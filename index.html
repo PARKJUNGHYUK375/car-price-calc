@@ -308,6 +308,16 @@
   const result = document.getElementById('result');
   const totalDeductInput = document.getElementById('totalDeduct');
   const bidPriceInput = document.getElementById('bidPrice');
+  bidPriceInput.addEventListener('input', (e) => {
+  const raw = uncomma(e.target.value); // 숫자만 남기기
+  if (raw === "") {
+    e.target.value = "";
+  } else {
+    e.target.value = parseInt(raw).toLocaleString(); // 쉼표 붙이기
+  }
+  updateTotal(); // 감가 금액 재계산
+});
+	
   const finalPriceInput = document.getElementById('finalPrice');
   const boxes = document.querySelectorAll('.deductBox'); // ✅ 전역 선언
 
