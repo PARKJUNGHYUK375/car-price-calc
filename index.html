@@ -6,7 +6,6 @@
   <!-- 시스템 다크모드 무시 -->
   <meta name="color-scheme" content="light only">
   <title>차량 감가 계산기</title>
-  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <style>
     body {
       font-family: sans-serif;
@@ -159,8 +158,7 @@
 
   <div style="margin-top: 10px; display: flex; gap: 10px; justify-content: center;">
     <button onclick="resetForm()">초기화</button>
-    <button onclick="saveImage()">사진 저장</button>
-  </div>
+ </div>
 </div>
 
 <div class="form-section">
@@ -342,16 +340,6 @@
 
     boxes.forEach(box => {
       box.checked = false;
-    });
-  }
-
-  function saveImage() {
-    const carContainer = document.getElementById('carContainer');
-    html2canvas(carContainer).then(canvas => {
-      const link = document.createElement('a');
-      link.download = 'car_view.png';
-      link.href = canvas.toDataURL();
-      link.click();
     });
   }
 </script>
