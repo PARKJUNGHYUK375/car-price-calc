@@ -309,6 +309,7 @@
   const totalDeductInput = document.getElementById('totalDeduct');
   const bidPriceInput = document.getElementById('bidPrice');
   const finalPriceInput = document.getElementById('finalPrice');
+  const boxes = document.querySelectorAll('.deductBox'); // ✅ 전역 선언
 
  function saveToLocalStorage() {
     localStorage.setItem('carModel', document.getElementById('carModel').value);
