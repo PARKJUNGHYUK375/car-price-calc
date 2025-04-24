@@ -41,12 +41,9 @@
     }
 
     input, textarea {
-      width: 100%;
-      padding: 8px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      box-sizing: border-box;
-      font-size: 14px;
+      
+      padding: 0.5rem;
+      font-size: 1rem;
     }
 
     textarea {
@@ -74,9 +71,8 @@
     }
 
     .car-container {
-      position: relative;
-	  display: inline-block;
-      width: 300px;
+      width: 100%;
+      max-width: 300px;
     }
 
     .car-container img {
@@ -144,6 +140,26 @@
     .input-group {
       flex: 1 1 300px;  /* 최소 300px, 공간 없으면 아래로 */
     }
+
+@media (max-width: 768px) {
+  .form-row, .calc-summary {
+    flex-direction: column;
+  }
+
+  .form-group, .calc-summary .form-group {
+    width: 100%;
+  }
+
+  .checkbox-label {
+    font-size: 0.7rem;
+  }
+
+  .car-wrapper {
+    flex-direction: column;
+    align-items: center;
+  }
+}  
+  
   </style>
 </head>
 <body>
