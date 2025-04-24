@@ -16,19 +16,20 @@
 	  color: black;
     }
 
-    .form-section {
-      max-width: 800px;
-      margin: auto;
-      text-align: left;
-      margin-bottom: 30px;
+    .form-section, container {
+      padding: 1rem;
+	    max-width: 100%;
     }
 
     .form-row {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
+      flex-direction:column;
     }
-
+@media  (min-width: 768px){
+	.form-row{
+		flex-direction: row;
+	}
+}
+	
     .form-group {
       flex: 1;
       min-width: 150px;
@@ -74,9 +75,10 @@
     }
 
     .car-container {
-      position: relative;
-	  display: inline-block;
-      width: 300px;
+      
+      width: 100%;
+	    max-width: 400px;
+	    margin:0 auto;
     }
 
     .car-container img {
