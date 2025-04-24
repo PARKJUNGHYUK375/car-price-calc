@@ -376,26 +376,32 @@
     updateTotal();
   });
 
-  function resetForm() {
-    document.getElementById('carModel').value = "";
-    document.getElementById('carNumber').value = "";
-    document.getElementById('mileage').value = "";
-    document.getElementById('outerDamage').value = "";
-    document.getElementById('wheelDamage').value = "";
-    document.getElementById('subKey').value = "";
-    document.getElementById('repair').value = "";
-    document.getElementById('advantages').value = "";
-    bidPriceInput.value = "";
-    totalDeductInput.value = "0";
-    finalPriceInput.value = "0";
-    result.innerText = `총 감가 금액: 0 원`;
+ function resetForm() {
+  document.getElementById('carModel').value = "";
+  document.getElementById('carNumber').value = "";
+  document.getElementById('mileage').value = "";
+  document.getElementById('outerDamage').value = "";
+  document.getElementById('wheelDamage').value = "";
+  document.getElementById('subKey').value = "";
+  document.getElementById('repair').value = "";
+  document.getElementById('advantages').value = "";
+  bidPriceInput.value = "";
+  totalDeductInput.value = "0";
+  finalPriceInput.value = "0";
+  result.innerText = `총 감가 금액: 0 원`;
 
-    boxes.forEach(box => {
-      box.checked = false;
-    });
-  }
-	 // 로컬 스토리지도 초기화
-    localStorage.clear();
+  // 체크박스 상태 초기화
+  const boxes = document.querySelectorAll('.deductBox');
+  boxes.forEach(box => {
+    box.checked = false;
+  });
+
+  // 로컬 스토리지 초기화
+  localStorage.clear();
+  
+  // 입력 필드 상태를 저장하도록 트리거
+  saveToLocalStorage();
+}
 </script>
 
 </body>
