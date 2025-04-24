@@ -143,12 +143,17 @@
    <div style="position: absolute; top: 10px; right: 10px; z-index: 1000;">
   <button onclick="resetForm()">초기화</button>
 </div>
-	<div class="form-group" style="flex: 1 1 100%;">
-    <label for="bidPrice">경매 입찰가</label>
-    <input type="text" id="bidPrice" placeholder="" />
+<div class="form-section" style="border: 3px solid #ccc; padding: 15px; border-radius: 10px; margin-bottom: 20px; background-color: white;">
+  <h3 style="margin-bottom: 20px; font-size: 30px; font-weight: bold;">금액 입력</h3>
+
+  <div class="form-row" style="display: flex; flex-wrap: wrap; gap: 15px;">
+    <div class="form-group" style="flex: 1 1 100%;">
+      <label for="bidPrice">경매 입찰가</label>
+      <input type="text" id="bidPrice" placeholder="" />
+    </div>
   </div>
 
-  <div style="display: flex; flex-wrap: wrap; gap: 10px; width: 100%;">
+  <div class="form-row" style="display: flex; flex-wrap: wrap; gap: 15px;">
     <div class="form-group" style="flex: 1;">
       <label>감가금액 (합)</label>
       <input type="text" id="totalDeduct" style="color: red; font-weight: bold;" />
@@ -158,6 +163,7 @@
       <input type="text" id="finalPrice" style="color: blue; font-weight: bold;" />
     </div>
   </div>
+</div>
 
  
 </div>
@@ -181,33 +187,35 @@
 </div>
 
   <!-- 고객 기재내용 -->
-  <div class="group-box">
-    <div class="group-title">기재내용 (고객)</div>
-    <div class="form-row">
-      <div class="form-group">
-        <label for="outerDamage">외판 (판)</label>
-        <input type="number" id="outerDamage" />
-      </div>
-      <div class="form-group">
-        <label for="wheelDamage">휠 스크래치 (개)</label>
-        <input type="number" id="wheelDamage" />
-      </div>
-      <div class="form-group">
-        <label for="subKey">보조키</label>
-        <input type="text" id="subKey" />
-      </div>
+<div class="form-section" style="border: 1px solid #ccc; padding: 10px; border-radius: 3px; margin-bottom: 30px; background-color: white;">
+  <h3 style="margin: 10px 0 10px 0; font-size: 35px; font-weight: bold; text-align: left;">고객기재내용</h3>
+  
+  <div class="form-row" style="display: flex; flex-wrap: wrap; gap: 15px;">
+    <div class="form-group" style="flex: 1 1 30%;">
+      <label for="outerDamage">외판</label>
+      <input type="number" id="outerDamage" />
     </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label for="repair">정비/수리 필요</label>
-        <input type="text" id="repair" />
-      </div>
+    <div class="form-group" style="flex: 1 1 30%;">
+      <label for="wheelDamage">휠기스</label>
+      <input type="number" id="wheelDamage" />
     </div>
-    <div class="form-row">
-      <div class="form-group" style="flex: 1 1 100%;">
-        <label for="advantages">차량 장단점</label>
-        <textarea id="advantages" rows="2"></textarea>
-      </div>
+    <div class="form-group" style="flex: 1 1 30%;">
+      <label for="subKey">보조키(유/무)</label>
+      <input type="text" id="subKey" />
+    </div>
+  </div>
+
+  <div class="form-row" style="margin-top: 15px;">
+    <div class="form-group" style="flex: 1 1 100%;">
+      <label for="repair">정비/수리 필요</label>
+      <input type="text" id="repair" />
+    </div>
+  </div>
+
+  <div class="form-row" style="margin-top: 15px;">
+    <div class="form-group" style="flex: 1 1 100%;">
+      <label for="advantages">차량 장단점</label>
+      <textarea id="advantages" rows="2"></textarea>
     </div>
   </div>
 </div>
