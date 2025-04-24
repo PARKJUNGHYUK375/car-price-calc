@@ -298,8 +298,8 @@
     document.getElementById('repair').value = localStorage.getItem('repair') || '';
     document.getElementById('advantages').value = localStorage.getItem('advantages') || '';
     document.getElementById('bidPrice').value = localStorage.getItem('bidPrice') || '';
-    document.getElementById('totalDeduct').value = localStorage.getItem('totalDeduct') || '0';
-    document.getElementById('finalPrice').value = localStorage.getItem('finalPrice') || '0';
+    document.getElementById('totalDeduct').value = localStorage.getItem('totalDeduct') || '';
+    document.getElementById('finalPrice').value = localStorage.getItem('finalPrice') || '';
   const boxes = document.querySelectorAll('.deductBox');
   boxes.forEach((box, index) => {
     box.checked = localStorage.getItem(`box${index}`) === 'true';
