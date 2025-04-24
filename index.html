@@ -144,17 +144,17 @@
   <button onclick="resetForm()">초기화</button>
 </div>
 	<div class="form-group" style="flex: 1 1 100%;">
-    <label for="bidPrice">최초 입찰가</label>
+    <label for="bidPrice">경매 입찰가</label>
     <input type="text" id="bidPrice" placeholder="" />
   </div>
 
   <div style="display: flex; flex-wrap: wrap; gap: 10px; width: 100%;">
     <div class="form-group" style="flex: 1;">
-      <label>총 감가 금액</label>
+      <label>감가금액 (합)</label>
       <input type="text" id="totalDeduct" style="color: red; font-weight: bold;" />
     </div>
     <div class="form-group" style="flex: 1;">
-      <label>최종 매입가</label>
+      <label>최종 견적가</label>
       <input type="text" id="finalPrice" style="color: blue; font-weight: bold;" />
     </div>
   </div>
@@ -285,11 +285,50 @@
 <div class="result" id="result">총 감가 금액: 0 원</div>
 
 <script>
+  // 페이지 로드 시 저장된 값 불러오기
+  window.onload = function() {
+    // 각 필드에 저장된 값 불러오기
+    document.getElementById('carModel').value = localStorage.getItem('carModel') || '';
+    document.getElementById('carNumber').value = localStorage.getItem('carNumber') || '';
+    document.getElementById('mileage').value = localStorage.getItem('mileage') || '';
+    document.getElementById('outerDamage').value = localStorage.getItem('outerDamage') || '';
+    document.getElementById('wheelDamage').value = localStorage.getItem('wheelDamage') || '';
+    document.getElementById('subKey').value = localStorage.getItem('subKey') || '';
+    document.getElementById('repair').value = localStorage.getItem('repair') || '';
+    document.getElementById('advantages').value = localStorage.getItem('advantages') || '';
+    document.getElementById('bidPrice').value = localStorage.getItem('bidPrice') || '';
+    document.getElementById('totalDeduct').value = localStorage.getItem('totalDeduct') || '0';
+    document.getElementById('finalPrice').value = localStorage.getItem('finalPrice') || '0';
   const boxes = document.querySelectorAll('.deductBox');
+  boxes.forEach((box, index) => {
+    box.checked = localStorage.getItem(`box${index}`) === 'true';
+    });
+  updateTotal(); // 값을 불러온 후 총 감가 금액 업데이트
+  }
   const result = document.getElementById('result');
   const totalDeductInput = document.getElementById('totalDeduct');
   const bidPriceInput = document.getElementById('bidPrice');
   const finalPriceInput = document.getElementById('finalPrice');
+
+ function saveToLocalStorage() {
+    localStorage.setItem('carModel', document.getElementById('carModel').value);
+    localStorage.setItem('carNumber', document.getElementById('carNumber').value);
+    localStorage.setItem('mileage', document.getElementById('mileage').value);
+    localStorage.setItem('outerDamage', document.getElementById('outerDamage').value);
+    localStorage.setItem('wheelDamage', document.getElementById('wheelDamage').value);
+    localStorage.setItem('subKey', document.getElementById('subKey').value);
+    localStorage.setItem('repair', document.getElementById('repair').value);
+    localStorage.setItem('advantages', document.getElementById('advantages').value);
+    localStorage.setItem('bidPrice', document.getElementById('bidPrice').value);
+    localStorage.setItem('totalDeduct', document.getElementById('totalDeduct').value);
+    localStorage.setItem('finalPrice', document.getElementById('finalPrice').value);
+
+   // 체크박스 상태 저장
+    const boxes = document.querySelectorAll('.deductBox');
+    boxes.forEach((box, index) => {
+      localStorage.setItem(`box${index}`, box.checked);
+    });
+  }
 
   function uncomma(str) {
     return str.replace(/[^\d]+/g, "");
@@ -311,7 +350,19 @@
     finalPriceInput.value = final.toLocaleString();
   }
 
-  boxes.forEach(box => {
+	document.querySelectorAll('input, textarea').forEach(element => {
+    element.addEventListener('input', saveToLocalStorage);
+  });
+
+  // 체크박스 상태가 변경될 때마다 로컬 스토리지에 저장
+  document.querySelectorAll('.deductBox').forEach((box, index) => {
+    box.addEventListener('change', () => {
+      localStorage.setItem(`box${index}`, box.checked);
+      updateTotal();
+    });
+  });
+ 
+	boxes.forEach(box => {
     box.addEventListener('change', updateTotal);
   });
 
@@ -343,6 +394,8 @@
       box.checked = false;
     });
   }
+	 // 로컬 스토리지도 초기화
+    localStorage.clear();
 </script>
 
 </body>
