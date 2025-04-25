@@ -5,13 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>중고차 감가 계산기</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
+        /* 전체 페이지에 대한 기본 설정 */
+        html, body {
             margin: 0;
             padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;  /* 좌우 스크롤 방지 */
+            box-sizing: border-box;
         }
 
+        /* 화면 크기에 맞게 이미지 크기 조정 */
+        .car-image-container img {
+            max-width: 100%;   /* 이미지 너비를 부모 컨테이너에 맞추기 */
+            height: auto;      /* 이미지 비율 유지 */
+            display: block;    /* 이미지 아래 불필요한 공백 제거 */
+        }
+
+        /* 나머지 스타일은 기존대로 */
         .header {
             background-color: #f2f2f2;
             padding: 20px;
@@ -38,10 +49,6 @@
 
         .car-image-container {
             margin-top: 20px;
-        }
-            .car-image-container img {
-            max-width: 100%;
-            height: auto;
         }
 
         area {
@@ -108,7 +115,7 @@
 
     <!-- 자동차 이미지와 클릭 가능한 영역 -->
     <div class="car-image-container">
-        <img src="https://i.imgur.com/NAH6AaM.jpg" alt="중고차 이미지" usemap="#car-map">
+        <img src="https://i.imgur.com/yourImage.jpg" alt="중고차 이미지" usemap="#car-map">
         <map name="car-map">
             <area shape="rect" coords="34,44,270,350" alt="타이어 상태" href="#" onclick="calculateDepreciation('tires')">
             <area shape="rect" coords="300,44,500,350" alt="차체 외관" href="#" onclick="calculateDepreciation('body')">
