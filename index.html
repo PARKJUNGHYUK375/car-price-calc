@@ -93,9 +93,10 @@
 
 
     .car-container img {
-      width: 100%;
+      width: auto;
+      max-width: 100%;
       height: auto;
-      display: block;
+      min-width: 300px;
     }
 
     .checkbox-label {
@@ -271,7 +272,7 @@
 <div class="car-wrapper" id="carContainer">
   <div class="car-container">
     <h3 style="text-align:center; margin-bottom: 10px;"></h3>
-    <img src="https://imgur.com/NAH6AaM.png" alt="차량 탑뷰" />
+    <img src="https://imgur.com/NAH6AaM.png" class="car-container img" alt="차량 탑뷰" />
 <!-- 왼쪽 -->
     <label class="checkbox-label" style="top: 15%; left: 20%;"><input type="checkbox" class="checkbox deductBox" value="180000">전휀더</label>
 	<label class="checkbox-label" style="top: 20%; left: 7%;"><input type="checkbox" class="checkbox deductBox" value="100000">휠</label>
@@ -302,7 +303,7 @@
 
   <div class="car-container">
     <h3 style="text-align:center; margin-bottom: 10px;"></h3>
-    <img src="https://imgur.com/tBnS5DO.png" alt="추가 차량 이미지" />
+    <img src="https://imgur.com/tBnS5DO.png" class="car-container img" alt="추가 차량 이미지" />
 <!-- 좌측 -->     
 	<label class="checkbox-label" style="top: 19%; left: 16%;"><input type="checkbox" class="checkbox deductBox" value="180000">휀더</label>
     <label class="checkbox-label" style="top: 39%; left: 16%;"><input type="checkbox" class="checkbox deductBox" value="180000">앞문</label>
