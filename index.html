@@ -16,20 +16,16 @@
     }
 
     .form-container {
-     display: grid;
-     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-     gap: 20px;
-     max-width: 1200px;
+     display: block;
+     max-width: 500px;
      margin: 0 auto;
      padding: 20px;
     }
 	
 	.form-section {
-      max-width: 600px;
-      margin: auto;
-      text-align: left;
-      margin-bottom: 30px;
-	  position: relative;
+      width: 100%;
+      margin-bottom: 20px;
+	  
     }
 
     .form-row {
@@ -42,6 +38,19 @@
       flex: 1;
       min-width: 150px;
     }
+
+    .form-section {
+     width: 100%;
+      margin-bottom: 20px;
+}
+
+     .form-section input,
+     .form-section select {
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      padding: 10px;
+}
 
     label {
       font-weight: bold;
