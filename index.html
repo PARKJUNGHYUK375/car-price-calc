@@ -5,43 +5,109 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>중고차 감가 계산기</title>
     <style>
-        /* 전체 페이지 설정 */
+        /* 전체 페이지에 대한 기본 설정 */
         html, body {
             margin: 0;
             padding: 0;
             width: 100%;
             height: 100%;
+            overflow-x: hidden;  /* 좌우 스크롤 방지 */
             box-sizing: border-box;
+        }
+
+        /* 화면 크기에 맞게 이미지 크기 조정 */
+        .car-image-container img {
+            max-width: 100%;   /* 이미지 너비를 부모 컨테이너에 맞추기 */
+            height: auto;      /* 이미지 비율 유지 */
+            display: block;    /* 이미지 아래 불필요한 공백 제거 */
+        }
+
+        /* 나머지 스타일은 기존대로 */
+        .header {
+            background-color: #f2f2f2;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .car-info, .customer-info, .damage-info {
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .car-info input, .customer-info textarea, .damage-info input, .damage-info select {
+            margin: 5px;
+            padding: 5px;
+            font-size: 14px;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .price-info {
+            font-size: 16px;
+            margin-top: 10px;
         }
 
         .car-image-container {
             margin-top: 20px;
-            position: relative;
         }
 
-        .car-image-container img {
-            max-width: 100%;
-            height: auto;
-            display: block;
+        area {
+            outline: none;
+            cursor: pointer;
         }
 
-        /* 클릭한 부위에 감가를 적용한 부분을 하이라이트할 때 사용할 스타일 */
-        .highlight {
-            outline: 2px solid red;
-        }
-        
-        .price-info {
-            font-size: 16px;
-            margin-top: 10px;
+        textarea {
+            height: 100px;
         }
     </style>
 </head>
 <body>
     <div class="header">
         <h2>중고차 감가 계산기</h2>
+        
+        <!-- 차량 정보 입력란 -->
+        <div class="car-info">
+            <label for="carName">차량명: </label>
+            <input type="text" id="carName" placeholder="차량명을 입력하세요">
+            <label for="carNumber">차량번호: </label>
+            <input type="text" id="carNumber" placeholder="차량번호를 입력하세요">
+            <label for="mileage">주행거리(km): </label>
+            <input type="number" id="mileage" placeholder="주행거리를 입력하세요">
+        </div>
 
-        <!-- 감가 금액 표시 -->
+        <!-- 고객이 제공하는 정보 입력란 -->
+        <div class="customer-info">
+            <h3>고객 제공 정보</h3>
+            <label for="noDepreciation">감가하지 말아야 할 사항</label><br>
+            <textarea id="noDepreciation" placeholder="고객이 제공한 감가하지 말아야 할 사항을 입력하세요..."></textarea><br>
+            <label for="exterior">외판 상태:</label>
+            <textarea id="exterior" placeholder="외판 상태에 대한 설명을 입력하세요..."></textarea><br>
+            <label for="wheelDamage">휠 기스 여부:</label>
+            <textarea id="wheelDamage" placeholder="휠 기스 여부에 대한 설명을 입력하세요..."></textarea><br>
+            <label for="extraKey">보조키 유무:</label>
+            <textarea id="extraKey" placeholder="보조키 유무를 입력하세요..."></textarea><br>
+            <label for="repair">정비/수리 필요 여부:</label>
+            <textarea id="repair" placeholder="정비/수리 필요 여부를 입력하세요..."></textarea><br>
+            <label for="prosCons">차량 장단점:</label>
+            <textarea id="prosCons" placeholder="차량 장단점을 입력하세요..."></textarea><br>
+        </div>
+
+        <!-- 교환흔적 및 판금흔적 정보 입력란 -->
+        <div class="damage-info">
+            <h3>교환흔적 / 판금흔적 감가</h3>
+            <label for="damageYesNo">골격부위 교환/판금 흔적 여부:</label>
+            <select id="damageYesNo">
+                <option value="no">없음</option>
+                <option value="yes">있음</option>
+            </select><br>
+            <label for="damageRate">감가 비율(%):</label>
+            <input type="number" id="damageRate" placeholder="감가 비율을 입력하세요" min="0" max="100"><br>
+        </div>
+
+        <!-- 경매 가격과 감가 금액 -->
         <div class="price-info">
+            <label for="bidPrice">경매 입찰가: </label>
+            <input type="number" id="bidPrice" placeholder="입찰가를 입력하세요">
             <p>감가 금액: <span id="depreciationAmount">0</span> 원</p>
             <p>최종 금액: <span id="finalPrice">0</span> 원</p>
         </div>
@@ -58,52 +124,122 @@
     </div>
 
     <script>
-        let bidPrice = 10000000;  // 예시 입찰가 1,000만원
-        let totalDepreciation = 0;
+        let bidPrice = 0;
+        let depreciation = 0;
+        let carName = "";
+        let carNumber = "";
+        let mileage = 0;
+        let noDepreciation = "";
+        let exterior = "";
+        let wheelDamage = "";
+        let extraKey = "";
+        let repair = "";
+        let prosCons = "";
+        let damageRate = 0;  // 교환흔적 및 판금흔적 감가 비율
+
+        // 차량 정보 입력 처리
+        document.getElementById('carName').addEventListener('input', function() {
+            carName = this.value;
+            console.log("차량명:", carName);
+        });
+
+        document.getElementById('carNumber').addEventListener('input', function() {
+            carNumber = this.value;
+            console.log("차량번호:", carNumber);
+        });
+
+        document.getElementById('mileage').addEventListener('input', function() {
+            mileage = parseInt(this.value) || 0;
+            console.log("주행거리:", mileage);
+        });
+
+        // 고객 제공 정보 입력 처리
+        document.getElementById('noDepreciation').addEventListener('input', function() {
+            noDepreciation = this.value;
+            console.log("감가하지 말아야 할 사항:", noDepreciation);
+        });
+
+        document.getElementById('exterior').addEventListener('input', function() {
+            exterior = this.value;
+            console.log("외판 상태:", exterior);
+        });
+
+        document.getElementById('wheelDamage').addEventListener('input', function() {
+            wheelDamage = this.value;
+            console.log("휠 기스 여부:", wheelDamage);
+        });
+
+        document.getElementById('extraKey').addEventListener('input', function() {
+            extraKey = this.value;
+            console.log("보조키 유무:", extraKey);
+        });
+
+        document.getElementById('repair').addEventListener('input', function() {
+            repair = this.value;
+            console.log("정비/수리 필요 여부:", repair);
+        });
+
+        document.getElementById('prosCons').addEventListener('input', function() {
+            prosCons = this.value;
+            console.log("차량 장단점:", prosCons);
+        });
+
+        // 교환흔적 및 판금흔적 감가 비율 입력 처리
+        document.getElementById('damageRate').addEventListener('input', function() {
+            damageRate = parseInt(this.value) || 0;
+            updateFinalPrice();
+        });
+
+        // 골격부위 교환/판금 여부 선택 처리
+        document.getElementById('damageYesNo').addEventListener('change', function() {
+            if (this.value === 'yes') {
+                // 사용자가 교환/판금 흔적이 있다고 선택했을 때 감가 비율을 입력하도록 유도
+                document.getElementById('damageRate').disabled = false;
+            } else {
+                document.getElementById('damageRate').disabled = true;
+                damageRate = 0;
+                updateFinalPrice();
+            }
+        });
+
+        // 경매 입찰가 입력 처리
+        document.getElementById('bidPrice').addEventListener('input', function() {
+            bidPrice = parseInt(this.value) || 0;
+            updateFinalPrice();
+        });
 
         // 감가 계산 함수
         function calculateDepreciation(part) {
-            let depreciation = 0;
-            let partName = '';
-
             switch(part) {
                 case 'tires':
-                    depreciation = 300000;  // 타이어 상태에 따른 감가
-                    partName = '타이어';
+                    depreciation = 200000; // 예시: 타이어 상태에 따른 감가
                     break;
                 case 'body':
-                    depreciation = 500000;  // 차체 외관 상태에 따른 감가
-                    partName = '차체 외관';
+                    depreciation = 300000; // 예시: 차체 외관 상태에 따른 감가
                     break;
                 case 'engine':
-                    depreciation = 800000;  // 엔진 상태에 따른 감가
-                    partName = '엔진';
+                    depreciation = 500000; // 예시: 엔진 상태에 따른 감가
                     break;
                 default:
                     depreciation = 0;
                     break;
             }
-
-            totalDepreciation += depreciation;
-
-            // 부위 클릭 후 강조 표시
-            highlightPart(part);
-
-            // 감가 금액과 최종 금액 업데이트
-            document.getElementById('depreciationAmount').textContent = totalDepreciation.toLocaleString();
-            document.getElementById('finalPrice').textContent = (bidPrice - totalDepreciation).toLocaleString();
+            document.getElementById('depreciationAmount').textContent = depreciation.toLocaleString();
+            updateFinalPrice();
         }
 
-        // 클릭된 부위 하이라이트 처리
-        function highlightPart(part) {
-            const areas = document.querySelectorAll('area');
-            areas.forEach(area => {
-                if(area.alt === part) {
-                    area.classList.add('highlight');
-                } else {
-                    area.classList.remove('highlight');
-                }
-            });
+        // 최종 금액 계산 함수
+        function updateFinalPrice() {
+            let totalDepreciation = depreciation;
+            
+            // 교환흔적이나 판금흔적에 따른 % 감가 적용
+            if (damageRate > 0) {
+                totalDepreciation += (bidPrice * (damageRate / 100));
+            }
+
+            let finalPrice = bidPrice - totalDepreciation;
+            document.getElementById('depreciationAmount').textContent = totalDepreciation.toLocaleString();
+            document.getElementById('finalPrice').textContent = finalPrice.toLocaleString();
         }
     </script>
 </body>
