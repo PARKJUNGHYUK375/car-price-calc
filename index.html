@@ -73,9 +73,9 @@
 
   <div class="price-info">
     입찰가: 
-    <input type="number" id="bidPriceInput" value="140000" onchange="updateDepreciation()" style="width:100px;"> 원 |
+    <input type="number" id="bidPriceInput" value="" onchange="updateDepreciation()" style="width:100px;"> 원 |
     감가합계: <strong id="depreciationAmount">0</strong>원 |
-    최종금액: <strong id="finalPrice">140,000</strong>원
+    최종금액: <strong id="finalPrice"></strong>원
   </div>
 
   <div class="container">
@@ -85,8 +85,8 @@
       <label class="checkbox-item c1"><input type="checkbox" onclick="updateDepreciation()"> 부위1</label>
       <label class="checkbox-item c2"><input type="checkbox" onclick="updateDepreciation()"> 부위2</label>
       <label class="checkbox-item c3"><input type="checkbox" onclick="updateDepreciation()"> 부위3</label>
-      <label class="checkbox-item c4"><input type="checkbox" onclick="updateDepreciation()"> 부위4</label>
-      <label class="checkbox-item c5"><input type="checkbox" onclick="updateDepreciation()"> 부위5</label>
+      <label class="checkbox-item c4"><input type="checkbox" onclick="updateDepreciation()"> 휠</label>
+      <label class="checkbox-item c5"><input type="checkbox" onclick="updateDepreciation()"> 휠</label>
       <label class="checkbox-item c6"><input type="checkbox" onclick="updateDepreciation()"> 부위6</label>
       <label class="checkbox-item c7"><input type="checkbox" onclick="updateDepreciation()"> 부위7</label>
       <label class="checkbox-item c8"><input type="checkbox" onclick="updateDepreciation()"> 부위8</label>
@@ -100,8 +100,8 @@
       <label class="checkbox-item c16"><input type="checkbox" onclick="updateDepreciation()"> 부위16</label>
       <label class="checkbox-item c17"><input type="checkbox" onclick="updateDepreciation()"> 부위17</label>
       <label class="checkbox-item c18"><input type="checkbox" onclick="updateDepreciation()"> 부위18</label>
-      <label class="checkbox-item c19"><input type="checkbox" onclick="updateDepreciation()"> 부위19</label>
-      <label class="checkbox-item c20"><input type="checkbox" onclick="updateDepreciation()"> 부위20</label>
+      <label class="checkbox-item c19"><input type="checkbox" onclick="updateDepreciation()"> 휠</label>
+      <label class="checkbox-item c20"><input type="checkbox" onclick="updateDepreciation()"> 휠</label>
       <label class="checkbox-item c21"><input type="checkbox" onclick="updateDepreciation()"> 부위21</label>
       <label class="checkbox-item c22"><input type="checkbox" onclick="updateDepreciation()"> 부위22</label>
       <label class="checkbox-item c23"><input type="checkbox" onclick="updateDepreciation()"> 부위23</label>
@@ -120,7 +120,7 @@
           if ([3, 4, 18, 19].includes(index)) {
             total += 100000; // 부위4(3), 부위5(4), 부위19(18), 부위20(19)는 100,000원 고정
           } else {
-            total += 140000; // 나머지는 140,000원 감가
+            total += 180000; // 나머지는 140,000원 감가
           }
         }
       });
