@@ -24,14 +24,12 @@
      padding: 20px;
     }
 	
-    .form-section {
-     width: 100%;
-     max-width: 800px;
-     margin: 0 auto 30px auto;
-     text-align: left;
-     position: relative;
-     box-sizing: border-box;
-     padding: 16px;
+	.form-section {
+      max-width: 800px;
+      margin: auto;
+      text-align: left;
+      margin-bottom: 30px;
+	  position: relative;
     }
 
     .form-row {
@@ -53,8 +51,11 @@
 
     input, textarea {
       width: 100%;
-      min-width: 0;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
       box-sizing: border-box;
+      font-size: 14px;
     }
 
     textarea {
@@ -93,7 +94,6 @@
 
     .car-container img {
       width: 100%;
-      max-width: 100%;
       height: auto;
       display: block;
     }
@@ -139,12 +139,17 @@
       width: 100px;
 	}
 	
-    .input-won-group {
-     width: 100%;
-     box-sizing: border-box;
+	.input-won-group {
+     display: flex;
+     align-items: center;
+     border: 1px solid #ccc;
+     border-radius: 4px;
+     padding-right: 10px;
+     background: white;
+     width: 200px; /* 원하는 크기로 조정 가능 */
     }
 
-     .input-won-group input {
+    .input-won-group input {
       border: none;
       outline: none;
       padding: 8px;
@@ -152,7 +157,7 @@
       font-size: 16px;
     }
 
-     .input-won-group span {
+    .input-won-group span {
       white-space: nowrap;
       font-size: 16px;
       color: #555;
@@ -170,36 +175,6 @@
 
     button:hover {
       background-color: #0056b3;
-    }
-@media (max-width: 480px) {
-     .car-container {
-      max-width: 100vw;
-      padding: 0; /* 여백도 최소화 */
-  }
-     .car-container img {
-      width: 100%;
-      height: auto;
-      max-height: 90vh;
-  }
-}
-     .form-section {
-       padding: 12px;
-      }
-
-      input, textarea {
-        font-size: 16px;
-        padding: 10px;
-      }
-      label {
-        font-size: 15px;
-
-      .input-won-group span {
-        font-size: 14px;
-      }
-
-      .group-title {
-        font-size: 17px;
-      }
     }
   </style>
 </head>
@@ -366,46 +341,7 @@
 <div class="result" id="result">총 감가 금액: 0 원</div>
 
 <script>
-  <script>
-    function formatNumber(num) {
-      return num.toLocaleString('ko-KR');
-    }
-
-    function calculateDeduction() {
-      let totalDeduction = 0;
-      document.querySelectorAll('.deductBox:checked').forEach(checkbox => {
-        totalDeduction += parseInt(checkbox.value);
-      });
-
-      const outerInput = parseInt(document.getElementById('outerDamage').value) || 0;
-      const wheelInput = parseInt(document.getElementById('wheelDamage').value) || 0;
-      
-      totalDeduction += outerInput * 180000;
-      totalDeduction += wheelInput * 100000;
-
-      const bidPrice = parseInt(document.getElementById('bidPrice').value.replace(/[^0-9]/g, '')) || 0;
-      const finalPrice = bidPrice - totalDeduction;
-
-      document.getElementById('totalDeduct').value = formatNumber(totalDeduction);
-      document.getElementById('finalPrice').value = formatNumber(finalPrice);
-    }
-
-    function resetForm() {
-      document.querySelectorAll('input[type=text], input[type=number], textarea').forEach(input => input.value = '');
-      document.querySelectorAll('input[type=checkbox]').forEach(checkbox => checkbox.checked = false);
-      document.getElementById('totalDeduct').value = '';
-      document.getElementById('finalPrice').value = '';
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      document.querySelectorAll('input').forEach(el => {
-        el.addEventListener('input', calculateDeduction);
-      });
-      document.querySelectorAll('.deductBox').forEach(checkbox => {
-        checkbox.addEventListener('change', calculateDeduction);
-      });
-    });
-	// 페이지 로드 시 저장된 값 불러오기
+  // 페이지 로드 시 저장된 값 불러오기
   window.onload = function() {
     // 각 필드에 저장된 값 불러오기
     document.getElementById('carModel').value = localStorage.getItem('carModel') || '';
