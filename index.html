@@ -42,16 +42,17 @@ h3 {
 
 .form-row {
   display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
+  gap: 20px;
+  margin-bottom: 10px;
 }
 
-   
+ .form-group {
+  flex: 1; /* 동일한 너비로 나란히 정렬 */  
 
-    label {
-      font-weight: bold;
-      display: block;
-      margin-bottom: 5px;
+  label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
     }
 
   input, textarea {
@@ -137,12 +138,10 @@ textarea {
      }
 
     .input-won-group input {
-      border: none;
-      outline: none;
-      padding: 8px;
-      flex: 1;
-      font-size: 16px;
-    }
+     flex: 1;
+     margin-right: 5px;
+    } 
+
 
     .input-won-group span {
       white-space: nowrap;
@@ -195,6 +194,8 @@ textarea {
 </div>
 <div class="form-container">
   <div class="form-section">
+
+    <!-- 첫 줄: 경매 입찰가 + 감가금액 -->
     <div class="form-row">
       <div class="form-group">
         <label for="bidPrice">경매 입찰가</label>
@@ -203,22 +204,27 @@ textarea {
           <span>원</span>
         </div>
       </div>
-    </div>
 
-    <div class="form-row">
       <div class="form-group">
         <label for="totalDeduct">감가금액 (합)</label>
-	      <div class="input-won-group">
-        <input type="text" id="totalDeduct" class="small-input" style="color: red; font-weight: bold;" />
-		      <span>원</span>
-      </div>
-      <div class="form-group">
-        <label for="finalPrice">최종 견적가</label>
-	      <div class="input-won-group">
-        <input type="text" id="finalPrice" class="small-input" style="color: blue; font-weight: bold;" />
-		      <span>원</span>
+        <div class="input-won-group">
+          <input type="text" id="totalDeduct" class="small-input" style="color: red; font-weight: bold;" />
+          <span>원</span>
+        </div>
       </div>
     </div>
+
+    <!-- 두 번째 줄: 최종 견적가 -->
+    <div class="form-row">
+      <div class="form-group">
+        <label for="finalPrice">최종 견적가</label>
+        <div class="input-won-group">
+          <input type="text" id="finalPrice" class="small-input" style="color: blue; font-weight: bold;" />
+          <span>원</span>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
