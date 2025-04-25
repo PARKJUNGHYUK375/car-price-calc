@@ -16,10 +16,12 @@
     }
 
     .form-container {
-     display: block;
-     max-width: 500px;
-     margin: 0 auto;
-     padding: 20px;
+  display: block;
+  max-width: 600px; /* 모바일에서 넘지 않도록 제한 */
+  width: 100%;
+  margin: 0 auto;
+  padding: 20px;
+  box-sizing: border-box;
     }
 	
 	.form-section {
@@ -45,11 +47,12 @@
 }
 
      .form-section input,
-     .form-section select {
-      width: 100%;
-      max-width: 100%;
-      box-sizing: border-box;
-      padding: 10px;
+     .form-section select,
+     .form-section textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px;
+  font-size: 1rem;
 }
 
     label {
