@@ -41,8 +41,7 @@
       border-radius: 5px;
       pointer-events: auto;
     }
-
-    /* 체크박스 위치 (이미지 기준) */
+    /* 체크박스 위치 */
     .c1  { top: 5%; left: 15%; }
     .c2  { top: 12%; left: 45%; }
     .c3  { top: 5%; left: 80%; }
@@ -73,16 +72,16 @@
 <body>
 
   <div class="price-info">
-    입찰가: <strong>140,000</strong>원 |
+    입찰가: 
+    <input type="number" id="bidPriceInput" value="140000" onchange="updateDepreciation()" style="width:100px;"> 원 |
     감가합계: <strong id="depreciationAmount">0</strong>원 |
     최종금액: <strong id="finalPrice">140,000</strong>원
   </div>
 
   <div class="container">
-    <img src="https://i.imgur.com/NAH6AaM.jpg" class="car-image" alt="자동차" />
+    <img src="c4543734-3a53-4d8b-adc4-2129cbcd7437.png" class="car-image" alt="자동차" />
     <div class="checkbox-overlay">
       <!-- 25개의 체크박스 -->
-      <!-- 실제 항목명으로 바꾸면 더 좋아요 -->
       <label class="checkbox-item c1"><input type="checkbox" onclick="updateDepreciation()"> 부위1</label>
       <label class="checkbox-item c2"><input type="checkbox" onclick="updateDepreciation()"> 부위2</label>
       <label class="checkbox-item c3"><input type="checkbox" onclick="updateDepreciation()"> 부위3</label>
@@ -112,18 +111,22 @@
   </div>
 
   <script>
-    const depreciationValues = new Array(25).fill(5000); // 각 부위마다 5000원 감가
-
     function updateDepreciation() {
+      const bidPrice = Number(document.getElementById('bidPriceInput').value) || 0;
       let total = 0;
-      for (let i = 0; i < 25; i++) {
-        const checkbox = document.querySelectorAll("input[type=checkbox]")[i];
+
+      document.querySelectorAll(".checkbox-overlay input").forEach((checkbox, index) => {
         if (checkbox.checked) {
-          total += depreciationValues[i];
+          if ([3, 4, 18, 19].includes(index)) {
+            total += 100000; // 부위4(3), 부위5(4), 부위19(18), 부위20(19)는 100,000원 고정
+          } else {
+            total += 140000; // 나머지는 140,000원 감가
+          }
         }
-      }
+      });
+
       document.getElementById("depreciationAmount").textContent = total.toLocaleString();
-      document.getElementById("finalPrice").textContent = (140000 - total).toLocaleString();
+      document.getElementById("finalPrice").textContent = (bidPrice - total).toLocaleString();
     }
   </script>
 
