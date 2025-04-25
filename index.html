@@ -5,24 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>중고차 감가 계산기</title>
     <style>
-        /* 전체 페이지에 대한 기본 설정 */
         html, body {
             margin: 0;
             padding: 0;
             width: 100%;
             height: 100%;
-            overflow-x: hidden;  /* 좌우 스크롤 방지 */
             box-sizing: border-box;
         }
 
-        /* 화면 크기에 맞게 이미지 크기 조정 */
-        .car-image-container img {
-            max-width: 100%;   /* 이미지 너비를 부모 컨테이너에 맞추기 */
-            height: auto;      /* 이미지 비율 유지 */
-            display: block;    /* 이미지 아래 불필요한 공백 제거 */
+        .car-image-container {
+            margin-top: 20px;
+            position: relative;
         }
 
-        /* 나머지 스타일은 기존대로 */
+        .car-image-container img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
         .header {
             background-color: #f2f2f2;
             padding: 20px;
@@ -47,32 +48,39 @@
             margin-top: 10px;
         }
 
+        textarea {
+            height: 100px;
+        }
+
+        .depreciation-checklist label {
+            display: block;
+            margin: 10px 0;
+        }
+
         .car-image-container {
             margin-top: 20px;
         }
 
-        area {
-            outline: none;
-            cursor: pointer;
-        }
-
-        textarea {
-            height: 100px;
+        /* 스타일 개선을 위한 페이지 레이아웃 */
+        .depreciation-checklist {
+            max-width: 700px;
+            margin: 0 auto;
+            font-size: 14px;
         }
     </style>
 </head>
 <body>
     <div class="header">
         <h2>중고차 감가 계산기</h2>
-        
+
         <!-- 차량 정보 입력란 -->
         <div class="car-info">
             <label for="carName">차량명: </label>
-            <input type="text" id="carName" placeholder="차량명을 입력하세요">
+            <input type="text" id="carName" placeholder="차량명을 입력하세요"><br>
             <label for="carNumber">차량번호: </label>
-            <input type="text" id="carNumber" placeholder="차량번호를 입력하세요">
+            <input type="text" id="carNumber" placeholder="차량번호를 입력하세요"><br>
             <label for="mileage">주행거리(km): </label>
-            <input type="number" id="mileage" placeholder="주행거리를 입력하세요">
+            <input type="number" id="mileage" placeholder="주행거리를 입력하세요"><br>
         </div>
 
         <!-- 고객이 제공하는 정보 입력란 -->
@@ -80,16 +88,6 @@
             <h3>고객 제공 정보</h3>
             <label for="noDepreciation">감가하지 말아야 할 사항</label><br>
             <textarea id="noDepreciation" placeholder="고객이 제공한 감가하지 말아야 할 사항을 입력하세요..."></textarea><br>
-            <label for="exterior">외판 상태:</label>
-            <textarea id="exterior" placeholder="외판 상태에 대한 설명을 입력하세요..."></textarea><br>
-            <label for="wheelDamage">휠 기스 여부:</label>
-            <textarea id="wheelDamage" placeholder="휠 기스 여부에 대한 설명을 입력하세요..."></textarea><br>
-            <label for="extraKey">보조키 유무:</label>
-            <textarea id="extraKey" placeholder="보조키 유무를 입력하세요..."></textarea><br>
-            <label for="repair">정비/수리 필요 여부:</label>
-            <textarea id="repair" placeholder="정비/수리 필요 여부를 입력하세요..."></textarea><br>
-            <label for="prosCons">차량 장단점:</label>
-            <textarea id="prosCons" placeholder="차량 장단점을 입력하세요..."></textarea><br>
         </div>
 
         <!-- 교환흔적 및 판금흔적 정보 입력란 -->
@@ -104,102 +102,57 @@
             <input type="number" id="damageRate" placeholder="감가 비율을 입력하세요" min="0" max="100"><br>
         </div>
 
+        <!-- 감가 항목 체크리스트 -->
+        <div class="depreciation-checklist">
+            <h3>감가 항목 (최대 25개)</h3>
+            <!-- 각 항목에 대해 체크박스를 생성 -->
+            <label><input type="checkbox" id="tires" onclick="updateDepreciation()"> 타이어 상태 (300,000원)</label>
+            <label><input type="checkbox" id="body" onclick="updateDepreciation()"> 차체 외관 상태 (500,000원)</label>
+            <label><input type="checkbox" id="engine" onclick="updateDepreciation()"> 엔진 상태 (800,000원)</label>
+            <label><input type="checkbox" id="rearBumper" onclick="updateDepreciation()"> 뒤 범퍼 (200,000원)</label>
+            <label><input type="checkbox" id="sideBody" onclick="updateDepreciation()"> 차체 측면 (400,000원)</label>
+            <label><input type="checkbox" id="headlights" onclick="updateDepreciation()"> 헤드라이트 상태 (150,000원)</label>
+            <label><input type="checkbox" id="grill" onclick="updateDepreciation()"> 그릴 상태 (100,000원)</label>
+            <label><input type="checkbox" id="roof" onclick="updateDepreciation()"> 지붕 상태 (250,000원)</label>
+            <label><input type="checkbox" id="door" onclick="updateDepreciation()"> 도어 상태 (300,000원)</label>
+            <label><input type="checkbox" id="sideMirror" onclick="updateDepreciation()"> 사이드 미러 상태 (150,000원)</label>
+            <label><input type="checkbox" id="exhaust" onclick="updateDepreciation()"> 배기 시스템 (200,000원)</label>
+            <label><input type="checkbox" id="suspension" onclick="updateDepreciation()"> 서스펜션 상태 (300,000원)</label>
+            <label><input type="checkbox" id="transmission" onclick="updateDepreciation()"> 변속기 상태 (500,000원)</label>
+            <label><input type="checkbox" id="brakes" onclick="updateDepreciation()"> 브레이크 시스템 (250,000원)</label>
+            <label><input type="checkbox" id="battery" onclick="updateDepreciation()"> 배터리 상태 (100,000원)</label>
+            <label><input type="checkbox" id="interior" onclick="updateDepreciation()"> 실내 상태 (400,000원)</label>
+            <label><input type="checkbox" id="dashboard" onclick="updateDepreciation()"> 대시보드 상태 (150,000원)</label>
+            <label><input type="checkbox" id="seats" onclick="updateDepreciation()"> 시트 상태 (200,000원)</label>
+            <label><input type="checkbox" id="airConditioning" onclick="updateDepreciation()"> 에어컨 상태 (150,000원)</label>
+            <label><input type="checkbox" id="clutch" onclick="updateDepreciation()"> 클러치 상태 (250,000원)</label>
+            <label><input type="checkbox" id="alignment" onclick="updateDepreciation()"> 얼라이먼트 (100,000원)</label>
+            <label><input type="checkbox" id="windscreen" onclick="updateDepreciation()"> 윈드스크린 (150,000원)</label>
+            <label><input type="checkbox" id="spareTire" onclick="updateDepreciation()"> 예비 타이어 (50,000원)</label>
+            <label><input type="checkbox" id="lighting" onclick="updateDepreciation()"> 조명 시스템 (100,000원)</label>
+            <label><input type="checkbox" id="wipers" onclick="updateDepreciation()"> 와이퍼 상태 (50,000원)</label>
+            <label><input type="checkbox" id="rust" onclick="updateDepreciation()"> 녹 상태 (300,000원)</label>
+            <label><input type="checkbox" id="paint" onclick="updateDepreciation()"> 페인트 상태 (200,000원)</label>
+            <label><input type="checkbox" id="frame" onclick="updateDepreciation()"> 프레임 상태 (500,000원)</label>
+        </div>
+
         <!-- 경매 가격과 감가 금액 -->
         <div class="price-info">
             <label for="bidPrice">경매 입찰가: </label>
-            <input type="number" id="bidPrice" placeholder="입찰가를 입력하세요">
+            <input type="number" id="bidPrice" placeholder="입찰가를 입력하세요"><br>
             <p>감가 금액: <span id="depreciationAmount">0</span> 원</p>
             <p>최종 금액: <span id="finalPrice">0</span> 원</p>
         </div>
     </div>
 
-    <!-- 자동차 이미지와 클릭 가능한 영역 -->
-    <div class="car-image-container">
-        <img src="https://i.imgur.com/NAH6AaM.jpg" alt="중고차 이미지" usemap="#car-map">
-        <map name="car-map">
-            <area shape="rect" coords="34,44,270,350" alt="타이어 상태" href="#" onclick="calculateDepreciation('tires')">
-            <area shape="rect" coords="300,44,500,350" alt="차체 외관" href="#" onclick="calculateDepreciation('body')">
-            <area shape="rect" coords="550,44,700,350" alt="엔진 상태" href="#" onclick="calculateDepreciation('engine')">
-        </map>
-    </div>
-
     <script>
         let bidPrice = 0;
-        let depreciation = 0;
-        let carName = "";
-        let carNumber = "";
-        let mileage = 0;
-        let noDepreciation = "";
-        let exterior = "";
-        let wheelDamage = "";
-        let extraKey = "";
-        let repair = "";
-        let prosCons = "";
-        let damageRate = 0;  // 교환흔적 및 판금흔적 감가 비율
+        let totalDepreciation = 0;
 
         // 차량 정보 입력 처리
         document.getElementById('carName').addEventListener('input', function() {
             carName = this.value;
             console.log("차량명:", carName);
-        });
-
-        document.getElementById('carNumber').addEventListener('input', function() {
-            carNumber = this.value;
-            console.log("차량번호:", carNumber);
-        });
-
-        document.getElementById('mileage').addEventListener('input', function() {
-            mileage = parseInt(this.value) || 0;
-            console.log("주행거리:", mileage);
-        });
-
-        // 고객 제공 정보 입력 처리
-        document.getElementById('noDepreciation').addEventListener('input', function() {
-            noDepreciation = this.value;
-            console.log("감가하지 말아야 할 사항:", noDepreciation);
-        });
-
-        document.getElementById('exterior').addEventListener('input', function() {
-            exterior = this.value;
-            console.log("외판 상태:", exterior);
-        });
-
-        document.getElementById('wheelDamage').addEventListener('input', function() {
-            wheelDamage = this.value;
-            console.log("휠 기스 여부:", wheelDamage);
-        });
-
-        document.getElementById('extraKey').addEventListener('input', function() {
-            extraKey = this.value;
-            console.log("보조키 유무:", extraKey);
-        });
-
-        document.getElementById('repair').addEventListener('input', function() {
-            repair = this.value;
-            console.log("정비/수리 필요 여부:", repair);
-        });
-
-        document.getElementById('prosCons').addEventListener('input', function() {
-            prosCons = this.value;
-            console.log("차량 장단점:", prosCons);
-        });
-
-        // 교환흔적 및 판금흔적 감가 비율 입력 처리
-        document.getElementById('damageRate').addEventListener('input', function() {
-            damageRate = parseInt(this.value) || 0;
-            updateFinalPrice();
-        });
-
-        // 골격부위 교환/판금 여부 선택 처리
-        document.getElementById('damageYesNo').addEventListener('change', function() {
-            if (this.value === 'yes') {
-                // 사용자가 교환/판금 흔적이 있다고 선택했을 때 감가 비율을 입력하도록 유도
-                document.getElementById('damageRate').disabled = false;
-            } else {
-                document.getElementById('damageRate').disabled = true;
-                damageRate = 0;
-                updateFinalPrice();
-            }
         });
 
         // 경매 입찰가 입력 처리
@@ -208,38 +161,49 @@
             updateFinalPrice();
         });
 
-        // 감가 계산 함수
-        function calculateDepreciation(part) {
-            switch(part) {
-                case 'tires':
-                    depreciation = 200000; // 예시: 타이어 상태에 따른 감가
-                    break;
-                case 'body':
-                    depreciation = 300000; // 예시: 차체 외관 상태에 따른 감가
-                    break;
-                case 'engine':
-                    depreciation = 500000; // 예시: 엔진 상태에 따른 감가
-                    break;
-                default:
-                    depreciation = 0;
-                    break;
-            }
-            document.getElementById('depreciationAmount').textContent = depreciation.toLocaleString();
+        // 감가 금액 업데이트
+        function updateDepreciation() {
+            totalDepreciation = 0;
+
+            // 각 체크박스 항목에 대한 감가 금액 합산
+            if (document.getElementById('tires').checked) totalDepreciation += 300000;
+            if (document.getElementById('body').checked) totalDepreciation += 500000;
+            if (document.getElementById('engine').checked) totalDepreciation += 800000;
+            if (document.getElementById('rearBumper').checked) totalDepreciation += 200000;
+            if (document.getElementById('sideBody').checked) totalDepreciation += 400000;
+            if (document.getElementById('headlights').checked) totalDepreciation += 150000;
+            if (document.getElementById('grill').checked) totalDepreciation += 100000;
+            if (document.getElementById('roof').checked) totalDepreciation += 250000;
+            if (document.getElementById('door').checked) totalDepreciation += 300000;
+            if (document.getElementById('sideMirror').checked) totalDepreciation += 150000;
+            if (document.getElementById('exhaust').checked) totalDepreciation += 200000;
+            if (document.getElementById('suspension').checked) totalDepreciation += 300000;
+            if (document.getElementById('transmission').checked) totalDepreciation += 500000;
+            if (document.getElementById('brakes').checked) totalDepreciation += 250000;
+            if (document.getElementById('battery').checked) totalDepreciation += 100000;
+            if (document.getElementById('interior').checked) totalDepreciation += 400000;
+            if (document.getElementById('dashboard').checked) totalDepreciation += 150000;
+            if (document.getElementById('seats').checked) totalDepreciation += 200000;
+            if (document.getElementById('airConditioning').checked) totalDepreciation += 150000;
+            if (document.getElementById('clutch').checked) totalDepreciation += 250000;
+            if (document.getElementById('alignment').checked) totalDepreciation += 100000;
+            if (document.getElementById('windscreen').checked) totalDepreciation += 150000;
+            if (document.getElementById('spareTire').checked) totalDepreciation += 50000;
+            if (document.getElementById('lighting').checked) totalDepreciation += 100000;
+            if (document.getElementById('wipers').checked) totalDepreciation += 50000;
+            if (document.getElementById('rust').checked) totalDepreciation += 300000;
+            if (document.getElementById('paint').checked) totalDepreciation += 200000;
+            if (document.getElementById('frame').checked) totalDepreciation += 500000;
+
+            // 감가 금액과 최종 금액 업데이트
+            document.getElementById('depreciationAmount').textContent = totalDepreciation.toLocaleString();
             updateFinalPrice();
         }
 
-        // 최종 금액 계산 함수
+        // 최종 금액 업데이트
         function updateFinalPrice() {
-            let totalDepreciation = depreciation;
-            
-            // 교환흔적이나 판금흔적에 따른 % 감가 적용
-            if (damageRate > 0) {
-                totalDepreciation += (bidPrice * (damageRate / 100));
-            }
-
-            let finalPrice = bidPrice - totalDepreciation;
-            document.getElementById('depreciationAmount').textContent = totalDepreciation.toLocaleString();
-            document.getElementById('finalPrice').textContent = finalPrice.toLocaleString();
+            const total = bidPrice - totalDepreciation;
+            document.getElementById('finalPrice').textContent = total.toLocaleString();
         }
     </script>
 </body>
