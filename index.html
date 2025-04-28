@@ -118,7 +118,7 @@ accidentPositions.forEach((pos, idx) => {
 });
 
 function updateAll() {
-  const bidPrice = Number(document.getElementById('bidPriceInput').value) || 0;
+  const bidPrice = Number(document.getElementById('bidPriceInput').value) || "0").replace(/,/g, ""));
   const partPrice = Number(document.getElementById('partPriceInput').value) || 0;
   const wheelPrice = Number(document.getElementById('wheelPriceInput').value) || 0;
 
