@@ -1,325 +1,331 @@
 <!DOCTYPE html>
-<html lang="ko">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>자동차 감가 계산기</title>
-<style>
-  :root {
-    --main-color: #ff5c5c;
-    --bg-light: #f0f0f0;
-    --bg-dark: #222;
-    --text-light: #eee;
-    --text-dark: #333;
-    --border-radius: 8px;
-    --transition: 0.3s;
-  }
-  body {
-    font-family: 'Noto Sans KR', sans-serif;
-    margin: 0;
-    padding: 20px;
-    background: var(--bg-light);
-    color: var(--text-dark);
-    transition: background var(--transition), color var(--transition);
-    text-align: center;
-  }
-  body.dark {
-    background: var(--bg-dark);
-    color: var(--text-light);
-  }
-  h2 {
-    font-size: 20px;
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    justify-content: center;
-  }
-  .price-info, .section, .final-price-area, .deduction-list {
-    margin-bottom: 20px;
-  }
-  .price-info input, .input-small {
-    width: 100%;
-    max-width: 380px;
-    font-size: 18px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: var(--border-radius);
-    flex-direction: row;
-    text-align: center;
-    margin-bottom: 10px;
-  }
-  .final-price-area {
-    background: #fff3f3;
-    padding: 12px;
-    border-radius: var(--border-radius);
-    font-size: 18px;
-    font-weight: bold;
-    display: flex;
-    flex-direction: row;
-    text-align: center;
-    justify-content: center; /* 양쪽 여백을 주면서 중앙 정렬 */
-    gap: 10px; /* 요소들 간 10px 간격 */
-    
-  }
-  #finalPrice {
-    color: var(--main-color);
-    font-size: 28px;
-  }
-  button {
-    padding: 10px 24px;
-    font-size: 16px;
-    background-color: var(--main-color);
-    color: white;
-    border: none;
-    border-radius: var(--border-radius);
-    cursor: pointer;
-    transition: background var(--transition);
-  }
-  button:hover {
-    background-color: #ff3838;
-  }
-  .container {
-    position: relative;
-    max-width: 500px;
-    margin: 0 auto;
-  }
-  .car-image {
-    width: 100%;
-    border-radius: var(--border-radius);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  }
-  .checkbox-overlay {
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-  }
-  .checkbox-item {
-    position: absolute;
-    font-size: 13px;
-    background: rgba(255,255,255,0.8);
-    padding: 6px 8px;
-    border-radius: var(--border-radius);
-    transform: translate(-50%, -50%) scale(1);
-    white-space: nowrap;
-    transition: background var(--transition), transform 0.2s;
-    cursor: pointer;
-  }
-  .checkbox-item.selected {
-    background: var(--main-color);
-    color: white;
-    transform: translate(-50%, -50%) scale(1.1);
-  }
-  .deduction-list {
-    font-size: 15px;
-    text-align: left;
-    max-width: 500px;
-    margin: 0 auto;
-    background: white;
-    padding: 10px;
-    border-radius: var(--border-radius);
-    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-  }
-  .deduction-list ul {
-    padding-left: 20px;
-    margin: 10px 0;
-  }
-  .deduction-total {
-    font-weight: bold;
-    color: var(--main-color);
-    margin-top: 10px;
-    text-align: right;
-  }
-
-  @media (max-width: 600px) {
-    .price-info input
-      width: 95%;
-      
-    }
-    
-    h2 {
-      font-size: 18px;
-    }
-    .checkbox-item {
-      font-size: 11px;
-      padding: 5px 6px;
-    }
-    button {
-      font-size: 14px;
-      padding: 8px 20px;
-    }
-    #finalPrice {
-      font-size: 24px;
-    }
-    .section {
-      text-align: left;
-    }
-    
-    .final-price-area {
-      width: 100%;
-    }
-    .price-info, .section, .final-price-area, .deduction-list {
-    margin-bottom: 12px;
-      
-    }
-}
-
-</style>
-</head>
-
-<body>
-
-<div class="price-info">
-  <label for="bidPriceInput">입찰가</label><br>
-  <input type="text" id="bidPriceInput" placeholder="" oninput="formatInput(this)" onchange="updateAll()">원
-  <div class="final-price-area">
-    최종금액 <span id="finalPrice">0</span>원
-  </div>
-  <button onclick="resetAll()">초기화</button>
-</div>
-
-<div id="deductionArea" class="deduction-list"></div>
-
-<!-- 차량정보 -->
-<div class="section">
-  <h2>🚗 차량정보</h2>
-  <input type="text" id="carNumber" class="input-small" placeholder="차량번호"><br>
-  <input type="text" id="carName" class="input-small" placeholder="차량명 & 등급"><br>
-  <input type="text" id="carMileage" class="input-small" placeholder="주행거리">
-</div>
-
-<!-- 고객기재 -->
-<div class="section">
-  <h2>🖊️ 고객기재</h2>
-  <input type="text" id="exterior" class="input-small" placeholder="외판"><br>
-  <input type="text" id="wheelScratch" class="input-small" placeholder="휠기스"><br>
-  <input type="text" id="spareKey" class="input-small" placeholder="보조키"><br>
-  <input type="text" id="repair" class="input-small" placeholder="정비요망"><br>
-  <input type="text" id="carAdvantage" class="input-small" placeholder="차량장단점">
-</div>
-
-<!-- 외관 평가 -->
-<div class="section">
-  <h2>✅ 외관 평가</h2>
-  <div class="container">
-    <img src="https://i.imgur.com/NAH6AaM.jpg" class="car-image" alt="자동차 외관">
-    <div class="checkbox-overlay" id="partSection"></div>
-  </div>
-</div>
-
-<!-- 사고 평가 -->
-<div class="section">
-  <h2>✅ 교환&판금 평가</h2>
-  <div class="container">
-    <img src="https://i.imgur.com/tBnS5DO.jpg" class="car-image" alt="사고부위 자동차">
-    <div class="checkbox-overlay" id="accidentSection"></div>
-  </div>
-</div>
-
-<script>
-// 상수 관리
-const CONSTANTS = {
-  partPrice: 180000,
-  wheelPrice: 100000,
-  partNames: [
-    "앞범퍼", "보닛", "앞휀다(좌)", "앞휀다(우)", "사이드미러(좌)", "사이드미러(우)",
-    "앞문(좌)", "앞문(우)", "뒷문(좌)", "뒷문(우)", "뒤휀다(좌)", "뒤휀다(우)",
-    "천장", "트렁크", "뒷범퍼", "사이드패널(좌)", "사이드패널(우)", "휠(FL)", "휠(FR)", "휠(RL)", "휠(RR)"
-  ],
-  accidentParts: [
-    { name: "프론트엔드", rate: 5, top: '10%', left: '20%' },
-    { name: "사이드", rate: 4, top: '20%', left: '30%' },
-    { name: "리어", rate: 3, top: '30%', left: '40%' },
-    { name: "하부", rate: 6, top: '40%', left: '50%' },
-    { name: "루프", rate: 5, top: '10%', left: '70%' }
-  ]
-};
-
-// 체크박스 렌더링
-function renderCheckboxes() {
-  const partSection = document.getElementById('partSection');
-  CONSTANTS.partNames.forEach((name, idx) => {
-    const label = document.createElement('label');
-    label.className = 'checkbox-item';
-    label.style.top = `${(idx * 5) % 90 + 5}%`;
-    label.style.left = `${10 + (idx % 5) * 18}%`;
-    label.innerHTML = `<input type="checkbox" class="part" data-name="${name}" onclick="updateAll()"> ${name}`;
-    partSection.appendChild(label);
-  });
-
-  const accidentSection = document.getElementById('accidentSection');
-  CONSTANTS.accidentParts.forEach(({ name, rate, top, left }) => {
-    const label = document.createElement('label');
-    label.className = 'checkbox-item';
-    label.style.top = top;
-    label.style.left = left;
-    label.innerHTML = `<input type="checkbox" class="accident" data-name="${name}" data-rate="${rate}" onclick="updateAll()"> ${name}`;
-    accidentSection.appendChild(label);
-  });
-}
-
-// 포맷
-function formatInput(input) {
-  input.value = input.value.replace(/[^\d]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-}
-function getNumericValue(value) {
-  return Number(value.replaceAll(',', '')) || 0;
-}
-
-// 업데이트
-function updateAll() {
-  const bidPrice = getNumericValue(document.getElementById('bidPriceInput').value) || 0;
-  let partDiscount = 0, accidentDiscount = 0;
-  const deductionDetails = [];
-
-  document.querySelectorAll(".part").forEach(checkbox => {
-    const label = checkbox.parentNode;
-    if (checkbox.checked) {
-      const name = checkbox.dataset.name;
-      const discount = name.includes('휠') ? CONSTANTS.wheelPrice : CONSTANTS.partPrice;
-      partDiscount += discount;
-      deductionDetails.push(`${name}: -${discount.toLocaleString()}원`);
-      label.classList.add('selected');
-    } else {
-      label.classList.remove('selected');
-    }
-  });
-
-  document.querySelectorAll(".accident").forEach(checkbox => {
-    const label = checkbox.parentNode;
-    if (checkbox.checked) {
-      const name = checkbox.dataset.name;
-      const rate = Number(checkbox.dataset.rate);
-      const discount = bidPrice * (rate / 100);
-      accidentDiscount += discount;
-      deductionDetails.push(`${name} 사고감가: -${discount.toLocaleString()}원`);
-      label.classList.add('selected');
-    } else {
-      label.classList.remove('selected');
-    }
-  });
-
-  const totalDiscount = partDiscount + accidentDiscount;
-  const finalPrice = bidPrice - totalDiscount;
-
-  document.getElementById('finalPrice').textContent = finalPrice.toLocaleString();
-  document.getElementById('deductionArea').innerHTML = deductionDetails.length
-    ? `<h3>감가 세부내역</h3><ul>${deductionDetails.map(d => `<li>${d}</li>`).join('')}</ul><div class="deduction-total">감가 총합계: -${totalDiscount.toLocaleString()}원</div>`
-    : '';
-}
-
-// 초기화
-function resetAll() {
-  document.querySelectorAll("input[type='checkbox']").forEach(cb => cb.checked = false);
-  document.querySelectorAll(".checkbox-item").forEach(label => label.classList.remove('selected'));
-  ['bidPriceInput', 'carNumber', 'carName', 'carMileage', 'exterior', 'wheelScratch', 'spareKey', 'repair', 'carAdvantage']
-    .forEach(id => document.getElementById(id).value = '');
-  document.getElementById('deductionArea').innerHTML = '';
-  updateAll();
-}
-
-renderCheckboxes();
-</script>
-
-</body>
-</html>
+ <html lang="ko">
+ <head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>자동차 감가 계산기</title>
+ <style>
+   :root {
+     --main-color: #ff5c5c;
+     --bg-light: #f0f0f0;
+     --bg-dark: #222;
+     --text-light: #eee;
+     --text-dark: #333;
+     --border-radius: 8px;
+     --transition: 0.3s;
+   }
+   body {
+     font-family: 'Noto Sans KR', sans-serif;
+     margin: 0;
+     padding: 20px;
+     background: var(--bg-light);
+     color: var(--text-dark);
+     transition: background var(--transition), color var(--transition);
+     text-align: center;
+   }
+   body.dark {
+     background: var(--bg-dark);
+     color: var(--text-light);
+   }
+   h2 {
+     font-size: 20px;
+     margin-bottom: 10px;
+     display: flex;
+     align-items: center;
+     gap: 8px;
+     justify-content: center;
+   }
+   .price-info, .section, .final-price-area, .deduction-list {
+     margin-bottom: 20px;
+   }
+   .price-info input, .input-small {
+     width: 100%;
+     max-width: 380px;
+     font-size: 18px;
+     padding: 10px;
+     border: 1px solid #ccc;
+     border-radius: var(--border-radius);
+     flex-direction: row;
+     text-align: center;
+     margin-bottom: 10px;
+   }
+   .final-price-area {
+     background: #fff3f3;
+     padding: 12px;
+     border-radius: var(--border-radius);
+     font-size: 18px;
+     font-weight: bold;
+     display: flex;
+     flex-direction: row;
+     text-align: center;
+     justify-content: center; /* 양쪽 여백을 주면서 중앙 정렬 */
+     gap: 10px; /* 요소들 간 10px 간격 */
+ 
+   }
+   #finalPrice {
+     color: var(--main-color);
+     font-size: 28px;
+   }
+   button {
+     padding: 10px 24px;
+     font-size: 16px;
+     background-color: var(--main-color);
+     color: white;
+     border: none;
+     border-radius: var(--border-radius);
+     cursor: pointer;
+     transition: background var(--transition);
+   }
+   button:hover {
+     background-color: #ff3838;
+   }
+   .container {
+     position: relative;
+     max-width: 500px;
+     margin: 0 auto;
+   }
+   .car-image {
+     width: 100%;
+     border-radius: var(--border-radius);
+     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+   }
+   .checkbox-overlay {
+     position: absolute;
+     top: 0; left: 0;
+     width: 100%; height: 100%;
+   }
+   .checkbox-item {
+     position: absolute;
+     font-size: 13px;
+     background: rgba(255,255,255,0.8);
+     padding: 6px 8px;
+     border-radius: var(--border-radius);
+     transform: translate(-50%, -50%) scale(1);
+     white-space: nowrap;
+     transition: background var(--transition), transform 0.2s;
+     cursor: pointer;
+   }
+   .checkbox-item.selected {
+     background: var(--main-color);
+     color: white;
+     transform: translate(-50%, -50%) scale(1.1);
+   }
+   .deduction-list {
+     font-size: 15px;
+     text-align: left;
+     max-width: 500px;
+     margin: 0 auto;
+     background: white;
+     padding: 10px;
+     border-radius: var(--border-radius);
+     box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+   }
+   .deduction-list ul {
+     padding-left: 20px;
+     margin: 10px 0;
+   }
+   .deduction-total {
+     font-weight: bold;
+     color: var(--main-color);
+     margin-top: 10px;
+     text-align: right;
+   }
+ 
+   @media (max-width: 600px) {
+     .price-info input, .input-small {
+     .price-info input
+       width: 95%;
+       flex-direction: row;
+       padding: 6px 10px;
+       font-size: 16px;
+       border: 1px solid #ccc;
+       border-radius: 6px;
+       text-align: right;
+     }
+ 
+     h2 {
+       font-size: 18px;
+     }
+     .checkbox-item {
+       font-size: 11px;
+       padding: 5px 6px;
+     }
+     button {
+       font-size: 14px;
+       padding: 8px 20px;
+     }
+     #finalPrice {
+       font-size: 24px;
+     }
+     .section {
+       text-align: left;
+     }
+ 
+     .final-price-area {
+       width: 100%;
+     }
+     .price-info, .section, .final-price-area, .deduction-list {
+     margin-bottom: 12px;
+ 
+     }
+ }
+ 
+ </style>
+ </head>
+ 
+ <body>
+ 
+ <div class="price-info">
+   <label for="bidPriceInput">입찰가</label><br>
+   <input type="text" id="bidPriceInput" placeholder="" oninput="formatInput(this)" onchange="updateAll()">원
+   <div class="final-price-area">
+     최종금액 <span id="finalPrice">0</span>원
+   </div>
+   <button onclick="resetAll()">초기화</button>
+ </div>
+ 
+ <div id="deductionArea" class="deduction-list"></div>
+ 
+ <!-- 차량정보 -->
+ <div class="section">
+   <h2>🚗 차량정보</h2>
+   <input type="text" id="carNumber" class="input-small" placeholder="차량번호"><br>
+   <input type="text" id="carName" class="input-small" placeholder="차량명 & 등급"><br>
+   <input type="text" id="carMileage" class="input-small" placeholder="주행거리">
+ </div>
+ 
+ <!-- 고객기재 -->
+ <div class="section">
+   <h2>🖊️ 고객기재</h2>
+   <input type="text" id="exterior" class="input-small" placeholder="외판"><br>
+   <input type="text" id="wheelScratch" class="input-small" placeholder="휠기스"><br>
+   <input type="text" id="spareKey" class="input-small" placeholder="보조키"><br>
+   <input type="text" id="repair" class="input-small" placeholder="정비요망"><br>
+   <input type="text" id="carAdvantage" class="input-small" placeholder="차량장단점">
+ </div>
+ 
+ <!-- 외관 평가 -->
+ <div class="section">
+   <h2>✅ 외관 평가</h2>
+   <div class="container">
+     <img src="https://i.imgur.com/NAH6AaM.jpg" class="car-image" alt="자동차 외관">
+     <div class="checkbox-overlay" id="partSection"></div>
+   </div>
+ </div>
+ 
+ <!-- 사고 평가 -->
+ <div class="section">
+   <h2>✅ 교환&판금 평가</h2>
+   <div class="container">
+     <img src="https://i.imgur.com/tBnS5DO.jpg" class="car-image" alt="사고부위 자동차">
+     <div class="checkbox-overlay" id="accidentSection"></div>
+   </div>
+ </div>
+ 
+ <script>
+ // 상수 관리
+ const CONSTANTS = {
+   partPrice: 180000,
+   wheelPrice: 100000,
+   partNames: [
+     "앞범퍼", "보닛", "앞휀다(좌)", "앞휀다(우)", "사이드미러(좌)", "사이드미러(우)",
+     "앞문(좌)", "앞문(우)", "뒷문(좌)", "뒷문(우)", "뒤휀다(좌)", "뒤휀다(우)",
+     "천장", "트렁크", "뒷범퍼", "사이드패널(좌)", "사이드패널(우)", "휠(FL)", "휠(FR)", "휠(RL)", "휠(RR)"
+   ],
+   accidentParts: [
+     { name: "프론트엔드", rate: 5, top: '10%', left: '20%' },
+     { name: "사이드", rate: 4, top: '20%', left: '30%' },
+     { name: "리어", rate: 3, top: '30%', left: '40%' },
+     { name: "하부", rate: 6, top: '40%', left: '50%' },
+     { name: "루프", rate: 5, top: '10%', left: '70%' }
+   ]
+ };
+ 
+ // 체크박스 렌더링
+ function renderCheckboxes() {
+   const partSection = document.getElementById('partSection');
+   CONSTANTS.partNames.forEach((name, idx) => {
+     const label = document.createElement('label');
+     label.className = 'checkbox-item';
+     label.style.top = `${(idx * 5) % 90 + 5}%`;
+     label.style.left = `${10 + (idx % 5) * 18}%`;
+     label.innerHTML = `<input type="checkbox" class="part" data-name="${name}" onclick="updateAll()"> ${name}`;
+     partSection.appendChild(label);
+   });
+ 
+   const accidentSection = document.getElementById('accidentSection');
+   CONSTANTS.accidentParts.forEach(({ name, rate, top, left }) => {
+     const label = document.createElement('label');
+     label.className = 'checkbox-item';
+     label.style.top = top;
+     label.style.left = left;
+     label.innerHTML = `<input type="checkbox" class="accident" data-name="${name}" data-rate="${rate}" onclick="updateAll()"> ${name}`;
+     accidentSection.appendChild(label);
+   });
+ }
+ 
+ // 포맷
+ function formatInput(input) {
+   input.value = input.value.replace(/[^\d]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+ }
+ function getNumericValue(value) {
+   return Number(value.replaceAll(',', '')) || 0;
+ }
+ 
+ // 업데이트
+ function updateAll() {
+   const bidPrice = getNumericValue(document.getElementById('bidPriceInput').value) || 0;
+   let partDiscount = 0, accidentDiscount = 0;
+   const deductionDetails = [];
+ 
+   document.querySelectorAll(".part").forEach(checkbox => {
+     const label = checkbox.parentNode;
+     if (checkbox.checked) {
+       const name = checkbox.dataset.name;
+       const discount = name.includes('휠') ? CONSTANTS.wheelPrice : CONSTANTS.partPrice;
+       partDiscount += discount;
+       deductionDetails.push(`${name}: -${discount.toLocaleString()}원`);
+       label.classList.add('selected');
+     } else {
+       label.classList.remove('selected');
+     }
+   });
+ 
+   document.querySelectorAll(".accident").forEach(checkbox => {
+     const label = checkbox.parentNode;
+     if (checkbox.checked) {
+       const name = checkbox.dataset.name;
+       const rate = Number(checkbox.dataset.rate);
+       const discount = bidPrice * (rate / 100);
+       accidentDiscount += discount;
+       deductionDetails.push(`${name} 사고감가: -${discount.toLocaleString()}원`);
+       label.classList.add('selected');
+     } else {
+       label.classList.remove('selected');
+     }
+   });
+ 
+   const totalDiscount = partDiscount + accidentDiscount;
+   const finalPrice = bidPrice - totalDiscount;
+ 
+   document.getElementById('finalPrice').textContent = finalPrice.toLocaleString();
+   document.getElementById('deductionArea').innerHTML = deductionDetails.length
+     ? `<h3>감가 세부내역</h3><ul>${deductionDetails.map(d => `<li>${d}</li>`).join('')}</ul><div class="deduction-total">감가 총합계: -${totalDiscount.toLocaleString()}원</div>`
+     : '';
+ }
+ 
+ // 초기화
+ function resetAll() {
+   document.querySelectorAll("input[type='checkbox']").forEach(cb => cb.checked = false);
+   document.querySelectorAll(".checkbox-item").forEach(label => label.classList.remove('selected'));
+   ['bidPriceInput', 'carNumber', 'carName', 'carMileage', 'exterior', 'wheelScratch', 'spareKey', 'repair', 'carAdvantage']
+     .forEach(id => document.getElementById(id).value = '');
+   document.getElementById('deductionArea').innerHTML = '';
+   updateAll();
+ }
+ 
+ renderCheckboxes();
+ </script>
+ 
+ </body>
+ </html>
