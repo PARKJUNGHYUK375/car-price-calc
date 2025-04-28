@@ -6,24 +6,62 @@
   <title>자동차 감가 계산기</title>
   <style>
     body {
-      font-family: sans-serif;
+      font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+      background: #f2f5f9;
       margin: 0;
-      padding: 0;
+      padding: 20px;
       text-align: center;
+      color: #333;
     }
-    .price-info {
+    .info-bar {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+    .info-bar strong {
+      color: #0078FF;
+    }
+    .info-bar input {
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 5px 10px;
+      font-size: 16px;
+      width: 120px;
+      text-align: right;
+    }
+    .reset-btn {
+      background: #ff4d4f;
+      color: #fff;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
       font-size: 14px;
-      margin: 5px;
+      transition: background 0.3s;
+    }
+    .reset-btn:hover {
+      background: #e63946;
     }
     .container {
       position: relative;
       max-width: 500px;
-      margin: auto;
+      margin: 20px auto;
     }
     .car-image {
       width: 100%;
       height: auto;
       display: block;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
     .checkbox-overlay {
       position: absolute;
@@ -35,30 +73,59 @@
     .checkbox-item {
       position: absolute;
       font-size: 12px;
-      background: rgba(255,255,255,0.7);
-      padding: 3px 5px;
-      border-radius: 5px;
+      background: rgba(255,255,255,0.9);
+      padding: 5px 8px;
+      border-radius: 10px;
       transform: translate(-50%, -50%);
       white-space: nowrap;
       cursor: pointer;
-      transition: background 0.3s;
+      transition: background 0.3s, color 0.3s, box-shadow 0.3s;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      min-width: 45px;
+      text-align: center;
     }
     .checkbox-item.selected {
-      background: rgba(255, 0, 0, 0.7);
+      background: #0078FF;
       color: #fff;
+      box-shadow: 0 2px 8px rgba(0,120,255,0.5);
+    }
+    h2 {
+      margin-top: 40px;
+      color: #333;
+    }
+
+    /* 반응형 디자인 추가 */
+    @media (max-width: 600px) {
+      .info-bar {
+        flex-direction: column;
+        gap: 5px;
+      }
+      .info-bar input {
+        width: 100px;
+      }
+      .reset-btn {
+        width: 100%;
+        margin-top: 5px;
+      }
+      .checkbox-item {
+        font-size: 10px;
+        min-width: 38px;
+        padding: 4px 6px;
+      }
     }
   </style>
 </head>
 <body>
 
-<div class="price-info">
+<div class="info-bar">
   입찰가: 
-  <input type="text" id="bidPriceInput" value="" style="width:120px;"> 원 |
-  감가합계: <strong id="depreciationAmount">0</strong>원 |
+  <input type="text" id="bidPriceInput" value=""> 원
+  |
+  감가합계: <strong id="depreciationAmount">0</strong>원
+  |
   최종금액: <strong id="finalPrice">0</strong>원
+  <button class="reset-btn" onclick="resetAll()">초기화</button>
 </div>
-
-<button onclick="resetAll()">모두 초기화</button>
 
 <div class="container">
   <img src="https://i.imgur.com/NAH6AaM.jpg" class="car-image" alt="자동차" />
@@ -69,7 +136,7 @@
 
 <h2>사고 부위 체크</h2>
 
-<div class="container" style="position: relative;">
+<div class="container">
   <img src="https://i.imgur.com/tBnS5DO.jpg" class="car-image" alt="사고부위 자동차">
   <div class="checkbox-overlay" id="accidentSection">
     <!-- 사고 체크박스 JS로 자동 생성 -->
@@ -77,8 +144,8 @@
 </div>
 
 <script>
-const PART_PRICE = 180000;  // 부위 감가 고정
-const WHEEL_PRICE = 100000; // 휠 감가 고정
+const PART_PRICE = 180000;
+const WHEEL_PRICE = 100000;
 
 const partPositions = [
   {top: '5%', left: '15%'}, {top: '12%', left: '45%'}, {top: '5%', left: '80%'}, 
@@ -169,6 +236,7 @@ function updateAll() {
 function resetAll() {
   document.querySelectorAll("input[type='checkbox']").forEach(cb => cb.checked = false);
   document.querySelectorAll(".checkbox-item").forEach(label => label.classList.remove('selected'));
+  document.getElementById('bidPriceInput').value = '';
   updateAll();
 }
 </script>
