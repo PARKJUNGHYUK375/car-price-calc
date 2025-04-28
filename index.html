@@ -44,7 +44,7 @@
       transition: background 0.3s;
     }
     .checkbox-item.selected {
-      background: rgba(255, 0, 0, 0.7); /* 선택되면 빨간색 */
+      background: rgba(255, 0, 0, 0.7);
       color: #fff;
     }
   </style>
@@ -53,7 +53,7 @@
 
 <div class="price-info">
   입찰가: 
-  <input type="number" id="bidPriceInput" value="" onchange="updateAll()" style="width:100px;"> 원 |
+  <input type="text" id="bidPriceInput" value="" style="width:120px;"> 원 |
   감가합계: <strong id="depreciationAmount">0</strong>원 |
   최종금액: <strong id="finalPrice">0</strong>원
 </div>
@@ -77,6 +77,9 @@
 </div>
 
 <script>
+const PART_PRICE = 180000;  // 부위 감가 고정
+const WHEEL_PRICE = 100000; // 휠 감가 고정
+
 const partPositions = [
   {top: '5%', left: '15%'}, {top: '12%', left: '45%'}, {top: '5%', left: '80%'}, 
   {top: '25%', left: '10%'}, {top: '25%', left: '85%'}, {top: '35%', left: '15%'}, 
@@ -89,7 +92,6 @@ const partPositions = [
   {top: '90%', left: '80%'}
 ];
 
-// 부위 체크박스 25개 자동생성
 const partSection = document.getElementById('partSection');
 partPositions.forEach((pos, idx) => {
   const label = document.createElement('label');
@@ -100,7 +102,6 @@ partPositions.forEach((pos, idx) => {
   partSection.appendChild(label);
 });
 
-// 사고 체크박스 생성
 const accidentSection = document.getElementById('accidentSection');
 const accidentPositions = [
   {top: '10%', left: '20%'}, {top: '20%', left: '30%'}, {top: '30%', left: '40%'}, 
@@ -117,22 +118,29 @@ accidentPositions.forEach((pos, idx) => {
   accidentSection.appendChild(label);
 });
 
+function formatNumber(input) {
+  const num = input.value.replace(/[^\d]/g, '');
+  input.value = num.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+document.getElementById('bidPriceInput').addEventListener('input', function(e) {
+  formatNumber(e.target);
+  updateAll();
+});
+
 function updateAll() {
   const bidPrice = Number((document.getElementById('bidPriceInput').value || "0").replace(/,/g, ""));
-  const partPrice = Number(document.getElementById('partPriceInput').value) || 0;
-  const wheelPrice = Number(document.getElementById('wheelPriceInput').value) || 0;
-
+  
   let partDiscount = 0;
   let accidentDiscount = 0;
 
-  // 부위 감가 계산
   document.querySelectorAll(".part").forEach((checkbox, index) => {
     const label = checkbox.parentNode;
     if (checkbox.checked) {
       if ([2, 3, 17, 18].includes(index)) {
-        partDiscount += wheelPrice; // 휠 감가
+        partDiscount += WHEEL_PRICE;
       } else {
-        partDiscount += partPrice; // 일반 부위 감가
+        partDiscount += PART_PRICE;
       }
       label.classList.add('selected');
     } else {
@@ -140,7 +148,6 @@ function updateAll() {
     }
   });
 
-  // 사고 감가 계산
   document.querySelectorAll(".accident").forEach((checkbox) => {
     const label = checkbox.parentNode;
     if (checkbox.checked) {
@@ -164,19 +171,6 @@ function resetAll() {
   document.querySelectorAll(".checkbox-item").forEach(label => label.classList.remove('selected'));
   updateAll();
 }
-
-function formatNumber(input) {
-  // 숫자만 남기고
-  const num = input.value.replace(/[^\d]/g, '');
-  // 콤마 찍기
-  input.value = num.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-}
-
-// 입찰가 입력시마다 formatNumber + updateAll 둘 다 호출
-document.getElementById('bidPriceInput').addEventListener('input', function(e) {
-  formatNumber(e.target);
-  updateAll();
-});
 </script>
 
 </body>
