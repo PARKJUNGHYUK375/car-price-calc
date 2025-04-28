@@ -1,226 +1,200 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>자동차 감가 계산기</title>
-  <style>
-    body {
-      font-family: 'Noto Sans KR', sans-serif;
-      margin: 0;
-      padding: 20px;
-      background-color: #f9f9f9;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>자동차 감가 계산기</title>
+<style>
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    margin: 0;
+    padding: 20px;
+    background: #f9f9f9;
+    text-align: center;
+  }
+
+  .price-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    color: #666;
+  }
+
+  .price-info input {
+    font-size: 16px;
+    padding: 5px 10px;
+    width: 120px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    text-align: right;
+  }
+
+  .input-small {
+    width: 150px;
+    padding: 6px 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    text-align: left;
+  }
+
+  .section {
+    margin-bottom: 20px;
+  }
+
+  .section-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 20px 0 10px;
+    color: #333;
+  }
+
+  .final-price-area {
+    background: #fff3f3;
+    padding: 8px 16px;
+    border-radius: 10px;
+    margin: 10px 0;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-weight: bold;
+    color: #333;
+  }
+
+  .money-icon {
+    font-size: 20px;
+  }
+
+  #finalPrice {
+    font-size: 26px;
+    color: #ff5c5c;
+    font-weight: bold;
+  }
+
+  button {
+    padding: 8px 20px;
+    font-size: 14px;
+    background-color: #ff5c5c;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+
+  button:hover {
+    background-color: #ff3838;
+  }
+
+  .container {
+    position: relative;
+    max-width: 500px;
+    margin: 0 auto 30px auto;
+  }
+
+  .car-image {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+
+  .checkbox-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .checkbox-item {
+    position: absolute;
+    font-size: 12px;
+    background: rgba(255,255,255,0.8);
+    padding: 3px 5px;
+    border-radius: 5px;
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+
+  .checkbox-item.selected {
+    background: rgba(255, 0, 0, 0.7);
+    color: #fff;
+  }
+
+  @media (max-width: 600px) {
+    .price-info {
+      gap: 4px;
+    }
+    .final-price-area {
+      flex-direction: row;
+      flex-wrap: wrap;
       text-align: center;
     }
-
-    .price-info {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 20px;
-      font-size: 14px;
-      color: #666;
+    .input-small {
+      width: 90%;
     }
-
-    .price-info input {
-      font-size: 16px;
-      padding: 5px 8px;
-      width: 100px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      text-align: right;
-    }
-
-    button {
-      padding: 6px 12px;
-      font-size: 14px;
-      background-color: #ff5c5c;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-
-    button:hover {
-      background-color: #ff3838;
-    }
-
-    .final-price-area {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      font-size: 14px;
-      color: #333;
-      background: #fff3f3;
-      padding: 4px 10px;
-      border-radius: 8px;
-    }
-
-    .money-icon {
-      font-size: 20px;
-    }
-
-    #finalPrice {
-      font-size: 26px;
-      color: #ff5c5c;
-      font-weight: bold;
-    }
-
-    .info-form {
-      margin: 20px auto;
-      padding: 20px;
-      max-width: 600px;
-      background: #fff;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      text-align: left;
-    }
-
-    .info-form label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: bold;
-      color: #333;
-    }
-
-    .info-form input, .info-form textarea {
-      width: 100%;
-      padding: 8px 10px;
-      margin-bottom: 15px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 14px;
-    }
-
-    .container {
-      position: relative;
-      max-width: 500px;
-      margin: 30px auto;
-    }
-
-    .section-title {
-      font-size: 20px;
-      font-weight: bold;
-      margin: 20px 0 10px;
-      color: #333;
-    }
-
-    .car-image {
-      width: 100%;
-      height: auto;
-      display: block;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-
-    .checkbox-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-    }
-
-    .checkbox-item {
-      position: absolute;
-      font-size: 12px;
-      background: rgba(255,255,255,0.8);
-      padding: 3px 5px;
-      border-radius: 5px;
-      transform: translate(-50%, -50%);
-      white-space: nowrap;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-
-    .checkbox-item.selected {
-      background: rgba(255, 0, 0, 0.7);
-      color: #fff;
-    }
-
-    @media (max-width: 600px) {
-      .price-info {
-        flex-direction: column;
-      }
-      .final-price-area {
-        justify-content: center;
-      }
-      .container {
-        width: 90%;
-      }
-      button {
-        width: 100px;
-      }
-      .info-form {
-        padding: 15px;
-      }
-    }
-  </style>
+  }
+</style>
 </head>
 
 <body>
 
 <div class="price-info">
-  입찰가
-  <input type="text" id="bidPriceInput" placeholder="숫자 입력" oninput="formatInput(this)" onchange="updateAll()"> 
-  감가합계 <strong id="depreciationAmount"></strong>
-  
+  <div>입찰가:</div>
+  <input type="text" id="bidPriceInput" placeholder="숫자 입력" oninput="formatInput(this)" onchange="updateAll()"> 원
+  <div>감가합계: <span id="depreciationAmount">0</span> 원</div>
   <div class="final-price-area">
-    <span class="money-icon">💰</span>
-    <span>최종금액</span>
-    <strong id="finalPrice">0</strong>원
+    <span class="money-icon">💰</span> 최종금액: <strong id="finalPrice">0</strong> 원
   </div>
   <button onclick="resetAll()">초기화</button>
 </div>
 
-<!-- 차량정보 폼 -->
-<div class="info-form">
+<!-- 차량정보 -->
+<div class="section">
   <div class="section-title">차량정보</div>
-  <label for="carNumber">차량번호</label>
-  <input type="text" id="carNumber" placeholder="차량번호 입력">
-  
-  <label for="carName">차량명 & 등급</label>
-  <input type="text" id="carName" placeholder="차량명 & 등급 입력">
-  
-  <label for="carMileage">주행거리</label>
-  <input type="text" id="carMileage" placeholder="주행거리 입력">
+  <input type="text" id="carNumber" class="input-small" placeholder="차량번호"><br>
+  <input type="text" id="carName" class="input-small" placeholder="차량명 & 등급"><br>
+  <input type="text" id="carMileage" class="input-small" placeholder="주행거리">
 </div>
 
-<!-- 고객기재 폼 -->
-<div class="info-form">
+<!-- 고객기재 -->
+<div class="section">
   <div class="section-title">고객기재</div>
-  <label for="exterior">외판</label>
-  <input type="text" id="exterior" placeholder="">
-
-  <label for="wheel">휠기스</label>
-  <input type="text" id="wheel" placeholder="">
-
-  <label for="key">보조키</label>
-  <input type="text" id="key" placeholder="">
-
-  <label for="repair">정비요망</label>
-  <input type="text" id="repair" placeholder="">
-
-  <label for="comment">차량 장단점</label>
-  <textarea id="comment" rows="3" placeholder=""></textarea>
+  <input type="text" id="exterior" class="input-small" placeholder="외판"><br>
+  <input type="text" id="wheelScratch" class="input-small" placeholder="휠기스"><br>
+  <input type="text" id="spareKey" class="input-small" placeholder="보조키"><br>
+  <input type="text" id="repair" class="input-small" placeholder="정비요망"><br>
+  <input type="text" id="carAdvantage" class="input-small" placeholder="차량장단점">
 </div>
 
-<div class="section-title">외관 평가</div>
-<div class="container">
-  <img src="https://i.imgur.com/NAH6AaM.jpg" class="car-image" alt="자동차 외관" />
-  <div class="checkbox-overlay" id="partSection"></div>
+<!-- 외관 평가 -->
+<div class="section">
+  <div class="section-title">외관 평가</div>
+  <div class="container">
+    <img src="https://i.imgur.com/NAH6AaM.jpg" class="car-image" alt="자동차 외관" />
+    <div class="checkbox-overlay" id="partSection"></div>
+  </div>
 </div>
 
-<div class="section-title">교환&판금 평가</div>
-<div class="container">
-  <img src="https://i.imgur.com/tBnS5DO.jpg" class="car-image" alt="사고부위 자동차">
-  <div class="checkbox-overlay" id="accidentSection"></div>
+<!-- 교환&판금 평가 -->
+<div class="section">
+  <div class="section-title">교환&판금 평가</div>
+  <div class="container">
+    <img src="https://i.imgur.com/tBnS5DO.jpg" class="car-image" alt="사고부위 자동차">
+    <div class="checkbox-overlay" id="accidentSection"></div>
+  </div>
 </div>
 
 <script>
+// 외관 부위 포지션
 const partPositions = [
   {top: '5%', left: '15%'}, {top: '12%', left: '45%'}, {top: '5%', left: '80%'}, 
   {top: '25%', left: '10%'}, {top: '25%', left: '85%'}, {top: '35%', left: '15%'}, 
@@ -232,7 +206,6 @@ const partPositions = [
   {top: '85%', left: '60%'}, {top: '90%', left: '15%'}, {top: '90%', left: '45%'}, 
   {top: '90%', left: '80%'}
 ];
-
 const partSection = document.getElementById('partSection');
 partPositions.forEach((pos, idx) => {
   const label = document.createElement('label');
@@ -243,13 +216,14 @@ partPositions.forEach((pos, idx) => {
   partSection.appendChild(label);
 });
 
-const accidentSection = document.getElementById('accidentSection');
+// 사고 부위 포지션
 const accidentPositions = [
   {top: '10%', left: '20%'}, {top: '20%', left: '30%'}, {top: '30%', left: '40%'}, 
   {top: '40%', left: '50%'}, {top: '10%', left: '70%'}
 ];
 const accidentRates = [5, 4, 3, 6, 5];
 
+const accidentSection = document.getElementById('accidentSection');
 accidentPositions.forEach((pos, idx) => {
   const label = document.createElement('label');
   label.className = 'checkbox-item';
@@ -259,19 +233,21 @@ accidentPositions.forEach((pos, idx) => {
   accidentSection.appendChild(label);
 });
 
+// 포맷팅 함수
 function formatInput(input) {
   input.value = input.value.replace(/[^0-9]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
+// 숫자 변환
 function getNumericValue(value) {
   return Number(value.replaceAll(',', '')) || 0;
 }
 
+// 업데이트
 function updateAll() {
   const bidPrice = getNumericValue(document.getElementById('bidPriceInput').value);
   const partPrice = 180000;
   const wheelPrice = 100000;
-
   let partDiscount = 0;
   let accidentDiscount = 0;
 
@@ -307,12 +283,20 @@ function updateAll() {
   document.getElementById('finalPrice').textContent = finalPrice.toLocaleString();
 }
 
+// 초기화
 function resetAll() {
   document.querySelectorAll("input[type='checkbox']").forEach(cb => cb.checked = false);
   document.querySelectorAll(".checkbox-item").forEach(label => label.classList.remove('selected'));
   document.getElementById('bidPriceInput').value = '';
-  document.getElementById('depreciationAmount').textContent = '0';
-  document.getElementById('finalPrice').textContent = '0';
+  document.getElementById('carNumber').value = '';
+  document.getElementById('carName').value = '';
+  document.getElementById('carMileage').value = '';
+  document.getElementById('exterior').value = '';
+  document.getElementById('wheelScratch').value = '';
+  document.getElementById('spareKey').value = '';
+  document.getElementById('repair').value = '';
+  document.getElementById('carAdvantage').value = '';
+  updateAll();
 }
 </script>
 
