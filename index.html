@@ -153,6 +153,9 @@
     .section {
       text-align: left;
     }
+    .final-price-area {
+      width: 95%;
+     }
   }
 
 </style>
@@ -162,7 +165,7 @@
 
 <div class="price-info">
   <label for="bidPriceInput">입찰가</label><br>
-  <input type="text" id="bidPriceInput" placeholder="숫자 입력" oninput="formatInput(this)" onchange="updateAll()">원
+  <input type="text" id="bidPriceInput" placeholder="0" oninput="formatInput(this)" onchange="updateAll()">원
   <div class="final-price-area">
     최종금액 <span id="finalPrice">0</span>원
   </div>
