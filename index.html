@@ -13,56 +13,20 @@
       text-align: center;
     }
 
-    .section {
-      background: #fff;
-      padding: 15px;
-      margin-bottom: 20px;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    }
-
-    .section-title {
-      font-size: 20px;
-      font-weight: bold;
-      margin-bottom: 10px;
-      color: #333;
-    }
-
-    .form-group {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-
-    .form-group input, .form-group textarea {
-      padding: 6px 10px;
-      font-size: 14px;
-      width: 250px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-    }
-
-    .form-group textarea {
-      height: 80px;
-      resize: vertical;
-    }
-
     .price-info {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
       align-items: center;
       gap: 10px;
+      margin-bottom: 20px;
       font-size: 14px;
       color: #666;
-      margin-bottom: 20px;
     }
 
     .price-info input {
       font-size: 16px;
-      padding: 5px 10px;
+      padding: 5px 8px;
       width: 100px;
       border: 1px solid #ccc;
       border-radius: 6px;
@@ -105,10 +69,43 @@
       font-weight: bold;
     }
 
+    .info-form {
+      margin: 20px auto;
+      padding: 20px;
+      max-width: 600px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      text-align: left;
+    }
+
+    .info-form label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .info-form input, .info-form textarea {
+      width: 100%;
+      padding: 8px 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
     .container {
       position: relative;
       max-width: 500px;
-      margin: 20px auto;
+      margin: 30px auto;
+    }
+
+    .section-title {
+      font-size: 20px;
+      font-weight: bold;
+      margin: 20px 0 10px;
+      color: #333;
     }
 
     .car-image {
@@ -145,9 +142,6 @@
     }
 
     @media (max-width: 600px) {
-      .form-group input, .form-group textarea {
-        width: 90%;
-      }
       .price-info {
         flex-direction: column;
       }
@@ -155,10 +149,13 @@
         justify-content: center;
       }
       .container {
-        width: 95%;
+        width: 90%;
       }
       button {
         width: 100px;
+      }
+      .info-form {
+        padding: 15px;
       }
     }
   </style>
@@ -166,34 +163,9 @@
 
 <body>
 
-<!-- 차량정보 입력 -->
-<div class="section">
-  <div class="section-title">차량정보</div>
-  <div class="form-group">
-    <input type="text" id="carNumber" placeholder="차량번호 입력" oninput="saveData()">
-    <input type="text" id="carName" placeholder="차량이름 & 등급 입력" oninput="saveData()">
-    <input type="text" id="carMileage" placeholder="주행거리 입력" oninput="saveData()">
-  </div>
-</div>
-
-<!-- 고객기재 입력 -->
-<div class="section">
-  <div class="section-title">고객기재</div>
-  <div class="form-group">
-    <input type="text" id="exterior" placeholder="외판" oninput="saveData()">
-    <input type="text" id="wheelScratch" placeholder="휠기스" oninput="saveData()">
-    <input type="text" id="spareKey" placeholder="보조키" oninput="saveData()">
-    <input type="text" id="maintenance" placeholder="정비요망" oninput="saveData()">
-  </div>
-  <div class="form-group">
-    <textarea id="carProsCons" placeholder="차량 장단점 입력" oninput="saveData()"></textarea>
-  </div>
-</div>
-
-<!-- 입찰가 및 감가정보 -->
 <div class="price-info">
   입찰가:
-  <input type="text" id="bidPriceInput" placeholder="숫자 입력" oninput="formatInput(this); updateAll(); saveData()"> 원
+  <input type="text" id="bidPriceInput" placeholder="숫자 입력" oninput="formatInput(this)" onchange="updateAll()"> 원
   | 감가합계: <span id="depreciationAmount">0</span>원
   |
   <div class="final-price-area">
@@ -204,14 +176,44 @@
   <button onclick="resetAll()">초기화</button>
 </div>
 
-<!-- 외관 평가 -->
+<!-- 차량정보 폼 -->
+<div class="info-form">
+  <div class="section-title">차량정보</div>
+  <label for="carNumber">차량번호</label>
+  <input type="text" id="carNumber" placeholder="차량번호 입력">
+  
+  <label for="carName">차량명 & 등급</label>
+  <input type="text" id="carName" placeholder="차량명 & 등급 입력">
+  
+  <label for="carMileage">주행거리</label>
+  <input type="text" id="carMileage" placeholder="주행거리 입력">
+</div>
+
+<!-- 고객기재 폼 -->
+<div class="info-form">
+  <div class="section-title">고객기재</div>
+  <label for="exterior">외판</label>
+  <input type="text" id="exterior" placeholder="외판 상태 입력">
+
+  <label for="wheel">휠기스</label>
+  <input type="text" id="wheel" placeholder="휠 상태 입력">
+
+  <label for="key">보조키</label>
+  <input type="text" id="key" placeholder="보조키 유무">
+
+  <label for="repair">정비요망</label>
+  <input type="text" id="repair" placeholder="정비 필요한 부분 입력">
+
+  <label for="comment">차량 장단점</label>
+  <textarea id="comment" rows="3" placeholder="차량 장단점 작성"></textarea>
+</div>
+
 <div class="section-title">외관 평가</div>
 <div class="container">
   <img src="https://i.imgur.com/NAH6AaM.jpg" class="car-image" alt="자동차 외관" />
   <div class="checkbox-overlay" id="partSection"></div>
 </div>
 
-<!-- 교환&판금 평가 -->
 <div class="section-title">교환&판금 평가</div>
 <div class="container">
   <img src="https://i.imgur.com/tBnS5DO.jpg" class="car-image" alt="사고부위 자동차">
@@ -231,31 +233,29 @@ const partPositions = [
   {top: '90%', left: '80%'}
 ];
 
-const accidentPositions = [
-  {top: '10%', left: '20%'}, {top: '20%', left: '30%'}, {top: '30%', left: '40%'}, 
-  {top: '40%', left: '50%'}, {top: '10%', left: '70%'}
-];
-const accidentRates = [5, 4, 3, 6, 5];
-
-// 외관 부위 생성
 const partSection = document.getElementById('partSection');
 partPositions.forEach((pos, idx) => {
   const label = document.createElement('label');
   label.className = 'checkbox-item c' + (idx+1);
   label.style.top = pos.top;
   label.style.left = pos.left;
-  label.innerHTML = `<input type="checkbox" class="part" data-index="${idx}" onclick="updateAll(); saveData()"> 부위${idx+1}`;
+  label.innerHTML = `<input type="checkbox" class="part" data-index="${idx}" onclick="updateAll()"> 부위${idx+1}`;
   partSection.appendChild(label);
 });
 
-// 사고 부위 생성
 const accidentSection = document.getElementById('accidentSection');
+const accidentPositions = [
+  {top: '10%', left: '20%'}, {top: '20%', left: '30%'}, {top: '30%', left: '40%'}, 
+  {top: '40%', left: '50%'}, {top: '10%', left: '70%'}
+];
+const accidentRates = [5, 4, 3, 6, 5];
+
 accidentPositions.forEach((pos, idx) => {
   const label = document.createElement('label');
   label.className = 'checkbox-item';
   label.style.top = pos.top;
   label.style.left = pos.left;
-  label.innerHTML = `<input type="checkbox" class="accident" data-rate="${accidentRates[idx]}" onclick="updateAll(); saveData()"> ${idx+1}`;
+  label.innerHTML = `<input type="checkbox" class="accident" data-rate="${accidentRates[idx]}" onclick="updateAll()"> ${idx+1}`;
   accidentSection.appendChild(label);
 });
 
@@ -278,7 +278,11 @@ function updateAll() {
   document.querySelectorAll(".part").forEach((checkbox, index) => {
     const label = checkbox.parentNode;
     if (checkbox.checked) {
-      partDiscount += [2, 3, 17, 18].includes(index) ? wheelPrice : partPrice;
+      if ([2, 3, 17, 18].includes(index)) {
+        partDiscount += wheelPrice;
+      } else {
+        partDiscount += partPrice;
+      }
       label.classList.add('selected');
     } else {
       label.classList.remove('selected');
@@ -307,57 +311,9 @@ function resetAll() {
   document.querySelectorAll("input[type='checkbox']").forEach(cb => cb.checked = false);
   document.querySelectorAll(".checkbox-item").forEach(label => label.classList.remove('selected'));
   document.getElementById('bidPriceInput').value = '';
-  document.getElementById('carNumber').value = '';
-  document.getElementById('carName').value = '';
-  document.getElementById('carMileage').value = '';
-  document.getElementById('exterior').value = '';
-  document.getElementById('wheelScratch').value = '';
-  document.getElementById('spareKey').value = '';
-  document.getElementById('maintenance').value = '';
-  document.getElementById('carProsCons').value = '';
-  updateAll();
-  localStorage.clear();
+  document.getElementById('depreciationAmount').textContent = '0';
+  document.getElementById('finalPrice').textContent = '0';
 }
-
-function saveData() {
-  const data = {
-    carNumber: document.getElementById('carNumber').value,
-    carName: document.getElementById('carName').value,
-    carMileage: document.getElementById('carMileage').value,
-    exterior: document.getElementById('exterior').value,
-    wheelScratch: document.getElementById('wheelScratch').value,
-    spareKey: document.getElementById('spareKey').value,
-    maintenance: document.getElementById('maintenance').value,
-    carProsCons: document.getElementById('carProsCons').value,
-    bidPriceInput: document.getElementById('bidPriceInput').value,
-    partsChecked: Array.from(document.querySelectorAll('.part')).map(cb => cb.checked),
-    accidentsChecked: Array.from(document.querySelectorAll('.accident')).map(cb => cb.checked)
-  };
-  localStorage.setItem('carData', JSON.stringify(data));
-}
-
-function loadData() {
-  const data = JSON.parse(localStorage.getItem('carData'));
-  if (!data) return;
-  document.getElementById('carNumber').value = data.carNumber || '';
-  document.getElementById('carName').value = data.carName || '';
-  document.getElementById('carMileage').value = data.carMileage || '';
-  document.getElementById('exterior').value = data.exterior || '';
-  document.getElementById('wheelScratch').value = data.wheelScratch || '';
-  document.getElementById('spareKey').value = data.spareKey || '';
-  document.getElementById('maintenance').value = data.maintenance || '';
-  document.getElementById('carProsCons').value = data.carProsCons || '';
-  document.getElementById('bidPriceInput').value = data.bidPriceInput || '';
-  
-  document.querySelectorAll('.part').forEach((cb, idx) => {
-    if (data.partsChecked && data.partsChecked[idx]) cb.checked = true;
-  });
-  document.querySelectorAll('.accident').forEach((cb, idx) => {
-    if (data.accidentsChecked && data.accidentsChecked[idx]) cb.checked = true;
-  });
-  updateAll();
-}
-loadData();
 </script>
 
 </body>
