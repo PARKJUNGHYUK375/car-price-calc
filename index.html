@@ -244,7 +244,7 @@ partPositions.forEach((pos, idx) => {
   label.className = 'checkbox-item c' + (idx+1);
   label.style.top = pos.top;
   label.style.left = pos.left;
-  label.innerHTML = <input type="checkbox" class="part" data-index="${idx}" onclick="updateAll(); saveData()"> 부위${idx+1};
+  label.innerHTML = `<input type="checkbox" class="part" data-index="${idx}" onclick="updateAll(); saveData()"> 부위${idx+1}`;
   partSection.appendChild(label);
 });
 
@@ -255,7 +255,7 @@ accidentPositions.forEach((pos, idx) => {
   label.className = 'checkbox-item';
   label.style.top = pos.top;
   label.style.left = pos.left;
-  label.innerHTML = <input type="checkbox" class="accident" data-rate="${accidentRates[idx]}" onclick="updateAll(); saveData()"> ${idx+1};
+  label.innerHTML = `<input type="checkbox" class="accident" data-rate="${accidentRates[idx]}" onclick="updateAll(); saveData()"> ${idx+1}`;
   accidentSection.appendChild(label);
 });
 
