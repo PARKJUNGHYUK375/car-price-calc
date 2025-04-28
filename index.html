@@ -165,9 +165,8 @@
 
 <div class="price-info">
   입찰가:
-  <input type="text" id="bidPriceInput" placeholder="숫자 입력" oninput="formatInput(this)" onchange="updateAll()"> 원
-  | 감가합계: <span id="depreciationAmount">0</span>원
-  |
+  <input type="text" id="bidPriceInput" placeholder="숫자 입력" oninput="formatInput(this)" onchange="updateAll()">원
+  감가합계: <span id="depreciationAmount"></span>원
   <div class="final-price-area">
     <span class="money-icon">💰</span>
     <span>최종금액:</span>
@@ -193,19 +192,19 @@
 <div class="info-form">
   <div class="section-title">고객기재</div>
   <label for="exterior">외판</label>
-  <input type="text" id="exterior" placeholder="외판 상태 입력">
+  <input type="text" id="exterior" placeholder="">
 
   <label for="wheel">휠기스</label>
-  <input type="text" id="wheel" placeholder="휠 상태 입력">
+  <input type="text" id="wheel" placeholder="">
 
   <label for="key">보조키</label>
-  <input type="text" id="key" placeholder="보조키 유무">
+  <input type="text" id="key" placeholder="">
 
   <label for="repair">정비요망</label>
-  <input type="text" id="repair" placeholder="정비 필요한 부분 입력">
+  <input type="text" id="repair" placeholder="">
 
   <label for="comment">차량 장단점</label>
-  <textarea id="comment" rows="3" placeholder="차량 장단점 작성"></textarea>
+  <textarea id="comment" rows="3" placeholder=""></textarea>
 </div>
 
 <div class="section-title">외관 평가</div>
