@@ -15,18 +15,23 @@
 
     .price-info {
       display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
-      gap: 10px;
+      gap: 6px;
       margin-bottom: 20px;
       font-size: 14px;
       color: #666;
     }
 
+    .price-info-row {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
     .price-info input {
       font-size: 16px;
-      padding: 5px 10px;
+      padding: 5px 8px;
       width: 90px;
       border: 1px solid #ccc;
       border-radius: 6px;
@@ -42,6 +47,7 @@
       border-radius: 6px;
       cursor: pointer;
       transition: background 0.3s;
+      margin-top: 5px;
     }
 
     button:hover {
@@ -57,8 +63,7 @@
       background: #fff3f3;
       padding: 4px 10px;
       border-radius: 8px;
-      justify-content: center;
-      flex-wrap: wrap;
+      margin-top: 5px;
     }
 
     .money-icon {
@@ -117,26 +122,16 @@
       color: #fff;
     }
 
+    /* 모바일 대응 */
     @media (max-width: 600px) {
-      .price-info {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-        gap: 5px;
-      }
-      .price-info input {
-        width: 120px;
-      }
-      .final-price-area {
-        justify-content: center;
-        flex-wrap: wrap;
-        gap: 5px;
-      }
       .container {
-        width: 95%;
+        width: 90%;
+      }
+      .price-info-row {
+        flex-direction: column;
       }
       button {
-        width: 120px;
+        width: 100px;
       }
     }
   </style>
@@ -145,15 +140,21 @@
 <body>
 
 <div class="price-info">
-  입찰가:
-  <input type="text" id="bidPriceInput" placeholder="숫자 입력" oninput="formatInput(this)" onchange="updateAll()"> 원
-  | 감가합계: <span id="depreciationAmount">0</span>원
-  |
+  <div class="price-info-row">
+    <label>입찰가:</label>
+    <input type="text" id="bidPriceInput" placeholder="숫자 입력" oninput="formatInput(this)" onchange="updateAll()"> 원
+  </div>
+
+  <div class="price-info-row">
+    감가합계: <span id="depreciationAmount">0</span>원
+  </div>
+
   <div class="final-price-area">
     <span class="money-icon">💰</span>
     <span>최종금액:</span>
     <strong id="finalPrice">0</strong>원
   </div>
+
   <button onclick="resetAll()">초기화</button>
 </div>
 
@@ -170,11 +171,6 @@
 </div>
 
 <script>
-// 페이지 로드 시 저장된 데이터 복원
-window.onload = function() {
-  restoreData();
-};
-
 // 외관 부위 포지션
 const partPositions = [
   {top: '5%', left: '15%'}, {top: '12%', left: '45%'}, {top: '5%', left: '80%'}, 
@@ -223,36 +219,6 @@ function getNumericValue(value) {
   return Number(value.replaceAll(',', '')) || 0;
 }
 
-function saveData() {
-  const bidPrice = document.getElementById('bidPriceInput').value;
-  const partStates = Array.from(document.querySelectorAll('.part')).map(cb => cb.checked);
-  const accidentStates = Array.from(document.querySelectorAll('.accident')).map(cb => cb.checked);
-
-  localStorage.setItem('bidPrice', bidPrice);
-  localStorage.setItem('partStates', JSON.stringify(partStates));
-  localStorage.setItem('accidentStates', JSON.stringify(accidentStates));
-}
-
-function restoreData() {
-  const bidPrice = localStorage.getItem('bidPrice');
-  const partStates = JSON.parse(localStorage.getItem('partStates') || '[]');
-  const accidentStates = JSON.parse(localStorage.getItem('accidentStates') || '[]');
-
-  if (bidPrice !== null) {
-    document.getElementById('bidPriceInput').value = bidPrice;
-  }
-
-  document.querySelectorAll('.part').forEach((cb, idx) => {
-    cb.checked = partStates[idx] || false;
-  });
-
-  document.querySelectorAll('.accident').forEach((cb, idx) => {
-    cb.checked = accidentStates[idx] || false;
-  });
-
-  updateAll(); 
-}
-
 function updateAll() {
   const bidPrice = getNumericValue(document.getElementById('bidPriceInput').value);
   const partPrice = 180000;
@@ -292,16 +258,55 @@ function updateAll() {
   document.getElementById('depreciationAmount').textContent = totalDiscount.toLocaleString();
   document.getElementById('finalPrice').textContent = finalPrice.toLocaleString();
 
-  saveData(); 
+  saveState();
 }
 
 function resetAll() {
   document.querySelectorAll("input[type='checkbox']").forEach(cb => cb.checked = false);
   document.querySelectorAll(".checkbox-item").forEach(label => label.classList.remove('selected'));
   document.getElementById('bidPriceInput').value = '';
-  localStorage.clear(); 
+  clearState();
   updateAll();
 }
+
+function saveState() {
+  const state = {
+    bidPrice: document.getElementById('bidPriceInput').value,
+    partChecked: Array.from(document.querySelectorAll('.part')).map(cb => cb.checked),
+    accidentChecked: Array.from(document.querySelectorAll('.accident')).map(cb => cb.checked)
+  };
+  localStorage.setItem('calculatorState', JSON.stringify(state));
+}
+
+function loadState() {
+  const saved = localStorage.getItem('calculatorState');
+  if (!saved) return;
+
+  const state = JSON.parse(saved);
+
+  document.getElementById('bidPriceInput').value = state.bidPrice || '';
+
+  const parts = document.querySelectorAll('.part');
+  state.partChecked.forEach((checked, idx) => {
+    if (parts[idx]) parts[idx].checked = checked;
+  });
+
+  const accidents = document.querySelectorAll('.accident');
+  state.accidentChecked.forEach((checked, idx) => {
+    if (accidents[idx]) accidents[idx].checked = checked;
+  });
+
+  updateAll();
+}
+
+function clearState() {
+  localStorage.removeItem('calculatorState');
+}
+
+// 페이지 로드시 저장된 값 복원
+window.onload = function() {
+  loadState();
+};
 </script>
 
 </body>
