@@ -5,116 +5,150 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>자동차 감가 계산기</title>
 <style>
+  :root {
+    --main-color: #ff5c5c;
+    --bg-light: #f0f0f0;
+    --bg-dark: #222;
+    --text-light: #eee;
+    --text-dark: #333;
+    --border-radius: 8px;
+    --transition: 0.3s;
+  }
   body {
     font-family: 'Noto Sans KR', sans-serif;
     margin: 0;
     padding: 20px;
-    background: #f0f0f0;
-    text-align: center;
-    color: #333;
-    transition: background 0.3s, color 0.3s;
+    background: var(--bg-light);
+    color: var(--text-dark);
+    transition: background var(--transition), color var(--transition);
   }
-  
   body.dark {
-    background: #222;
-    color: #eee;
+    background: var(--bg-dark);
+    color: var(--text-light);
   }
-
+  h2 {
+    font-size: 20px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: center;
+  }
   .price-info, .section, .final-price-area, .deduction-list {
     margin-bottom: 20px;
   }
-
   .price-info input, .input-small {
-    font-size: 16px;
-    padding: 6px 10px;
+    width: 100%;
+    max-width: 300px;
+    font-size: 18px;
+    padding: 10px;
     border: 1px solid #ccc;
-    border-radius: 6px;
-    width: 250px;
-    margin-bottom: 8px;
+    border-radius: var(--border-radius);
     text-align: right;
+    margin-bottom: 10px;
   }
-
   .final-price-area {
     background: #fff3f3;
-    padding: 10px;
-    border-radius: 10px;
+    padding: 12px;
+    border-radius: var(--border-radius);
     font-size: 18px;
     font-weight: bold;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-    gap: 10px;
   }
-
   #finalPrice {
-    color: #ff5c5c;
-    font-size: 26px;
+    color: var(--main-color);
+    font-size: 28px;
   }
-
   button {
-    padding: 8px 20px;
-    font-size: 14px;
-    background-color: #ff5c5c;
+    padding: 10px 24px;
+    font-size: 16px;
+    background-color: var(--main-color);
     color: white;
     border: none;
-    border-radius: 6px;
+    border-radius: var(--border-radius);
     cursor: pointer;
-    margin-top: 10px;
-    transition: background 0.3s;
+    transition: background var(--transition);
   }
   button:hover {
     background-color: #ff3838;
   }
-
   .container {
     position: relative;
     max-width: 500px;
     margin: 0 auto;
   }
-
   .car-image {
     width: 100%;
-    border-radius: 10px;
+    border-radius: var(--border-radius);
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   }
-
   .checkbox-overlay {
     position: absolute;
     top: 0; left: 0;
     width: 100%; height: 100%;
   }
-
   .checkbox-item {
     position: absolute;
-    font-size: 12px;
+    font-size: 13px;
     background: rgba(255,255,255,0.8);
-    padding: 4px 6px;
-    border-radius: 6px;
+    padding: 6px 8px;
+    border-radius: var(--border-radius);
     transform: translate(-50%, -50%) scale(1);
     white-space: nowrap;
-    transition: background 0.3s, transform 0.2s;
+    transition: background var(--transition), transform 0.2s;
     cursor: pointer;
   }
-
   .checkbox-item.selected {
-    background: rgba(255, 0, 0, 0.7);
+    background: var(--main-color);
     color: white;
     transform: translate(-50%, -50%) scale(1.1);
   }
-
   .deduction-list {
-    font-size: 14px;
+    font-size: 15px;
     text-align: left;
     max-width: 500px;
     margin: 0 auto;
+    background: white;
+    padding: 10px;
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  }
+  .deduction-list ul {
+    padding-left: 20px;
+    margin: 10px 0;
+  }
+  .deduction-total {
+    font-weight: bold;
+    color: var(--main-color);
+    margin-top: 10px;
+    text-align: right;
+  }
+
+  @media (max-width: 600px) {
+    h2 {
+      font-size: 18px;
+    }
+    .checkbox-item {
+      font-size: 11px;
+      padding: 5px 6px;
+    }
+    button {
+      font-size: 14px;
+      padding: 8px 20px;
+    }
+    #finalPrice {
+      font-size: 24px;
+    }
   }
 
   @media (prefers-color-scheme: dark) {
-    body { background: #222; color: #eee; }
+    body { background: var(--bg-dark); color: var(--text-light); }
     .final-price-area { background: #333; }
     .car-image { box-shadow: 0 2px 8px rgba(255,255,255,0.1); }
+    .deduction-list { background: #333; }
   }
-
 </style>
 </head>
 
@@ -133,7 +167,7 @@
 
 <!-- 차량정보 -->
 <div class="section">
-  <h2>차량정보</h2>
+  <h2>🚗 차량정보</h2>
   <input type="text" id="carNumber" class="input-small" placeholder="차량번호"><br>
   <input type="text" id="carName" class="input-small" placeholder="차량명 & 등급"><br>
   <input type="text" id="carMileage" class="input-small" placeholder="주행거리">
@@ -141,7 +175,7 @@
 
 <!-- 고객기재 -->
 <div class="section">
-  <h2>고객기재</h2>
+  <h2>🖊️ 고객기재</h2>
   <input type="text" id="exterior" class="input-small" placeholder="외판"><br>
   <input type="text" id="wheelScratch" class="input-small" placeholder="휠기스"><br>
   <input type="text" id="spareKey" class="input-small" placeholder="보조키"><br>
@@ -151,7 +185,7 @@
 
 <!-- 외관 평가 -->
 <div class="section">
-  <h2>외관 평가</h2>
+  <h2>✅ 외관 평가</h2>
   <div class="container">
     <img src="https://i.imgur.com/NAH6AaM.jpg" class="car-image" alt="자동차 외관">
     <div class="checkbox-overlay" id="partSection"></div>
@@ -160,7 +194,7 @@
 
 <!-- 사고 평가 -->
 <div class="section">
-  <h2>교환&판금 평가</h2>
+  <h2>✅ 교환&판금 평가</h2>
   <div class="container">
     <img src="https://i.imgur.com/tBnS5DO.jpg" class="car-image" alt="사고부위 자동차">
     <div class="checkbox-overlay" id="accidentSection"></div>
@@ -186,20 +220,20 @@ const CONSTANTS = {
   ]
 };
 
-// HTML 렌더링
+// 체크박스 렌더링
 function renderCheckboxes() {
   const partSection = document.getElementById('partSection');
   CONSTANTS.partNames.forEach((name, idx) => {
     const label = document.createElement('label');
     label.className = 'checkbox-item';
-    label.style.top = `${(idx * 4) % 100}%`;
+    label.style.top = `${(idx * 5) % 90 + 5}%`;
     label.style.left = `${10 + (idx % 5) * 18}%`;
     label.innerHTML = `<input type="checkbox" class="part" data-name="${name}" onclick="updateAll()"> ${name}`;
     partSection.appendChild(label);
   });
 
   const accidentSection = document.getElementById('accidentSection');
-  CONSTANTS.accidentParts.forEach(({ name, rate, top, left }, idx) => {
+  CONSTANTS.accidentParts.forEach(({ name, rate, top, left }) => {
     const label = document.createElement('label');
     label.className = 'checkbox-item';
     label.style.top = top;
@@ -209,12 +243,10 @@ function renderCheckboxes() {
   });
 }
 
-// 숫자 포맷팅
+// 포맷
 function formatInput(input) {
   input.value = input.value.replace(/[^\d]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
-
-// 숫자 변환
 function getNumericValue(value) {
   return Number(value.replaceAll(',', '')) || 0;
 }
@@ -257,7 +289,7 @@ function updateAll() {
 
   document.getElementById('finalPrice').textContent = finalPrice.toLocaleString();
   document.getElementById('deductionArea').innerHTML = deductionDetails.length
-    ? `<h3>감가 세부내역</h3><ul>${deductionDetails.map(d => `<li>${d}</li>`).join('')}</ul>`
+    ? `<h3>감가 세부내역</h3><ul>${deductionDetails.map(d => `<li>${d}</li>`).join('')}</ul><div class="deduction-total">감가 총합계: -${totalDiscount.toLocaleString()}원</div>`
     : '';
 }
 
@@ -271,7 +303,6 @@ function resetAll() {
   updateAll();
 }
 
-// 시작
 renderCheckboxes();
 </script>
 
