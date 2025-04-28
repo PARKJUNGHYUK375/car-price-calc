@@ -165,12 +165,12 @@
 
 <div class="price-info">
   입찰가
-  <input type="text" id="bidPriceInput" placeholder="숫자 입력" oninput="formatInput(this)" onchange="updateAll()">원 
-  감가합계 <span id="depreciationAmount"></span>원
+  <input type="text" id="bidPriceInput" placeholder="숫자 입력" oninput="formatInput(this)" onchange="updateAll()"> 
+  감가합계 <strong id="depreciationAmount"></strong>
   
   <div class="final-price-area">
     <span class="money-icon">💰</span>
-    <span>최종금액:</span>
+    <span>최종금액</span>
     <strong id="finalPrice">0</strong>원
   </div>
   <button onclick="resetAll()">초기화</button>
