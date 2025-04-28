@@ -190,20 +190,6 @@
   </div>
 </div>
 
-<!-- 입찰가 및 감가정보 -->
-<div class="price-info">
-  입찰가:
-  <input type="text" id="bidPriceInput" placeholder="숫자 입력" oninput="formatInput(this); updateAll(); saveData()"> 원
-  | 감가합계: <span id="depreciationAmount">0</span>원
-  |
-  <div class="final-price-area">
-    <span class="money-icon">💰</span>
-    <span>최종금액:</span>
-    <strong id="finalPrice">0</strong>원
-  </div>
-  <button onclick="resetAll()">초기화</button>
-</div>
-
 <!-- 외관 평가 -->
 <div class="section-title">외관 평가</div>
 <div class="container">
@@ -216,6 +202,20 @@
 <div class="container">
   <img src="https://i.imgur.com/tBnS5DO.jpg" class="car-image" alt="사고부위 자동차">
   <div class="checkbox-overlay" id="accidentSection"></div>
+</div>
+
+<!-- 입찰가 및 감가정보 -->
+<div class="price-info">
+  입찰가:
+  <input type="text" id="bidPriceInput" placeholder="숫자 입력" oninput="formatInput(this); updateAll(); saveData()"> 원
+  | 감가합계: <span id="depreciationAmount">0</span>원
+  |
+  <div class="final-price-area">
+    <span class="money-icon">💰</span>
+    <span>최종금액:</span>
+    <strong id="finalPrice">0</strong>원
+  </div>
+  <button onclick="resetAll()">초기화</button>
 </div>
 
 <script>
@@ -329,35 +329,19 @@ function saveData() {
     spareKey: document.getElementById('spareKey').value,
     maintenance: document.getElementById('maintenance').value,
     carProsCons: document.getElementById('carProsCons').value,
-    bidPriceInput: document.getElementById('bidPriceInput').value,
-    partsChecked: Array.from(document.querySelectorAll('.part')).map(cb => cb.checked),
-    accidentsChecked: Array.from(document.querySelectorAll('.accident')).map(cb => cb.checked)
   };
   localStorage.setItem('carData', JSON.stringify(data));
 }
 
-function loadData() {
-  const data = JSON.parse(localStorage.getItem('carData'));
-  if (!data) return;
-  document.getElementById('carNumber').value = data.carNumber || '';
-  document.getElementById('carName').value = data.carName || '';
-  document.getElementById('carMileage').value = data.carMileage || '';
-  document.getElementById('exterior').value = data.exterior || '';
-  document.getElementById('wheelScratch').value = data.wheelScratch || '';
-  document.getElementById('spareKey').value = data.spareKey || '';
-  document.getElementById('maintenance').value = data.maintenance || '';
-  document.getElementById('carProsCons').value = data.carProsCons || '';
-  document.getElementById('bidPriceInput').value = data.bidPriceInput || '';
-  
-  document.querySelectorAll('.part').forEach((cb, idx) => {
-    if (data.partsChecked && data.partsChecked[idx]) cb.checked = true;
-  });
-  document.querySelectorAll('.accident').forEach((cb, idx) => {
-    if (data.accidentsChecked && data.accidentsChecked[idx]) cb.checked = true;
-  });
-  updateAll();
-}
-loadData();
+document.addEventListener("DOMContentLoaded", function () {
+  const savedData = JSON.parse(localStorage.getItem('carData'));
+  if (savedData) {
+    Object.keys(savedData).forEach(key => {
+      const input = document.getElementById(key);
+      if (input) input.value = savedData[key];
+    });
+  }
+});
 </script>
 
 </body>
