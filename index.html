@@ -11,9 +11,9 @@
       padding: 0;
       text-align: center;
     }
-    .price-info {
+    .price-info, .settings {
       font-size: 14px;
-      margin: 5px;
+      margin: 10px;
     }
     .container {
       position: relative;
@@ -74,39 +74,26 @@
 <div class="price-info">
   입찰가: 
   <input type="number" id="bidPriceInput" value="" onchange="updateAll()" style="width:100px;"> 원 |
-  감가합계: <strong id="depreciationAmount"></strong>원 |
-  최종금액: <strong id="finalPrice"></strong>원
+  감가합계: <strong id="depreciationAmount">0</strong>원 |
+  최종금액: <strong id="finalPrice">0</strong>원
+</div>
+
+<div class="settings">
+  <span>부위 감가: <input type="number" id="partDiscountInput" value="180000" style="width:80px;" onchange="updateAll()"> 원</span> |
+  <span>휠 감가: <input type="number" id="wheelDiscountInput" value="100000" style="width:80px;" onchange="updateAll()"> 원</span>
+  <br><br>
+  <button onclick="resetAll()">모두 초기화</button>
 </div>
 
 <div class="container">
   <img src="https://i.imgur.com/NAH6AaM.jpg" class="car-image" alt="자동차" />
   <div class="checkbox-overlay" id="partSection">
     <!-- 25개 부위 체크박스 -->
-    <label class="checkbox-item c1"><input type="checkbox" class="part" onclick="updateAll()"> 부위1</label>
-    <label class="checkbox-item c2"><input type="checkbox" class="part" onclick="updateAll()"> 부위2</label>
-    <label class="checkbox-item c3"><input type="checkbox" class="part" onclick="updateAll()"> 부위3</label>
-    <label class="checkbox-item c4"><input type="checkbox" class="part" onclick="updateAll()"> 휠</label>
-    <label class="checkbox-item c5"><input type="checkbox" class="part" onclick="updateAll()"> 휠</label>
-    <label class="checkbox-item c6"><input type="checkbox" class="part" onclick="updateAll()"> 부위6</label>
-    <label class="checkbox-item c7"><input type="checkbox" class="part" onclick="updateAll()"> 부위7</label>
-    <label class="checkbox-item c8"><input type="checkbox" class="part" onclick="updateAll()"> 부위8</label>
-    <label class="checkbox-item c9"><input type="checkbox" class="part" onclick="updateAll()"> 부위9</label>
-    <label class="checkbox-item c10"><input type="checkbox" class="part" onclick="updateAll()"> 부위10</label>
-    <label class="checkbox-item c11"><input type="checkbox" class="part" onclick="updateAll()"> 부위11</label>
-    <label class="checkbox-item c12"><input type="checkbox" class="part" onclick="updateAll()"> 부위12</label>
-    <label class="checkbox-item c13"><input type="checkbox" class="part" onclick="updateAll()"> 부위13</label>
-    <label class="checkbox-item c14"><input type="checkbox" class="part" onclick="updateAll()"> 부위14</label>
-    <label class="checkbox-item c15"><input type="checkbox" class="part" onclick="updateAll()"> 부위15</label>
-    <label class="checkbox-item c16"><input type="checkbox" class="part" onclick="updateAll()"> 부위16</label>
-    <label class="checkbox-item c17"><input type="checkbox" class="part" onclick="updateAll()"> 부위17</label>
-    <label class="checkbox-item c18"><input type="checkbox" class="part" onclick="updateAll()"> 부위18</label>
-    <label class="checkbox-item c19"><input type="checkbox" class="part" onclick="updateAll()"> 휠</label>
-    <label class="checkbox-item c20"><input type="checkbox" class="part" onclick="updateAll()"> 휠</label>
-    <label class="checkbox-item c21"><input type="checkbox" class="part" onclick="updateAll()"> 부위21</label>
-    <label class="checkbox-item c22"><input type="checkbox" class="part" onclick="updateAll()"> 부위22</label>
-    <label class="checkbox-item c23"><input type="checkbox" class="part" onclick="updateAll()"> 부위23</label>
-    <label class="checkbox-item c24"><input type="checkbox" class="part" onclick="updateAll()"> 부위24</label>
-    <label class="checkbox-item c25"><input type="checkbox" class="part" onclick="updateAll()"> 부위25</label>
+    ${[...Array(25)].map((_, i) => `
+      <label class="checkbox-item c${i+1}">
+        <input type="checkbox" class="part" onclick="updateAll()"> 부위${i+1 <= 25 ? i+1 : ''}
+      </label>
+    `).join('')}
   </div>
 </div>
 
@@ -115,19 +102,20 @@
 <div class="container" style="position: relative;">
   <img src="https://i.imgur.com/tBnS5DO.jpg" class="car-image" alt="사고부위 자동차">
   <div class="checkbox-overlay" id="accidentSection">
-    <!-- 사고부위 체크박스 -->
     <label class="checkbox-item" style="top:10%; left:20%;"><input type="checkbox" class="accident" data-rate="5" onclick="updateAll()"> 1</label>
     <label class="checkbox-item" style="top:20%; left:30%;"><input type="checkbox" class="accident" data-rate="4" onclick="updateAll()"> 2</label>
     <label class="checkbox-item" style="top:30%; left:40%;"><input type="checkbox" class="accident" data-rate="3" onclick="updateAll()"> 3</label>
     <label class="checkbox-item" style="top:40%; left:50%;"><input type="checkbox" class="accident" data-rate="6" onclick="updateAll()"> 4</label>
     <label class="checkbox-item" style="top:10%; left:70%;"><input type="checkbox" class="accident" data-rate="5" onclick="updateAll()"> 5</label>
-    <!-- 필요한 만큼 계속 추가 가능 -->
   </div>
 </div>
 
 <script>
 function updateAll() {
   const bidPrice = Number(document.getElementById('bidPriceInput').value) || 0;
+  const partDiscountBase = Number(document.getElementById('partDiscountInput').value) || 0;
+  const wheelDiscountBase = Number(document.getElementById('wheelDiscountInput').value) || 0;
+
   let partDiscount = 0;
   let accidentDiscount = 0;
 
@@ -135,9 +123,9 @@ function updateAll() {
   document.querySelectorAll(".part").forEach((checkbox, index) => {
     if (checkbox.checked) {
       if ([3, 4, 18, 19].includes(index)) {
-        partDiscount += 100000; // 휠 감가 10만
+        partDiscount += wheelDiscountBase; // 휠
       } else {
-        partDiscount += 180000; // 일반 부위 감가 18만
+        partDiscount += partDiscountBase; // 일반부위
       }
     }
   });
@@ -156,6 +144,21 @@ function updateAll() {
   document.getElementById('depreciationAmount').textContent = totalDiscount.toLocaleString();
   document.getElementById('finalPrice').textContent = finalPrice.toLocaleString();
 }
+
+function resetAll() {
+  document.getElementById('bidPriceInput').value = '';
+  document.getElementById('partDiscountInput').value = 180000;
+  document.getElementById('wheelDiscountInput').value = 100000;
+
+  document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+
+  updateAll();
+}
+
+// 페이지 로드시 초기화
+window.onload = () => {
+  updateAll();
+};
 </script>
 
 </body>
