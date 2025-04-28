@@ -26,20 +26,20 @@
       display: block;
     }
     .checkbox-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
     }
     .checkbox-item {
-  position: absolute;
-  font-size: 12px;
-  background: rgba(255,255,255,0.7);
-  padding: 3px 5px;
-  border-radius: 5px;
-  transform: translate(-50%, -50%);
-  white-space: nowrap;
+      position: absolute;
+      font-size: 12px;
+      background: rgba(255,255,255,0.7);
+      padding: 3px 5px;
+      border-radius: 5px;
+      transform: translate(-50%, -50%);
+      white-space: nowrap;
     }
     /* 체크박스 위치 */
     .c1  { top: 5%; left: 15%; }
@@ -71,193 +71,92 @@
 </head>
 <body>
 
-  <div class="price-info">
-    입찰가: 
-    <input type="number" id="bidPriceInput" value="" onchange="updateDepreciation()" style="width:100px;"> 원 |
-    감가합계: <strong id="depreciationAmount"></strong>원 |
-    최종금액: <strong id="finalPrice"></strong>원
-  </div>
+<div class="price-info">
+  입찰가: 
+  <input type="number" id="bidPriceInput" value="" onchange="updateAll()" style="width:100px;"> 원 |
+  감가합계: <strong id="depreciationAmount"></strong>원 |
+  최종금액: <strong id="finalPrice"></strong>원
+</div>
 
-  <div class="container">
-    <img src="https://i.imgur.com/NAH6AaM.jpg" class="car-image" alt="자동차" />
-    <div class="checkbox-overlay">
-      <!-- 25개의 체크박스 -->
-      <label class="checkbox-item c1"><input type="checkbox" onclick="updateDepreciation()"> 부위1</label>
-      <label class="checkbox-item c2"><input type="checkbox" onclick="updateDepreciation()"> 부위2</label>
-      <label class="checkbox-item c3"><input type="checkbox" onclick="updateDepreciation()"> 부위3</label>
-      <label class="checkbox-item c4"><input type="checkbox" onclick="updateDepreciation()"> 휠</label>
-      <label class="checkbox-item c5"><input type="checkbox" onclick="updateDepreciation()"> 휠</label>
-      <label class="checkbox-item c6"><input type="checkbox" onclick="updateDepreciation()"> 부위6</label>
-      <label class="checkbox-item c7"><input type="checkbox" onclick="updateDepreciation()"> 부위7</label>
-      <label class="checkbox-item c8"><input type="checkbox" onclick="updateDepreciation()"> 부위8</label>
-      <label class="checkbox-item c9"><input type="checkbox" onclick="updateDepreciation()"> 부위9</label>
-      <label class="checkbox-item c10"><input type="checkbox" onclick="updateDepreciation()"> 부위10</label>
-      <label class="checkbox-item c11"><input type="checkbox" onclick="updateDepreciation()"> 부위11</label>
-      <label class="checkbox-item c12"><input type="checkbox" onclick="updateDepreciation()"> 부위12</label>
-      <label class="checkbox-item c13"><input type="checkbox" onclick="updateDepreciation()"> 부위13</label>
-      <label class="checkbox-item c14"><input type="checkbox" onclick="updateDepreciation()"> 부위14</label>
-      <label class="checkbox-item c15"><input type="checkbox" onclick="updateDepreciation()"> 부위15</label>
-      <label class="checkbox-item c16"><input type="checkbox" onclick="updateDepreciation()"> 부위16</label>
-      <label class="checkbox-item c17"><input type="checkbox" onclick="updateDepreciation()"> 부위17</label>
-      <label class="checkbox-item c18"><input type="checkbox" onclick="updateDepreciation()"> 부위18</label>
-      <label class="checkbox-item c19"><input type="checkbox" onclick="updateDepreciation()"> 휠</label>
-      <label class="checkbox-item c20"><input type="checkbox" onclick="updateDepreciation()"> 휠</label>
-      <label class="checkbox-item c21"><input type="checkbox" onclick="updateDepreciation()"> 부위21</label>
-      <label class="checkbox-item c22"><input type="checkbox" onclick="updateDepreciation()"> 부위22</label>
-      <label class="checkbox-item c23"><input type="checkbox" onclick="updateDepreciation()"> 부위23</label>
-      <label class="checkbox-item c24"><input type="checkbox" onclick="updateDepreciation()"> 부위24</label>
-      <label class="checkbox-item c25"><input type="checkbox" onclick="updateDepreciation()"> 부위25</label>
-    </div>
-  </div>
-
-  <h2>사고 부위 체크</h2>
-
-<div class="container" style="position: relative;">
-  <img src="https://i.imgur.com/tBnS5DO.jpg" class="car-image" alt="사고부위 자동차" style="width: 100%; max-width: 600px; height: auto;">
-
-  <div class="checkbox-overlay">
-    <!-- 사고부위 예시 배치 -->
-    <label class="checkbox-item" style="top:10%; left:20%;">
-      <input type="checkbox" data-rate="5" onchange="updateAccidentDepreciation()"> 1
-    </label>
-    <label class="checkbox-item" style="top:20%; left:30%;">
-      <input type="checkbox" data-rate="4" onchange="updateAccidentDepreciation()"> 2
-    </label>
-    <label class="checkbox-item" style="top:30%; left:40%;">
-      <input type="checkbox" data-rate="3" onchange="updateAccidentDepreciation()"> 3
-    </label>
-    <label class="checkbox-item" style="top:40%; left:50%;">
-      <input type="checkbox" data-rate="6" onchange="updateAccidentDepreciation()"> 4
-    </label>
-    <label class="checkbox-item" style="top:10%; left:70%;">
-      <input type="checkbox" data-rate="5" onchange="updateAccidentDepreciation()"> 5
-    </label>
-    <label class="checkbox-item" style="top:20%; left:60%;">
-      <input type="checkbox" data-rate="4" onchange="updateAccidentDepreciation()"> 6
-    </label>
-    <label class="checkbox-item" style="top:30%; left:50%;">
-      <input type="checkbox" data-rate="3" onchange="updateAccidentDepreciation()"> 7
-    </label>
-    <label class="checkbox-item" style="top:40%; left:40%;">
-      <input type="checkbox" data-rate="6" onchange="updateAccidentDepreciation()"> 8
-    </label>
-    <label class="checkbox-item" style="top:40%; left:40%;"> 
-    <input type="checkbox" data-rate="6" onchange="updateAccidentDepreciation()"> 9
-    </label>
-    <label class="checkbox-item" style="top:40%; left:40%;"> 
-    <input type="checkbox" data-rate="6" onchange="updateAccidentDepreciation()"> 10
-    </label>
-     <label class="checkbox-item" style="top:40%; left:40%;">
-      <input type="checkbox" data-rate="6" onchange="updateAccidentDepreciation()"> 11
-    </label>
-    <label class="checkbox-item" style="top:40%; left:40%;"> 
-    <input type="checkbox" data-rate="6" onchange="updateAccidentDepreciation()"> 12
-    </label>
-    <label class="checkbox-item" style="top:40%; left:40%;"> 
-    <input type="checkbox" data-rate="6" onchange="updateAccidentDepreciation()"> 13
-    </label>
-    <label class="checkbox-item" style="top:40%; left:40%;"> 
-    <input type="checkbox" data-rate="6" onchange="updateAccidentDepreciation()"> 14
-    </label>
-    <label class="checkbox-item" style="top:40%; left:40%;"> 
-    <input type="checkbox" data-rate="6" onchange="updateAccidentDepreciation()"> 15
-    </label>
-    <label class="checkbox-item" style="top:40%; left:40%;"> 
-    <input type="checkbox" data-rate="6" onchange="updateAccidentDepreciation()"> 16
-    </label>
-    <label class="checkbox-item" style="top:40%; left:40%;"> 
-    <input type="checkbox" data-rate="6" onchange="updateAccidentDepreciation()"> 17
-    </label>
-    <label class="checkbox-item" style="top:40%; left:40%;"> 
-    <input type="checkbox" data-rate="6" onchange="updateAccidentDepreciation()"> 18
-    </label>
-    <label class="checkbox-item" style="top:40%; left:40%;"> 
-    <input type="checkbox" data-rate="6" onchange="updateAccidentDepreciation()"> 19
-    </label>
-    <label class="checkbox-item" style="top:40%; left:40%;"> 
-    <input type="checkbox" data-rate="6" onchange="updateAccidentDepreciation()"> 20
-    </label>
-     <label class="checkbox-item" style="top:40%; left:40%;">
-      <input type="checkbox" data-rate="6" onchange="updateAccidentDepreciation()"> 21
-    </label>
-    <label class="checkbox-item" style="top:40%; left:40%;"> 
-    <input type="checkbox" data-rate="6" onchange="updateAccidentDepreciation()"> 22
-    </label>
-    <label class="checkbox-item" style="top:40%; left:40%;"> 
-    <input type="checkbox" data-rate="6" onchange="updateAccidentDepreciation()"> 23
-    </label>
-    <label class="checkbox-item" style="top:40%; left:40%;"> 
-    <input type="checkbox" data-rate="6" onchange="updateAccidentDepreciation()"> 24
-    </label>
-    <label class="checkbox-item" style="top:40%; left:40%;"> 
-    <input type="checkbox" data-rate="6" onchange="updateAccidentDepreciation()"> 25
-    </label>
-    <label class="checkbox-item" style="top:40%; left:40%;"> 
-    <input type="checkbox" data-rate="6" onchange="updateAccidentDepreciation()"> 26
-    </label>
-    <label class="checkbox-item" style="top:40%; left:40%;"> 
-    <input type="checkbox" data-rate="6" onchange="updateAccidentDepreciation()"> 27
-    </label>
-    <label class="checkbox-item" style="top:40%; left:40%;"> 
-    <input type="checkbox" data-rate="6" onchange="updateAccidentDepreciation()"> 29
-    </label>
-    <label class="checkbox-item" style="top:40%; left:40%;"> 
-    <input type="checkbox" data-rate="6" onchange="updateAccidentDepreciation()"> 29
-    </label>
-    <label class="checkbox-item" style="top:40%; left:40%;"> 
-    <input type="checkbox" data-rate="6" onchange="updateAccidentDepreciation()"> 30
-    </label>
-    
-    <!-- 계속 추가... 총 30개 -->
+<div class="container">
+  <img src="https://i.imgur.com/NAH6AaM.jpg" class="car-image" alt="자동차" />
+  <div class="checkbox-overlay" id="partSection">
+    <!-- 25개 부위 체크박스 -->
+    <label class="checkbox-item c1"><input type="checkbox" class="part" onclick="updateAll()"> 부위1</label>
+    <label class="checkbox-item c2"><input type="checkbox" class="part" onclick="updateAll()"> 부위2</label>
+    <label class="checkbox-item c3"><input type="checkbox" class="part" onclick="updateAll()"> 부위3</label>
+    <label class="checkbox-item c4"><input type="checkbox" class="part" onclick="updateAll()"> 휠</label>
+    <label class="checkbox-item c5"><input type="checkbox" class="part" onclick="updateAll()"> 휠</label>
+    <label class="checkbox-item c6"><input type="checkbox" class="part" onclick="updateAll()"> 부위6</label>
+    <label class="checkbox-item c7"><input type="checkbox" class="part" onclick="updateAll()"> 부위7</label>
+    <label class="checkbox-item c8"><input type="checkbox" class="part" onclick="updateAll()"> 부위8</label>
+    <label class="checkbox-item c9"><input type="checkbox" class="part" onclick="updateAll()"> 부위9</label>
+    <label class="checkbox-item c10"><input type="checkbox" class="part" onclick="updateAll()"> 부위10</label>
+    <label class="checkbox-item c11"><input type="checkbox" class="part" onclick="updateAll()"> 부위11</label>
+    <label class="checkbox-item c12"><input type="checkbox" class="part" onclick="updateAll()"> 부위12</label>
+    <label class="checkbox-item c13"><input type="checkbox" class="part" onclick="updateAll()"> 부위13</label>
+    <label class="checkbox-item c14"><input type="checkbox" class="part" onclick="updateAll()"> 부위14</label>
+    <label class="checkbox-item c15"><input type="checkbox" class="part" onclick="updateAll()"> 부위15</label>
+    <label class="checkbox-item c16"><input type="checkbox" class="part" onclick="updateAll()"> 부위16</label>
+    <label class="checkbox-item c17"><input type="checkbox" class="part" onclick="updateAll()"> 부위17</label>
+    <label class="checkbox-item c18"><input type="checkbox" class="part" onclick="updateAll()"> 부위18</label>
+    <label class="checkbox-item c19"><input type="checkbox" class="part" onclick="updateAll()"> 휠</label>
+    <label class="checkbox-item c20"><input type="checkbox" class="part" onclick="updateAll()"> 휠</label>
+    <label class="checkbox-item c21"><input type="checkbox" class="part" onclick="updateAll()"> 부위21</label>
+    <label class="checkbox-item c22"><input type="checkbox" class="part" onclick="updateAll()"> 부위22</label>
+    <label class="checkbox-item c23"><input type="checkbox" class="part" onclick="updateAll()"> 부위23</label>
+    <label class="checkbox-item c24"><input type="checkbox" class="part" onclick="updateAll()"> 부위24</label>
+    <label class="checkbox-item c25"><input type="checkbox" class="part" onclick="updateAll()"> 부위25</label>
   </div>
 </div>
 
+<h2>사고 부위 체크</h2>
 
-  <script>
-    function updateDepreciation() {
-      const bidPrice = Number(document.getElementById('bidPriceInput').value) || 0;
-      let total = 0;
+<div class="container" style="position: relative;">
+  <img src="https://i.imgur.com/tBnS5DO.jpg" class="car-image" alt="사고부위 자동차">
+  <div class="checkbox-overlay" id="accidentSection">
+    <!-- 사고부위 체크박스 -->
+    <label class="checkbox-item" style="top:10%; left:20%;"><input type="checkbox" class="accident" data-rate="5" onclick="updateAll()"> 1</label>
+    <label class="checkbox-item" style="top:20%; left:30%;"><input type="checkbox" class="accident" data-rate="4" onclick="updateAll()"> 2</label>
+    <label class="checkbox-item" style="top:30%; left:40%;"><input type="checkbox" class="accident" data-rate="3" onclick="updateAll()"> 3</label>
+    <label class="checkbox-item" style="top:40%; left:50%;"><input type="checkbox" class="accident" data-rate="6" onclick="updateAll()"> 4</label>
+    <label class="checkbox-item" style="top:10%; left:70%;"><input type="checkbox" class="accident" data-rate="5" onclick="updateAll()"> 5</label>
+    <!-- 필요한 만큼 계속 추가 가능 -->
+  </div>
+</div>
 
-      document.querySelectorAll(".checkbox-overlay input").forEach((checkbox, index) => {
-        if (checkbox.checked) {
-          if ([3, 4, 18, 19].includes(index)) {
-            total += 100000; // 부위4(3), 부위5(4), 부위19(18), 부위20(19)는 100,000원 고정
-          } else {
-            total += 180000; // 나머지는 140,000원 감가
-          }
-        }
-      });
-
-      
-function updateAccidentDepreciation() {
+<script>
+function updateAll() {
   const bidPrice = Number(document.getElementById('bidPriceInput').value) || 0;
+  let partDiscount = 0;
   let accidentDiscount = 0;
 
-  document.querySelectorAll(".checkbox-overlay input").forEach((checkbox) => {
+  // 부위 감가 계산
+  document.querySelectorAll(".part").forEach((checkbox, index) => {
+    if (checkbox.checked) {
+      if ([3, 4, 18, 19].includes(index)) {
+        partDiscount += 100000; // 휠 감가 10만
+      } else {
+        partDiscount += 180000; // 일반 부위 감가 18만
+      }
+    }
+  });
+
+  // 사고 감가 계산
+  document.querySelectorAll(".accident").forEach((checkbox) => {
     if (checkbox.checked) {
       const rate = Number(checkbox.dataset.rate) || 0;
       accidentDiscount += bidPrice * (rate / 100);
     }
   });
 
-  // 기존 감가도 고려 (부위 감가 부분 추가로 들어있으면 합산)
-  let baseDiscount = 0;
-  document.querySelectorAll(".checkbox-overlay input.c-part").forEach((checkbox, index) => {
-    if (checkbox.checked) {
-      if ([3, 4, 18, 19].includes(index)) {
-        baseDiscount += 100000;
-      } else {
-        baseDiscount += 140000;
-      }
-    }
-  });
+  const totalDiscount = partDiscount + accidentDiscount;
+  const finalPrice = bidPrice - totalDiscount;
 
-  const totalDiscount = baseDiscount + accidentDiscount;
-  document.getElementById("depreciationAmount").textContent = totalDiscount.toLocaleString();
-  document.getElementById("finalPrice").textContent = (bidPrice - totalDiscount).toLocaleString();
+  document.getElementById('depreciationAmount').textContent = totalDiscount.toLocaleString();
+  document.getElementById('finalPrice').textContent = finalPrice.toLocaleString();
 }
 </script>
-
 
 </body>
 </html>
