@@ -1,132 +1,162 @@
-<style>
-.checkbox-item {
-  position: absolute;
-  transform: translate(-50%, -50%);
-  background-color: transparent;
-  padding: 5px 8px;
-  border-radius: 8px;
-  transition: background-color 0.3s ease;
-  font-size: 12px;
-  font-weight: bold;
-}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>자동차 감가 계산기</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+    .price-info {
+      font-size: 14px;
+      margin: 5px;
+    }
+    .container {
+      position: relative;
+      max-width: 500px;
+      margin: auto;
+    }
+    .car-image {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .checkbox-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+    .checkbox-item {
+      position: absolute;
+      font-size: 12px;
+      background: rgba(255,255,255,0.7);
+      padding: 3px 5px;
+      border-radius: 5px;
+      transform: translate(-50%, -50%);
+      white-space: nowrap;
+    }
+    /* 체크박스 위치 */
+    .c1  { top: 5%; left: 15%; }
+    .c2  { top: 12%; left: 45%; }
+    .c3  { top: 5%; left: 80%; }
+    .c4  { top: 25%; left: 10%; }
+    .c5  { top: 25%; left: 85%; }
+    .c6  { top: 35%; left: 15%; }
+    .c7  { top: 35%; left: 45%; }
+    .c8  { top: 35%; left: 80%; }
+    .c9  { top: 45%; left: 10%; }
+    .c10 { top: 45%; left: 85%; }
+    .c11 { top: 55%; left: 15%; }
+    .c12 { top: 55%; left: 45%; }
+    .c13 { top: 55%; left: 80%; }
+    .c14 { top: 65%; left: 10%; }
+    .c15 { top: 65%; left: 85%; }
+    .c16 { top: 70%; left: 15%; }
+    .c17 { top: 70%; left: 45%; }
+    .c18 { top: 70%; left: 80%; }
+    .c19 { top: 80%; left: 10%; }
+    .c20 { top: 80%; left: 85%; }
+    .c21 { top: 85%; left: 30%; }
+    .c22 { top: 85%; left: 60%; }
+    .c23 { top: 90%; left: 15%; }
+    .c24 { top: 90%; left: 45%; }
+    .c25 { top: 90%; left: 80%; }
+  </style>
+</head>
+<body>
 
-/* 선택됐을 때 빨간색 배경 */
-.checkbox-item.selected {
-  background-color: rgba(255, 0, 0, 0.7);
-  color: white;
-}
-
-/* 초기화 버튼 스타일 */
-#resetButton {
-  margin: 20px;
-  padding: 10px 20px;
-  font-size: 16px;
-  background-color: #ff4d4d;
-  border: none;
-  border-radius: 8px;
-  color: white;
-  cursor: pointer;
-}
-</style>
-
-<!-- 체크박스 전체 영역 -->
-<div class="checkbox-overlay" id="accidentSection" style="position: relative; width: 100%; height: 600px; background-color: #f0f0f0;">
-  <!-- 30개 체크박스 배치 -->
-  <label class="checkbox-item" style="top:5%; left:8%;"><input type="checkbox" class="accident" onclick="toggleSelected(this)">1</label>
-  <label class="checkbox-item" style="top:10%; left:20%;"><input type="checkbox" class="accident" onclick="toggleSelected(this)">2</label>
-  <label class="checkbox-item" style="top:8%; left:40%;"><input type="checkbox" class="accident" onclick="toggleSelected(this)">3</label>
-  <label class="checkbox-item" style="top:7%; left:70%;"><input type="checkbox" class="accident" onclick="toggleSelected(this)">4</label>
-  <label class="checkbox-item" style="top:12%; left:90%;"><input type="checkbox" class="accident" onclick="toggleSelected(this)">5</label>
-
-  <label class="checkbox-item" style="top:20%; left:10%;"><input type="checkbox" class="accident" onclick="toggleSelected(this)">6</label>
-  <label class="checkbox-item" style="top:18%; left:30%;"><input type="checkbox" class="accident" onclick="toggleSelected(this)">7</label>
-  <label class="checkbox-item" style="top:22%; left:50%;"><input type="checkbox" class="accident" onclick="toggleSelected(this)">8</label>
-  <label class="checkbox-item" style="top:25%; left:70%;"><input type="checkbox" class="accident" onclick="toggleSelected(this)">9</label>
-  <label class="checkbox-item" style="top:21%; left:85%;"><input type="checkbox" class="accident" onclick="toggleSelected(this)">10</label>
-
-  <label class="checkbox-item" style="top:30%; left:5%;"><input type="checkbox" class="accident" onclick="toggleSelected(this)">11</label>
-  <label class="checkbox-item" style="top:33%; left:20%;"><input type="checkbox" class="accident" onclick="toggleSelected(this)">12</label>
-  <label class="checkbox-item" style="top:28%; left:45%;"><input type="checkbox" class="accident" onclick="toggleSelected(this)">13</label>
-  <label class="checkbox-item" style="top:31%; left:65%;"><input type="checkbox" class="accident" onclick="toggleSelected(this)">14</label>
-  <label class="checkbox-item" style="top:29%; left:90%;"><input type="checkbox" class="accident" onclick="toggleSelected(this)">15</label>
-
-  <label class="checkbox-item" style="top:40%; left:15%;"><input type="checkbox" class="accident" onclick="toggleSelected(this)">16</label>
-  <label class="checkbox-item" style="top:43%; left:35%;"><input type="checkbox" class="accident" onclick="toggleSelected(this)">17</label>
-  <label class="checkbox-item" style="top:41%; left:55%;"><input type="checkbox" class="accident" onclick="toggleSelected(this)">18</label>
-  <label class="checkbox-item" style="top:44%; left:75%;"><input type="checkbox" class="accident" onclick="toggleSelected(this)">19</label>
-  <label class="checkbox-item" style="top:46%; left:90%;"><input type="checkbox" class="accident" onclick="toggleSelected(this)">20</label>
-
-  <label class="checkbox-item" style="top:55%; left:5%;"><input type="checkbox" class="accident" onclick="toggleSelected(this)">21</label>
-  <label class="checkbox-item" style="top:58%; left:25%;"><input type="checkbox" class="accident" onclick="toggleSelected(this)">22</label>
-  <label class="checkbox-item" style="top:52%; left:50%;"><input type="checkbox" class="accident" onclick="toggleSelected(this)">23</label>
-  <label class="checkbox-item" style="top:57%; left:70%;"><input type="checkbox" class="accident" onclick="toggleSelected(this)">24</label>
-  <label class="checkbox-item" style="top:54%; left:90%;"><input type="checkbox" class="accident" onclick="toggleSelected(this)">25</label>
-
-  <label class="checkbox-item" style="top:65%; left:12%;"><input type="checkbox" class="accident" onclick="toggleSelected(this)">26</label>
-  <label class="checkbox-item" style="top:68%; left:32%;"><input type="checkbox" class="accident" onclick="toggleSelected(this)">27</label>
-  <label class="checkbox-item" style="top:66%; left:55%;"><input type="checkbox" class="accident" onclick="toggleSelected(this)">28</label>
-  <label class="checkbox-item" style="top:69%; left:75%;"><input type="checkbox" class="accident" onclick="toggleSelected(this)">29</label>
-  <label class="checkbox-item" style="top:67%; left:90%;"><input type="checkbox" class="accident" onclick="toggleSelected(this)">30</label>
+<div class="price-info">
+  입찰가: 
+  <input type="number" id="bidPriceInput" value="" onchange="updateAll()" style="width:100px;"> 원 |
+  감가합계: <strong id="depreciationAmount"></strong>원 |
+  최종금액: <strong id="finalPrice"></strong>원
 </div>
 
-<!-- 초기화 버튼 -->
-<div style="text-align: center;">
-  <button id="resetButton" onclick="resetSelections()">초기화</button>
+<div class="container">
+  <img src="https://i.imgur.com/NAH6AaM.jpg" class="car-image" alt="자동차" />
+  <div class="checkbox-overlay" id="partSection">
+    <!-- 25개 부위 체크박스 -->
+    <label class="checkbox-item c1"><input type="checkbox" class="part" onclick="updateAll()"> 부위1</label>
+    <label class="checkbox-item c2"><input type="checkbox" class="part" onclick="updateAll()"> 부위2</label>
+    <label class="checkbox-item c3"><input type="checkbox" class="part" onclick="updateAll()"> 부위3</label>
+    <label class="checkbox-item c4"><input type="checkbox" class="part" onclick="updateAll()"> 휠</label>
+    <label class="checkbox-item c5"><input type="checkbox" class="part" onclick="updateAll()"> 휠</label>
+    <label class="checkbox-item c6"><input type="checkbox" class="part" onclick="updateAll()"> 부위6</label>
+    <label class="checkbox-item c7"><input type="checkbox" class="part" onclick="updateAll()"> 부위7</label>
+    <label class="checkbox-item c8"><input type="checkbox" class="part" onclick="updateAll()"> 부위8</label>
+    <label class="checkbox-item c9"><input type="checkbox" class="part" onclick="updateAll()"> 부위9</label>
+    <label class="checkbox-item c10"><input type="checkbox" class="part" onclick="updateAll()"> 부위10</label>
+    <label class="checkbox-item c11"><input type="checkbox" class="part" onclick="updateAll()"> 부위11</label>
+    <label class="checkbox-item c12"><input type="checkbox" class="part" onclick="updateAll()"> 부위12</label>
+    <label class="checkbox-item c13"><input type="checkbox" class="part" onclick="updateAll()"> 부위13</label>
+    <label class="checkbox-item c14"><input type="checkbox" class="part" onclick="updateAll()"> 부위14</label>
+    <label class="checkbox-item c15"><input type="checkbox" class="part" onclick="updateAll()"> 부위15</label>
+    <label class="checkbox-item c16"><input type="checkbox" class="part" onclick="updateAll()"> 부위16</label>
+    <label class="checkbox-item c17"><input type="checkbox" class="part" onclick="updateAll()"> 부위17</label>
+    <label class="checkbox-item c18"><input type="checkbox" class="part" onclick="updateAll()"> 부위18</label>
+    <label class="checkbox-item c19"><input type="checkbox" class="part" onclick="updateAll()"> 휠</label>
+    <label class="checkbox-item c20"><input type="checkbox" class="part" onclick="updateAll()"> 휠</label>
+    <label class="checkbox-item c21"><input type="checkbox" class="part" onclick="updateAll()"> 부위21</label>
+    <label class="checkbox-item c22"><input type="checkbox" class="part" onclick="updateAll()"> 부위22</label>
+    <label class="checkbox-item c23"><input type="checkbox" class="part" onclick="updateAll()"> 부위23</label>
+    <label class="checkbox-item c24"><input type="checkbox" class="part" onclick="updateAll()"> 부위24</label>
+    <label class="checkbox-item c25"><input type="checkbox" class="part" onclick="updateAll()"> 부위25</label>
+  </div>
+</div>
+
+<h2>사고 부위 체크</h2>
+
+<div class="container" style="position: relative;">
+  <img src="https://i.imgur.com/tBnS5DO.jpg" class="car-image" alt="사고부위 자동차">
+  <div class="checkbox-overlay" id="accidentSection">
+    <!-- 사고부위 체크박스 -->
+    <label class="checkbox-item" style="top:10%; left:20%;"><input type="checkbox" class="accident" data-rate="5" onclick="updateAll()"> 1</label>
+    <label class="checkbox-item" style="top:20%; left:30%;"><input type="checkbox" class="accident" data-rate="4" onclick="updateAll()"> 2</label>
+    <label class="checkbox-item" style="top:30%; left:40%;"><input type="checkbox" class="accident" data-rate="3" onclick="updateAll()"> 3</label>
+    <label class="checkbox-item" style="top:40%; left:50%;"><input type="checkbox" class="accident" data-rate="6" onclick="updateAll()"> 4</label>
+    <label class="checkbox-item" style="top:10%; left:70%;"><input type="checkbox" class="accident" data-rate="5" onclick="updateAll()"> 5</label>
+    <!-- 필요한 만큼 계속 추가 가능 -->
+  </div>
 </div>
 
 <script>
-// 체크박스 클릭하면 색 변경
-function toggleSelected(checkbox) {
-  const label = checkbox.parentElement;
-  if (checkbox.checked) {
-    label.classList.add('selected');
-  } else {
-    label.classList.remove('selected');
-  }
-  saveSelections();
-  updateAll();
-}
-
-// 체크한 항목 저장
-function saveSelections() {
-  const selections = [];
-  document.querySelectorAll('.accident').forEach((checkbox, idx) => {
-    if (checkbox.checked) {
-      selections.push(idx);
-    }
-  });
-  localStorage.setItem('savedSelections', JSON.stringify(selections));
-}
-
-// 페이지 로드할 때 저장된 거 복원
-function loadSelections() {
-  const saved = JSON.parse(localStorage.getItem('savedSelections')) || [];
-  document.querySelectorAll('.accident').forEach((checkbox, idx) => {
-    if (saved.includes(idx)) {
-      checkbox.checked = true;
-      checkbox.parentElement.classList.add('selected');
-    } else {
-      checkbox.checked = false;
-      checkbox.parentElement.classList.remove('selected');
-    }
-  });
-}
-
-// 초기화 버튼 누르면 모두 해제
-function resetSelections() {
-  localStorage.removeItem('savedSelections');
-  document.querySelectorAll('.accident').forEach((checkbox) => {
-    checkbox.checked = false;
-    checkbox.parentElement.classList.remove('selected');
-  });
-  updateAll();
-}
-
-// 처음 로딩할 때 복원
-window.onload = loadSelections;
-
-// 계산 업데이트 함수 (필요하면 너 계산 함수 넣으면 됨)
 function updateAll() {
-  // 감가 계산 함수 연결 부분
+  const bidPrice = Number(document.getElementById('bidPriceInput').value) || 0;
+  let partDiscount = 0;
+  let accidentDiscount = 0;
+
+  // 부위 감가 계산
+  document.querySelectorAll(".part").forEach((checkbox, index) => {
+    if (checkbox.checked) {
+      if ([3, 4, 18, 19].includes(index)) {
+        partDiscount += 100000; // 휠 감가 10만
+      } else {
+        partDiscount += 180000; // 일반 부위 감가 18만
+      }
+    }
+  });
+
+  // 사고 감가 계산
+  document.querySelectorAll(".accident").forEach((checkbox) => {
+    if (checkbox.checked) {
+      const rate = Number(checkbox.dataset.rate) || 0;
+      accidentDiscount += bidPrice * (rate / 100);
+    }
+  });
+
+  const totalDiscount = partDiscount + accidentDiscount;
+  const finalPrice = bidPrice - totalDiscount;
+
+  document.getElementById('depreciationAmount').textContent = totalDiscount.toLocaleString();
+  document.getElementById('finalPrice').textContent = finalPrice.toLocaleString();
 }
 </script>
+
+</body>
+</html>
