@@ -58,11 +58,6 @@
   최종금액: <strong id="finalPrice">0</strong>원
 </div>
 
-<div class="price-info">
-  부위 감가: <input type="number" id="partPriceInput" value="180000" style="width:80px;"> 원 |
-  휠 감가: <input type="number" id="wheelPriceInput" value="100000" style="width:80px;"> 원
-</div>
-
 <button onclick="resetAll()">모두 초기화</button>
 
 <div class="container">
@@ -169,6 +164,19 @@ function resetAll() {
   document.querySelectorAll(".checkbox-item").forEach(label => label.classList.remove('selected'));
   updateAll();
 }
+
+function formatNumber(input) {
+  // 숫자만 남기고
+  const num = input.value.replace(/[^\d]/g, '');
+  // 콤마 찍기
+  input.value = num.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+// 입찰가 입력시마다 formatNumber + updateAll 둘 다 호출
+document.getElementById('bidPriceInput').addEventListener('input', function(e) {
+  formatNumber(e.target);
+  updateAll();
+});
 </script>
 
 </body>
