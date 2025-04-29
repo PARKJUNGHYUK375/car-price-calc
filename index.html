@@ -196,7 +196,8 @@
     <img src="https://i.imgur.com/tBnS5DO.jpg" class="car-image" alt="사고부위 자동차">
     <div class="checkbox-overlay" id="accidentSection"></div>
   </div>
-<div class="section">
+
+  <div class="section">
   <h2>차량상태평가</h2>
 
   <!-- 엔진&미션 파트 -->
@@ -230,17 +231,12 @@
     <div class="item">시트 계통 (가죽, 열선, 통풍, 전동)</div>
     <div class="item">실내 상태 (냄새, 스크래치)</div>
   </div>
-<!-- 총 합계 및 버튼 -->
-<div style="margin-top: 20px;">
-  <strong>총 감가 금액: <span id="totalCost">₩0</span></strong>
-  <br><br>
-  <button onclick="saveData()">저장하기</button>
 </div>
 
 <!-- 감가 상세 내역 표시 -->
 <div style="margin-top: 30px;">
   <h3>감가 상세내역</h3>
-  <ul id="deductionDetails"></ul>
+  <ul id="deductionDetails" class="deduction-list"></ul>
 </div>
 
 <!-- 항목 템플릿 -->
@@ -475,6 +471,69 @@ function resetAll() {
 
     console.log('전송할 데이터:', JSON.stringify(data, null, 2));
     alert("저장 완료! 콘솔을 확인하세요.");
+  }
+
+    // 템플릿으로 입력창 구성
+  document.querySelectorAll('.item').forEach(originalItem => {
+    const template = document.getElementById('item-template');
+    const clone = template.content.cloneNode(true);
+
+    const nameInput = clone.querySelector('.repair-name');
+    const costInput = clone.querySelector('.repair-cost');
+    const repairCheck = clone.querySelector('.check-repair');
+
+    nameInput.value = originalItem.textContent.trim();
+
+    // 수리 필요 체크박스 제어
+    repairCheck.addEventListener('change', () => {
+      const enabled = repairCheck.checked;
+      nameInput.disabled = !enabled;
+      costInput.disabled = !enabled;
+      if (!enabled) {
+        costInput.value = "";
+        updateTotal();
+        saveData(); // 자동 업데이트
+      } else {
+        saveData(); // 자동 업데이트
+      }
+    });
+
+    // 수리비 입력 변경 시 내역 업데이트
+    costInput.addEventListener('input', () => {
+      updateTotal();
+      saveData();
+    });
+
+    originalItem.after(clone);
+  });
+
+  // 총합 계산 (표시는 하지 않음)
+  function updateTotal() {
+    let total = 0;
+    document.querySelectorAll('.repair-cost').forEach(input => {
+      if (!input.disabled && input.value) {
+        total += parseInt(input.value, 10);
+      }
+    });
+    // 총 감가금액 표시를 제거했으므로 DOM에는 반영하지 않음
+  }
+
+  // 내역 자동 표시
+  function saveData() {
+    const list = document.getElementById('deductionDetails');
+    list.innerHTML = '';
+
+    document.querySelectorAll('.item-row').forEach(row => {
+      const repair = row.querySelector('.check-repair').checked;
+      const name = row.querySelector('.repair-name').value.trim();
+      const cost = parseInt(row.querySelector('.repair-cost').value || 0, 10);
+
+      if (repair) {
+        const li = document.createElement('li');
+        li.textContent = `${name}: ₩${cost.toLocaleString()}`;
+        list.appendChild(li);
+      }
+    });
   }
   
 
