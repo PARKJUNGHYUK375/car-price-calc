@@ -182,6 +182,12 @@
      <div class="checkbox-overlay" id="accidentSection"></div>
    </div>
  </div>
+
+<h2>차량기능 평가</h2>
+
+<div id="evaluation-section">
+  <!-- 각 파트별로 구성 -->
+</div>
  
  <script>
  // 설정
@@ -333,7 +339,98 @@
      accidentSection.appendChild(label);
    });
  }
- 
+ const parts = {
+    "엔진 & 미션": [
+      "엔진오일누유",
+      "냉각수상태",
+      "호스류상태",
+      "미션오일누유",
+      "소모품(타이밍,팬벨트등등)"
+    ],
+    "엑슬 파트": [
+      "쇼버계통",
+      "구동계통",
+      "소모품관련",
+      "관절계통"
+    ],
+    "인테리어 & 전장": [
+      "유리",
+      "썬팅류",
+      "사이드미러&윈도우계통",
+      "계기판(경고등계통)",
+      "에어컨&히터",
+      "오디오계통(네비,후카,모니터상태)",
+      "시트계통(가죽,열선,통풍,전동)",
+      "실내상태(냄새,스크래치)"
+    ]
+  };
+for (let part in parts) {
+    const section = document.createElement("div");
+    section.className = "evaluation-part";
+    section.innerHTML = `<h3>${part}</h3>`;
+
+    parts[part].forEach(item => {
+      const itemDiv = document.createElement("div");
+      itemDiv.className = "item";
+      itemDiv.innerHTML = `
+        <label><input type="checkbox" class="check-ok"> ${item}</label>
+        <label>
+          <input type="checkbox" class="check-repair">
+          수리 필요
+          <input type="text" class="repair-desc" placeholder="문제 항목명 입력" disabled>
+          <input type="number" class="repair-cost" placeholder="수리비 입력" disabled> 원
+        </label>
+      `;
+      section.appendChild(itemDiv);
+    });
+
+    container.appendChild(section);
+  }
+
+  // 체크박스 이벤트 등록
+  function setupEvents() {
+    document.querySelectorAll('.check-repair').forEach(function (checkbox) {
+      checkbox.addEventListener('change', function () {
+        const item = this.closest('.item');
+        const desc = item.querySelector('.repair-desc');
+        const cost = item.querySelector('.repair-cost');
+        desc.disabled = !this.checked;
+        cost.disabled = !this.checked;
+        updateDepreciation();
+      });
+    });
+
+    document.querySelectorAll('.repair-cost').forEach(function (input) {
+      input.addEventListener('input', updateDepreciation);
+    });
+  }
+
+  function updateDepreciation() {
+    let total = 0;
+    document.querySelectorAll('.check-repair:checked').forEach(function (checkbox) {
+      const item = checkbox.closest('.item');
+      const costInput = item.querySelector('.repair-cost');
+      const cost = parseInt(costInput.value) || 0;
+      total += cost;
+    });
+    document.getElementById('total-depreciation').textContent = total.toLocaleString();
+  }
+
+  function getRepairItems() {
+    const repairs = [];
+    document.querySelectorAll('.check-repair:checked').forEach(function (checkbox) {
+      const item = checkbox.closest('.item');
+      const desc = item.querySelector('.repair-desc').value;
+      const cost = item.querySelector('.repair-cost').value;
+      repairs.push({ desc, cost });
+    });
+    return repairs;
+  }
+
+  // 이벤트 초기 설정
+  setupEvents();
+</script>
+  const container = document.getElementById("evaluation-section");
  // 초기화
  function resetAll() {
    localStorage.clear();
@@ -344,11 +441,12 @@
    updateAll();
  }
  
- // 시작
+ document.addEventListener("DOMContentLoaded", () => {
  renderCheckboxes();
  loadInputs();
  loadCheckboxState();
  updateAll();
+ });
  </script>
  
  </body>
