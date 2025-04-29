@@ -175,7 +175,7 @@
   <h3>✔️차량명 & 등급</h3>
   <input type="text" id="carName" class="input-small" placeholder="차량명 & 등급" oninput="saveInput('carName')"><br>
   <h3>✔️주행거리</h3>
-  <input type="text" id="carMileage" class="input-small" placeholder="주행거리" oninput="saveInput('carMileage')">
+  <input type="text" id="carMileage" class="input-small" placeholder="주행거리" oninput="formatInput(this); saveInput('carMileage')">
 </div>
 
 <div class="section">
@@ -311,7 +311,7 @@ function getNumericValue(value) {
 // 계산 업데이트
 function updateAll() {
   const bidPrice = getNumericValue(document.getElementById('bidPriceInput').value) || 0;
-  let partDiscount = 0, accidentDiscount = 0;
+  let partDiscount = 0, accidentDiscount = 0, repairDiscount = 0;
   const deductionDetails = [];
 
   document.querySelectorAll(".part").forEach(checkbox => {
@@ -392,6 +392,7 @@ function resetAll() {
   document.getElementById('deductionArea').innerHTML = '';
   document.getElementById('repairInputArea').innerHTML = '';
   updateAll();
+  location.reload();
 }
 
   function toggleRepairInput() {
