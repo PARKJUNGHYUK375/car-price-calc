@@ -211,27 +211,6 @@
    </div>
  </div>
  
- <div class="section">
-   <h2>☑️ 차량상태 평가</h2>
-   <h3>엔진파트</h3>
-   <h3>누유</h3>
-   <label><input type="checkbox" id="goodCondition" onchange="updateAll()"> 양호</label>
-   <label><input type="checkbox" id="needsRepair" onchange="toggleRepairInput()"> 수리</label>
- 
-   <div id="repairInputArea" style="display:none; margin-top: 10px;">
-     <input type="text" id="repairMemo" class="input-small" placeholder="수리항목" oninput="saveInput('repairMemo')"><br>
-     <input type="text" id="repairCost" class="input-small" placeholder="감가액(원)" oninput="formatInput(this); saveInput('repairCost')" onchange="updateAll()">
-   </div>
-    <h3>냉각수</h3>
-   <label><input type="checkbox" id="goodCondition" onchange="updateAll()"> 양호</label>
-   <label><input type="checkbox" id="needsRepair" onchange="toggleRepairInput()"> 수리</label>
- 
-   <div id="repairInputArea" style="display:none; margin-top: 10px;">
-     <input type="text" id="repairMemo" class="input-small" placeholder="수리항목" oninput="saveInput('repairMemo')"><br>
-     <input type="text" id="repairCost" class="input-small" placeholder="감가액(원)" oninput="formatInput(this); saveInput('repairCost')" onchange="updateAll()">
-   </div>
- </div>  
- 
  <script>
  // 설정
  const CONSTANTS = {
@@ -291,17 +270,14 @@
  
  // 불러오기
  function loadInputs() {
-   ['bidPriceInput', 'carNumber', 'carName', 'carMileage', 'exterior', 'wheelScratch', 'spareKey', 'repair', 'carAdvantage', 'repairMemo', 'repairCost', 'needsRepair']
+   ['bidPriceInput', 'carNumber', 'carName', 'carMileage', 'exterior', 'wheelScratch', 'spareKey', 'repair', 'carAdvantage']
      .forEach(id => {
        if (localStorage.getItem(id)) {
          document.getElementById(id).value = localStorage.getItem(id);
        }
      });
  }
-   if (localStorage.getItem('needsRepair') === 'true') {
-   document.getElementById('needsRepair').checked = true;
-   document.getElementById('repairInputArea').style.display = 'block';
- }
+
  function loadCheckboxState() {
    const states = JSON.parse(localStorage.getItem('checkboxStates') || '{}');
    document.querySelectorAll("input[type='checkbox']").forEach(cb => {
@@ -354,15 +330,9 @@
      }
    });
  
-   if (document.getElementById('needsRepair').checked) {
-     const repairCost = getNumericValue(document.getElementById('repairCost').value);
-     if (repairCost > 0) {
-       repairDiscount = repairCost;
-       deductionDetails.push(`수리요망 감가: -${repairCost.toLocaleString()}원`);
-     }
    }
  
-   const totalDiscount = partDiscount + accidentDiscount + repairDiscount;
+   const totalDiscount = partDiscount + accidentDiscount;
    const finalPrice = bidPrice - totalDiscount;
  
    document.getElementById('finalPrice').textContent = finalPrice.toLocaleString();
@@ -406,13 +376,6 @@
    document.getElementById('repairInputArea').innerHTML = '';
    updateAll();
    location.reload();
- }
- 
-   function toggleRepairInput() {
-   const repairChecked = document.getElementById('needsRepair').checked;
-   document.getElementById('repairInputArea').style.display = repairChecked ? 'block' : 'none';
-   saveInput('needsRepair');
-   updateAll();
  }
  
  // 시작
