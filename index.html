@@ -363,6 +363,7 @@ function resetAll() {
   document.querySelectorAll("input[type='checkbox']").forEach(cb => cb.checked = false);
   document.querySelectorAll(".checkbox-item").forEach(label => label.classList.remove('selected'));
   document.getElementById('deductionArea').innerHTML = '';
+  document.getElementById('repairInputArea').innerHTML = '';
   updateAll();
 }
 
