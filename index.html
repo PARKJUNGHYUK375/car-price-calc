@@ -257,6 +257,7 @@ function loadInputs() {
         document.getElementById(id).value = localStorage.getItem(id);
       }
     });
+}
   if (localStorage.getItem('needsRepair') === 'true') {
   document.getElementById('needsRepair').checked = true;
   document.getElementById('repairInputArea').style.display = 'block';
