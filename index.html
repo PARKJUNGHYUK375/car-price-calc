@@ -127,6 +127,22 @@
       margin-top: 10px;
       text-align: right;
     }
+     .part { margin-bottom: 30px; }
+  .item { font-weight: bold; margin: 10px 0 5px; }
+  .item-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+  }
+  input[disabled] {
+    background: #eee;
+  }
+  input[type="text"], input[type="number"] {
+    padding: 5px;
+    min-width: 160px;
+  }
     @media (max-width: 600px) {
       .price-info input, .input-small { width: 95%; }
       h2 { font-size: 18px; }
@@ -180,6 +196,62 @@
     <img src="https://i.imgur.com/tBnS5DO.jpg" class="car-image" alt="사고부위 자동차">
     <div class="checkbox-overlay" id="accidentSection"></div>
   </div>
+<div class="section">
+  <h2>차량상태평가</h2>
+
+  <!-- 엔진&미션 파트 -->
+  <div class="part">
+    <h3>엔진&미션 파트</h3>
+    <div class="item">엔진오일 누유</div>
+    <div class="item">냉각수 상태</div>
+    <div class="item">호스류 상태</div>
+    <div class="item">미션오일 누유</div>
+    <div class="item">소모품(타이밍, 팬벨트 등)</div>
+  </div>
+
+  <!-- 엑슬 파트 -->
+  <div class="part">
+    <h3>엑슬 파트</h3>
+    <div class="item">쇼버 계통</div>
+    <div class="item">구동 계통</div>
+    <div class="item">소모품 관련</div>
+    <div class="item">관절 계통</div>
+  </div>
+
+  <!-- 인테리어 & 전장 파트 -->
+  <div class="part">
+    <h3>인테리어 & 전장 파트</h3>
+    <div class="item">유리</div>
+    <div class="item">썬팅류</div>
+    <div class="item">사이드미러 & 윈도우 계통</div>
+    <div class="item">계기판 (경고등 계통)</div>
+    <div class="item">에어컨 & 히터</div>
+    <div class="item">오디오 계통 (네비, 후카, 모니터 상태)</div>
+    <div class="item">시트 계통 (가죽, 열선, 통풍, 전동)</div>
+    <div class="item">실내 상태 (냄새, 스크래치)</div>
+  </div>
+<!-- 총 합계 및 버튼 -->
+<div style="margin-top: 20px;">
+  <strong>총 감가 금액: <span id="totalCost">₩0</span></strong>
+  <br><br>
+  <button onclick="saveData()">저장하기</button>
+</div>
+
+<!-- 감가 상세 내역 표시 -->
+<div style="margin-top: 30px;">
+  <h3>감가 상세내역</h3>
+  <ul id="deductionDetails"></ul>
+</div>
+
+<!-- 항목 템플릿 -->
+<template id="item-template">
+  <div class="item-row">
+    <label><input type="checkbox" class="check-confirm"> 확인</label>
+    <label><input type="checkbox" class="check-repair"> 수리 필요</label>
+    <input type="text" class="repair-name" placeholder="항목명" disabled>
+    <input type="number" class="repair-cost" placeholder="수리비 (₩)" disabled>
+  </div>
+</template>
 </div>
 
 <script>
@@ -342,6 +414,69 @@ function resetAll() {
   document.getElementById('deductionArea').innerHTML = '';
   updateAll();
 }
+ // 템플릿으로 입력창 구성
+  document.querySelectorAll('.item').forEach(originalItem => {
+    const template = document.getElementById('item-template');
+    const clone = template.content.cloneNode(true);
+
+    const nameInput = clone.querySelector('.repair-name');
+    const costInput = clone.querySelector('.repair-cost');
+    const repairCheck = clone.querySelector('.check-repair');
+
+    nameInput.value = originalItem.textContent.trim();
+
+    // 수리 필요 체크박스 제어
+    repairCheck.addEventListener('change', () => {
+      const enabled = repairCheck.checked;
+      nameInput.disabled = !enabled;
+      costInput.disabled = !enabled;
+      if (!enabled) {
+        costInput.value = "";
+        updateTotal();
+      }
+    });
+
+    // 수리비 입력 변경 시 합계 계산
+    costInput.addEventListener('input', updateTotal);
+
+    originalItem.after(clone);
+  });
+
+  // 총합 계산
+  function updateTotal() {
+    let total = 0;
+    document.querySelectorAll('.repair-cost').forEach(input => {
+      if (!input.disabled && input.value) {
+        total += parseInt(input.value, 10);
+      }
+    });
+    document.getElementById('totalCost').textContent = `₩${total.toLocaleString()}`;
+  }
+
+  // 저장 기능
+  function saveData() {
+    const data = [];
+    const list = document.getElementById('deductionDetails');
+    list.innerHTML = '';
+
+    document.querySelectorAll('.item-row').forEach(row => {
+      const confirm = row.querySelector('.check-confirm').checked;
+      const repair = row.querySelector('.check-repair').checked;
+      const name = row.querySelector('.repair-name').value.trim();
+      const cost = parseInt(row.querySelector('.repair-cost').value || 0, 10);
+
+      if (repair) {
+        data.push({ 항목: name, 금액: cost });
+        const li = document.createElement('li');
+        li.textContent = `${name}: ₩${cost.toLocaleString()}`;
+        list.appendChild(li);
+      }
+    });
+
+    console.log('전송할 데이터:', JSON.stringify(data, null, 2));
+    alert("저장 완료! 콘솔을 확인하세요.");
+  }
+  
 
 // 시작
 renderCheckboxes();
