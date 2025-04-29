@@ -313,8 +313,6 @@ function updateAll() {
     }
   });
 
-  const totalDiscount = partDiscount + accidentDiscount + repairDiscount;
-  let repairDiscount = 0;
   if (document.getElementById('needsRepair').checked) {
     const repairCost = getNumericValue(document.getElementById('repairCost').value);
     if (repairCost > 0) {
@@ -323,7 +321,7 @@ function updateAll() {
     }
   }
 
-  
+  const totalDiscount = partDiscount + accidentDiscount + repairDiscount;
   const finalPrice = bidPrice - totalDiscount;
 
   document.getElementById('finalPrice').textContent = finalPrice.toLocaleString();
