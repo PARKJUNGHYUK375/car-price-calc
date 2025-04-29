@@ -169,28 +169,31 @@
 <div id="deductionArea" class="deduction-list"></div>
 
 <div class="section">
-  <h2>🚗 입찰차 차량정보</h2>
+  <h2>🚗 입찰 차량정보</h2>
+  <h3>✔️차량번호</h3>
   <input type="text" id="carNumber" class="input-small" placeholder="차량번호" oninput="saveInput('carNumber')"><br>
+  <h3>✔️차량명 & 등급</h3>
   <input type="text" id="carName" class="input-small" placeholder="차량명 & 등급" oninput="saveInput('carName')"><br>
+  <h3>✔️주행거리</h3>
   <input type="text" id="carMileage" class="input-small" placeholder="주행거리" oninput="saveInput('carMileage')">
 </div>
 
 <div class="section">
-  <h2>🖊️ 고객기재내용</h2>
-  <h3>외판수량</h3>
+  <h2>📝고객기재내용</h2>
+  <h3>✔️외판수량</h3>
   <input type="text" id="exterior" class="input-small" placeholder="외판" oninput="saveInput('exterior')"><br>
-  <h3>휠기스</h3>
+  <h3>✔️휠기스</h3>
   <input type="text" id="wheelScratch" class="input-small" placeholder="휠기스" oninput="saveInput('wheelScratch')"><br>
-  <h3>보조키 유/무</h3>
+  <h3>✔️보조키 유/무</h3>
   <input type="text" id="spareKey" class="input-small" placeholder="보조키" oninput="saveInput('spareKey')"><br>
-  <h3>정비요망</h3>
+  <h3>✔️정비요망</h3>
   <input type="text" id="repair" class="input-small" placeholder="정비요망" oninput="saveInput('repair')"><br>
-  <h3>차량 장단점</h3>
+  <h3>✔️차량 장단점</h3>
   <input type="text" id="carAdvantage" class="input-small" placeholder="차량장단점" oninput="saveInput('carAdvantage')">
 </div>
 
 <div class="section">
-  <h2>✅ 외관 평가</h2>
+  <h2>☑️외관 평가</h2>
   <div class="container">
     <img src="https://i.imgur.com/NAH6AaM.jpg" class="car-image" alt="자동차 외관">
     <div class="checkbox-overlay" id="partSection"></div>
@@ -198,7 +201,7 @@
 </div>
 
 <div class="section">
-  <h2>✅ 교환&판금 평가</h2>
+  <h2>☑️교환&판금 평가</h2>
   <div class="container">
     <img src="https://i.imgur.com/tBnS5DO.jpg" class="car-image" alt="사고부위 자동차">
     <div class="checkbox-overlay" id="accidentSection"></div>
@@ -206,7 +209,7 @@
 </div>
 
 <div class="section">
-  <h2>🔧 차량 상태 평가</h2>
+  <h2>☑️차량상태 평가</h2>
   <label><input type="checkbox" id="goodCondition" onchange="updateAll()"> 양호</label>
   <label><input type="checkbox" id="needsRepair" onchange="toggleRepairInput()"> 수리요망</label>
 
