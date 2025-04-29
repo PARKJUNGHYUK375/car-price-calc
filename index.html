@@ -159,9 +159,9 @@
 
 <div class="section">
   <h2>🖊️ 고객기재</h2>
-  <input type="text" id="exterior" class="input-small" placeholder="외판" oninput="saveInput('exterior')"><br>
-  <input type="text" id="wheelScratch" class="input-small" placeholder="휠기스" oninput="saveInput('wheelScratch')"><br>
-  <input type="text" id="spareKey" class="input-small" placeholder="보조키" oninput="saveInput('spareKey')"><br>
+  <input type="text" id="exterior" class="input-small" placeholder="외판" oninput="saveInput('exterior')"><br>외판
+  <input type="text" id="wheelScratch" class="input-small" placeholder="휠기스" oninput="saveInput('wheelScratch')"><br>휠기스
+  <input type="text" id="spareKey" class="input-small" placeholder="보조키" oninput="saveInput('spareKey')"><br>보조키
   <input type="text" id="repair" class="input-small" placeholder="정비요망" oninput="saveInput('repair')"><br>
   <input type="text" id="carAdvantage" class="input-small" placeholder="차량장단점" oninput="saveInput('carAdvantage')">
 </div>
@@ -204,36 +204,37 @@ const CONSTANTS = {
     "천장", "트렁크", "뒷범퍼", "사이드패널(좌)", "사이드패널(우)", "휠(FL)", "휠(FR)", "휠(RL)", "휠(RR)"
   ],
   accidentParts: [
-    { name: "프론트엔드", rate: 2, top: '10%', left: '20%' },
-    { name: "사이드", rate: 4, top: '20%', left: '30%' },
-    { name: "리어", rate: 3, top: '30%', left: '40%' },
-    { name: "하부", rate: 6, top: '40%', left: '50%' },
-    { name: "루프", rate: 5, top: '10%', left: '70%' },
-    { name: "루프", rate: 5, top: '10%', left: '70%' },
-    { name: "루프", rate: 5, top: '10%', left: '70%' },
-    { name: "루프", rate: 5, top: '10%', left: '70%' },
-    { name: "루프", rate: 5, top: '10%', left: '70%' },
-    { name: "루프", rate: 5, top: '10%', left: '70%' },
-    { name: "루프", rate: 5, top: '10%', left: '70%' },
-    { name: "루프", rate: 5, top: '10%', left: '70%' },
-    { name: "루프", rate: 5, top: '10%', left: '70%' },
-    { name: "루프", rate: 5, top: '10%', left: '70%' },
-    { name: "루프", rate: 5, top: '10%', left: '70%' },
-    { name: "루프", rate: 5, top: '10%', left: '70%' },
-    { name: "루프", rate: 5, top: '10%', left: '70%' },
-    { name: "루프", rate: 5, top: '10%', left: '70%' },
-    { name: "루프", rate: 5, top: '10%', left: '70%' },
-    { name: "루프", rate: 5, top: '10%', left: '70%' },
-    { name: "루프", rate: 5, top: '10%', left: '70%' },
-    { name: "루프", rate: 5, top: '10%', left: '70%' },
-    { name: "루프", rate: 5, top: '10%', left: '70%' },
-    { name: "루프", rate: 5, top: '10%', left: '70%' },
-    { name: "루프", rate: 5, top: '10%', left: '70%' },
-    { name: "루프", rate: 5, top: '10%', left: '70%' },
-    { name: "루프", rate: 5, top: '10%', left: '70%' },
-    { name: "루프", rate: 5, top: '10%', left: '70%' },
-    { name: "루프", rate: 5, top: '10%', left: '70%' },
-    { name: "루프", rate: 5, top: '10%', left: '70%' }
+    { name: "휀다(좌)", rate: 2, top: '10%', left: '20%' },
+    { name: "휀다(우)", rate: 4, top: '20%', left: '30%' },
+    { name: "휀다(좌)", rate: 3, top: '30%', left: '40%' },
+    { name: "휀다(우)", rate: 6, top: '40%', left: '50%' },
+    { name: "앞문(좌)", rate: 5, top: '10%', left: '70%' },
+    { name: "앞문(우)", rate: 5, top: '10%', left: '70%' },
+    { name: "뒷문(좌)", rate: 5, top: '10%', left: '70%' },
+    { name: "뒷문(우)", rate: 5, top: '10%', left: '70%' },
+    { name: "사이드패널(좌)", rate: 5, top: '10%', left: '70%' },
+    { name: "사이드패널(우)", rate: 5, top: '10%', left: '70%' },
+    { name: "필러패널(좌)", rate: 5, top: '10%', left: '70%' },
+    { name: "필러패널(우)", rate: 5, top: '10%', left: '70%' },
+    { name: "휀다(좌)", rate: 5, top: '10%', left: '70%' },
+    { name: "휀다(우)", rate: 5, top: '10%', left: '70%' },
+    { name: "프론트패널", rate: 5, top: '10%', left: '70%' },
+    { name: "리어패널", rate: 5, top: '10%', left: '70%' },
+    { name: "인사이드(좌)", rate: 5, top: '10%', left: '70%' },
+    { name: "인사이드(우)", rate: 5, top: '10%', left: '70%' },
+    { name: "사이드멤버(좌)", rate: 5, top: '10%', left: '70%' },
+    { name: "사이드멤버(우)", rate: 5, top: '10%', left: '70%' },
+    { name: "휠하우스(좌)", rate: 5, top: '10%', left: '70%' },
+    { name: "휠하우스(우)", rate: 5, top: '10%', left: '70%' },
+    { name: "크로스멤버", rate: 5, top: '10%', left: '70%' },
+    { name: "대쉬패널", rate: 5, top: '10%', left: '70%' },
+    { name: "플로어패널", rate: 5, top: '10%', left: '70%' },
+    { name: "패키지트레이", rate: 5, top: '10%', left: '70%' },
+    { name: "휠하우스(좌)", rate: 5, top: '10%', left: '70%' },
+    { name: "휠하우스(우)", rate: 5, top: '10%', left: '70%' },
+    { name: "사이드멤버(좌)", rate: 5, top: '10%', left: '70%' },
+    { name: "사이드멤버(우)", rate: 5, top: '10%', left: '70%' },
+    { name: "트렁크플로어", rate: 5, top: '10%', left: '70%' }
   ]
 };
 
