@@ -182,6 +182,17 @@
   </div>
 </div>
 
+<div class="section">
+  <h2>🔧 차량 상태 평가</h2>
+  <label><input type="checkbox" id="goodCondition" onchange="updateAll()"> 양호</label>
+  <label><input type="checkbox" id="needsRepair" onchange="toggleRepairInput()"> 수리요망</label>
+
+  <div id="repairInputArea" style="display:none; margin-top: 10px;">
+    <input type="text" id="repairMemo" class="input-small" placeholder="수리 항목 메모" oninput="saveInput('repairMemo')"><br>
+    <input type="text" id="repairCost" class="input-small" placeholder="수리 예상 감가액(원)" oninput="formatInput(this); saveInput('repairCost')" onchange="updateAll()">
+  </div>
+</div>  
+
 <script>
 // 설정
 const CONSTANTS = {
@@ -240,7 +251,7 @@ function saveCheckboxState() {
 
 // 불러오기
 function loadInputs() {
-  ['bidPriceInput', 'carNumber', 'carName', 'carMileage', 'exterior', 'wheelScratch', 'spareKey', 'repair', 'carAdvantage']
+  ['bidPriceInput', 'carNumber', 'carName', 'carMileage', 'exterior', 'wheelScratch', 'spareKey', 'repair', 'carAdvantage', 'repairMemo', 'repairCost', 'needsRepair']
     .forEach(id => {
       if (localStorage.getItem(id)) {
         document.getElementById(id).value = localStorage.getItem(id);
@@ -299,7 +310,17 @@ function updateAll() {
     }
   });
 
-  const totalDiscount = partDiscount + accidentDiscount;
+  const totalDiscount = partDiscount + accidentDiscount + repairDiscount;
+  let repairDiscount = 0;
+  if (document.getElementById('needsRepair').checked) {
+    const repairCost = getNumericValue(document.getElementById('repairCost').value);
+    if (repairCost > 0) {
+      repairDiscount = repairCost;
+      deductionDetails.push(`수리요망 감가: -${repairCost.toLocaleString()}원`);
+    }
+  }
+
+  
   const finalPrice = bidPrice - totalDiscount;
 
   document.getElementById('finalPrice').textContent = finalPrice.toLocaleString();
@@ -340,6 +361,13 @@ function resetAll() {
   document.querySelectorAll("input[type='checkbox']").forEach(cb => cb.checked = false);
   document.querySelectorAll(".checkbox-item").forEach(label => label.classList.remove('selected'));
   document.getElementById('deductionArea').innerHTML = '';
+  updateAll();
+}
+
+  function toggleRepairInput() {
+  const repairChecked = document.getElementById('needsRepair').checked;
+  document.getElementById('repairInputArea').style.display = repairChecked ? 'block' : 'none';
+  saveInput('needsRepair');
   updateAll();
 }
 
