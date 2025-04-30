@@ -188,6 +188,7 @@
   width: 100%;
   text-align: right;
 }
+       
 
       @media (max-width: 600px) {
         .price-info input, .input-small { width: 95%; }
@@ -205,7 +206,7 @@
         display: flex;
         align-items: center;
         gap: 8px;
-        justify-content: left;
+        justify-content: left 30%;
       }
         .checkbox-item { font-size: 11px; padding: 5px 6px; }
         button { font-size: 14px; padding: 8px 20px; }
@@ -230,22 +231,22 @@
   
   <div class="section">
     <h2>차량정보🚗</h2>
-    <h4>차량번호</h4><input type="text" id="carNumber" class="input-small" placeholder="차량번호" oninput="saveInput('carNumber')"><br>
-    <h4>차량명&등급</h4><input type="text" id="carName" class="input-small" placeholder="차량명 & 등급" oninput="saveInput('carName')"><br>
-    <h4>주행거리</h4><input type="text" id="carMileage" class="input-small" placeholder="주행거리" oninput="saveInput('carMileage')">
+    <h4>차량번호</h4><input type="text" id="carNumber" class="input-small" placeholder="차량번호 입력" oninput="saveInput('carNumber')"><br>
+    <h4>차량명&등급</h4><input type="text" id="carName" class="input-small" placeholder="차량명 & 등급 입력" oninput="saveInput('carName')"><br>
+    <h4>주행거리</h4><input type="text" id="carMileage" class="input-small" placeholder="주행거리 입력" oninput="saveInput('carMileage')">
   </div>
   
   <div class="section">
-    <h2> 고객기재🔍</h2>
-    <h4>외판</h4><input type="text" id="exterior" class="input-small" placeholder="외판" oninput="saveInput('exterior')"><br>
-    <h4>휠기스</h4><input type="text" id="wheelScratch" class="input-small" placeholder="휠기스" oninput="saveInput('wheelScratch')"><br>
-    <h4>보조키</h4><input type="text" id="spareKey" class="input-small" placeholder="보조키" oninput="saveInput('spareKey')"><br>
+    <h2>고객기재🔍</h2>
+    <h4>외판</h4><input type="text" id="exterior" class="input-small" placeholder="외판수량" oninput="saveInput('exterior')"><br>
+    <h4>휠기스</h4><input type="text" id="wheelScratch" class="input-small" placeholder="휠기스수량" oninput="saveInput('wheelScratch')"><br>
+    <h4>보조키</h4><input type="text" id="spareKey" class="input-small" placeholder="보조키 유/무" oninput="saveInput('spareKey')"><br>
     <h4>정비요망</h4><input type="text" id="repair" class="input-small" placeholder="정비요망" oninput="saveInput('repair')"><br>
-    <h4>차량 장단점</h4><input type="text" id="carAdvantage" class="input-small" placeholder="차량장단점" oninput="saveInput('carAdvantage')">
+    <h4>차량 장단점</h4><input type="text" id="carAdvantage" class="input-small" placeholder="차량장단점" oninput="resizeInput(this);"saveInput('carAdvantage')">
   </div>
   
   <div class="section">
-    <h2>✅ 외관 상태</h2>
+    <h2>외관 상태</h2>
     <div class="container">
       <img src="https://i.imgur.com/NAH6AaM.jpg" class="car-image" alt="자동차 외관">
       <div class="checkbox-overlay" id="partSection"></div>
@@ -253,7 +254,7 @@
   </div>
   
   <div class="section">
-    <h2>✅ 사고ㆍ교환ㆍ수리 이력</h2>
+    <h2>사고ㆍ교환ㆍ수리 이력</h2>
     <div class="container">
       <img src="https://i.imgur.com/tBnS5DO.jpg" class="car-image" alt="사고부위 자동차">
       <div class="checkbox-overlay" id="accidentSection"></div>
@@ -522,6 +523,10 @@
     document.querySelectorAll(".checkbox-item").forEach(label => label.classList.remove('selected'));
     document.getElementById('deductionArea').innerHTML = '';
     updateAll();
+  }
+   
+      function resizeInput(input) {
+    input.style.width = (input.value.length + 1) + 'ch';  // 문자 수에 맞게 크기 조정
   }
   
   // 시작
