@@ -188,6 +188,16 @@
   width: 100%;
   text-align: right;
 }
+        .icon {
+      width: 50px;
+      height: 50px;
+      display: inline-block;
+      margin: 10px;
+      background-size: contain;
+      background-repeat: no-repeat;
+    }
+    .icon1 { background-image: url('https://imgur.com/a/I7satEM.png'); }
+    
        
 
       @media (max-width: 600px) {
@@ -232,7 +242,11 @@
   
   <div class="section">
     <h2>차량정보🚗</h2>
-    <h4>차량번호</h4><input type="text" id="carNumber" class="input-small" placeholder="차량번호 입력" oninput="saveInput('carNumber')"><br>
+    <h4>차량번호</h4>
+<div style="display: flex; align-items: center; gap: 8px;">
+  <input type="text" id="carNumber" class="input-small" placeholder="차량번호 입력" oninput="saveInput('carNumber')">
+  <img src="https://i.imgur.com/abcd123.png" alt="차량 아이콘" style="width: 24px; height: 24px;">
+</div>
     <h4>차량명&등급</h4><input type="text" id="carName" class="input-small" placeholder="차량명 & 등급 입력" oninput="saveInput('carName')"><br>
     <h4>주행거리</h4><input type="text" id="carMileage" class="input-small" placeholder="주행거리 입력" oninput="saveInput('carMileage')">
   </div>
