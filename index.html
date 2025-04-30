@@ -209,9 +209,11 @@
   <div class="function-category">
     <h3>정비 항목</h3>
      
-    <div class="function-item"><input type="checkbox" data-name="엔진오일" onchange="updateAll()"> 엔진오일 
-        <input type="text" placeholder="수리내용">
-        <input type="text" class="function-price" oninput="formatInput(this); updateAll()" placeholder="금액(원)"></div>
+  <div class="function-item">
+  <input type="checkbox" data-name="엔진오일" onchange="updateAll()"> 엔진오일 
+  <input type="text" class="function-price" data-key="엔진오일-price" oninput="formatInput(this); saveInput('엔진오일-price'); updateAll()" placeholder="금액(원)">
+  <input type="text" class="function-desc" data-key="엔진오일-desc" oninput="saveInput('엔진오일-desc'); updateAll()" placeholder="수리내용">
+</div>
     <div class="function-item"><input type="checkbox" data-name="냉각수계통" onchange="updateAll()"> 냉각수계통 <input type="text" class="function-price" oninput="formatInput(this); updateAll()" placeholder="금액(원)"></div>
     <div class="function-item"><input type="checkbox" data-name="호스류계통" onchange="updateAll()"> 호스류계통 <input type="text" class="function-price" oninput="formatInput(this); updateAll()" placeholder="금액(원)"></div>
     <div class="function-item"><input type="checkbox" data-name="소모품계통(정비)" onchange="updateAll()"> 소모품계통 <input type="text" class="function-price" oninput="formatInput(this); updateAll()" placeholder="금액(원)"></div>
@@ -306,7 +308,7 @@
   const keys = [
     'bidPriceInput', 'carNumber', 'carName', 'carMileage',
     'exterior', 'wheelScratch', 'spareKey', 'repair', 'carAdvantage',
-    '오일류계통-price', '오일류계통-desc'
+    '엔진오일-price', '엔진오일-desc'
   ];
   keys.forEach(id => {
     const el = document.querySelector(`[data-key="${id}"]`);
