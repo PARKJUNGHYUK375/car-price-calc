@@ -363,15 +363,23 @@
   const checkbox = item.querySelector('input[type="checkbox"]');
   const name = checkbox.dataset.name;
   const priceInput = item.querySelector('.function-price');
-          localStorage.setItem(`function-price-${index}`, priceInput.value);
   const price = getNumericValue(priceInput.value);
-  const saved = localStorage.getItem(`function-price-${index}`);
-   
-  if (checkbox.checked && price > 0) {
+    if (checkbox.checked && price > 0) {
     functionDiscount += price;
     deductionDetails.push(`${name}: -${price.toLocaleString()}원`);
-    (saved) item.querySelector('.function-price').value = saved;
+    
   }
+});
+      // 저장할 때
+document.querySelectorAll('.function-item').forEach((item, index) => {
+  const priceInput = item.querySelector('.function-price');
+  localStorage.setItem(`function-price-${index}`, priceInput.value);
+});
+
+// 복원할 때
+document.querySelectorAll('.function-item').forEach((item, index) => {
+  const saved = localStorage.getItem(`function-price-${index}`);
+  if (saved) item.querySelector('.function-price').value = saved;
 });
     const totalDiscount = partDiscount + accidentDiscount + functionDiscount;
     const finalPrice = bidPrice - totalDiscount;
