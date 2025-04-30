@@ -208,7 +208,9 @@
 
   <div class="function-category">
     <h3>정비 항목</h3>
-    <div class="function-item"><input type="checkbox" data-name="오일류계통" onchange="updateAll()"> 오일류계통 <input type="text" class="function-price" oninput="formatInput(this); updateAll()" placeholder="금액(원)"></div>
+     <input type="checkbox" data-name="오일류계통" onchange="updateAll()"> 오일류계통 
+  <input type="text" class="function-price" data-key="오일류계통-price" oninput="formatInput(this); saveInput('오일류계통-price'); updateAll()" placeholder="금액(원)">
+  <input type="text" class="function-desc" data-key="오일류계통-desc" oninput="saveInput('오일류계통-desc'); updateAll()" placeholder="수리내용">
     <div class="function-item"><input type="checkbox" data-name="냉각수계통" onchange="updateAll()"> 냉각수계통 <input type="text" class="function-price" oninput="formatInput(this); updateAll()" placeholder="금액(원)"></div>
     <div class="function-item"><input type="checkbox" data-name="호스류계통" onchange="updateAll()"> 호스류계통 <input type="text" class="function-price" oninput="formatInput(this); updateAll()" placeholder="금액(원)"></div>
     <div class="function-item"><input type="checkbox" data-name="소모품계통(정비)" onchange="updateAll()"> 소모품계통 <input type="text" class="function-price" oninput="formatInput(this); updateAll()" placeholder="금액(원)"></div>
@@ -300,12 +302,12 @@
   
   // 불러오기
   function loadInputs() {
-    ['bidPriceInput', 'carNumber', 'carName', 'carMileage', 'exterior', 'wheelScratch', 'spareKey', 'repair', 'carAdvantage']
-      .forEach(id => {
-        if (localStorage.getItem(id)) {
-          document.getElementById(id).value = localStorage.getItem(id);
-        }
-      });
+    ['bidPriceInput', 'carNumber', 'carName', 'carMileage', 'exterior', 'wheelScratch', 'spareKey', 'repair', 'carAdvantage', '오일류계통-price', '오일류계통-desc']
+       .forEach(id => {
+    if (localStorage.getItem(id)) {
+      document.querySelector(`[data-key="${id}"]`).value = localStorage.getItem(id);
+    }
+  });
   }
   function loadCheckboxState() {
     const states = JSON.parse(localStorage.getItem('checkboxStates') || '{}');
@@ -363,11 +365,14 @@
   const checkbox = item.querySelector('input[type="checkbox"]');
   const name = checkbox.dataset.name;
   const priceInput = item.querySelector('.function-price');
+  const descInput = item.querySelector('.function-desc');
   const price = getNumericValue(priceInput.value);
+  const desc = descInput?.value || '';
 
   if (checkbox.checked && price > 0) {
     functionDiscount += price;
-    deductionDetails.push(`${name}: -${price.toLocaleString()}원`);
+    const label = desc ? `${name} - ${desc}: -${price.toLocaleString()}원` : `${name}: -${price.toLocaleString()}원`;
+    deductionDetails.push(label);
   }
 });
     const totalDiscount = partDiscount + accidentDiscount + functionDiscount;
