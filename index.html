@@ -378,18 +378,14 @@
 
   // 저장 처리
  localStorage.setItem(`function-price-${index}`, priceInput.value);
-  if (detailInput) {
-    localStorage.setItem(`function-detail-${index}`, detailInput.value);
+ 
   }
 });
 
 
     const totalDiscount = partDiscount + accidentDiscount + functionDiscount;
     const finalPrice = bidPrice - totalDiscount;
-    const detailInput = item.querySelector('.function-detail');
-     if (detailInput) {
-  localStorage.setItem(`function-detail-${index}`, detailInput.value);
-     }
+    
     document.getElementById('finalPrice').textContent = finalPrice.toLocaleString();
     document.getElementById('deductionArea').innerHTML = deductionDetails.length
       ? `<h3>감가 세부내역</h3><ul>${deductionDetails.map(d => `<li>${d}</li>`).join('')}</ul><div class="deduction-total">감가 총합계: -${totalDiscount.toLocaleString()}원</div>`
