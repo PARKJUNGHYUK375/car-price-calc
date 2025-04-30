@@ -140,14 +140,33 @@
 }
 .function-item {
   display: flex;
-  gap: 10px;
   align-items: center;
-  margin-bottom: 8px;
   justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+  flex-wrap: wrap; /* 모바일 대응 */
 }
+
+.function-item input[type="checkbox"] {
+  width: 20px;
+  flex-shrink: 0;
+}
+
 .function-item input[type="text"] {
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.function-item input.function-desc {
+  flex: 1;
+  min-width: 120px;
+}
+
+.function-item input.function-price {
   width: 100px;
   text-align: right;
+  flex-shrink: 0;
 }
 
       @media (max-width: 600px) {
