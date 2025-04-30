@@ -452,6 +452,53 @@ for (let part in parts) {
  loadCheckboxState();
  updateAll();
  });
+
+   function renderEvaluation() {
+  for (const [title, items] of Object.entries(parts)) {
+    const section = document.createElement('div');
+    section.className = 'deduction-list';
+    const h3 = document.createElement('h3');
+    h3.textContent = title;
+    section.appendChild(h3);
+
+    items.forEach(name => {
+      const row = document.createElement('div');
+      row.style.display = 'flex';
+      row.style.alignItems = 'center';
+      row.style.gap = '8px';
+      row.style.marginBottom = '6px';
+
+      const check = document.createElement('input');
+      check.type = 'checkbox';
+      check.dataset.name = name;
+      check.onchange = saveCheckboxState;
+
+      const label = document.createElement('label');
+      label.textContent = name;
+
+      const repairCheck = document.createElement('input');
+      repairCheck.type = 'checkbox';
+      repairCheck.title = '수리 필요';
+
+      const costInput = document.createElement('input');
+      costInput.type = 'text';
+      costInput.placeholder = '수리비';
+      costInput.style.width = '80px';
+      costInput.oninput = () => formatInput(costInput);
+
+      row.append(check, label, repairCheck, costInput);
+      section.appendChild(row);
+    });
+
+    container.appendChild(section);
+  }
+}
+
+// 실행
+renderEvaluation();
+loadInputs();
+loadCheckboxState();
+updateAll();
  </script>
  
  </body>
