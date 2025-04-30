@@ -276,10 +276,10 @@
   <div class="function-category">
     <h3>하체 Part</h3>
     <div class="function-item"><input type="checkbox" data-name="쇼버" onchange="updateAll()"> 쇼버 <input type="text" class="function-desc" data-key="쇼버-desc" oninput="saveInput('쇼버-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="쇼버-price" oninput="formatInput(this); saveInput('쇼버-price'); updateAll()" placeholder="금액(원)"></div>
-    <div class="function-item">
-  <label style="display: flex; align-items: flex-start; font-size: 12px;">
+    <div class="function-item" style="display: flex; align-items: center; gap: 10px;">
+  <label style="display: flex; align-items: center; font-size: 12px; white-space: nowrap;">
     <input type="checkbox" data-name="서스펜션" onchange="updateAll()" style="margin-right: 6px;">
-    <span>
+    <span style="line-height: 1.2;">
       서스펜션<br>(암,링크)
     </span>
   </label><input type="text" class="function-desc" data-key="서스펜션-desc" oninput="saveInput('서스펜션-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="서스펜션-price" oninput="formatInput(this); saveInput('서스펜션-price'); updateAll()" placeholder="금액(원)"></div>
