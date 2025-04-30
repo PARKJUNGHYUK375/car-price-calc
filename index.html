@@ -144,8 +144,17 @@
   align-items: center;
   gap: 8px;
   margin-bottom: 10px;
+  word-break: break-word;
 }
 
+.function-item label,
+.function-item span,
+.function-item {
+  font-size: 1rem;
+  line-height: 1.4;
+  word-break: keep-all;
+  white-space: normal;
+}
 .function-item input[type="checkbox"] {
   justify-self: center;
 }
