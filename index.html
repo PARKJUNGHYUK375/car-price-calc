@@ -302,13 +302,18 @@
   
   // 불러오기
   function loadInputs() {
-    ['bidPriceInput', 'carNumber', 'carName', 'carMileage', 'exterior', 'wheelScratch', 'spareKey', 'repair', 'carAdvantage', '오일류계통-price', '오일류계통-desc']
-       .forEach(id => {
-    if (localStorage.getItem(id)) {
-      document.querySelector(`[data-key="${id}"]`).value = localStorage.getItem(id);
+  const keys = [
+    'bidPriceInput', 'carNumber', 'carName', 'carMileage',
+    'exterior', 'wheelScratch', 'spareKey', 'repair', 'carAdvantage',
+    '오일류계통-price', '오일류계통-desc'
+  ];
+  keys.forEach(id => {
+    const el = document.querySelector(`[data-key="${id}"]`);
+    if (el && localStorage.getItem(id)) {
+      el.value = localStorage.getItem(id);
     }
   });
-  }
+}
   function loadCheckboxState() {
     const states = JSON.parse(localStorage.getItem('checkboxStates') || '{}');
     document.querySelectorAll("input[type='checkbox']").forEach(cb => {
@@ -361,18 +366,18 @@
       }
     });
   
-      document.querySelectorAll('.function-item').forEach(item => {
+    document.querySelectorAll('.function-item').forEach(item => {
   const checkbox = item.querySelector('input[type="checkbox"]');
   const name = checkbox.dataset.name;
   const priceInput = item.querySelector('.function-price');
   const descInput = item.querySelector('.function-desc');
-  const price = getNumericValue(priceInput.value);
+  const price = getNumericValue(priceInput?.value || '');
   const desc = descInput?.value || '';
 
   if (checkbox.checked && price > 0) {
     functionDiscount += price;
-    const label = desc ? `${name} - ${desc}: -${price.toLocaleString()}원` : `${name}: -${price.toLocaleString()}원`;
-    deductionDetails.push(label);
+    const detail = desc ? `${name} - ${desc}: -${price.toLocaleString()}원` : `${name}: -${price.toLocaleString()}원`;
+    deductionDetails.push(detail);
   }
 });
     const totalDiscount = partDiscount + accidentDiscount + functionDiscount;
