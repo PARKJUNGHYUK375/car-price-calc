@@ -144,10 +144,26 @@
   align-items: center;
   gap: 8px;
   margin-bottom: 10px;
-  font-size: clamp(12px, 2.5vw, 16px);
-  word-break: keep-all;
-  white-space: normal;
+}
 
+.function-item input[type="checkbox"] {
+  justify-self: center;
+}
+
+.function-item input[type="text"] {
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.function-item input.function-desc {
+  width: 100%;
+}
+
+.function-item input.function-price {
+  width: 100%;
+  text-align: right;
 }
 
 .function-item input[type="checkbox"] {
