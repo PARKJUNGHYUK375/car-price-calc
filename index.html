@@ -275,44 +275,47 @@
  
  // 계산 업데이트
  function updateAll() {
-   const bidPrice = getNumericValue(document.getElementById('bidPriceInput').value) || 0;
-   let partDiscount = 0, accidentDiscount = 0;
-   const deductionDetails = [];
- 
-   document.querySelectorAll(".part").forEach(checkbox => {
-     const label = checkbox.parentNode;
-     if (checkbox.checked) {
-       const name = checkbox.dataset.name;
-       const discount = name.includes('휠') ? CONSTANTS.wheelPrice : CONSTANTS.partPrice;
-       partDiscount += discount;
-       deductionDetails.push(`${name}: -${discount.toLocaleString()}원`);
-       label.classList.add('selected');
-     } else {
-       label.classList.remove('selected');
-     }
-   });
- 
-   document.querySelectorAll(".accident").forEach(checkbox => {
-     const label = checkbox.parentNode;
-     if (checkbox.checked) {
-       const name = checkbox.dataset.name;
-       const rate = Number(checkbox.dataset.rate);
-       const discount = bidPrice * (rate / 100);
-       accidentDiscount += discount;
-       deductionDetails.push(`${name} 사고감가: -${discount.toLocaleString()}원`);
-       label.classList.add('selected');
-     } else {
-       label.classList.remove('selected');
-     }
-   });
- 
-   const totalDiscount = partDiscount + accidentDiscount;
-   const finalPrice = bidPrice - totalDiscount;
- 
-   document.getElementById('finalPrice').textContent = finalPrice.toLocaleString();
-   document.getElementById('deductionArea').innerHTML = deductionDetails.length
-     ? `<h3>감가 세부내역</h3><ul>${deductionDetails.map(d => `<li>${d}</li>`).join('')}</ul><div class="deduction-total">감가 총합계: -${totalDiscount.toLocaleString()}원</div>`
-     : '';
+  const expectedPrice = getNumericValue(document.getElementById("expectedPrice").value);
+
+  // 교환/판금 감가 계산
+  let partDiscount = 0;
+  document.querySelectorAll("input[type='checkbox']:checked").forEach(checkbox => {
+    partDiscount += parseInt(checkbox.value);
+  });
+
+  // 사고유무 감가 계산
+  let accidentDiscount = 0;
+  const accidentChecks = document.getElementsByName("accident");
+  for (const check of accidentChecks) {
+    if (check.checked) {
+      accidentDiscount += parseInt(check.value);
+    }
+  }
+
+  // 수리비 총합 계산
+  let repairCost = 0;
+  document.querySelectorAll(".repair-cost").forEach(input => {
+    const value = getNumericValue(input.value);
+    if (!isNaN(value)) {
+      repairCost += value;
+    }
+  });
+
+  // 전체 감가 총합
+  const totalDiscount = partDiscount + accidentDiscount + repairCost;
+  const finalPrice = expectedPrice - totalDiscount;
+
+  // 감가 내역 표시
+  const deductionDetails = [];
+  if (partDiscount > 0) deductionDetails.push(`판금/교환 감가: -${partDiscount.toLocaleString()}원`);
+  if (accidentDiscount > 0) deductionDetails.push(`사고유무 감가: -${accidentDiscount.toLocaleString()}원`);
+  if (repairCost > 0) deductionDetails.push(`기능 수리비: -${repairCost.toLocaleString()}원`);
+  document.getElementById("deductionDetails").innerHTML = deductionDetails.join("<br>");
+
+  // 최종금액 출력
+  document.getElementById("finalPrice").innerText = `${finalPrice.toLocaleString()}원`;
+}
+
  
    saveCheckboxState();
  }
