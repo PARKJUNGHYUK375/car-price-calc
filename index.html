@@ -294,15 +294,18 @@
   
   // 입력 저장
   function saveInput(id) {
-    localStorage.setItem(id, document.getElementById(id).value);
-      const keys = [
-    'bidPriceInput', 'carNumber', 'carName', 'carMileage',
-    'exterior', 'wheelScratch', 'spareKey', 'repair', 'carAdvantage',
-    '엔진오일-price', '엔진오일-desc'];
+  // 기존 요소들 저장
+  const element = document.getElementById(id);
+  if (element) {
+    localStorage.setItem(id, element.value);
+  }
 
-       keys.forEach(key => {
-    const value = document.getElementById(key) ? document.getElementById(key).value : '';
-    localStorage.setItem(key, value);
+  // 모든 function-price 저장
+  document.querySelectorAll('.function-price, .function-desc').forEach(input => {
+    const key = input.dataset.key;
+    if (key) {
+      localStorage.setItem(key, input.value);
+    }
   });
 }
   function saveCheckboxState() {
@@ -315,15 +318,23 @@
   
   // 불러오기
   function loadInputs() {
-  const keys = [
+  // 기본 항목 로딩
+  const baseKeys = [
     'bidPriceInput', 'carNumber', 'carName', 'carMileage',
-    'exterior', 'wheelScratch', 'spareKey', 'repair', 'carAdvantage',
-    '엔진오일-price', '엔진오일-desc'
+    'exterior', 'wheelScratch', 'spareKey', 'repair', 'carAdvantage'
   ];
-  keys.forEach(id => {
-    const el = document.querySelector(`[data-key="${id}"]`);
+  baseKeys.forEach(id => {
+    const el = document.getElementById(id);
     if (el && localStorage.getItem(id)) {
       el.value = localStorage.getItem(id);
+    }
+  });
+
+  // function 항목 로딩
+  document.querySelectorAll('.function-price, .function-desc').forEach(input => {
+    const key = input.dataset.key;
+    if (key && localStorage.getItem(key)) {
+      input.value = localStorage.getItem(key);
     }
   });
 }
