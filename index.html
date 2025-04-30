@@ -326,11 +326,12 @@
   
   // 숫자 추출
   function getNumericValue(value) {
-    return Number(value.replaceAll(',', '')) || 0;
+    return Number(value.replaceAll(/,/g, '')) || 0;
   }
   
   // 계산 업데이트
   function updateAll() {
+      console.log("updateAll 실행됨 ✅"); // 이거 추가
     const bidPrice = getNumericValue(document.getElementById('bidPriceInput').value) || 0;
     let partDiscount = 0, accidentDiscount = 0, functionDiscount = 0;
     const deductionDetails = [];
