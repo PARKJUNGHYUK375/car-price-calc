@@ -178,6 +178,22 @@
       <img src="https://i.imgur.com/tBnS5DO.jpg" class="car-image" alt="사고부위 자동차">
       <div class="checkbox-overlay" id="accidentSection"></div>
     </div>
+
+      <div class="section">
+  <h2>🛠️ 차량 기능 평가</h2>
+
+  <h3>엔진 & 미션</h3>
+  <label><input type="checkbox" class="function-item" data-name="엔진오일누유" onchange="saveFunctionState()"> 엔진오일누유 </label>
+  <input type="text" class="function-price" data-name="엔진오일누유" placeholder="수리비(원)" oninput="formatInput(this); saveFunctionState()"><br>
+
+  <label><input type="checkbox" class="function-item" data-name="냉각수상태" onchange="saveFunctionState()"> 냉각수상태 </label>
+  <input type="text" class="function-price" data-name="냉각수상태" placeholder="수리비(원)" oninput="formatInput(this); saveFunctionState()"><br>
+
+  <label><input type="checkbox" class="function-item" data-name="에어컨작동" onchange="saveFunctionState()"> 에어컨작동 </label>
+  <input type="text" class="function-price" data-name="에어컨작동" placeholder="수리비(원)" oninput="formatInput(this); saveFunctionState()"><br>
+</div>
+
+      
   </div>
   
   <script>
@@ -296,6 +312,19 @@
         label.classList.remove('selected');
       }
     });
+
+      // 기능 평가 감가 계산
+document.querySelectorAll('.function-item').forEach(cb => {
+  const name = cb.dataset.name;
+  const priceInput = document.querySelector(`.function-price[data-name="${name}"]`);
+  const price = getNumericValue(priceInput.value);
+
+  if (cb.checked && price > 0) {
+    totalDiscount += price;
+    deductionDetails.push(`${name}: -${price.toLocaleString()}원`);
+  }
+});
+
   
     const totalDiscount = partDiscount + accidentDiscount;
     const finalPrice = bidPrice - totalDiscount;
@@ -334,18 +363,45 @@
   // 초기화
   function resetAll() {
     localStorage.clear();
+      localStorage.removeItem('functionEvaluation');
+
     document.querySelectorAll("input[type='text']").forEach(input => input.value = '');
     document.querySelectorAll("input[type='checkbox']").forEach(cb => cb.checked = false);
     document.querySelectorAll(".checkbox-item").forEach(label => label.classList.remove('selected'));
     document.getElementById('deductionArea').innerHTML = '';
     updateAll();
   }
+      function saveFunctionState() {
+  const data = {};
+  document.querySelectorAll('.function-item').forEach(cb => {
+    const name = cb.dataset.name;
+    const input = document.querySelector(`.function-price[data-name="${name}"]`);
+    data[name] = {
+      checked: cb.checked,
+      price: input.value
+    };
+  });
+  localStorage.setItem('functionEvaluation', JSON.stringify(data));
+}
+
+function loadFunctionState() {
+  const data = JSON.parse(localStorage.getItem('functionEvaluation') || '{}');
+  Object.entries(data).forEach(([name, { checked, price }]) => {
+    const cb = document.querySelector(`.function-item[data-name="${name}"]`);
+    const input = document.querySelector(`.function-price[data-name="${name}"]`);
+    if (cb) cb.checked = checked;
+    if (input) input.value = price;
+  });
+}
+
   
   // 시작
   renderCheckboxes();
   loadInputs();
   loadCheckboxState();
   updateAll();
+  
+
   </script>
   
   </body>
