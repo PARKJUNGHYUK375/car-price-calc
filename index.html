@@ -363,11 +363,14 @@
   const checkbox = item.querySelector('input[type="checkbox"]');
   const name = checkbox.dataset.name;
   const priceInput = item.querySelector('.function-price');
+          localStorage.setItem(`function-price-${index}`, priceInput.value);
   const price = getNumericValue(priceInput.value);
-
+  const saved = localStorage.getItem(`function-price-${index}`);
+   
   if (checkbox.checked && price > 0) {
     functionDiscount += price;
     deductionDetails.push(`${name}: -${price.toLocaleString()}원`);
+    (saved) item.querySelector('.function-price').value = saved;
   }
 });
     const totalDiscount = partDiscount + accidentDiscount + functionDiscount;
