@@ -208,7 +208,10 @@
 
   <div class="function-category">
     <h3>정비 항목</h3>
-    <div class="function-item"><input type="checkbox" data-name="오일류계통" onchange="updateAll()"> 오일류계통 <input type="text" class="function-price" oninput="formatInput(this); updateAll()" placeholder="금액(원)"></div>
+    <div class="function-item">
+        <input type="checkbox" data-name="오일류계통" onchange="updateAll()"> 오일류계통 
+        <input type="text" class="function-detail" placeholder="세부항목 입력" oninput="saveInput('oilDetail'); updateAll()">
+        <input type="text" class="function-price" oninput="formatInput(this); updateAll()" placeholder="금액(원)"></div>
     <div class="function-item"><input type="checkbox" data-name="냉각수계통" onchange="updateAll()"> 냉각수계통 <input type="text" class="function-price" oninput="formatInput(this); updateAll()" placeholder="금액(원)"></div>
     <div class="function-item"><input type="checkbox" data-name="호스류계통" onchange="updateAll()"> 호스류계통 <input type="text" class="function-price" oninput="formatInput(this); updateAll()" placeholder="금액(원)"></div>
     <div class="function-item"><input type="checkbox" data-name="소모품계통(정비)" onchange="updateAll()"> 소모품계통 <input type="text" class="function-price" oninput="formatInput(this); updateAll()" placeholder="금액(원)"></div>
@@ -377,7 +380,10 @@
 
     const totalDiscount = partDiscount + accidentDiscount + functionDiscount;
     const finalPrice = bidPrice - totalDiscount;
-  
+    const detailInput = item.querySelector('.function-detail');
+     if (detailInput) {
+  localStorage.setItem(`function-detail-${index}`, detailInput.value);
+     }
     document.getElementById('finalPrice').textContent = finalPrice.toLocaleString();
     document.getElementById('deductionArea').innerHTML = deductionDetails.length
       ? `<h3>감가 세부내역</h3><ul>${deductionDetails.map(d => `<li>${d}</li>`).join('')}</ul><div class="deduction-total">감가 총합계: -${totalDiscount.toLocaleString()}원</div>`
@@ -392,6 +398,11 @@
     if (saved) {
       item.querySelector('.function-price').value = saved;
     }
+      const detailInput = item.querySelector('.function-detail');
+if (detailInput) {
+  const savedDetail = localStorage.getItem(`function-detail-${index}`);
+  if (savedDetail) detailInput.value = savedDetail;
+}
   });
 }
       
