@@ -359,28 +359,22 @@
       }
     });
   
-      document.querySelectorAll('.function-item').forEach(item => {
+ document.querySelectorAll('.function-item').forEach((item, index) => {
   const checkbox = item.querySelector('input[type="checkbox"]');
   const name = checkbox.dataset.name;
   const priceInput = item.querySelector('.function-price');
   const price = getNumericValue(priceInput.value);
-    if (checkbox.checked && price > 0) {
+
+  // 계산 처리
+  if (checkbox.checked && price > 0) {
     functionDiscount += price;
     deductionDetails.push(`${name}: -${price.toLocaleString()}원`);
-    
   }
-});
-      // 저장할 때
-document.querySelectorAll('.function-item').forEach((item, index) => {
-  const priceInput = item.querySelector('.function-price');
+
+  // 저장 처리
   localStorage.setItem(`function-price-${index}`, priceInput.value);
 });
 
-// 복원할 때
-document.querySelectorAll('.function-item').forEach((item, index) => {
-  const saved = localStorage.getItem(`function-price-${index}`);
-  if (saved) item.querySelector('.function-price').value = saved;
-});
     const totalDiscount = partDiscount + accidentDiscount + functionDiscount;
     const finalPrice = bidPrice - totalDiscount;
   
@@ -391,7 +385,16 @@ document.querySelectorAll('.function-item').forEach((item, index) => {
   
     saveCheckboxState();
   }
-  
+      
+  function loadFunctionPrices() {
+  document.querySelectorAll('.function-item').forEach((item, index) => {
+    const saved = localStorage.getItem(`function-price-${index}`);
+    if (saved) {
+      item.querySelector('.function-price').value = saved;
+    }
+  });
+}
+      
   // 체크박스 렌더링
   function renderCheckboxes() {
     const partSection = document.getElementById('partSection');
@@ -429,6 +432,7 @@ document.querySelectorAll('.function-item').forEach((item, index) => {
   renderCheckboxes();
   loadInputs();
   loadCheckboxState();
+  loadFunctionPrices();
   updateAll();
   </script>
   
