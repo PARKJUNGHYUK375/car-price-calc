@@ -188,16 +188,6 @@
   text-align: right;
 }
 
-.function-desc,
-.function-price {
-  width: 80px; /* 또는 원하는 크기 */
-  padding: 6px 8px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 14px;
-}
-    
-
       @media (max-width: 600px) {
         .price-info input, .input-small { width: 95%; }
         h2 { font-size: 18px; }
@@ -286,13 +276,7 @@
   <div class="function-category">
     <h3>하체 Part</h3>
     <div class="function-item"><input type="checkbox" data-name="쇼버" onchange="updateAll()"> 쇼버 <input type="text" class="function-desc" data-key="쇼버-desc" oninput="saveInput('쇼버-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="쇼버-price" oninput="formatInput(this); saveInput('쇼버-price'); updateAll()" placeholder="금액(원)"></div>
-    <div class="function-item" style="display: flex; align-items: center; gap: 10px;">
-  <label style="display: flex; align-items: center; font-size: 12px; white-space: nowrap;">
-    <input type="checkbox" data-name="서스펜션" onchange="updateAll()" style="margin-right: 6px;">
-    <span style="line-height: 1.2;">
-      서스펜션<br>(암,링크)
-    </span>
-  </label><input type="text" class="function-desc" data-key="서스펜션-desc" oninput="saveInput('서스펜션-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="서스펜션-price" oninput="formatInput(this); saveInput('서스펜션-price'); updateAll()" placeholder="금액(원)"></div>
+    <div class="function-item"><input type="checkbox" data-name="서스펜션" onchange="updateAll()"> <span style="font-size: 12px;">서스펜션(암,링크)</span><input type="text" class="function-desc" data-key="서스펜션-desc" oninput="saveInput('서스펜션-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="서스펜션-price" oninput="formatInput(this); saveInput('서스펜션-price'); updateAll()" placeholder="금액(원)"></div>
     <div class="function-item"><input type="checkbox" data-name="등속조인트" onchange="updateAll()"> 등속조인트 <input type="text" class="function-desc" data-key="등속조인트-desc" oninput="saveInput('등속조인트-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="등속조인트-price" oninput="formatInput(this); saveInput('등속조인트-price'); updateAll()" placeholder="금액(원)"></div>
     <div class="function-item"><input type="checkbox" data-name="웜기어" onchange="updateAll()"> 웜기어 <input type="text" class="function-desc" data-key="웜기어-desc" oninput="saveInput('웜기어-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="웜기어-price" oninput="formatInput(this); saveInput('웜기어-price'); updateAll()" placeholder="금액(원)"></div>
     <div class="function-item"><input type="checkbox" data-name="디스크" onchange="updateAll()"> 디스크(패드) <input type="text" class="function-desc" data-key="디스크-desc" oninput="saveInput('디스크-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="디스크-price" oninput="formatInput(this); saveInput('디스크-price'); updateAll()" placeholder="금액(원)"></div>
