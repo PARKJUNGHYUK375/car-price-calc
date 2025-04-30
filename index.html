@@ -259,7 +259,7 @@
   </div>
   
   <div class="section">
-    <h2>외관 상태✔️</h2>
+    <h2>✔️외관 상태</h2>
     <div class="container">
       <img src="https://i.imgur.com/NAH6AaM.jpg" class="car-image" alt="자동차 외관">
       <div class="checkbox-overlay" id="partSection"></div>
@@ -267,14 +267,14 @@
   </div>
   
   <div class="section">
-    <h2>사고ㆍ교환ㆍ수리 이력✔️</h2>
+    <h2>✔️사고ㆍ교환ㆍ수리 이력</h2>
     <div class="container">
       <img src="https://i.imgur.com/tBnS5DO.jpg" class="car-image" alt="사고부위 자동차">
       <div class="checkbox-overlay" id="accidentSection"></div>
     </div>
 
       <div class="section">
-  <h2> Part별 세부상태✔️</h2>
+  <h2> ✔️Part별 세부상태</h2>
 
   <!-- 익스테리어 Part -->
   <div class="function-category">
@@ -319,12 +319,12 @@
   <!-- 인테리어 Part -->
   <div class="function-category">
     <h3>인테리어 Part📝</h3>
-    <div class="function-item"><input type="checkbox" data-name="시트" onchange="updateAll()"><span style="font-size: 11px;">시트(가죽/열선/통풍/전동)</span>  <input type="text" class="function-desc" data-key="시트-desc" oninput="saveInput('시트-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="시트-price" oninput="formatInput(this); saveInput('시트-price'); updateAll()" placeholder="금액(원)"></div>
-    <div class="function-item"><input type="checkbox" data-name="실내컨디션" onchange="updateAll()"> <span style="font-size: 11px;">실내컨디션(사용감/냄새)</span> <input type="text" class="function-desc" data-key="실내컨디션-desc" oninput="saveInput('실내컨디션-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="실내컨디션-price" oninput="formatInput(this); saveInput('실내컨디션-price'); updateAll()" placeholder="금액(원)"></div>
-    <div class="function-item"><input type="checkbox" data-name="계기판" onchange="updateAll()"> <span style="font-size: 11px;">계기판(경고등여부)</span><input type="text" class="function-desc" data-key="계기판-desc" oninput="saveInput('계기판-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="계기판-price" oninput="formatInput(this); saveInput('계기판-price'); updateAll()" placeholder="금액(원)"></div>
+    <div class="function-item"><input type="checkbox" data-name="시트" onchange="updateAll()"><span style="font-size: 11px;">시트(작동상태)</span>  <input type="text" class="function-desc" data-key="시트-desc" oninput="saveInput('시트-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="시트-price" oninput="formatInput(this); saveInput('시트-price'); updateAll()" placeholder="금액(원)"></div>
+    <div class="function-item"><input type="checkbox" data-name="실내컨디션" onchange="updateAll()"> <span style="font-size: 11px;">실내(사용/냄새)</span> <input type="text" class="function-desc" data-key="실내컨디션-desc" oninput="saveInput('실내컨디션-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="실내컨디션-price" oninput="formatInput(this); saveInput('실내컨디션-price'); updateAll()" placeholder="금액(원)"></div>
+    <div class="function-item"><input type="checkbox" data-name="계기판" onchange="updateAll()"> <span style="font-size: 11px;">계기판(경고등)</span><input type="text" class="function-desc" data-key="계기판-desc" oninput="saveInput('계기판-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="계기판-price" oninput="formatInput(this); saveInput('계기판-price'); updateAll()" placeholder="금액(원)"></div>
     <div class="function-item"><input type="checkbox" data-name="등화류" onchange="updateAll()"> 등화류 <input type="text" class="function-desc" data-key="등화류-desc" oninput="saveInput('등화류-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="등화류-price" oninput="formatInput(this); saveInput('등화류-price'); updateAll()" placeholder="금액(원)"></div>
     <div class="function-item"><input type="checkbox" data-name="에어컨히터" onchange="updateAll()"> 에어컨&히터 <input type="text" class="function-desc" data-key="에어컨히터-desc" oninput="saveInput('에어컨히터-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="에어컨히터-price" oninput="formatInput(this); saveInput('에어컨히터-price'); updateAll()" placeholder="금액(원)"></div>
-    <div class="function-item"><input type="checkbox" data-name="오디오" onchange="updateAll()"> <span style="font-size: 11px;">오디오(네비,후카,모니터)</span> <input type="text" class="function-desc" data-key="오디오-desc" oninput="saveInput('오디오-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="오디오-price" oninput="formatInput(this); saveInput('오디오-price'); updateAll()" placeholder="금액(원)"></div>
+    <div class="function-item"><input type="checkbox" data-name="오디오" onchange="updateAll()"> <span style="font-size: 11px;">오디오패널</span> <input type="text" class="function-desc" data-key="오디오-desc" oninput="saveInput('오디오-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="오디오-price" oninput="formatInput(this); saveInput('오디오-price'); updateAll()" placeholder="금액(원)"></div>
     <div class="function-item"><input type="checkbox" data-name="미러창문" onchange="updateAll()"> 미러&창문 <input type="text" class="function-desc" data-key="미러창문-desc" oninput="saveInput('미러창문-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="미러창문-price" oninput="formatInput(this); saveInput('미러창문-price'); updateAll()" placeholder="금액(원)"></div>
     <div class="function-item"><input type="checkbox" data-name="버튼류" onchange="updateAll()"> 버튼류작동 <input type="text" class="function-desc" data-key="버튼류-desc" oninput="saveInput('버튼류-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="버튼류-price" oninput="formatInput(this); saveInput('버튼류-price'); updateAll()" placeholder="금액(원)"></div>
     <div class="function-item"><input type="checkbox" data-name="썬팅" onchange="updateAll()"> 썬팅상태 <input type="text" class="function-desc" data-key="썬팅-desc" oninput="saveInput('썬팅-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="썬팅-price" oninput="formatInput(this); saveInput('썬팅-price'); updateAll()" placeholder="금액(원)"></div>
