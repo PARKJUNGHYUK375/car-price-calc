@@ -294,6 +294,10 @@
   // 입력 저장
   function saveInput(id) {
     localStorage.setItem(id, document.getElementById(id).value);
+      const keys = [
+    'bidPriceInput', 'carNumber', 'carName', 'carMileage',
+    'exterior', 'wheelScratch', 'spareKey', 'repair', 'carAdvantage',
+    '엔진오일-price', '엔진오일-desc']
   }
   function saveCheckboxState() {
     const states = {};
