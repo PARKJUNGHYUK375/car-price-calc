@@ -339,7 +339,18 @@
      accidentSection.appendChild(label);
    });
  }
- const parts = {
+  const container = document.getElementById("evaluation-section");
+ // 초기화
+ function resetAll() {
+   localStorage.clear();
+   document.querySelectorAll("input[type='text']").forEach(input => input.value = '');
+   document.querySelectorAll("input[type='checkbox']").forEach(cb => cb.checked = false);
+   document.querySelectorAll(".checkbox-item").forEach(label => label.classList.remove('selected'));
+   document.getElementById('deductionArea').innerHTML = '';
+   updateAll();
+ }
+   
+   const parts = {
     "엔진 & 미션": [
       "엔진오일누유",
       "냉각수상태",
@@ -430,16 +441,7 @@ for (let part in parts) {
   // 이벤트 초기 설정
   setupEvents();
 
-  const container = document.getElementById("evaluation-section");
- // 초기화
- function resetAll() {
-   localStorage.clear();
-   document.querySelectorAll("input[type='text']").forEach(input => input.value = '');
-   document.querySelectorAll("input[type='checkbox']").forEach(cb => cb.checked = false);
-   document.querySelectorAll(".checkbox-item").forEach(label => label.classList.remove('selected'));
-   document.getElementById('deductionArea').innerHTML = '';
-   updateAll();
- }
+ 
  
  document.addEventListener("DOMContentLoaded", () => {
  renderCheckboxes();
