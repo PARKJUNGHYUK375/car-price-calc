@@ -139,34 +139,31 @@
   color: var(--main-color);
 }
 .function-item {
-  display: flex;
+  display: grid;
+  grid-template-columns: 30px 1fr 1fr 100px;
   align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 8px;
-  flex-wrap: wrap; /* 모바일 대응 */
+  gap: 8px;
+  margin-bottom: 10px;
 }
 
 .function-item input[type="checkbox"] {
-  width: 20px;
-  flex-shrink: 0;
+  justify-self: center;
 }
 
 .function-item input[type="text"] {
   padding: 6px 8px;
-  border-radius: 6px;
   border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
 }
 
 .function-item input.function-desc {
-  flex: 1;
-  min-width: 120px;
+  width: 100%;
 }
 
 .function-item input.function-price {
-  width: 100px;
+  width: 100%;
   text-align: right;
-  flex-shrink: 0;
 }
 
       @media (max-width: 600px) {
