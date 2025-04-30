@@ -366,7 +366,8 @@
   const checkbox = item.querySelector('input[type="checkbox"]');
   const name = checkbox.dataset.name;
   const priceInput = item.querySelector('.function-price');
-  const price = getNumericValue(priceInput.value);
+  const detailInput = item.querySelector('.function-detail'); // 세부항목 추가
+    const price = getNumericValue(priceInput.value);
 
   // 계산 처리
   if (checkbox.checked && price > 0) {
@@ -375,8 +376,12 @@
   }
 
   // 저장 처리
-  localStorage.setItem(`function-price-${index}`, priceInput.value);
+ localStorage.setItem(`function-price-${index}`, priceInput.value);
+  if (detailInput) {
+    localStorage.setItem(`function-detail-${index}`, detailInput.value);
+  }
 });
+
 
     const totalDiscount = partDiscount + accidentDiscount + functionDiscount;
     const finalPrice = bidPrice - totalDiscount;
@@ -394,16 +399,13 @@
       
   function loadFunctionPrices() {
   document.querySelectorAll('.function-item').forEach((item, index) => {
-    const saved = localStorage.getItem(`function-price-${index}`);
-    if (saved) {
-      item.querySelector('.function-price').value = saved;
-    }
-      const detailInput = item.querySelector('.function-detail');
-if (detailInput) {
-  const savedDetail = localStorage.getItem(`function-detail-${index}`);
-  if (savedDetail) detailInput.value = savedDetail;
-}
-  });
+  const priceSaved = localStorage.getItem(`function-price-${index}`);
+  const detailSaved = localStorage.getItem(`function-detail-${index}`);
+  if (priceSaved) item.querySelector('.function-price').value = priceSaved;
+  if (detailSaved && item.querySelector('.function-detail')) {
+    item.querySelector('.function-detail').value = detailSaved;
+  }
+});
 }
       
   // 체크박스 렌더링
