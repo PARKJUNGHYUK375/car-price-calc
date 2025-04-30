@@ -209,10 +209,6 @@
    <div class="function-category">
      <h3>정비 항목</h3>
      <div class="function-item"><input type="checkbox" data-name="오일류계통" onchange="updateAll()"> 오일류계통 <input type="text" class="function-price" oninput="formatInput(this); updateAll()" placeholder="금액(원)"></div>
-     <div class="function-item">
-         <input type="checkbox" data-name="오일류계통" onchange="updateAll()"> 오일류계통 
-         <input type="text" class="function-detail" placeholder="세부항목 입력" oninput="saveInput('oilDetail'); updateAll()">
-         <input type="text" class="function-price" oninput="formatInput(this); updateAll()" placeholder="금액(원)"></div>
      <div class="function-item"><input type="checkbox" data-name="냉각수계통" onchange="updateAll()"> 냉각수계통 <input type="text" class="function-price" oninput="formatInput(this); updateAll()" placeholder="금액(원)"></div>
      <div class="function-item"><input type="checkbox" data-name="호스류계통" onchange="updateAll()"> 호스류계통 <input type="text" class="function-price" oninput="formatInput(this); updateAll()" placeholder="금액(원)"></div>
      <div class="function-item"><input type="checkbox" data-name="소모품계통(정비)" onchange="updateAll()"> 소모품계통 <input type="text" class="function-price" oninput="formatInput(this); updateAll()" placeholder="금액(원)"></div>
@@ -363,29 +359,37 @@
        }
      });
  
+       document.querySelectorAll('.function-item').forEach(item => {
   document.querySelectorAll('.function-item').forEach((item, index) => {
    const checkbox = item.querySelector('input[type="checkbox"]');
    const name = checkbox.dataset.name;
    const priceInput = item.querySelector('.function-price');
    const price = getNumericValue(priceInput.value);
+     if (checkbox.checked && price > 0) {
  
    // 계산 처리
    if (checkbox.checked && price > 0) {
      functionDiscount += price;
      deductionDetails.push(`${name}: -${price.toLocaleString()}원`);
+     
    }
+ });
+       // 저장할 때
+ document.querySelectorAll('.function-item').forEach((item, index) => {
+   const priceInput = item.querySelector('.function-price');
  
    // 저장 처리
    localStorage.setItem(`function-price-${index}`, priceInput.value);
  });
  
+ // 복원할 때
+ document.querySelectorAll('.function-item').forEach((item, index) => {
+   const saved = localStorage.getItem(`function-price-${index}`);
+   if (saved) item.querySelector('.function-price').value = saved;
+ });
      const totalDiscount = partDiscount + accidentDiscount + functionDiscount;
      const finalPrice = bidPrice - totalDiscount;
-   
-     const detailInput = item.querySelector('.function-detail');
-      if (detailInput) {
-   localStorage.setItem(`function-detail-${index}`, detailInput.value);
-      }
+ 
      document.getElementById('finalPrice').textContent = finalPrice.toLocaleString();
      document.getElementById('deductionArea').innerHTML = deductionDetails.length
        ? `<h3>감가 세부내역</h3><ul>${deductionDetails.map(d => `<li>${d}</li>`).join('')}</ul><div class="deduction-total">감가 총합계: -${totalDiscount.toLocaleString()}원</div>`
@@ -393,21 +397,17 @@
  
      saveCheckboxState();
    }
- 
+   
+       
    function loadFunctionPrices() {
    document.querySelectorAll('.function-item').forEach((item, index) => {
      const saved = localStorage.getItem(`function-price-${index}`);
      if (saved) {
        item.querySelector('.function-price').value = saved;
      }
-       const detailInput = item.querySelector('.function-detail');
- if (detailInput) {
-   const savedDetail = localStorage.getItem(`function-detail-${index}`);
-   if (savedDetail) detailInput.value = savedDetail;
- }
    });
  }
- 
+       
    // 체크박스 렌더링
    function renderCheckboxes() {
      const partSection = document.getElementById('partSection');
