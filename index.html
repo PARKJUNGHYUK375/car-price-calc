@@ -208,10 +208,7 @@
 
   <div class="function-category">
     <h3>정비 항목</h3>
-    <div class="function-item">
-        <input type="checkbox" data-name="오일류계통" onchange="updateAll()"> 오일류계통 
-        <input type="text" class="function-detail" placeholder="세부항목 입력" oninput="saveInput('oilDetail'); updateAll()">
-        <input type="text" class="function-price" oninput="formatInput(this); updateAll()" placeholder="금액(원)"></div>
+    <div class="function-item"><input type="checkbox" data-name="오일류계통" onchange="updateAll()"> 오일류계통 <input type="text" class="function-price" oninput="formatInput(this); updateAll()" placeholder="금액(원)"></div>
     <div class="function-item"><input type="checkbox" data-name="냉각수계통" onchange="updateAll()"> 냉각수계통 <input type="text" class="function-price" oninput="formatInput(this); updateAll()" placeholder="금액(원)"></div>
     <div class="function-item"><input type="checkbox" data-name="호스류계통" onchange="updateAll()"> 호스류계통 <input type="text" class="function-price" oninput="formatInput(this); updateAll()" placeholder="금액(원)"></div>
     <div class="function-item"><input type="checkbox" data-name="소모품계통(정비)" onchange="updateAll()"> 소모품계통 <input type="text" class="function-price" oninput="formatInput(this); updateAll()" placeholder="금액(원)"></div>
@@ -326,12 +323,11 @@
   
   // 숫자 추출
   function getNumericValue(value) {
-    return Number(value.replaceAll(/,/g, '')) || 0;
+    return Number(value.replaceAll(',', '')) || 0;
   }
   
   // 계산 업데이트
   function updateAll() {
-      console.log("updateAll 실행됨 ✅"); // 이거 추가
     const bidPrice = getNumericValue(document.getElementById('bidPriceInput').value) || 0;
     let partDiscount = 0, accidentDiscount = 0, functionDiscount = 0;
     const deductionDetails = [];
@@ -363,33 +359,20 @@
       }
     });
   
- document.querySelectorAll('.function-item').forEach((item, index) => {
+      document.querySelectorAll('.function-item').forEach(item => {
   const checkbox = item.querySelector('input[type="checkbox"]');
   const name = checkbox.dataset.name;
   const priceInput = item.querySelector('.function-price');
-  const detailInput = item.querySelector('.function-detail'); // 세부항목 추가
-    const price = getNumericValue(priceInput.value);
+  const price = getNumericValue(priceInput.value);
 
-  // 계산 처리
   if (checkbox.checked && price > 0) {
     functionDiscount += price;
     deductionDetails.push(`${name}: -${price.toLocaleString()}원`);
   }
-
-  // 저장 처리
- localStorage.setItem(`function-price-${index}`, priceInput.value);
-  if (detailInput) {
-    localStorage.setItem(`function-detail-${index}`, detailInput.value);
-  }
 });
-
-
     const totalDiscount = partDiscount + accidentDiscount + functionDiscount;
     const finalPrice = bidPrice - totalDiscount;
-    const detailInput = item.querySelector('.function-detail');
-     if (detailInput) {
-  localStorage.setItem(`function-detail-${index}`, detailInput.value);
-     }
+  
     document.getElementById('finalPrice').textContent = finalPrice.toLocaleString();
     document.getElementById('deductionArea').innerHTML = deductionDetails.length
       ? `<h3>감가 세부내역</h3><ul>${deductionDetails.map(d => `<li>${d}</li>`).join('')}</ul><div class="deduction-total">감가 총합계: -${totalDiscount.toLocaleString()}원</div>`
@@ -397,18 +380,7 @@
   
     saveCheckboxState();
   }
-      
-  function loadFunctionPrices() {
-  document.querySelectorAll('.function-item').forEach((item, index) => {
-  const priceSaved = localStorage.getItem(`function-price-${index}`);
-  const detailSaved = localStorage.getItem(`function-detail-${index}`);
-  if (priceSaved) item.querySelector('.function-price').value = priceSaved;
-  if (detailSaved && item.querySelector('.function-detail')) {
-    item.querySelector('.function-detail').value = detailSaved;
-  }
-});
-}
-      
+  
   // 체크박스 렌더링
   function renderCheckboxes() {
     const partSection = document.getElementById('partSection');
@@ -446,9 +418,7 @@
   renderCheckboxes();
   loadInputs();
   loadCheckboxState();
-  loadFunctionPrices();
-setTimeout(updateAll, 0);
-  
+  updateAll();
   </script>
   
   </body>
