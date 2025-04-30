@@ -189,16 +189,7 @@
   width: 100%;
   text-align: right;
 }
-        .icon {
-      width: 50px;
-      height: 50px;
-      display: inline-block;
-      margin: 10px;
-      background-size: contain;
-      background-repeat: no-repeat;
-    }
-    .icon1 { background-image: url('https://imgur.com/a/I7satEM.png'); }
-    
+   
        
 
       @media (max-width: 600px) {
@@ -251,11 +242,12 @@
   
   <div class="section">
     <h2>고객기재🔍</h2>
-    <h4>외판</h4><input type="text" id="exterior" class="input-small" placeholder="외판수량" oninput="saveInput('exterior')"><br>
-    <h4>휠기스</h4><input type="text" id="wheelScratch" class="input-small" placeholder="휠기스수량" oninput="saveInput('wheelScratch')"><br>
+    <h4>외판</h4><input type="text" id="exterior" class="input-small" placeholder="외판 수량" oninput="saveInput('exterior')"><br>
+    <h4>휠기스</h4><input type="text" id="wheelScratch" class="input-small" placeholder="휠기스 수량" oninput="saveInput('wheelScratch')"><br>
     <h4>보조키</h4><input type="text" id="spareKey" class="input-small" placeholder="보조키 유/무" oninput="saveInput('spareKey')"><br>
+    <h4>타이어상태</h4><input type="text" id="tire" class="input-small" placeholder="교체필요 수량" oninput="saveInput('tire')"><br>
     <h4>정비요망</h4><input type="text" id="repair" class="input-small" placeholder="정비요망" oninput="saveInput('repair')"><br>
-    <h4>차량 장단점</h4><input type="text" id="carAdvantage" class="input-small" placeholder="차량장단점" oninput="resizeInput(this); saveInput('carAdvantage')">
+    <h4>차량 장단점</h4><input type="text" id="carAdvantage" class="input-small" placeholder="차량 장단점" oninput="resizeInput(this); saveInput('carAdvantage')">
   </div>
   
   <div class="section">
@@ -324,7 +316,7 @@
     <div class="function-item"><input type="checkbox" data-name="계기판" onchange="updateAll()"> <span style="font-size: 11px;">계기판(경고등)</span><input type="text" class="function-desc" data-key="계기판-desc" oninput="saveInput('계기판-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="계기판-price" oninput="formatInput(this); saveInput('계기판-price'); updateAll()" placeholder="금액(원)"></div>
     <div class="function-item"><input type="checkbox" data-name="등화류" onchange="updateAll()"> 등화류 <input type="text" class="function-desc" data-key="등화류-desc" oninput="saveInput('등화류-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="등화류-price" oninput="formatInput(this); saveInput('등화류-price'); updateAll()" placeholder="금액(원)"></div>
     <div class="function-item"><input type="checkbox" data-name="에어컨히터" onchange="updateAll()"> 에어컨&히터 <input type="text" class="function-desc" data-key="에어컨히터-desc" oninput="saveInput('에어컨히터-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="에어컨히터-price" oninput="formatInput(this); saveInput('에어컨히터-price'); updateAll()" placeholder="금액(원)"></div>
-    <div class="function-item"><input type="checkbox" data-name="오디오" onchange="updateAll()"> <span style="font-size: 11px;">오디오패널</span> <input type="text" class="function-desc" data-key="오디오-desc" oninput="saveInput('오디오-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="오디오-price" oninput="formatInput(this); saveInput('오디오-price'); updateAll()" placeholder="금액(원)"></div>
+    <div class="function-item"><input type="checkbox" data-name="오디오" onchange="updateAll()"> <span style="font-size: 11px;">오디오(네비관련)</span> <input type="text" class="function-desc" data-key="오디오-desc" oninput="saveInput('오디오-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="오디오-price" oninput="formatInput(this); saveInput('오디오-price'); updateAll()" placeholder="금액(원)"></div>
     <div class="function-item"><input type="checkbox" data-name="미러창문" onchange="updateAll()"> 미러&창문 <input type="text" class="function-desc" data-key="미러창문-desc" oninput="saveInput('미러창문-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="미러창문-price" oninput="formatInput(this); saveInput('미러창문-price'); updateAll()" placeholder="금액(원)"></div>
     <div class="function-item"><input type="checkbox" data-name="버튼류" onchange="updateAll()"> 버튼류작동 <input type="text" class="function-desc" data-key="버튼류-desc" oninput="saveInput('버튼류-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="버튼류-price" oninput="formatInput(this); saveInput('버튼류-price'); updateAll()" placeholder="금액(원)"></div>
     <div class="function-item"><input type="checkbox" data-name="썬팅" onchange="updateAll()"> 썬팅상태 <input type="text" class="function-desc" data-key="썬팅-desc" oninput="saveInput('썬팅-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="썬팅-price" oninput="formatInput(this); saveInput('썬팅-price'); updateAll()" placeholder="금액(원)"></div>
@@ -411,7 +403,7 @@
   // 기본 항목 로딩
   const baseKeys = [
     'bidPriceInput', 'carNumber', 'carName', 'carMileage',
-    'exterior', 'wheelScratch', 'spareKey', 'repair', 'carAdvantage'
+    'exterior', 'wheelScratch', 'spareKey', 'tire' , 'repair', 'carAdvantage'
   ];
   baseKeys.forEach(id => {
     const el = document.getElementById(id);
