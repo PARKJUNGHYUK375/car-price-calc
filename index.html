@@ -189,47 +189,27 @@
   text-align: right;
 }
 
-.car-type-radio {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  margin-bottom: 20px;
+.car-type-toggle {
+  margin-bottom: 10px;
 }
 
-.car-type-radio label {
-  position: relative;
-  padding-left: 28px;
-  cursor: pointer;
-  font-size: 16px;
-  user-select: none;
-  color: var(--text-dark);
-}
-
-.car-type-radio input[type="radio"] {
-  display: none;
-}
-
-.custom-radio {
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 20px;
-  width: 20px;
+.car-type-toggle button {
+  padding: 8px 16px;
+  margin: 0 5px;
   border: 2px solid var(--main-color);
-  border-radius: 50%;
-  background-color: white;
+  border-radius: var(--border-radius);
+  background: white;
+  color: var(--main-color);
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
 }
 
-.car-type-radio input[type="radio"]:checked + .custom-radio::after {
-  content: "";
-  position: absolute;
-  top: 4px;
-  left: 4px;
-  width: 8px;
-  height: 8px;
-  background-color: var(--main-color);
-  border-radius: 50%;
+.car-type-toggle button.active {
+  background: var(--main-color);
+  color: white;
 }
+
    
        
 
@@ -257,45 +237,16 @@
         .checkbox-item { font-size: 11px; padding: 5px 6px; }
         button { font-size: 14px; padding: 8px 20px; }
         #finalPrice { font-size: 24px; }
-		
-		.car-type-toggle {
-  margin-bottom: 10px;
-}
-
-.car-type-toggle button {
-  padding: 8px 16px;
-  margin: 0 5px;
-  border: 2px solid var(--main-color);
-  border-radius: var(--border-radius);
-  background: white;
-  color: var(--main-color);
-  font-weight: bold;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.car-type-toggle button.active {
-  background: var(--main-color);
-  color: white;
-}
         
           
       }
     </style>
   </head>
   <body>
-  
-  <div class="price-info">
-<div class="car-type-radio">
+  <div class="car-type-toggle">
   🚘 차량 유형:
-  <label>
-    <input type="radio" name="carType" value="imported" onclick="setCarType('imported')">
-    <span class="custom-radio"></span> 수입차
-  </label>
-  <label>
-    <input type="radio" name="carType" value="domestic" onclick="setCarType('domestic')">
-    <span class="custom-radio"></span> 국산차
-  </label>
+  <button id="btnImported" onclick="setCarType('imported')">수입차</button>
+  <button id="btnDomestic" onclick="setCarType('domestic')">국산차</button>
 </div>
 
   <div class="price-info">
@@ -430,16 +381,16 @@
     { name: "뒷범퍼", top: "99%", left: "50%" },
     { name: "사이드실(좌)", top: "50%", left: "11%" },
     { name: "사이드실(우)", top: "53%", left: "103%" },
-    { name: "필러(좌)", top: "55%", left: "32%" },
-    { name: "필러(우)", top: "55%", left: "75%" },
+	{ name: "필러(좌)", top: "55%", left: "32%" },
+	{ name: "필러(우)", top: "55%", left: "75%" },
     { name: "휠(FL)", top: "20%", left: "5%" },
     { name: "휠(FR)", top: "15%", left: "100%" },
     { name: "휠(RL)", top: "75%", left: "5%" },
     { name: "휠(RR)", top: "75%", left: "100%" },
-    { name: "타이어(FL)", top: "27%", left: "7%" } ,  
-    { name: "타이어(FR)", top: "20%", left: "102%" },
-    { name: "타이어(RL)", top: "81%", left: "7%" },
-    { name: "타이어(RR)", top: "80%", left: "102%" }
+    { name: "타이어(FL)", top: "25%", left: "7%" } ,  
+    { name: "타이어(FR)", top: "19%", left: "102%" },
+    { name: "타이어(RL)", top: "80%", left: "7%" },
+    { name: "타이어(RR)", top: "79%", left: "102%" }
     ],
     
       accidentParts: [
@@ -472,7 +423,7 @@
       { name: "루프패널", rate: 5, top: '60%', left: '50%' },
       { name: "트렁크플로어", rate: 5, top: '91%', left: '55%' },
       { name: "R.패널", rate: 5, top: '97%', left: '55%' },
-      { name: "쿼터(좌)", rate: 5, top: '85%', left: '22%' },
+	  { name: "쿼터(좌)", rate: 5, top: '85%', left: '22%' },
       { name: "쿼터(우)", rate: 5, top: '85%', left: '88%' },
     ]
   };
@@ -641,6 +592,31 @@ function updateAll() {
       accidentSection.appendChild(label);
     });
   }
+  function setCarType(type) {
+  if (type === 'domestic') {
+    CONSTANTS.partPrice = 130000;
+    CONSTANTS.tirePrice = 90000;
+  } else {
+    CONSTANTS.partPrice = 180000;
+    CONSTANTS.tirePrice = 90000;
+  }
+
+  localStorage.setItem('carType', type);
+  updateAll();
+  updateCarTypeButtons(type);
+}
+
+function updateCarTypeButtons(selected) {
+  document.getElementById('btnDomestic').classList.toggle('active', selected === 'domestic');
+  document.getElementById('btnImported').classList.toggle('active', selected === 'imported');
+}
+
+// 초기 로딩 시
+window.addEventListener('DOMContentLoaded', () => {
+  const savedType = localStorage.getItem('carType') || 'imported';
+  setCarType(savedType);
+});
+
   
   // 초기화
   function resetAll() {
@@ -655,43 +631,6 @@ function updateAll() {
       function resizeInput(input) {
     input.style.width = (input.value.length + 1) + 'ch';  // 문자 수에 맞게 크기 조정
   }
-  
-  function setCarType(type) {
-  // 가격 설정
-  if (type === 'domestic') {
-    CONSTANTS.partPrice = 130000;
-    CONSTANTS.tirePrice = 90000;
-  } else {
-    CONSTANTS.partPrice = 180000;
-    CONSTANTS.tirePrice = 80000;
-  }
-
-  // 저장
-  localStorage.setItem('carType', type);
-
-  // 버튼 UI 반영
-  updateCarTypeButtons(type);
-
-  // 감가 금액 업데이트
-  updateAll();
-}
-
-function updateCarTypeButtons(selected) {
-  document.getElementById('btnDomestic').classList.toggle('active', selected === 'domestic');
-  document.getElementById('btnImported').classList.toggle('active', selected === 'imported');
-}
-
-// 페이지 로드 시 로컬 저장된 차량유형 복원
-window.addEventListener('DOMContentLoaded', () => {
-  const savedType = localStorage.getItem('carType') || 'imported';
-  setCarType(savedType);
-  
-  // 라디오 선택값 복원
-  const radio = document.querySelector(`input[name="carType"][value="${savedType}"]`);
-  if (radio) radio.checked = true;
-});
-
-
   
   // 시작
   renderCheckboxes();
