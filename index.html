@@ -127,38 +127,38 @@
         margin-top: 10px;
         text-align: right;
       }
-        .function-category {
-  margin-bottom: 20px;
-  background: #fff;
-  padding: 12px;
-  border-radius: var(--border-radius);
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      .function-category {
+        margin-bottom: 20px;
+        background: #fff;
+        padding: 12px;
+        border-radius: var(--border-radius);
+        box-shadow: 0 2px 6px rgba(0,0,0,0.05);
 }
-.function-category h3 {
-  text-align: left;
-  margin-bottom: 10px;
-  font-size: 16px;
-  color: var(--main-color);
-    font-size: 12px;
+       .function-category h3 {
+        text-align: left;
+        margin-bottom: 10px;
+        font-size: 16px;
+        color: var(--main-color);
+        font-size: 12px;
 }
-.function-item {
-  display: grid;
-  grid-template-columns: 30px 1fr 1fr 100px;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 10px;
-    font-size: 15px;
-}
-
-.function-item input[type="checkbox"] {
-  justify-self: center;
+       .function-item {
+          display: grid;
+          grid-template-columns: 30px 1fr 1fr 100px;
+          align-items: center;
+          gap: 8px;
+          margin-bottom: 10px;
+          font-size: 15px;
 }
 
-.function-item input[type="text"] {
-  padding: 6px 8px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 14px;
+       .function-item input[type="checkbox"] {
+          justify-self: center;
+}
+
+       .function-item input[type="text"] {
+          padding: 6px 8px;
+          border: 1px solid #ccc;
+          border-radius: 6px;
+          font-size: 14px;
 }
 
 .function-item input.function-desc {
@@ -248,7 +248,7 @@
     <h4>보조키</h4><input type="text" id="spareKey" class="input-small" placeholder="보조키 유/무" oninput="saveInput('spareKey')"><br>
     <h4>타이어상태</h4><input type="text" id="tire" class="input-small" placeholder="교체필요 수량" oninput="saveInput('tire')"><br>
     <h4>정비요망</h4><input type="text" id="repair" class="input-small" placeholder="정비요망" oninput="saveInput('repair')"><br>
-    <h4>차량 장단점</h4><input type="text" id="carAdvantage" class="input-small" placeholder="차량 장단점" oninput="resizeInput(this); saveInput('carAdvantage')">
+    <h4>차량 장단점</h4><input type="text" id="carAdvantage" class="input-small" placeholder="차량 장단점" oninput="resizeInput(this); saveInput('carAdvantage')"><br>
   </div>
   
   <div class="section">
@@ -398,7 +398,7 @@
       { name: "루프", rate: 5, top: '10%', left: '70%' }
     ]
   };
-      {  
+}        
   // 입력 저장
   function saveInput(id) {
   // 기존 요소들 저장
