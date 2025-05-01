@@ -271,7 +271,7 @@
     <h4>보조키✔️</h4><input type="text" id="spareKey" class="input-small" placeholder="보조키 유/무" oninput="saveInput('spareKey')"><br>
     <h4>타이어상태✔️</h4><input type="text" id="tire" class="input-small" placeholder="교체필요 수량" oninput="saveInput('tire')"><br>
     <h4>정비요망✔️</h4><input type="text" id="repair" class="input-small" placeholder="정비요망" oninput="saveInput('repair')"><br>
-    <h4>차량 장단점✔️</h4><input type="text" id="carAdvantage" class="input-small" placeholder="차량 장단점" oninput="resizeInput(this); saveInput('carAdvantage')"><br>
+    <h4>차량 장단점✔️</h4><textarea id="carAdvantage" class="input-small" placeholder="차량 장단점" oninput="autoResize(this); saveInput('carAdvantage')" rows="1" style="resize: none; width: 100%; overflow: hidden;"></textarea><br>
   </div>
   
   <div class="section">
@@ -470,7 +470,9 @@
       input.value = localStorage.getItem(key);
     }
   });
+autoResize(document.getElementById('carAdvantage'));
 }
+
   function loadCheckboxState() {
     const states = JSON.parse(localStorage.getItem('checkboxStates') || '{}');
     document.querySelectorAll("input[type='checkbox']").forEach(cb => {
@@ -622,12 +624,18 @@ window.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll("input[type='checkbox']").forEach(cb => cb.checked = false);
     document.querySelectorAll(".checkbox-item").forEach(label => label.classList.remove('selected'));
     document.getElementById('deductionArea').innerHTML = '';
-    updateAll();
+    document.getElementById('carAdvantage').style.height = 'auto';
+	updateAll();
   }
    
       function resizeInput(input) {
     input.style.width = (input.value.length + 1) + 'ch';  // 문자 수에 맞게 크기 조정
   }
+  function autoResize(textarea) {
+  textarea.style.height = 'auto'; // 초기화
+  textarea.style.height = (textarea.scrollHeight) + 'px'; // 실제 내용 높이로 조정
+}
+
   
   // 시작
   renderCheckboxes();
