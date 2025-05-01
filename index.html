@@ -465,62 +465,82 @@
   }
   
   // 계산 업데이트
-  function updateAll() {
+ function updateAll() {
     const bidPrice = getNumericValue(document.getElementById('bidPriceInput').value) || 0;
     let partDiscount = 0, accidentDiscount = 0, functionDiscount = 0;
     const deductionDetails = [];
-  
-    document.querySelectorAll(".part").forEach(checkbox => {
-      const label = checkbox.parentNode;
-      if (checkbox.checked) {
-        const name = checkbox.dataset.name;
-        const discount = name.includes('휠') ? CONSTANTS.wheelPrice : CONSTANTS.partPrice : CONSTANTS.tirePrice;
-        partDiscount += discount;
-        deductionDetails.push(`${name}: -${discount.toLocaleString()}원`);
-        label.classList.add('selected');
-      } else {
-        label.classList.remove('selected');
-      }
-    });
-  
-    document.querySelectorAll(".accident").forEach(checkbox => {
-      const label = checkbox.parentNode;
-      if (checkbox.checked) {
-        const name = checkbox.dataset.name;
-        const rate = Number(checkbox.dataset.rate);
-        const discount = bidPrice * (rate / 100);
-        accidentDiscount += discount;
-        deductionDetails.push(`${name} 사고감가: -${discount.toLocaleString()}원`);
-        label.classList.add('selected');
-      } else {
-        label.classList.remove('selected');
-      }
-    });
-  
-    document.querySelectorAll('.function-item').forEach(item => {
-  const checkbox = item.querySelector('input[type="checkbox"]');
-  const name = checkbox.dataset.name;
-  const priceInput = item.querySelector('.function-price');
-  const descInput = item.querySelector('.function-desc');
-  const price = getNumericValue(priceInput?.value || '');
-  const desc = descInput?.value || '';
 
-  if (checkbox.checked && price > 0) {
-    functionDiscount += price;
-    const detail = desc ? `${name} - ${desc}: -${price.toLocaleString()}원` : `${name}: -${price.toLocaleString()}원`;
-    deductionDetails.push(detail);
-  }
-});
+    // 🚗 외관 상태 감가 계산 (part 체크박스)
+    document.querySelectorAll(".part").forEach(checkbox => {
+        const label = checkbox.parentNode;
+        if (checkbox.checked) {
+            const name = checkbox.dataset.name;
+            let discount = 0;
+            
+            // 🚨 타이어, 휠, 일반 부품 감가 금액 다르게 설정
+            if (name.includes('타이어')) {
+                discount = CONSTANTS.tirePrice;
+            } else if (name.includes('휠')) {
+                discount = CONSTANTS.wheelPrice;
+            } else {
+                discount = CONSTANTS.partPrice;
+            }
+
+            partDiscount += discount;
+            deductionDetails.push(`${name}: -${discount.toLocaleString()}원`);
+            label.classList.add('selected');
+        } else {
+            label.classList.remove('selected');
+        }
+    });
+
+    // 🚨 사고 감가 계산 (accident 체크박스)
+    document.querySelectorAll(".accident").forEach(checkbox => {
+        const label = checkbox.parentNode;
+        if (checkbox.checked) {
+            const name = checkbox.dataset.name;
+            const rate = Number(checkbox.dataset.rate);
+            const discount = bidPrice * (rate / 100);
+
+            accidentDiscount += discount;
+            deductionDetails.push(`${name} 사고 감가: -${discount.toLocaleString()}원`);
+            label.classList.add('selected');
+        } else {
+            label.classList.remove('selected');
+        }
+    });
+
+    // 🔧 기능 감가 계산 (function-item 체크박스)
+    document.querySelectorAll('.function-item').forEach(item => {
+        const checkbox = item.querySelector('input[type="checkbox"]');
+        const name = checkbox.dataset.name;
+        const priceInput = item.querySelector('.function-price');
+        const descInput = item.querySelector('.function-desc');
+        
+        const price = getNumericValue(priceInput?.value || '');
+        const desc = descInput?.value || '';
+
+        if (checkbox.checked && price > 0) {
+            functionDiscount += price;
+            const detail = desc ? `${name} - ${desc}: -${price.toLocaleString()}원` : `${name}: -${price.toLocaleString()}원`;
+            deductionDetails.push(detail);
+        }
+    });
+
+    // 💰 최종 감가 계산
     const totalDiscount = partDiscount + accidentDiscount + functionDiscount;
     const finalPrice = bidPrice - totalDiscount;
-  
+
+    // 📌 UI 업데이트
     document.getElementById('finalPrice').textContent = finalPrice.toLocaleString();
     document.getElementById('deductionArea').innerHTML = deductionDetails.length
-      ? `<h3>감가 세부내역</h3><ul>${deductionDetails.map(d => `<li>${d}</li>`).join('')}</ul><div class="deduction-total">감가 총합계: -${totalDiscount.toLocaleString()}원</div>`
-      : '';
-  
+        ? `<h3>감가 세부내역</h3><ul>${deductionDetails.map(d => `<li>${d}</li>`).join('')}</ul>
+           <div class="deduction-total">감가 총합계: -${totalDiscount.toLocaleString()}원</div>`
+        : '';
+
+    // ✅ 체크박스 상태 저장
     saveCheckboxState();
-  }
+}
   
   // 체크박스 렌더링
   function renderCheckboxes() {
