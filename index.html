@@ -244,7 +244,7 @@
   </head>
   <body>
   <div class="car-type-toggle">
-  🚘 차량 유형
+  🚘 차량 유형:
   <button id="btnImported" onclick="setCarType('imported')">수입차</button>
   <button id="btnDomestic" onclick="setCarType('domestic')">국산차</button>
 </div>
@@ -262,23 +262,23 @@
   
   <div class="section">
     <h2>차량정보🚗</h2>
-    <h4>✓차량번호</h4><input type="text" id="carNumber" class="input-small" placeholder="차량번호 입력" oninput="saveInput('carNumber')"><br>
-    <h4>✓차량명&등급</h4><input type="text" id="carName" class="input-small" placeholder="차량명 & 등급 입력" oninput="saveInput('carName')"><br>
-    <h4>✓주행거리</h4><input type="text" id="carMileage" class="input-small" placeholder="주행거리 입력" oninput="saveInput('carMileage')">
+    <h4>차량번호</h4><input type="text" id="carNumber" class="input-small" placeholder="차량번호 입력" oninput="saveInput('carNumber')"><br>
+    <h4>차량명&등급</h4><input type="text" id="carName" class="input-small" placeholder="차량명 & 등급 입력" oninput="saveInput('carName')"><br>
+    <h4>주행거리</h4><input type="text" id="carMileage" class="input-small" placeholder="주행거리 입력" oninput="saveInput('carMileage')">
   </div>
   
   <div class="section">
     <h2>고객기재🔍</h2>
-    <h4>✓외판</h4><input type="text" id="exterior" class="input-small" placeholder="외판 수량" oninput="saveInput('exterior')"><br>
-    <h4>✓휠기스</h4><input type="text" id="wheelScratch" class="input-small" placeholder="휠기스 수량" oninput="saveInput('wheelScratch')"><br>
-    <h4>✓보조키</h4><input type="text" id="spareKey" class="input-small" placeholder="보조키 유/무" oninput="saveInput('spareKey')"><br>
-    <h4>✓타이어상태</h4><input type="text" id="tire" class="input-small" placeholder="교체필요 수량" oninput="saveInput('tire')"><br>
-    <h4>✓정비요망</h4><input type="text" id="repair" class="input-small" placeholder="정비요망" oninput="saveInput('repair')"><br>
-    <h4>✓차량 장단점</h4><input type="text" id="carAdvantage" class="input-small" placeholder="차량 장단점" oninput="resizeInput(this); saveInput('carAdvantage')"><br>
+    <h4>외판</h4><input type="text" id="exterior" class="input-small" placeholder="외판 수량" oninput="saveInput('exterior')"><br>
+    <h4>휠기스</h4><input type="text" id="wheelScratch" class="input-small" placeholder="휠기스 수량" oninput="saveInput('wheelScratch')"><br>
+    <h4>보조키</h4><input type="text" id="spareKey" class="input-small" placeholder="보조키 유/무" oninput="saveInput('spareKey')"><br>
+    <h4>타이어상태</h4><input type="text" id="tire" class="input-small" placeholder="교체필요 수량" oninput="saveInput('tire')"><br>
+    <h4>정비요망</h4><input type="text" id="repair" class="input-small" placeholder="정비요망" oninput="saveInput('repair')"><br>
+    <h4>차량 장단점</h4><input type="text" id="carAdvantage" class="input-small" placeholder="차량 장단점" oninput="resizeInput(this); saveInput('carAdvantage')"><br>
   </div>
   
   <div class="section">
-    <h2>외관 상태📋</h2>
+    <h2>외관 상태✔️</h2>
     <div class="container">
       <img src="https://i.imgur.com/NAH6AaM.jpg" class="car-image" alt="자동차 외관">
       <div class="checkbox-overlay" id="partSection"></div>
@@ -286,14 +286,14 @@
   </div>
   
   <div class="section">
-    <h2>사고ㆍ교환ㆍ수리 이력📋/h2>
+    <h2>사고ㆍ교환ㆍ수리 이력✔️</h2>
     <div class="container">
       <img src="https://i.imgur.com/tBnS5DO.jpg" class="car-image" alt="사고부위 자동차">
       <div class="checkbox-overlay" id="accidentSection"></div>
     </div>
 
       <div class="section">
-  <h2>Part별 세부상태📋/h2>
+  <h2>Part별 세부상태✔️</h2>
 
   <!-- 익스테리어 Part -->
   <div class="function-category">
