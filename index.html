@@ -7,210 +7,172 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
   <style>
-    /* =========================
-       ✅ Dealer App UI/UX
-       - 틀/ID/기능 유지
-       - 오버레이 위치 편집모드(드래그 저장)
-       ========================= */
-
     :root{
-      --accent:#ff5c5c;
-      --accent-2:#ff7b7b;
-
+      --accent:#ff4d5a;
+      --accent-2:#ff7a86;
       --bg:#0b1220;
-      --bg-2:#0e172a;
-      --card: rgba(255,255,255,0.06);
-      --card-2: rgba(255,255,255,0.08);
-
+      --bg2:#0f1a30;
+      --card:#0f172a;
+      --card2:#101b33;
       --text:#e5e7eb;
       --muted:#94a3b8;
-      --line: rgba(255,255,255,0.10);
-
-      --shadow: 0 12px 40px rgba(0,0,0,0.35);
-      --shadow-soft: 0 6px 18px rgba(0,0,0,0.25);
-
+      --line:rgba(148,163,184,0.18);
+      --shadow: 0 14px 35px rgba(0,0,0,0.35);
+      --shadow-soft: 0 8px 20px rgba(0,0,0,0.25);
       --radius: 18px;
       --radius-sm: 14px;
-
-      --focus: 0 0 0 4px rgba(255, 92, 92, 0.18);
+      --focus: 0 0 0 4px rgba(255,77,90,0.22);
     }
 
-    *{ box-sizing:border-box; }
-    html,body{ height:100%; }
+    * { box-sizing:border-box; }
     body{
-      margin:0;
-      padding:14px;
       font-family: 'Noto Sans KR', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background: radial-gradient(1200px 600px at 20% -10%, rgba(255,92,92,0.18), transparent 60%),
-                  radial-gradient(1000px 700px at 90% 20%, rgba(56,189,248,0.10), transparent 55%),
-                  linear-gradient(180deg, var(--bg), var(--bg-2));
-      color:var(--text);
+      margin:0;
+      padding:16px;
+      background: radial-gradient(1200px 700px at 20% -10%, rgba(255,77,90,0.18), transparent 55%),
+                  radial-gradient(900px 600px at 90% 10%, rgba(124,58,237,0.16), transparent 55%),
+                  linear-gradient(180deg, var(--bg), var(--bg2));
+      color: var(--text);
+      text-align:center;
     }
 
+    /* ====== Dealer App Top Bar ====== */
     .app-shell{
       max-width: 820px;
       margin: 0 auto;
-      display:grid;
-      gap:12px;
-      padding-bottom: 90px; /* bottom bar 공간 */
     }
 
-    /* ===== 상단 앱바 ===== */
-    .appbar{
+    .topbar{
       position: sticky;
       top: 10px;
-      z-index: 80;
+      z-index: 60;
       border-radius: 22px;
-      border: 1px solid var(--line);
-      background: rgba(15, 23, 42, 0.75);
-      backdrop-filter: blur(12px);
-      box-shadow: var(--shadow-soft);
+      background: linear-gradient(180deg, rgba(15,23,42,0.92), rgba(15,23,42,0.78));
+      backdrop-filter: blur(10px);
+      border:1px solid var(--line);
+      box-shadow: var(--shadow);
       padding: 12px 12px;
+      text-align:left;
     }
-
-    .appbar-row{
+    .topbar-row{
       display:flex;
       align-items:center;
       justify-content:space-between;
       gap:10px;
-      flex-wrap:wrap;
     }
-
     .brand{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      min-width: 220px;
+      display:flex; align-items:center; gap:10px;
     }
     .brand .logo{
-      width:38px;height:38px;
-      border-radius: 14px;
-      display:grid;
-      place-items:center;
-      background: rgba(255,92,92,0.14);
-      border: 1px solid rgba(255,92,92,0.22);
+      width:38px;height:38px;border-radius:14px;
+      display:grid; place-items:center;
+      background: rgba(255,77,90,0.14);
       color: var(--accent);
+      border:1px solid rgba(255,77,90,0.22);
+      box-shadow: 0 10px 22px rgba(255,77,90,0.10);
     }
     .brand .title{
-      display:grid;
-      gap:2px;
+      display:grid; gap:2px;
     }
-    .brand .title b{
-      font-size: 15px;
-      letter-spacing: -0.2px;
+    .brand .title h1{
+      margin:0;
+      font-size: 16px;
+      letter-spacing:-0.2px;
+      line-height:1.1;
     }
-    .brand .title span{
+    .brand .title .sub{
       font-size: 11px;
       color: var(--muted);
-      letter-spacing: -0.1px;
+      line-height:1.2;
     }
 
-    .actions{
+    .top-actions{
       display:flex;
       gap:8px;
-      align-items:center;
       flex-wrap:wrap;
       justify-content:flex-end;
     }
 
-    .btn{
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,0.06);
-      color: var(--text);
-      padding: 10px 12px;
-      border-radius: 14px;
-      font-weight: 900;
-      cursor:pointer;
-      transition: 0.15s;
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-    }
-    .btn:hover{ background: rgba(255,255,255,0.10); }
-    .btn:active{ transform: translateY(1px); }
-
-    .btn-primary{
-      border: none;
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      color:#fff;
-      box-shadow: 0 10px 22px rgba(255,92,92,0.22);
-    }
-    .btn-primary:hover{ filter: brightness(1.03); }
-
-    .btn-danger{
-      border-color: rgba(255,92,92,0.35);
-      background: rgba(255,92,92,0.10);
-      color: var(--accent);
-      font-weight: 900;
-    }
-
-    /* 수입/국산 토글 (세그먼트 느낌) */
-    .car-type-toggle{
+    .segmented{
       display:flex;
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,0.05);
+      gap:8px;
+      background: rgba(148,163,184,0.08);
+      border:1px solid var(--line);
+      padding:6px;
       border-radius: 999px;
-      padding: 4px;
-      gap: 4px;
     }
-    .car-type-toggle button{
-      border: none;
+    .segmented button{
+      padding:8px 12px;
+      border-radius: 999px;
+      border:1px solid transparent;
       background: transparent;
-      color: var(--muted);
+      color: var(--text);
       font-weight: 900;
       cursor:pointer;
-      padding: 8px 12px;
-      border-radius: 999px;
+      transition: 0.2s;
+      white-space:nowrap;
+    }
+    .segmented button.active{
+      background: rgba(255,77,90,0.16);
+      border-color: rgba(255,77,90,0.28);
+      color: var(--accent-2);
+    }
+
+    .btn-mini{
+      padding:8px 10px;
+      border-radius: 14px;
+      border:1px solid var(--line);
+      background: rgba(148,163,184,0.08);
+      color: var(--text);
+      font-weight: 900;
+      cursor:pointer;
       transition: 0.15s;
+      white-space:nowrap;
     }
-    .car-type-toggle button.active{
-      background: rgba(255,92,92,0.20);
-      color: var(--accent);
+    .btn-mini:hover{ background: rgba(148,163,184,0.12); }
+    .btn-mini.danger{
+      border-color: rgba(255,77,90,0.30);
+      background: rgba(255,77,90,0.12);
+      color: var(--accent-2);
     }
 
-    /* ===== 카드 섹션 ===== */
+    /* ====== Cards/Sections ====== */
     .section{
+      margin: 14px auto;
+      background: linear-gradient(180deg, rgba(16,27,51,0.92), rgba(15,23,42,0.92));
+      border:1px solid var(--line);
       border-radius: var(--radius);
-      border: 1px solid var(--line);
-      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.04));
-      box-shadow: var(--shadow);
+      box-shadow: var(--shadow-soft);
       padding: 14px;
+      text-align:left;
     }
-
     .section h2{
       margin:0 0 12px;
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 1000;
-      letter-spacing: -0.2px;
+      letter-spacing:-0.2px;
       display:flex;
       align-items:center;
       gap:10px;
     }
-
     .section h2 i{
-      width:36px;height:36px;
-      border-radius: 14px;
+      color: var(--accent-2);
+      background: rgba(255,77,90,0.14);
+      width:34px;height:34px;
       display:grid;
       place-items:center;
-      background: rgba(255,92,92,0.14);
-      border: 1px solid rgba(255,92,92,0.22);
-      color: var(--accent);
+      border-radius: 12px;
+      border:1px solid rgba(255,77,90,0.20);
     }
 
     .hint{
-      margin-top: 10px;
+      margin-top:8px;
       font-size: 12px;
       color: var(--muted);
-      line-height:1.4;
+      line-height:1.35;
     }
 
-    /* ===== 입력 ===== */
-    .field{
-      display:grid;
-      gap:8px;
-      margin-bottom: 12px;
-    }
-
+    .field{ display:grid; gap:8px; margin-bottom: 12px; }
     .field label{
       font-size: 12px;
       color: var(--muted);
@@ -219,47 +181,37 @@
       align-items:center;
       gap:8px;
     }
-    .field label i{ color: var(--accent); opacity: 0.95; }
+    .field label i{ color: var(--accent-2); opacity:0.95; }
 
     input[type="text"], textarea{
       width:100%;
       padding: 12px 12px;
       border-radius: var(--radius-sm);
       border: 1px solid var(--line);
-      background: rgba(2,6,23,0.35);
+      background: rgba(2,6,23,0.55);
       color: var(--text);
+      font-size: 14px;
       outline:none;
       transition: 0.15s;
-      font-size: 14px;
     }
-    input[type="text"]::placeholder, textarea::placeholder{ color: rgba(148,163,184,0.70); }
+    input[type="text"]::placeholder, textarea::placeholder{ color: rgba(148,163,184,0.75); }
     input[type="text"]:focus, textarea:focus{
-      border-color: rgba(255,92,92,0.55);
+      border-color: rgba(255,77,90,0.55);
       box-shadow: var(--focus);
     }
-    textarea{
-      resize:none;
-      overflow:hidden;
-      min-height: 46px;
-    }
+    textarea{ resize:none; overflow:hidden; min-height: 44px; }
 
-    .price-inline{
-      display:flex;
-      gap:10px;
-      align-items:center;
-      flex-wrap:wrap;
-    }
-    .suffix{
-      color: var(--muted);
+    .price-inline{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+    .price-inline .suffix{
       font-weight: 1000;
-      padding: 0 6px;
+      color: var(--muted);
     }
 
-    /* ===== 검차결과 ===== */
+    /* ====== Result box ====== */
     .result-area{
+      border: 1px dashed rgba(255,77,90,0.36);
+      background: rgba(255,77,90,0.06);
       border-radius: var(--radius);
-      border: 1px dashed rgba(255,92,92,0.35);
-      background: rgba(255,92,92,0.07);
       padding: 12px;
       margin-top: 10px;
     }
@@ -269,24 +221,24 @@
       justify-content:space-between;
       gap:10px;
       margin-bottom: 10px;
-      flex-wrap:wrap;
     }
     .result-title{
+      font-weight: 1000;
+      color: var(--accent-2);
       display:flex;
       align-items:center;
       gap:8px;
-      font-weight: 1000;
-      color: var(--accent);
-      letter-spacing: -0.1px;
+      font-size: 14px;
     }
     .result-total{
       font-weight: 1000;
-      color: var(--accent);
-      font-size: 12px;
+      color: var(--accent-2);
+      font-size: 13px;
+      text-align:right;
       white-space:nowrap;
     }
     .result-sub{
-      margin-top: 10px;
+      margin-top:10px;
       font-size: 12px;
       color: var(--muted);
       font-weight: 1000;
@@ -297,43 +249,30 @@
 
     .chips{ display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
     .chip{
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      border: 1px solid var(--line);
+      background: rgba(2,6,23,0.35);
+      color: var(--text);
       display:inline-flex;
       align-items:center;
       gap:6px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      border: 1px solid var(--line);
-      background: rgba(2,6,23,0.30);
-      color: var(--text);
-      font-size: 12px;
-      font-weight: 900;
     }
-    .chip.exchange{
-      border-color: rgba(255,92,92,0.45);
-      background: rgba(255,92,92,0.16);
-      color: #ffd3d3;
-    }
-    .chip.repair{
-      border-color: rgba(245,158,11,0.45);
-      background: rgba(245,158,11,0.16);
-      color: #ffe3b0;
-    }
+    .chip.exchange{ border-color: rgba(255,77,90,0.36); background: rgba(255,77,90,0.14); color: var(--accent-2); }
+    .chip.repair{ border-color: rgba(245,158,11,0.36); background: rgba(245,158,11,0.14); color: #fbbf24; }
 
     .result-list{
       margin: 10px 0 0;
       padding-left: 18px;
+      color: var(--text);
       font-size: 13px;
       line-height: 1.55;
-      color: var(--text);
     }
-    .result-list li{ margin: 4px 0; }
-    .result-empty{
-      margin-top: 8px;
-      font-size: 13px;
-      color: rgba(148,163,184,0.85);
-    }
+    .result-list li{ margin: 4px 0; color: #e5e7eb; }
+    .result-empty{ margin-top:8px; font-size: 13px; color: var(--muted); }
 
-    /* ===== 이미지 + 오버레이 ===== */
+    /* ====== Image Overlay ====== */
     .container{
       position: relative;
       width: 100%;
@@ -342,278 +281,239 @@
       border-radius: var(--radius);
       overflow:hidden;
       border: 1px solid var(--line);
-      background: rgba(2,6,23,0.35);
       box-shadow: var(--shadow-soft);
+      background: rgba(2,6,23,0.35);
     }
     .car-image{ width:100%; display:block; }
     .checkbox-overlay{ position:absolute; inset:0; }
 
-    /* “딜러앱” 마커: 기본은 작은 마커, 선택 시 라벨 강조 */
     .checkbox-item{
       position:absolute;
       transform: translate(-50%, -50%);
       cursor:pointer;
       user-select:none;
       -webkit-tap-highlight-color: transparent;
-      touch-action: manipulation;
-
-      display:inline-flex;
-      align-items:center;
-      gap:6px;
-
       padding: 7px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.18);
-      background: rgba(2,6,23,0.65);
-      backdrop-filter: blur(6px);
-
-      box-shadow: 0 8px 20px rgba(0,0,0,0.30);
       font-size: 11px;
-      font-weight: 900;
-      color: rgba(229,231,235,0.92);
-      white-space:nowrap;
-      transition: 0.15s;
-    }
-
-    /* 마커 왼쪽 작은 점 */
-    .checkbox-item::before{
-      content:'';
-      width: 8px;
-      height: 8px;
       border-radius: 999px;
-      background: rgba(148,163,184,0.9);
-      box-shadow: 0 0 0 2px rgba(2,6,23,0.55);
+      border: 1px solid rgba(226,232,240,0.18);
+      background: rgba(2,6,23,0.55);
+      backdrop-filter: blur(6px);
       transition: 0.15s;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.28);
+      white-space:nowrap;
+      color: var(--text);
     }
-
     .checkbox-item:hover{ transform: translate(-50%, -50%) scale(1.03); }
 
-    /* 도색 선택 */
     .checkbox-item.selected{
-      border-color: rgba(255,92,92,0.75);
-      background: rgba(255,92,92,0.18);
-      box-shadow: 0 10px 26px rgba(255,92,92,0.16);
-      color: #fff;
+      border-color: rgba(255,77,90,0.75);
+      background: rgba(255,77,90,0.18);
+      box-shadow: 0 10px 22px rgba(255,77,90,0.18);
+      font-weight: 1000;
     }
-    .checkbox-item.selected::before{ background: var(--accent); }
-
-    /* 사고 상태(교환/판금) */
     .acc-item.exchange{
-      border-color: rgba(255,92,92,0.85);
-      background: rgba(255,92,92,0.22);
-      color: #fff;
+      border-color: rgba(255,77,90,0.85);
+      background: rgba(255,77,90,0.22);
+      font-weight: 1000;
     }
-    .acc-item.exchange::before{ background: var(--accent); }
-
     .acc-item.repair{
       border-color: rgba(245,158,11,0.85);
       background: rgba(245,158,11,0.22);
-      color: #fff;
-    }
-    .acc-item.repair::before{ background: #f59e0b; }
-
-    /* 편집모드에서만 드래그 가능 시각표시 */
-    body.edit-mode .checkbox-item{
-      outline: 2px dashed rgba(56,189,248,0.55);
-      outline-offset: 2px;
-      cursor: grab;
-    }
-    body.edit-mode .checkbox-item:active{
-      cursor: grabbing;
+      font-weight: 1000;
     }
 
-    /* ===== 세부 상태(아이템 정렬 개선) ===== */
+    /* Edit Mode badge */
+    .edit-badge{
+      margin-top: 10px;
+      display:none;
+      gap:8px;
+      align-items:center;
+      font-size:12px;
+      color: var(--accent-2);
+      font-weight:1000;
+    }
+    .edit-badge.show{ display:flex; }
+    .edit-badge i{ opacity:0.95; }
+
+    /* ====== Function items ====== */
     .function-category{
       margin-top: 14px;
-      border-radius: var(--radius);
       border: 1px solid var(--line);
-      background: rgba(2,6,23,0.35);
+      border-radius: var(--radius);
       padding: 12px;
+      background: rgba(2,6,23,0.20);
     }
     .function-category h3{
       margin:0 0 10px;
       font-size: 12px;
       font-weight: 1000;
-      color: #ffd3d3;
+      color: var(--accent-2);
       display:flex;
       align-items:center;
       gap:8px;
     }
-    .function-category h3 i{ color: var(--accent); }
 
     .function-item{
       display:grid;
-      grid-template-columns: 26px 140px 1fr 140px;
-      gap:8px;
+      grid-template-columns: 28px 1fr 1.2fr 140px;
+      gap: 8px;
       align-items:center;
+      margin-bottom: 10px;
       padding: 10px;
       border-radius: 16px;
-      border: 1px solid rgba(255,255,255,0.10);
-      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--line);
+      background: rgba(2,6,23,0.25);
       transition: 0.15s;
-      margin-bottom: 10px;
     }
-    .function-item.is-checked{
-      border-color: rgba(255,92,92,0.25);
-      background: rgba(255,92,92,0.06);
+    .function-item:has(input[type="checkbox"]:checked){
+      border-color: rgba(255,77,90,0.30);
+      background: rgba(255,77,90,0.06);
     }
-
     .function-item input[type="checkbox"]{
       width:18px;height:18px;
       accent-color: var(--accent);
     }
-
-    .function-item .name{
-      font-weight: 1000;
-      color: rgba(229,231,235,0.95);
-      font-size: 13px;
-      letter-spacing: -0.1px;
-    }
-
     .function-item input[type="text"]{
       padding: 10px 10px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(2,6,23,0.45);
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: rgba(2,6,23,0.55);
       color: var(--text);
       font-size: 13px;
     }
-
     .function-item input.function-price{
       text-align:right;
       font-weight: 1000;
     }
 
     .btn-soft{
-      width: 100%;
-      border: 1px solid rgba(255,92,92,0.35);
-      background: rgba(255,92,92,0.10);
-      color: var(--accent);
-      padding: 11px 12px;
-      border-radius: 16px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,77,90,0.28);
+      background: rgba(255,77,90,0.12);
+      color: var(--accent-2);
       font-weight: 1000;
       cursor:pointer;
       transition: 0.15s;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.18);
+      width: 100%;
     }
-    .btn-soft:hover{ background: rgba(255,92,92,0.16); }
+    .btn-soft:hover{ background: rgba(255,77,90,0.16); }
 
-    /* 동적 기타 항목(삭제버튼 포함) 레이아웃 */
-    .function-item.has-delete{
-      grid-template-columns: 26px 140px 1fr 140px 92px;
-    }
-    .function-item.has-delete .btn-del{
-      padding: 10px 10px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(255,255,255,0.06);
-      color: rgba(229,231,235,0.9);
-      font-weight: 1000;
-      cursor:pointer;
-    }
-    .function-item.has-delete .btn-del:hover{
-      background: rgba(255,92,92,0.12);
-      border-color: rgba(255,92,92,0.35);
-      color: #ffd3d3;
-    }
-
-    /* ===== 하단 고정바 ===== */
+    /* ====== Bottom Summary Bar ====== */
     .bottom-bar{
-      position: fixed;
-      left: 50%;
-      transform: translateX(-50%);
-      bottom: 12px;
-      z-index: 90;
-
-      width: min(820px, calc(100% - 28px));
-      border-radius: 20px;
+      position: sticky;
+      bottom: 10px;
+      z-index: 50;
+      margin: 14px auto 0;
+      background: linear-gradient(180deg, rgba(15,23,42,0.92), rgba(15,23,42,0.82));
+      backdrop-filter: blur(10px);
       border: 1px solid var(--line);
-      background: rgba(15, 23, 42, 0.80);
-      backdrop-filter: blur(12px);
+      border-radius: 22px;
       box-shadow: var(--shadow);
-      padding: 10px 12px;
-
+      padding: 12px;
       display:flex;
       align-items:center;
       justify-content:space-between;
-      gap:10px;
+      gap: 12px;
+      text-align:left;
     }
-    .bottom-left{
-      display:grid;
-      gap:2px;
-    }
+    .bottom-left{ display:grid; gap:2px; }
     .bottom-left .label{
       font-size: 11px;
       color: var(--muted);
       font-weight: 1000;
     }
     .bottom-left .value{
-      font-size: 16px;
+      font-size: 18px;
       font-weight: 1000;
-      color: #ffd3d3;
-      letter-spacing: -0.2px;
+      color: var(--accent-2);
+      letter-spacing:-0.2px;
+      display:flex;
+      gap:8px;
+      align-items:baseline;
+    }
+    .bottom-left .value small{
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 1000;
     }
 
-    /* 모바일 최적화 */
+    .bottom-actions{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .btn-primary{
+      padding: 11px 14px;
+      border-radius: 14px;
+      border: none;
+      background: var(--accent);
+      color:#fff;
+      font-weight: 1000;
+      cursor:pointer;
+    }
+    .btn-ghost{
+      padding: 11px 14px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(2,6,23,0.35);
+      color: var(--text);
+      font-weight: 1000;
+      cursor:pointer;
+    }
+
     @media (max-width: 560px){
       body{ padding: 12px; }
-      .app-shell{ padding-bottom: 96px; }
-      .brand{ min-width: 0; }
-
       .function-item{
         grid-template-columns: 26px 1fr;
         grid-template-rows: auto auto auto;
       }
-      .function-item .name{ grid-column: 2 / 3; }
-      .function-item input.function-desc{ grid-column: 1 / 3; }
-      .function-item input.function-price{ grid-column: 1 / 3; text-align:left; }
-
-      .function-item.has-delete{
-        grid-template-columns: 26px 1fr;
-      }
-      .function-item.has-delete .btn-del{
-        grid-column: 1 / 3;
-      }
-
-      .checkbox-item{
-        font-size: 10px;
-        padding: 6px 9px;
-      }
+      .function-item > :nth-child(2){ grid-column: 2 / 3; }
+      .function-item > :nth-child(3){ grid-column: 1 / 3; }
+      .function-item > :nth-child(4){ grid-column: 1 / 3; }
+      .function-item input.function-price{ text-align:left; }
+      .bottom-left .value{ font-size: 16px; }
+      .btn-primary, .btn-ghost{ padding: 10px 12px; }
     }
   </style>
 </head>
 
 <body>
   <div class="app-shell">
-    <!-- ✅ APP BAR -->
-    <div class="appbar">
-      <div class="appbar-row">
+    <!-- Topbar -->
+    <div class="topbar">
+      <div class="topbar-row">
         <div class="brand">
           <div class="logo"><i class="fa-solid fa-car"></i></div>
           <div class="title">
-            <b>자동차 감가 계산기</b>
-            <span>입찰가 → 도색/사고 선택 → 세부상태 입력</span>
+            <h1>자동차 감가 계산기</h1>
+            <div class="sub">입찰가 → 도색/사고 선택 → 세부상태 금액 입력하면 자동 계산</div>
           </div>
         </div>
 
-        <div class="actions">
-          <div class="car-type-toggle">
+        <div class="top-actions">
+          <div class="segmented">
             <button id="btnImported" onclick="setCarType('imported')">수입차</button>
             <button id="btnDomestic" onclick="setCarType('domestic')">국산차</button>
           </div>
-
-          <button class="btn" onclick="toggleEditMode()" id="editModeBtn">
-            <i class="fa-solid fa-location-dot"></i> 편집모드
+          <button class="btn-mini" id="btnEditPos" onclick="toggleEditMode()">
+            <i class="fa-solid fa-location-crosshairs"></i> 위치조정
           </button>
-
-          <button class="btn btn-danger" onclick="resetAll()">
+          <button class="btn-mini danger" onclick="resetAll()">
             <i class="fa-solid fa-rotate-left"></i> 초기화
           </button>
         </div>
       </div>
+      <div id="editBadge" class="edit-badge">
+        <i class="fa-solid fa-hand-pointer"></i>
+        위치조정 모드: 오버레이(도색/사고)를 <b>드래그</b>해서 맞춘 뒤 자동 저장됩니다.
+        <span style="color:var(--muted); font-weight:1000;">(다시 누르면 종료)</span>
+      </div>
     </div>
 
-    <!-- ✅ 가격 + 검차결과 -->
+    <!-- 가격 + 검차결과 -->
     <div class="section">
       <h2><i class="fa-solid fa-won-sign"></i> 가격</h2>
 
@@ -622,8 +522,7 @@
         <div class="price-inline">
           <input type="text" id="bidPriceInput"
                  oninput="formatInput(this); saveInput('bidPriceInput')"
-                 onchange="updateAll()"
-                 placeholder="예) 12,300,000">
+                 onchange="updateAll()" placeholder="예) 12,300,000">
           <span class="suffix">원</span>
         </div>
       </div>
@@ -631,37 +530,36 @@
       <div id="resultArea" class="result-area" style="display:none;"></div>
 
       <div class="hint">
-        * 도색/사고는 부위를 터치해 선택합니다. <br>
-        * <b>편집모드</b>에서 부위를 드래그해 위치를 맞추면 저장됩니다.
+        * 도색/사고는 이미지 위 부위를 터치해서 선택/해제할 수 있어요. (휠/타이어는 별도 감가 단가 적용)
       </div>
     </div>
 
-    <!-- ✅ 차량정보 -->
+    <!-- 차량정보 -->
     <div class="section">
       <h2><i class="fas fa-car-side"></i> 차량정보</h2>
 
       <div class="field">
-        <label><i class="fas fa-car"></i> 차량번호 <i class="fas fa-tachometer-alt"></i> 주행거리</label>
+        <label><i class="fas fa-car"></i> 차량번호 &nbsp; <i class="fas fa-tachometer-alt"></i> 주행거리</label>
         <input type="text" id="carNumber" placeholder="차량번호 / 주행거리 입력" oninput="saveInput('carNumber')">
       </div>
 
       <div class="field">
-        <label><i class="fas fa-id-badge"></i> 차량명 <i class="fas fa-star"></i> 차량등급</label>
+        <label><i class="fas fa-id-badge"></i> 차량명 &nbsp; <i class="fas fa-star"></i> 차량등급</label>
         <input type="text" id="carName" placeholder="차량명 & 등급 입력" oninput="saveInput('carName')">
       </div>
     </div>
 
-    <!-- ✅ 고객기재 -->
+    <!-- 고객기재 -->
     <div class="section">
       <h2><i class="fas fa-user-edit"></i> 고객기재</h2>
 
       <div class="field">
-        <label><i class="fas fa-tools"></i> 외판 <i class="fas fa-dot-circle"></i> 휠기스</label>
+        <label><i class="fas fa-tools"></i> 외판 &nbsp; <i class="fas fa-dot-circle"></i> 휠기스</label>
         <input type="text" id="exterior" placeholder="외판 & 휠기스 수량" oninput="saveInput('exterior')">
       </div>
 
       <div class="field">
-        <label><i class="fas fa-key"></i> 보조키 <i class="fas fa-circle-notch"></i> 타이어상태</label>
+        <label><i class="fas fa-key"></i> 보조키 &nbsp; <i class="fas fa-circle-notch"></i> 타이어상태</label>
         <input type="text" id="spareKey" placeholder="보조키 유/무 & 타이어상태" oninput="saveInput('spareKey')">
       </div>
 
@@ -683,7 +581,7 @@
       </div>
     </div>
 
-    <!-- ✅ 도색 -->
+    <!-- 도색 -->
     <div class="section">
       <h2><i class="fas fa-paint-roller"></i> 도색</h2>
 
@@ -693,15 +591,15 @@
       </div>
 
       <div class="hint">
-        부위를 터치하면 선택/해제됩니다. (휠/타이어는 별도 감가 단가 적용)
+        부위를 터치하면 선택/해제됩니다. (위치가 어긋나면 상단 <b>위치조정</b>으로 끌어서 맞춰주세요)
       </div>
     </div>
 
-    <!-- ✅ 사고 -->
+    <!-- 사고 -->
     <div class="section">
       <h2><i class="fas fa-car-burst"></i> 사고 이력</h2>
 
-      <div class="container" id="accidentContainer">
+      <div class="container" id="accContainer">
         <img src="https://imgur.com/kfizDdA.png" class="car-image" alt="사고부위 자동차">
         <div class="checkbox-overlay" id="accidentSection"></div>
       </div>
@@ -711,7 +609,7 @@
       </div>
     </div>
 
-    <!-- ✅ 세부 상태 (여기 아래는 너가 준 기존 구조 유지 + UI만 정렬) -->
+    <!-- 세부 상태 -->
     <div class="section">
       <h2><i class="fas fa-tools"></i> 세부 상태</h2>
 
@@ -720,35 +618,35 @@
 
         <div class="function-item">
           <input type="checkbox" data-name="라이트크랙" onchange="updateAll()">
-          <div class="name">라이트크랙</div>
+          <div style="font-weight:1000;">라이트크랙</div>
           <input type="text" class="function-desc" data-key="라이트크랙-desc" oninput="saveInput('라이트크랙-desc'); updateAll()" placeholder="내용">
           <input type="text" class="function-price" data-key="라이트크랙-price" oninput="formatInput(this); saveInput('라이트크랙-price'); updateAll()" placeholder="금액(원)">
         </div>
 
         <div class="function-item">
           <input type="checkbox" data-name="안개등크랙" onchange="updateAll()">
-          <div class="name">안개등크랙</div>
+          <div style="font-weight:1000;">안개등크랙</div>
           <input type="text" class="function-desc" data-key="안개등크랙-desc" oninput="saveInput('안개등크랙-desc'); updateAll()" placeholder="내용">
           <input type="text" class="function-price" data-key="안개등크랙-price" oninput="formatInput(this); saveInput('안개등크랙-price'); updateAll()" placeholder="금액(원)">
         </div>
 
         <div class="function-item">
           <input type="checkbox" data-name="데루등크랙" onchange="updateAll()">
-          <div class="name">데루등크랙</div>
+          <div style="font-weight:1000;">데루등크랙</div>
           <input type="text" class="function-desc" data-key="데루등크랙-desc" oninput="saveInput('데루등크랙-desc'); updateAll()" placeholder="내용">
           <input type="text" class="function-price" data-key="데루등크랙-price" oninput="formatInput(this); saveInput('데루등크랙-price'); updateAll()" placeholder="금액(원)">
         </div>
 
         <div class="function-item">
           <input type="checkbox" data-name="자동차검사(기타)" onchange="updateAll()">
-          <div class="name">자동차검사</div>
+          <div style="font-weight:1000;">자동차검사</div>
           <input type="text" class="function-desc" data-key="자동차검사(기타)-desc" oninput="saveInput('자동차검사(기타)-desc'); updateAll()" placeholder="내용">
           <input type="text" class="function-price" data-key="자동차검사(기타)-price" oninput="formatInput(this); saveInput('자동차검사(기타)-price'); updateAll()" placeholder="금액(원)">
         </div>
 
         <div class="function-item">
           <input type="checkbox" data-name="구변여부(기타)" onchange="updateAll()">
-          <div class="name">구변여부</div>
+          <div style="font-weight:1000;">구변여부</div>
           <input type="text" class="function-desc" data-key="구변여부(기타)-desc" oninput="saveInput('구변여부(기타)-desc'); updateAll()" placeholder="내용">
           <input type="text" class="function-price" data-key="구변여부(기타)-price" oninput="formatInput(this); saveInput('구변여부(기타)-price'); updateAll()" placeholder="금액(원)">
         </div>
@@ -757,34 +655,33 @@
         <button class="btn-soft" onclick="addExtraItem('익스테리어')">+ 기타 항목 추가</button>
       </div>
 
-      <!-- 엔진 -->
       <div class="function-category">
         <h3><i class="fa-solid fa-list-check"></i> 엔진 Part📝</h3>
 
         <div class="function-item">
           <input type="checkbox" data-name="공회전상태" onchange="updateAll()">
-          <div class="name">공회전상태</div>
+          <div style="font-weight:1000;">공회전상태</div>
           <input type="text" class="function-desc" data-key="공회전상태-desc" oninput="saveInput('공회전상태-desc'); updateAll()" placeholder="내용">
           <input type="text" class="function-price" data-key="공회전상태-price" oninput="formatInput(this); saveInput('공회전상태-price'); updateAll()" placeholder="금액(원)">
         </div>
 
         <div class="function-item">
           <input type="checkbox" data-name="오일누유" onchange="updateAll()">
-          <div class="name">오일누유</div>
+          <div style="font-weight:1000;">오일누유</div>
           <input type="text" class="function-desc" data-key="오일누유-desc" oninput="saveInput('오일누유-desc'); updateAll()" placeholder="내용">
           <input type="text" class="function-price" data-key="오일누유-price" oninput="formatInput(this); saveInput('오일누유-price'); updateAll()" placeholder="금액(원)">
         </div>
 
         <div class="function-item">
           <input type="checkbox" data-name="냉각수누수" onchange="updateAll()">
-          <div class="name">냉각수누수</div>
+          <div style="font-weight:1000;">냉각수누수</div>
           <input type="text" class="function-desc" data-key="냉각수누수-desc" oninput="saveInput('냉각수누수-desc'); updateAll()" placeholder="내용">
           <input type="text" class="function-price" data-key="냉각수누수-price" oninput="formatInput(this); saveInput('냉각수누수-price'); updateAll()" placeholder="금액(원)">
         </div>
 
         <div class="function-item">
           <input type="checkbox" data-name="소모품(엔진)" onchange="updateAll()">
-          <div class="name">소모품</div>
+          <div style="font-weight:1000;">소모품</div>
           <input type="text" class="function-desc" data-key="소모품(엔진)-desc" oninput="saveInput('소모품(엔진)-desc'); updateAll()" placeholder="내용">
           <input type="text" class="function-price" data-key="소모품(엔진)-price" oninput="formatInput(this); saveInput('소모품(엔진)-price'); updateAll()" placeholder="금액(원)">
         </div>
@@ -793,20 +690,19 @@
         <button class="btn-soft" onclick="addExtraItem('엔진')">+ 기타 항목 추가</button>
       </div>
 
-      <!-- 미션 -->
       <div class="function-category">
         <h3><i class="fa-solid fa-list-check"></i> 미션 Part📝</h3>
 
         <div class="function-item">
           <input type="checkbox" data-name="오일누유(미션)" onchange="updateAll()">
-          <div class="name">오일누유</div>
+          <div style="font-weight:1000;">오일누유</div>
           <input type="text" class="function-desc" data-key="오일누유(미션)-desc" oninput="saveInput('오일누유(미션)-desc'); updateAll()" placeholder="내용">
           <input type="text" class="function-price" data-key="오일누유(미션)-price" oninput="formatInput(this); saveInput('오일누유(미션)-price'); updateAll()" placeholder="금액(원)">
         </div>
 
         <div class="function-item">
           <input type="checkbox" data-name="소모품(미션)" onchange="updateAll()">
-          <div class="name">소모품</div>
+          <div style="font-weight:1000;">소모품</div>
           <input type="text" class="function-desc" data-key="소모품(미션)-desc" oninput="saveInput('소모품(미션)-desc'); updateAll()" placeholder="내용">
           <input type="text" class="function-price" data-key="소모품(미션)-price" oninput="formatInput(this); saveInput('소모품(미션)-price'); updateAll()" placeholder="금액(원)">
         </div>
@@ -815,55 +711,54 @@
         <button class="btn-soft" onclick="addExtraItem('미션')">+ 기타 항목 추가</button>
       </div>
 
-      <!-- 하체 -->
       <div class="function-category">
         <h3><i class="fa-solid fa-list-check"></i> 하체 Part📝</h3>
 
         <div class="function-item">
           <input type="checkbox" data-name="쇼버" onchange="updateAll()">
-          <div class="name">쇼버</div>
+          <div style="font-weight:1000;">쇼버</div>
           <input type="text" class="function-desc" data-key="쇼버-desc" oninput="saveInput('쇼버-desc'); updateAll()" placeholder="내용">
           <input type="text" class="function-price" data-key="쇼버-price" oninput="formatInput(this); saveInput('쇼버-price'); updateAll()" placeholder="금액(원)">
         </div>
 
         <div class="function-item">
           <input type="checkbox" data-name="서스펜션" onchange="updateAll()">
-          <div class="name">서스펜션(암,링크)</div>
+          <div style="font-weight:1000;">서스펜션(암,링크)</div>
           <input type="text" class="function-desc" data-key="서스펜션-desc" oninput="saveInput('서스펜션-desc'); updateAll()" placeholder="내용">
           <input type="text" class="function-price" data-key="서스펜션-price" oninput="formatInput(this); saveInput('서스펜션-price'); updateAll()" placeholder="금액(원)">
         </div>
 
         <div class="function-item">
           <input type="checkbox" data-name="등속조인트" onchange="updateAll()">
-          <div class="name">등속조인트</div>
+          <div style="font-weight:1000;">등속조인트</div>
           <input type="text" class="function-desc" data-key="등속조인트-desc" oninput="saveInput('등속조인트-desc'); updateAll()" placeholder="내용">
           <input type="text" class="function-price" data-key="등속조인트-price" oninput="formatInput(this); saveInput('등속조인트-price'); updateAll()" placeholder="금액(원)">
         </div>
 
         <div class="function-item">
           <input type="checkbox" data-name="웜기어" onchange="updateAll()">
-          <div class="name">웜기어</div>
+          <div style="font-weight:1000;">웜기어</div>
           <input type="text" class="function-desc" data-key="웜기어-desc" oninput="saveInput('웜기어-desc'); updateAll()" placeholder="내용">
           <input type="text" class="function-price" data-key="웜기어-price" oninput="formatInput(this); saveInput('웜기어-price'); updateAll()" placeholder="금액(원)">
         </div>
 
         <div class="function-item">
           <input type="checkbox" data-name="디스크" onchange="updateAll()">
-          <div class="name">디스크(패드)</div>
+          <div style="font-weight:1000;">디스크(패드)</div>
           <input type="text" class="function-desc" data-key="디스크-desc" oninput="saveInput('디스크-desc'); updateAll()" placeholder="내용">
           <input type="text" class="function-price" data-key="디스크-price" oninput="formatInput(this); saveInput('디스크-price'); updateAll()" placeholder="금액(원)">
         </div>
 
         <div class="function-item">
           <input type="checkbox" data-name="머플러" onchange="updateAll()">
-          <div class="name">머플러</div>
+          <div style="font-weight:1000;">머플러</div>
           <input type="text" class="function-desc" data-key="머플러-desc" oninput="saveInput('머플러-desc'); updateAll()" placeholder="내용">
           <input type="text" class="function-price" data-key="머플러-price" oninput="formatInput(this); saveInput('머플러-price'); updateAll()" placeholder="금액(원)">
         </div>
 
         <div class="function-item">
           <input type="checkbox" data-name="소모품(하체)" onchange="updateAll()">
-          <div class="name">소모품</div>
+          <div style="font-weight:1000;">소모품</div>
           <input type="text" class="function-desc" data-key="소모품(하체)-desc" oninput="saveInput('소모품(하체)-desc'); updateAll()" placeholder="내용">
           <input type="text" class="function-price" data-key="소모품(하체)-price" oninput="formatInput(this); saveInput('소모품(하체)-price'); updateAll()" placeholder="금액(원)">
         </div>
@@ -872,83 +767,82 @@
         <button class="btn-soft" onclick="addExtraItem('하체')">+ 기타 항목 추가</button>
       </div>
 
-      <!-- 인테리어 -->
       <div class="function-category">
         <h3><i class="fa-solid fa-list-check"></i> 인테리어 Part📝</h3>
 
         <div class="function-item">
           <input type="checkbox" data-name="시트" onchange="updateAll()">
-          <div class="name">시트상태</div>
+          <div style="font-weight:1000;">시트상태</div>
           <input type="text" class="function-desc" data-key="시트-desc" oninput="saveInput('시트-desc'); updateAll()" placeholder="내용">
           <input type="text" class="function-price" data-key="시트-price" oninput="formatInput(this); saveInput('시트-price'); updateAll()" placeholder="금액(원)">
         </div>
 
         <div class="function-item">
           <input type="checkbox" data-name="실내컨디션" onchange="updateAll()">
-          <div class="name">실내상태</div>
+          <div style="font-weight:1000;">실내상태</div>
           <input type="text" class="function-desc" data-key="실내컨디션-desc" oninput="saveInput('실내컨디션-desc'); updateAll()" placeholder="내용">
           <input type="text" class="function-price" data-key="실내컨디션-price" oninput="formatInput(this); saveInput('실내컨디션-price'); updateAll()" placeholder="금액(원)">
         </div>
 
         <div class="function-item">
           <input type="checkbox" data-name="계기판" onchange="updateAll()">
-          <div class="name">계기판</div>
+          <div style="font-weight:1000;">계기판</div>
           <input type="text" class="function-desc" data-key="계기판-desc" oninput="saveInput('계기판-desc'); updateAll()" placeholder="내용">
           <input type="text" class="function-price" data-key="계기판-price" oninput="formatInput(this); saveInput('계기판-price'); updateAll()" placeholder="금액(원)">
         </div>
 
         <div class="function-item">
           <input type="checkbox" data-name="등화류" onchange="updateAll()">
-          <div class="name">등화류</div>
+          <div style="font-weight:1000;">등화류</div>
           <input type="text" class="function-desc" data-key="등화류-desc" oninput="saveInput('등화류-desc'); updateAll()" placeholder="내용">
           <input type="text" class="function-price" data-key="등화류-price" oninput="formatInput(this); saveInput('등화류-price'); updateAll()" placeholder="금액(원)">
         </div>
 
         <div class="function-item">
           <input type="checkbox" data-name="에어컨히터" onchange="updateAll()">
-          <div class="name">냉난방류</div>
+          <div style="font-weight:1000;">냉난방류</div>
           <input type="text" class="function-desc" data-key="에어컨히터-desc" oninput="saveInput('에어컨히터-desc'); updateAll()" placeholder="내용">
           <input type="text" class="function-price" data-key="에어컨히터-price" oninput="formatInput(this); saveInput('에어컨히터-price'); updateAll()" placeholder="금액(원)">
         </div>
 
         <div class="function-item">
           <input type="checkbox" data-name="오디오" onchange="updateAll()">
-          <div class="name">오디오계통</div>
+          <div style="font-weight:1000;">오디오계통</div>
           <input type="text" class="function-desc" data-key="오디오-desc" oninput="saveInput('오디오-desc'); updateAll()" placeholder="내용">
           <input type="text" class="function-price" data-key="오디오-price" oninput="formatInput(this); saveInput('오디오-price'); updateAll()" placeholder="금액(원)">
         </div>
 
         <div class="function-item">
           <input type="checkbox" data-name="미러창문" onchange="updateAll()">
-          <div class="name">미러&창문</div>
+          <div style="font-weight:1000;">미러&창문</div>
           <input type="text" class="function-desc" data-key="미러창문-desc" oninput="saveInput('미러창문-desc'); updateAll()" placeholder="내용">
           <input type="text" class="function-price" data-key="미러창문-price" oninput="formatInput(this); saveInput('미러창문-price'); updateAll()" placeholder="금액(원)">
         </div>
 
         <div class="function-item">
           <input type="checkbox" data-name="버튼류" onchange="updateAll()">
-          <div class="name">버튼류작동</div>
+          <div style="font-weight:1000;">버튼류작동</div>
           <input type="text" class="function-desc" data-key="버튼류-desc" oninput="saveInput('버튼류-desc'); updateAll()" placeholder="내용">
           <input type="text" class="function-price" data-key="버튼류-price" oninput="formatInput(this); saveInput('버튼류-price'); updateAll()" placeholder="금액(원)">
         </div>
 
         <div class="function-item">
           <input type="checkbox" data-name="썬팅" onchange="updateAll()">
-          <div class="name">썬팅상태</div>
+          <div style="font-weight:1000;">썬팅상태</div>
           <input type="text" class="function-desc" data-key="썬팅-desc" oninput="saveInput('썬팅-desc'); updateAll()" placeholder="내용">
           <input type="text" class="function-price" data-key="썬팅-price" oninput="formatInput(this); saveInput('썬팅-price'); updateAll()" placeholder="금액(원)">
         </div>
 
         <div class="function-item">
           <input type="checkbox" data-name="유리크랙" onchange="updateAll()">
-          <div class="name">유리크랙</div>
+          <div style="font-weight:1000;">유리크랙</div>
           <input type="text" class="function-desc" data-key="유리크랙-desc" oninput="saveInput('유리크랙-desc'); updateAll()" placeholder="내용">
           <input type="text" class="function-price" data-key="유리크랙-price" oninput="formatInput(this); saveInput('유리크랙-price'); updateAll()" placeholder="금액(원)">
         </div>
 
         <div class="function-item">
           <input type="checkbox" data-name="트렁크상태" onchange="updateAll()">
-          <div class="name">트렁크상태</div>
+          <div style="font-weight:1000;">트렁크상태</div>
           <input type="text" class="function-desc" data-key="트렁크상태-desc" oninput="saveInput('트렁크상태-desc'); updateAll()" placeholder="내용">
           <input type="text" class="function-price" data-key="트렁크상태-price" oninput="formatInput(this); saveInput('트렁크상태-price'); updateAll()" placeholder="금액(원)">
         </div>
@@ -957,21 +851,27 @@
         <button class="btn-soft" onclick="addExtraItem('인테리어')">+ 기타 항목 추가</button>
       </div>
     </div>
-  </div>
 
-  <!-- ✅ 하단 요약바 -->
-  <div class="bottom-bar">
-    <div class="bottom-left">
-      <div class="label">최종금액</div>
-      <div class="value"><span id="finalPrice">0</span>원</div>
-    </div>
-    <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;">
-      <button class="btn" onclick="window.scrollTo({top:0, behavior:'smooth'})">
-        <i class="fa-solid fa-arrow-up"></i> 맨위로
-      </button>
-      <button class="btn btn-primary" onclick="resetAll()">
-        <i class="fa-solid fa-rotate-left"></i> 초기화
-      </button>
+    <!-- Bottom bar -->
+    <div class="bottom-bar">
+      <div class="bottom-left">
+        <div class="label">최종금액</div>
+        <div class="value">
+          <span id="finalPrice">0</span>원
+          <small id="discountInfo">감가 0원</small>
+        </div>
+      </div>
+      <div class="bottom-actions">
+        <button class="btn-ghost" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+          <i class="fa-solid fa-arrow-up"></i> 맨위로
+        </button>
+        <button class="btn-ghost" onclick="copySummary()">
+          <i class="fa-solid fa-copy"></i> 요약복사
+        </button>
+        <button class="btn-primary" onclick="resetAll()">
+          <i class="fa-solid fa-rotate-left"></i> 초기화
+        </button>
+      </div>
     </div>
   </div>
 
@@ -979,7 +879,7 @@
     // ✅ 가격(국산/수입 토글용)
     const PRICE = { partPrice: 180000, wheelPrice: 100000, tirePrice: 90000 };
 
-    // ✅ 데이터(좌표/이름)
+    // ✅ 데이터(좌표/이름) — (틀/로직 유지)
     const DATA = {
       partNames: [
         { key:"front_bumper", name:"앞범퍼", top:"2%", left:"53%" },
@@ -1058,13 +958,13 @@
       const name = savedName || `기타${index}(${category})`;
 
       const item = document.createElement('div');
-      item.className='function-item has-delete';
+      item.className='function-item';
       item.innerHTML = `
         <input type="checkbox" data-name="${name}" onchange="updateAll()">
-        <div class="name">${name}</div>
+        <div style="font-weight:1000;">${name}</div>
         <input type="text" class="function-desc" data-key="${name}-desc" placeholder="내용" oninput="saveInput('${name}-desc'); updateAll()">
         <input type="text" class="function-price" data-key="${name}-price" placeholder="금액(원)" oninput="formatInput(this); saveInput('${name}-price'); updateAll()">
-        <button class="btn-del" onclick="this.parentElement.remove(); localStorage.removeItem('${name}-desc'); localStorage.removeItem('${name}-price'); updateAll(); saveExtraItems();">삭제</button>
+        <button class="btn-soft" onclick="this.parentElement.remove(); localStorage.removeItem('${name}-desc'); localStorage.removeItem('${name}-price'); updateAll(); saveExtraItems();">삭제</button>
       `;
       container.appendChild(item);
       saveExtraItems();
@@ -1138,98 +1038,93 @@
       textarea.style.height = textarea.scrollHeight + 'px';
     }
 
-    // ===== 편집모드 (마커 드래그 저장) =====
-    let editMode = false;
-
-    function toggleEditMode(){
-      editMode = !editMode;
-      document.body.classList.toggle('edit-mode', editMode);
-
-      const btn = document.getElementById('editModeBtn');
-      if(editMode){
-        btn.innerHTML = `<i class="fa-solid fa-check"></i> 편집완료`;
-        btn.classList.add('btn-primary');
-      }else{
-        btn.innerHTML = `<i class="fa-solid fa-location-dot"></i> 편집모드`;
-        btn.classList.remove('btn-primary');
-        saveOverlayPositions(); // 확실히 저장
-      }
-    }
-
-    function getOverlayPositions(){
-      return JSON.parse(localStorage.getItem('overlayPositions') || '{}');
-    }
-
-    function setOverlayPosition(key, top, left){
-      const positions = getOverlayPositions();
-      positions[key] = { top, left };
-      localStorage.setItem('overlayPositions', JSON.stringify(positions));
-    }
-
-    function saveOverlayPositions(){
-      // 이미 드래그 반영된 style top/left를 localStorage에 확정 저장
-      document.querySelectorAll('.part-item, .acc-item').forEach(el=>{
-        const key = el.dataset.key;
-        if(!key) return;
-        setOverlayPosition(key, el.style.top, el.style.left);
-      });
-    }
-
-    function applySavedPosition(el, fallbackTop, fallbackLeft){
-      const positions = getOverlayPositions();
-      const saved = positions[el.dataset.key];
-      el.style.top = saved?.top || fallbackTop;
-      el.style.left = saved?.left || fallbackLeft;
-    }
-
-    function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
-
-    function enableDrag(el, container){
-      let dragging = false;
-
-      const onDown = (e) => {
-        if(!editMode) return;
-        e.preventDefault();
-        dragging = true;
-        el.setPointerCapture?.(e.pointerId);
-      };
-
-      const onMove = (e) => {
-        if(!editMode || !dragging) return;
-
-        const rect = container.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-
-        const px = clamp(x / rect.width, 0, 1);
-        const py = clamp(y / rect.height, 0, 1);
-
-        const left = (px * 100).toFixed(2) + '%';
-        const top  = (py * 100).toFixed(2) + '%';
-
-        el.style.left = left;
-        el.style.top  = top;
-      };
-
-      const onUp = () => {
-        if(!editMode) return;
-        if(!dragging) return;
-        dragging = false;
-        // 드래그 종료 시 저장
-        setOverlayPosition(el.dataset.key, el.style.top, el.style.left);
-      };
-
-      el.addEventListener('pointerdown', onDown);
-      window.addEventListener('pointermove', onMove);
-      window.addEventListener('pointerup', onUp);
-    }
-
     // 사고 state helper
     function setAccidentState(el, state){
       el.dataset.state = state;
       el.classList.remove('repair','exchange');
       if(state) el.classList.add(state);
       el.setAttribute('aria-pressed', state ? 'true' : 'false');
+    }
+
+    // =========================
+    // ✅ 위치 조정(드래그) 모드
+    // =========================
+    let editMode = false;
+
+    function toggleEditMode(){
+      editMode = !editMode;
+      document.getElementById('btnEditPos').classList.toggle('danger', editMode);
+      document.getElementById('editBadge').classList.toggle('show', editMode);
+    }
+
+    function getSavedPosMap(){
+      return JSON.parse(localStorage.getItem('overlayPositions') || '{"paint":{},"accident":{}}');
+    }
+
+    function setSavedPos(kind, key, topPct, leftPct){
+      const map = getSavedPosMap();
+      if(!map[kind]) map[kind] = {};
+      map[kind][key] = { top: `${topPct}%`, left: `${leftPct}%` };
+      localStorage.setItem('overlayPositions', JSON.stringify(map));
+    }
+
+    function getPos(kind, key, defaultTop, defaultLeft){
+      const map = getSavedPosMap();
+      const saved = map?.[kind]?.[key];
+      return {
+        top: saved?.top || defaultTop,
+        left: saved?.left || defaultLeft
+      };
+    }
+
+    function enableDrag(el, kind, containerEl){
+      let dragging = false;
+
+      const onDown = (e) => {
+        if(!editMode) return;
+        dragging = true;
+        el.style.transition = 'none';
+        el.setPointerCapture?.(e.pointerId);
+        e.preventDefault();
+        e.stopPropagation();
+      };
+
+      const onMove = (e) => {
+        if(!editMode || !dragging) return;
+        const rect = containerEl.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width) * 100;
+        const y = ((e.clientY - rect.top) / rect.height) * 100;
+
+        const cx = Math.max(0, Math.min(100, x));
+        const cy = Math.max(0, Math.min(100, y));
+
+        el.style.left = `${cx}%`;
+        el.style.top  = `${cy}%`;
+      };
+
+      const onUp = (e) => {
+        if(!editMode || !dragging) return;
+        dragging = false;
+        el.style.transition = '';
+        const topPct = parseFloat(el.style.top);
+        const leftPct = parseFloat(el.style.left);
+        setSavedPos(kind, el.dataset.key, topPct, leftPct);
+        e.preventDefault();
+        e.stopPropagation();
+      };
+
+      // Pointer events (best on mobile)
+      el.addEventListener('pointerdown', onDown);
+      window.addEventListener('pointermove', onMove);
+      window.addEventListener('pointerup', onUp);
+
+      // 클릭이 상태변경을 트리거하지 않게(편집모드일 때)
+      el.addEventListener('click', (e)=>{
+        if(editMode){
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      }, true);
     }
 
     // ✅ 도색(터치형)
@@ -1239,26 +1134,28 @@
       partSection.innerHTML='';
 
       DATA.partNames.forEach(({key,name,top,left})=>{
+        const pos = getPos('paint', key, top, left);
+
         const el=document.createElement('div');
         el.className='checkbox-item part-item';
+        el.style.top=pos.top;
+        el.style.left=pos.left;
         el.dataset.key=key;
         el.dataset.name=name;
         el.setAttribute('role','button');
         el.setAttribute('aria-pressed','false');
         el.textContent=name;
 
-        // 저장된 위치 적용
-        applySavedPosition(el, top, left);
+        enableDrag(el, 'paint', paintContainer);
 
         el.addEventListener('click',()=>{
-          if(editMode) return; // 편집모드에서는 클릭 선택 방지(드래그만)
+          if(editMode) return;
           el.classList.toggle('selected');
           el.setAttribute('aria-pressed', el.classList.contains('selected') ? 'true' : 'false');
           updateAll();
           saveCheckboxState();
         });
 
-        enableDrag(el, paintContainer);
         partSection.appendChild(el);
       });
     }
@@ -1266,22 +1163,26 @@
     // ✅ 사고(없음→교환→판금→없음)
     function renderAccidentItems(){
       const accidentSection=document.getElementById('accidentSection');
-      const accidentContainer=document.getElementById('accidentContainer');
+      const accContainer=document.getElementById('accContainer');
       accidentSection.innerHTML='';
 
       DATA.accidentParts.forEach(({key,name,rate,top,left})=>{
+        const pos = getPos('accident', key, top, left);
+
         const el=document.createElement('div');
         el.className='checkbox-item acc-item';
-        el.dataset.key=key || name;
+        el.style.top=pos.top;
+        el.style.left=pos.left;
+        el.dataset.key=key||name;
         el.dataset.name=name;
         el.dataset.rate=String(rate);
         el.dataset.state='';
         el.setAttribute('role','button');
         el.setAttribute('aria-pressed','false');
-        el.textContent=name;
 
-        // 저장된 위치 적용
-        applySavedPosition(el, top, left);
+        el.textContent = name;
+
+        enableDrag(el, 'accident', accContainer);
 
         el.addEventListener('click',()=>{
           if(editMode) return;
@@ -1292,7 +1193,6 @@
           saveCheckboxState();
         });
 
-        enableDrag(el, accidentContainer);
         accidentSection.appendChild(el);
       });
     }
@@ -1448,15 +1348,13 @@
           const descText = desc ? ` / ${desc}` : '';
           deductionLines.push(`[세부] ${name}${descText}: -${price.toLocaleString()}원`);
         }
-
-        // 체크 UI 표시
-        item.classList.toggle('is-checked', checkbox.checked);
       });
 
       const totalDiscount = paintDiscount + accidentDiscount + functionDiscount;
       const finalPrice = Math.max(0, Math.round(bidPrice - totalDiscount));
 
       document.getElementById('finalPrice').textContent = finalPrice.toLocaleString();
+      document.getElementById('discountInfo').textContent = `감가 ${totalDiscount.toLocaleString()}원`;
 
       renderResultBox({
         selectedPaint,
@@ -1487,6 +1385,44 @@
       document.getElementById('btnImported').classList.toggle('active', selected === 'imported');
     }
 
+    // 요약 복사(딜러앱 느낌)
+    function copySummary(){
+      const bid = document.getElementById('bidPriceInput').value || '0';
+      const carNo = document.getElementById('carNumber').value || '-';
+      const carName = document.getElementById('carName').value || '-';
+      const exterior = document.getElementById('exterior').value || '-';
+      const spareKey = document.getElementById('spareKey').value || '-';
+      const repair = document.getElementById('repair').value || '-';
+      const adv = document.getElementById('carAdvantage').value || '-';
+      const memo = document.getElementById('Memo').value || '-';
+      const finalPrice = document.getElementById('finalPrice').textContent || '0';
+      const discountInfo = document.getElementById('discountInfo').textContent || '';
+
+      const resultText = document.getElementById('resultArea')?.innerText || '';
+      const text =
+`[감가 계산 요약]
+- 입찰가: ${bid}원
+- 차량번호/주행: ${carNo}
+- 차량명/등급: ${carName}
+- 외판/휠기스: ${exterior}
+- 보조키/타이어: ${spareKey}
+- 정비요망: ${repair}
+- 장단점: ${adv}
+- 메모: ${memo}
+
+${resultText}
+
+[최종]
+- ${discountInfo}
+- 최종금액: ${finalPrice}원`;
+
+      navigator.clipboard?.writeText(text).then(()=>{
+        alert('요약이 복사됐어요!');
+      }).catch(()=>{
+        prompt('복사가 막혀있으면 아래를 길게 눌러 복사하세요:', text);
+      });
+    }
+
     function resetAll(){
       localStorage.clear();
 
@@ -1505,10 +1441,6 @@
       box.style.display='none';
 
       resetExtraItems();
-
-      // 위치 저장도 초기화하려면 아래 라인 활성화
-      // localStorage.removeItem('overlayPositions');
-
       updateAll();
     }
 
