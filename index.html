@@ -1,731 +1,1023 @@
+<!DOCTYPE html>
+<html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>자동차 감가 계산기</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-	<style>
-      /* 기본 스타일은 질문에 주신 그대로 유지했습니다 */
-      :root {
-        --main-color: #ff5c5c;
-        --bg-light: #f0f0f0;
-        --bg-dark: #222;
-        --text-light: #eee;
-        --text-dark: #333;
-        --border-radius: 8px;
-        --transition: 0.3s;
-      }
-      body {
-        font-family: 'Noto Sans KR', sans-serif;
-        margin: 0;
-        padding: 20px;
-        background: var(--bg-light);
-        color: var(--text-dark);
-        transition: background var(--transition), color var(--transition);
-        text-align: center;
-      }
-      body.dark {
-        background: var(--bg-dark);
-        color: var(--text-light);
-      }
-      h2 {
-        font-size: 30px;
-        margin-bottom: 10px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        justify-content: flex-start; /* 왼쪽 정렬 */
-        padding-left: 45%; /* 또는 margin-left */
-      }
-       
-      .price-info, .section, .final-price-area, .deduction-list {
-        margin-bottom: 20px;
-      }
-	  .section {
-  background: white;
-  padding: 10px;
-  border-radius: var(--border-radius);
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-  margin-bottom: 30px;
-}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>자동차 감가 계산기</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-.section h2 {
-  background: linear-gradient(90deg, #ff5c5c 0%, #ffa07a 100%);
-  color: white;
-  padding: 12px 20px;
-  border-radius: 8px;
-  font-size: 35px;
-  font-weight: 600;
-  text-align: left;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-  position: relative;
-  margin-bottom: 20px;
-  justify-content: center;
-}
-.section h2::after {
-  content: '';
-  position: absolute;
-  bottom: -6px;
-  left: 10px;
-  width: 40px;
-  height: 3px;
-  background-color: #ff5c5c;
-  border-radius: 2px;
-}
-.section h2 i {
-  color: white;
-  background: #ff5c5c;
-  border-radius: 20%;
-  padding: 6px;
-  font-size: 30px;
-  width: 28px;
-  height: 28px;
-  text-align: center;
-  line-height: 25px;
-}
-      .price-info input, .input-small {
-        width: 100%;
-        max-width: 380px;
-        font-size: 15px;
-		
-        padding: 4px 8px;
-        border: 1px solid #ccc;
-        border-radius: var(--border-radius);
-        text-align: center;
-         margin-top: 0;
-		margin-bottom: 10px;
-      }
- 
-      .final-price-area {
-        background: white;
-        padding: 8px;
-        border-radius: var(--border-radius);
-        font-size: 25px;
-        font-weight: bold;
-        display: flex;
-        justify-content: center;
-        gap: 10px;
-      }
-      #finalPrice {
-        color: var(--main-color);
-        font-size: 18px;
-      }
-      button {
-        padding: 10px 24px;
-        font-size: 16px;
-        background-color: var(--main-color);
-        color: white;
-        border: none;
-        border-radius: var(--border-radius);
-        cursor: pointer;
-        transition: background var(--transition);
-      }
-      button:hover {
-        background-color: #ff3838;
-      }
-      .container {
-        position: relative;
-        max-width: 500px;
-        margin: 0 auto;
-      }
-      .car-image {
-        width: 100%;
-        border-radius: var(--border-radius);
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      }
-      .checkbox-overlay {
-        position: absolute;
-        top: 0; left: 0;
-        width: 100%; height: 100%;
-      }
-      .checkbox-item {
-        position: absolute;
-        font-size: 10px;
-        border-radius: var(--border-radius);
-        transform: translate(-50%, -50%) scale(1);
-        transition: background var(--transition), transform 0.2s;
-        cursor: pointer;
-      }
-      .checkbox-item.selected {
-        background: var(--main-color);
-        color: white;
-        transform: translate(-50%, -50%) scale(1.1);
-      }
-      .deduction-list {
-        font-size: 15px;
-        text-align: left;
-        max-width: 500px;
-        margin: 20 auto;
-        background: white;
-        padding: 10px;
-        border-radius: var(--border-radius);
-        box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-      }
-      .deduction-list ul {
-        padding-left: 20px;
-        margin: 10px 0;
-      }
-      .deduction-total {
-        font-weight: bold;
-        color: var(--main-color);
-        margin-top: 10px;
-        text-align: right;
-      }
-      .function-category {
-        margin-bottom: 20px;
-        background: #fff;
-        padding: 12px;
-        border-radius: var(--border-radius);
-        box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-}
-       .function-category h3 {
-        text-align: left;
-        margin-bottom: 10px;
-        color: var(--main-color);
-        font-size: 12px;
-}
-       .function-item {
-          display: grid;
-          grid-template-columns: 30px 1fr 1fr 100px;
-          align-items: center;
-          gap: 8px;
-          margin-bottom: 10px;
-          font-size: 15px;
-}
+  <style>
+    :root {
+      --main-color: #ff5c5c;
+      --bg-light: #f0f0f0;
+      --bg-dark: #222;
+      --text-light: #eee;
+      --text-dark: #333;
+      --border-radius: 8px;
+      --transition: 0.3s;
+    }
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: var(--bg-light);
+      color: var(--text-dark);
+      transition: background var(--transition), color var(--transition);
+      text-align: center;
+    }
+    body.dark {
+      background: var(--bg-dark);
+      color: var(--text-light);
+    }
 
-       .function-item input[type="checkbox"] {
-          justify-self: center;
-}
+    .price-info, .section, .final-price-area, .deduction-list {
+      margin-bottom: 20px;
+    }
 
-       .function-item input[type="text"] {
-          padding: 6px 8px;
-          border: 1px solid #ccc;
-          border-radius: 6px;
-          font-size: 10px;
-}
+    .section {
+      background: white;
+      padding: 10px;
+      border-radius: var(--border-radius);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      margin-bottom: 30px;
+    }
 
-.function-item input.function-desc {
-  width: 100%;
-}
+    .section h2 {
+      background: linear-gradient(90deg, #ff5c5c 0%, #ffa07a 100%);
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 35px;
+      font-weight: 600;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      position: relative;
+      margin-bottom: 20px;
+      justify-content: center;
+    }
+    .section h2::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: 10px;
+      width: 40px;
+      height: 3px;
+      background-color: #ff5c5c;
+      border-radius: 2px;
+    }
+    .section h2 i {
+      color: white;
+      background: #ff5c5c;
+      border-radius: 20%;
+      padding: 6px;
+      font-size: 30px;
+      width: 28px;
+      height: 28px;
+      text-align: center;
+      line-height: 25px;
+    }
 
-.function-item input.function-price {
-  width: 100%;
-  text-align: center;
-}
+    h4 {
+      font-size: 14px;
+      color: red;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: flex-start;
+      padding-left: 25px;
+    }
 
-.function-item input[type="checkbox"] {
-  justify-self: center;
-}
+    .price-info input, .input-small {
+      width: 100%;
+      max-width: 380px;
+      font-size: 15px;
+      padding: 4px 8px;
+      border: 1px solid #ccc;
+      border-radius: var(--border-radius);
+      text-align: center;
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
 
-.function-item input[type="text"] {
-  padding: 6px 8px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 14px;
-}
+    .final-price-area {
+      background: white;
+      padding: 8px;
+      border-radius: var(--border-radius);
+      font-size: 25px;
+      font-weight: bold;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
 
-.function-item input.function-desc {
-  width: 100%;
-}
+    #finalPrice {
+      color: var(--main-color);
+      font-size: 18px;
+    }
 
-.function-item input.function-price {
-  width: 100%;
-  text-align: right;
-}
+    button {
+      padding: 10px 24px;
+      font-size: 16px;
+      background-color: var(--main-color);
+      color: white;
+      border: none;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      transition: background var(--transition);
+    }
+    button:hover {
+      background-color: #ff3838;
+    }
 
-.car-type-toggle {
-  margin-bottom: 10px;
-}
+    .container {
+      position: relative;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    .car-image {
+      width: 100%;
+      border-radius: var(--border-radius);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .checkbox-overlay {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+    }
 
-.car-type-toggle button {
-  padding: 8px 16px;
-  margin: 0 5px;
-  border: 2px solid var(--main-color);
-  border-radius: var(--border-radius);
-  background: white;
-  color: var(--main-color);
-  font-weight: bold;
-  cursor: pointer;
-  transition: 0.2s;
-}
+    /* ✅ 터치 가능한 공통 박스 */
+    .checkbox-item {
+      position: absolute;
+      font-size: 9px;
+      border-radius: var(--border-radius);
+      transform: translate(-50%, -50%) scale(1);
+      transition: background var(--transition), transform 0.2s, border-color var(--transition);
+      cursor: pointer;
 
-.car-type-toggle button.active {
-  background: var(--main-color);
-  color: white;
-}
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      padding: 6px 8px;
+      background: rgba(255,255,255,0.85);
+      border: 1px solid rgba(0,0,0,0.15);
+    }
 
-   
-       
+    /* ✅ 외관 선택 강조 */
+    .checkbox-item.selected {
+      background: rgba(255, 92, 92, 0.18);
+      border-color: rgba(255, 92, 92, 0.8);
+      transform: translate(-50%, -50%) scale(1.05);
+      font-weight: 700;
+    }
 
-      @media (max-width: 600px) {
-        .price-info input, .input-small { width: 95%; }
-        h2 {
-        font-size: 25px;
-        margin-bottom: 10px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        justify-content: center;
-             padding-left: 5px;
-      }
-           h4 {
-        font-size: 14px;
-        color: red;
-        margin-bottom: 4px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        justify-content: flex-start;
-        padding-left: 25px;
-      }
-        .function-item {
-          
-          font-size: 11px;
-	}
-	      .checkbox-item { font-size: 9px; padding: 5px 6px; }
-        button { font-size: 14px; padding: 8px 20px; }
-       .final-price-area {
-        font-size: 16px;
-        
-      #finalPrice {
-        font-size: 17px;
-      }
-	 
-}
-    </style>
-  </head>
-  <body>
+    /* ✅ 사고 상태별 강조 */
+    .acc-item.repair {
+      background: rgba(255, 165, 0, 0.18);
+      border-color: rgba(255, 165, 0, 0.85);
+      font-weight: 700;
+      transform: translate(-50%, -50%) scale(1.05);
+    }
+    .acc-item.exchange {
+      background: rgba(255, 92, 92, 0.22);
+      border-color: rgba(255, 92, 92, 0.9);
+      font-weight: 700;
+      transform: translate(-50%, -50%) scale(1.08);
+    }
+
+    .acc-badge {
+      display: inline-block;
+      margin-top: 2px;
+      padding: 1px 6px;
+      border-radius: 999px;
+      font-size: 10px;
+      line-height: 14px;
+      background: rgba(0,0,0,0.06);
+    }
+    .acc-item.repair .acc-badge { background: rgba(255,165,0,0.25); }
+    .acc-item.exchange .acc-badge { background: rgba(255,92,92,0.28); }
+
+    .deduction-list {
+      font-size: 15px;
+      text-align: left;
+      max-width: 500px;
+      margin: 20px auto;
+      background: white;
+      padding: 10px;
+      border-radius: var(--border-radius);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+    .deduction-list ul {
+      padding-left: 20px;
+      margin: 10px 0;
+    }
+    .deduction-total {
+      font-weight: bold;
+      color: var(--main-color);
+      margin-top: 10px;
+      text-align: right;
+    }
+
+    .function-category {
+      margin-bottom: 20px;
+      background: #fff;
+      padding: 12px;
+      border-radius: var(--border-radius);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+    .function-category h3 {
+      text-align: left;
+      margin-bottom: 10px;
+      color: var(--main-color);
+      font-size: 12px;
+    }
+    .function-item {
+      display: grid;
+      grid-template-columns: 30px 1fr 1fr 100px;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+      font-size: 15px;
+    }
+    .function-item input[type="checkbox"] { justify-self: center; }
+    .function-item input[type="text"] {
+      padding: 6px 8px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    .function-item input.function-desc { width: 100%; }
+    .function-item input.function-price { width: 100%; text-align: right; }
+
+    .car-type-toggle { margin-bottom: 10px; }
+    .car-type-toggle button {
+      padding: 8px 16px;
+      margin: 0 5px;
+      border: 2px solid var(--main-color);
+      border-radius: var(--border-radius);
+      background: white;
+      color: var(--main-color);
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .car-type-toggle button.active {
+      background: var(--main-color);
+      color: white;
+    }
+
+    @media (max-width: 600px) {
+      .price-info input, .input-small { width: 95%; }
+      .checkbox-item { font-size: 9px; padding: 5px 6px; }
+      button { font-size: 14px; padding: 8px 20px; }
+      .function-item { font-size: 11px; }
+
+      .final-price-area { font-size: 16px; }
+      #finalPrice { font-size: 17px; }
+    }
+  </style>
+</head>
+
+<body>
   <div class="car-type-toggle">
-  <button id="btnImported" onclick="setCarType('imported')">수입차</button>
-  <button id="btnDomestic" onclick="setCarType('domestic')">국산차</button>
-   
-</div>
+    <button id="btnImported" onclick="setCarType('imported')">수입차</button>
+    <button id="btnDomestic" onclick="setCarType('domestic')">국산차</button>
+  </div>
 
   <div class="price-info">
     <label for="bidPriceInput">입찰가</label><br>
-    <input type="text" id="bidPriceInput" class="input-small" oninput="formatInput(this); saveInput('bidPriceInput')" onchange="updateAll()">원
+    <input type="text" id="bidPriceInput" class="input-small"
+           oninput="formatInput(this); saveInput('bidPriceInput')"
+           onchange="updateAll()">원
     <div class="final-price-area">
       최종금액 <span id="finalPrice">0</span>원
-	  <button onclick="resetAll()">초기화</button>
+      <button onclick="resetAll()">초기화</button>
     </div>
-   
   </div>
-  
+
   <div id="deductionArea" class="deduction-list"></div>
-  
+
   <div class="section">
     <h2><i class="fas fa-car-side"></i> 차량정보</h2>
-	<h4><i class="fas fa-car"></i>&nbsp; 차량번호 &nbsp;& <i class="fas fa-tachometer-alt"></i>&nbsp; 주행거리</h4>
-<input type="text" id="carNumber" class="input-small" placeholder="차량번호 / 주행거리 입력" oninput="saveInput('carNumber')">
+    <h4><i class="fas fa-car"></i>&nbsp; 차량번호 &nbsp;& <i class="fas fa-tachometer-alt"></i>&nbsp; 주행거리</h4>
+    <input type="text" id="carNumber" class="input-small" placeholder="차량번호 / 주행거리 입력" oninput="saveInput('carNumber')">
 
-    
-	<h4>
-  <i class="fas fa-id-badge"></i> 차량명 &nbsp;&
-  <i class="fas fa-star"></i> 차량등급
-</h4>
-<input type="text" id="carName" class="input-small" placeholder="차량명 & 등급 입력" oninput="saveInput('carName')">
-
-    
+    <h4><i class="fas fa-id-badge"></i> 차량명 &nbsp;& <i class="fas fa-star"></i> 차량등급</h4>
+    <input type="text" id="carName" class="input-small" placeholder="차량명 & 등급 입력" oninput="saveInput('carName')">
   </div>
-  
+
   <div class="section">
     <h2><i class="fas fa-user-edit"></i> 고객기재</h2>
-	<h4>
-  <i class="fas fa-tools"></i> 외판 &nbsp;&
-  <i class="fas fa-dot-circle"></i> 휠기스
-</h4>
-<input type="text" id="exterior" class="input-small" placeholder="외판 & 휠기스 수량" oninput="saveInput('exterior')">
+    <h4><i class="fas fa-tools"></i> 외판 &nbsp;& <i class="fas fa-dot-circle"></i> 휠기스</h4>
+    <input type="text" id="exterior" class="input-small" placeholder="외판 & 휠기스 수량" oninput="saveInput('exterior')">
 
-	<h4>
-  <i class="fas fa-key"></i> 보조키 &nbsp;&
-  <i class="fas fa-circle-notch"></i> 타이어상태
-</h4>
-<input type="text" id="spareKey" class="input-small" placeholder="보조키 유/무 & 타이어상태" oninput="saveInput('spareKey')">
+    <h4><i class="fas fa-key"></i> 보조키 &nbsp;& <i class="fas fa-circle-notch"></i> 타이어상태</h4>
+    <input type="text" id="spareKey" class="input-small" placeholder="보조키 유/무 & 타이어상태" oninput="saveInput('spareKey')">
 
-	<h4>
-  <i class="fas fa-wrench"></i> 정비 요망
-</h4>
-<input type="text" id="repair" class="input-small" placeholder="정비 필요한 항목을 입력" oninput="saveInput('repair')">
+    <h4><i class="fas fa-wrench"></i> 정비 요망</h4>
+    <input type="text" id="repair" class="input-small" placeholder="정비 필요한 항목을 입력" oninput="saveInput('repair')">
 
-  <h4>
-  <i class="fas fa-comment-dots"></i> 차량  장단점
-</h4>
-<textarea id="carAdvantage" class="input-small" placeholder="차량 장단점" oninput="autoResize(this); saveInput('carAdvantage')" rows="1" style="resize: none; width: 100%; overflow: hidden;"></textarea>
+    <h4><i class="fas fa-comment-dots"></i> 차량  장단점</h4>
+    <textarea id="carAdvantage" class="input-small" placeholder="차량 장단점"
+              oninput="autoResize(this); saveInput('carAdvantage')"
+              rows="1" style="resize:none; width:100%; overflow:hidden;"></textarea>
 
+    <h4><i class="fas fa-comment-dots"></i> 메모</h4>
+    <textarea id="Memo" class="input-small" placeholder="메모 입력"
+              oninput="autoResize(this); saveInput('Memo')"
+              rows="1" style="resize:none; width:100%; overflow:hidden;"></textarea>
   </div>
-  
+
   <div class="section">
     <h2><i class="fas fa-search"></i> 외관 상태</h2>
     <div class="container">
-      <img src="https://i.imgur.com/NAH6AaM.jpg" class="car-image" alt="자동차 외관">
+      <img src="https://imgur.com/KeHpOPv.png" class="car-image" alt="자동차 외관">
       <div class="checkbox-overlay" id="partSection"></div>
     </div>
+    <div style="font-size:12px; opacity:0.8; margin-top:8px;">
+      부위를 <b>터치</b>하면 선택/해제됩니다.
+    </div>
   </div>
-  
+
   <div class="section">
     <h2><i class="fas fa-search"></i> 사고 이력</h2>
     <div class="container">
-      <img src="https://i.imgur.com/tBnS5DO.jpg" class="car-image" alt="사고부위 자동차">
+      <img src="https://imgur.com/kfizDdA.png" class="car-image" alt="사고부위 자동차">
       <div class="checkbox-overlay" id="accidentSection"></div>
     </div>
-
-      <div class="section">
-  <h2><i class="fas fa-tools"></i> 세부 상태</h2>
-
-  <!-- 익스테리어 Part -->
-  <div class="function-category">
-    <h3>익스테리어 Part📝</h3>
-    <div class="function-item"><input type="checkbox" data-name="라이트크랙" onchange="updateAll()"> 라이트크랙 <input type="text" class="function-desc" data-key="라이트크랙-desc" oninput="saveInput('라이트크랙-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="라이트크랙-price" oninput="formatInput(this); saveInput('라이트크랙-price'); updateAll()" placeholder="금액(원)"></div>
-    <div class="function-item"><input type="checkbox" data-name="안개등크랙" onchange="updateAll()"> 안개등크랙 <input type="text" class="function-desc" data-key="안개등크랙-desc" oninput="saveInput('안개등크랙-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="안개등크랙-price" oninput="formatInput(this); saveInput('안개등크랙-price'); updateAll()" placeholder="금액(원)"></div>
-    <div class="function-item"><input type="checkbox" data-name="데루등크랙" onchange="updateAll()"> 데루등크랙 <input type="text" class="function-desc" data-key="데루등크랙-desc" oninput="saveInput('데루등크랙-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="데루등크랙-price" oninput="formatInput(this); saveInput('데루등크랙-price'); updateAll()" placeholder="금액(원)"></div>
-    <div class="function-item"><input type="checkbox" data-name="기타(익스테리어)" onchange="updateAll()"> 기타 <input type="text" class="function-desc" data-key="기타(익스테리어)-desc" oninput="saveInput('기타(익스테리어)-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="기타(익스테리어)-price" oninput="formatInput(this); saveInput('기타(익스테리어)-price'); updateAll()" placeholder="금액(원)"></div>
+    <div style="font-size:12px; opacity:0.8; margin-top:8px;">
+      부위를 <b>터치</b>하면 <b>없음 → 판금 → 교환 → 없음</b> 순서로 바뀝니다.
+    </div>
   </div>
 
-  <!-- 엔진 Part -->
-  <div class="function-category">
-    <h3>엔진 Part📝</h3>
-    <div class="function-item"><input type="checkbox" data-name="공회전상태" onchange="updateAll()"> 공회전상태 <input type="text" class="function-desc" data-key="공회전상태-desc" oninput="saveInput('공회전상태-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="공회전상태-price" oninput="formatInput(this); saveInput('공회전상태-price'); updateAll()" placeholder="금액(원)"></div>
-    <div class="function-item"><input type="checkbox" data-name="오일누유" onchange="updateAll()"> 오일누유 <input type="text" class="function-desc" data-key="오일누유-desc" oninput="saveInput('오일누유-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="오일누유-price" oninput="formatInput(this); saveInput('오일누유-price'); updateAll()" placeholder="금액(원)"></div>
-    <div class="function-item"><input type="checkbox" data-name="냉각수누수" onchange="updateAll()"> 냉각수누수 <input type="text" class="function-desc" data-key="냉각수누수-desc" oninput="saveInput('냉각수누수-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="냉각수누수-price" oninput="formatInput(this); saveInput('냉각수누수-price'); updateAll()" placeholder="금액(원)"></div>
-    <div class="function-item"><input type="checkbox" data-name="소모품(엔진)" onchange="updateAll()"> 소모품 <input type="text" class="function-desc" data-key="소모품(엔진)-desc" oninput="saveInput('소모품(엔진)-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="소모품(엔진)-price" oninput="formatInput(this); saveInput('소모품(엔진)-price'); updateAll()" placeholder="금액(원)"></div>
-    <div class="function-item"><input type="checkbox" data-name="기타(엔진)" onchange="updateAll()"> 기타 <input type="text" class="function-desc" data-key="기타(엔진)-desc" oninput="saveInput('기타(엔진)-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="기타(엔진)-price" oninput="formatInput(this); saveInput('기타(엔진)-price'); updateAll()" placeholder="금액(원)"></div>
+  <!-- ✅ 아래 세부 상태 섹션(기능 체크박스)은 기존 구조 유지 -->
+  <div class="section">
+    <h2><i class="fas fa-tools"></i> 세부 상태</h2>
+
+    <!-- 익스테리어 Part -->
+    <div class="function-category">
+      <h3>익스테리어&기타 Part📝</h3>
+      <div class="function-item">
+        <input type="checkbox" data-name="라이트크랙" onchange="updateAll()">
+        라이트크랙
+        <input type="text" class="function-desc" data-key="라이트크랙-desc" oninput="saveInput('라이트크랙-desc'); updateAll()" placeholder="내용">
+        <input type="text" class="function-price" data-key="라이트크랙-price" oninput="formatInput(this); saveInput('라이트크랙-price'); updateAll()" placeholder="금액(원)">
+      </div>
+      <div class="function-item">
+        <input type="checkbox" data-name="안개등크랙" onchange="updateAll()">
+        안개등크랙
+        <input type="text" class="function-desc" data-key="안개등크랙-desc" oninput="saveInput('안개등크랙-desc'); updateAll()" placeholder="내용">
+        <input type="text" class="function-price" data-key="안개등크랙-price" oninput="formatInput(this); saveInput('안개등크랙-price'); updateAll()" placeholder="금액(원)">
+      </div>
+      <div class="function-item">
+        <input type="checkbox" data-name="데루등크랙" onchange="updateAll()">
+        데루등크랙
+        <input type="text" class="function-desc" data-key="데루등크랙-desc" oninput="saveInput('데루등크랙-desc'); updateAll()" placeholder="내용">
+        <input type="text" class="function-price" data-key="데루등크랙-price" oninput="formatInput(this); saveInput('데루등크랙-price'); updateAll()" placeholder="금액(원)">
+      </div>
+
+      <!-- ✅ data-key / saveInput 키 통일(버그 수정) -->
+      <div class="function-item">
+        <input type="checkbox" data-name="자동차검사(기타)" onchange="updateAll()">
+        자동차검사
+        <input type="text" class="function-desc" data-key="자동차검사(기타)-desc" oninput="saveInput('자동차검사(기타)-desc'); updateAll()" placeholder="내용">
+        <input type="text" class="function-price" data-key="자동차검사(기타)-price" oninput="formatInput(this); saveInput('자동차검사(기타)-price'); updateAll()" placeholder="금액(원)">
+      </div>
+
+      <div class="function-item">
+        <input type="checkbox" data-name="구변여부(기타)" onchange="updateAll()">
+        구변여부
+        <input type="text" class="function-desc" data-key="구변여부(기타)-desc" oninput="saveInput('구변여부(기타)-desc'); updateAll()" placeholder="내용">
+        <input type="text" class="function-price" data-key="구변여부(기타)-price" oninput="formatInput(this); saveInput('구변여부(기타)-price'); updateAll()" placeholder="금액(원)">
+      </div>
+
+      <div id="exterior-items"></div>
+      <button onclick="addExtraItem('익스테리어')">+ 기타 항목 추가</button>
+    </div>
+
+    <!-- 엔진 Part -->
+    <div class="function-category">
+      <h3>엔진 Part📝</h3>
+      <div class="function-item">
+        <input type="checkbox" data-name="공회전상태" onchange="updateAll()">
+        공회전상태
+        <input type="text" class="function-desc" data-key="공회전상태-desc" oninput="saveInput('공회전상태-desc'); updateAll()" placeholder="내용">
+        <input type="text" class="function-price" data-key="공회전상태-price" oninput="formatInput(this); saveInput('공회전상태-price'); updateAll()" placeholder="금액(원)">
+      </div>
+      <div class="function-item">
+        <input type="checkbox" data-name="오일누유" onchange="updateAll()">
+        오일누유
+        <input type="text" class="function-desc" data-key="오일누유-desc" oninput="saveInput('오일누유-desc'); updateAll()" placeholder="내용">
+        <input type="text" class="function-price" data-key="오일누유-price" oninput="formatInput(this); saveInput('오일누유-price'); updateAll()" placeholder="금액(원)">
+      </div>
+      <div class="function-item">
+        <input type="checkbox" data-name="냉각수누수" onchange="updateAll()">
+        냉각수누수
+        <input type="text" class="function-desc" data-key="냉각수누수-desc" oninput="saveInput('냉각수누수-desc'); updateAll()" placeholder="내용">
+        <input type="text" class="function-price" data-key="냉각수누수-price" oninput="formatInput(this); saveInput('냉각수누수-price'); updateAll()" placeholder="금액(원)">
+      </div>
+      <div class="function-item">
+        <input type="checkbox" data-name="소모품(엔진)" onchange="updateAll()">
+        소모품
+        <input type="text" class="function-desc" data-key="소모품(엔진)-desc" oninput="saveInput('소모품(엔진)-desc'); updateAll()" placeholder="내용">
+        <input type="text" class="function-price" data-key="소모품(엔진)-price" oninput="formatInput(this); saveInput('소모품(엔진)-price'); updateAll()" placeholder="금액(원)">
+      </div>
+
+      <div id="engine-items"></div>
+      <button onclick="addExtraItem('엔진')">+ 기타 항목 추가</button>
+    </div>
+
+    <!-- 미션 Part -->
+    <div class="function-category">
+      <h3>미션 Part📝</h3>
+      <div class="function-item">
+        <input type="checkbox" data-name="오일누유(미션)" onchange="updateAll()">
+        오일누유
+        <input type="text" class="function-desc" data-key="오일누유(미션)-desc" oninput="saveInput('오일누유(미션)-desc'); updateAll()" placeholder="내용">
+        <input type="text" class="function-price" data-key="오일누유(미션)-price" oninput="formatInput(this); saveInput('오일누유(미션)-price'); updateAll()" placeholder="금액(원)">
+      </div>
+      <div class="function-item">
+        <input type="checkbox" data-name="소모품(미션)" onchange="updateAll()">
+        소모품
+        <input type="text" class="function-desc" data-key="소모품(미션)-desc" oninput="saveInput('소모품(미션)-desc'); updateAll()" placeholder="내용">
+        <input type="text" class="function-price" data-key="소모품(미션)-price" oninput="formatInput(this); saveInput('소모품(미션)-price'); updateAll()" placeholder="금액(원)">
+      </div>
+
+      <div id="mission-items"></div>
+      <button onclick="addExtraItem('미션')">+ 기타 항목 추가</button>
+    </div>
+
+    <!-- 하체 Part -->
+    <div class="function-category">
+      <h3>하체 Part📝</h3>
+      <div class="function-item">
+        <input type="checkbox" data-name="쇼버" onchange="updateAll()">
+        쇼버
+        <input type="text" class="function-desc" data-key="쇼버-desc" oninput="saveInput('쇼버-desc'); updateAll()" placeholder="내용">
+        <input type="text" class="function-price" data-key="쇼버-price" oninput="formatInput(this); saveInput('쇼버-price'); updateAll()" placeholder="금액(원)">
+      </div>
+      <div class="function-item">
+        <input type="checkbox" data-name="서스펜션" onchange="updateAll()">
+        <span style="font-size: 11px;">서스펜션(암,링크)</span>
+        <input type="text" class="function-desc" data-key="서스펜션-desc" oninput="saveInput('서스펜션-desc'); updateAll()" placeholder="내용">
+        <input type="text" class="function-price" data-key="서스펜션-price" oninput="formatInput(this); saveInput('서스펜션-price'); updateAll()" placeholder="금액(원)">
+      </div>
+      <div class="function-item">
+        <input type="checkbox" data-name="등속조인트" onchange="updateAll()">
+        등속조인트
+        <input type="text" class="function-desc" data-key="등속조인트-desc" oninput="saveInput('등속조인트-desc'); updateAll()" placeholder="내용">
+        <input type="text" class="function-price" data-key="등속조인트-price" oninput="formatInput(this); saveInput('등속조인트-price'); updateAll()" placeholder="금액(원)">
+      </div>
+      <div class="function-item">
+        <input type="checkbox" data-name="웜기어" onchange="updateAll()">
+        웜기어
+        <input type="text" class="function-desc" data-key="웜기어-desc" oninput="saveInput('웜기어-desc'); updateAll()" placeholder="내용">
+        <input type="text" class="function-price" data-key="웜기어-price" oninput="formatInput(this); saveInput('웜기어-price'); updateAll()" placeholder="금액(원)">
+      </div>
+      <div class="function-item">
+        <input type="checkbox" data-name="디스크" onchange="updateAll()">
+        디스크(패드)
+        <input type="text" class="function-desc" data-key="디스크-desc" oninput="saveInput('디스크-desc'); updateAll()" placeholder="내용">
+        <input type="text" class="function-price" data-key="디스크-price" oninput="formatInput(this); saveInput('디스크-price'); updateAll()" placeholder="금액(원)">
+      </div>
+      <div class="function-item">
+        <input type="checkbox" data-name="머플러" onchange="updateAll()">
+        머플러
+        <input type="text" class="function-desc" data-key="머플러-desc" oninput="saveInput('머플러-desc'); updateAll()" placeholder="내용">
+        <input type="text" class="function-price" data-key="머플러-price" oninput="formatInput(this); saveInput('머플러-price'); updateAll()" placeholder="금액(원)">
+      </div>
+      <div class="function-item">
+        <input type="checkbox" data-name="소모품(하체)" onchange="updateAll()">
+        소모품
+        <input type="text" class="function-desc" data-key="소모품(하체)-desc" oninput="saveInput('소모품(하체)-desc'); updateAll()" placeholder="내용">
+        <input type="text" class="function-price" data-key="소모품(하체)-price" oninput="formatInput(this); saveInput('소모품(하체)-price'); updateAll()" placeholder="금액(원)">
+      </div>
+
+      <div id="under-items"></div>
+      <button onclick="addExtraItem('하체')">+ 기타 항목 추가</button>
+    </div>
+
+    <!-- 인테리어 Part -->
+    <div class="function-category">
+      <h3>인테리어 Part📝</h3>
+      <div class="function-item">
+        <input type="checkbox" data-name="시트" onchange="updateAll()">
+        <span style="font-size: 11px;">시트상태</span>
+        <input type="text" class="function-desc" data-key="시트-desc" oninput="saveInput('시트-desc'); updateAll()" placeholder="내용">
+        <input type="text" class="function-price" data-key="시트-price" oninput="formatInput(this); saveInput('시트-price'); updateAll()" placeholder="금액(원)">
+      </div>
+      <div class="function-item">
+        <input type="checkbox" data-name="실내컨디션" onchange="updateAll()">
+        <span style="font-size: 11px;">실내상태</span>
+        <input type="text" class="function-desc" data-key="실내컨디션-desc" oninput="saveInput('실내컨디션-desc'); updateAll()" placeholder="내용">
+        <input type="text" class="function-price" data-key="실내컨디션-price" oninput="formatInput(this); saveInput('실내컨디션-price'); updateAll()" placeholder="금액(원)">
+      </div>
+      <div class="function-item">
+        <input type="checkbox" data-name="계기판" onchange="updateAll()">
+        <span style="font-size: 11px;">계기판</span>
+        <input type="text" class="function-desc" data-key="계기판-desc" oninput="saveInput('계기판-desc'); updateAll()" placeholder="내용">
+        <input type="text" class="function-price" data-key="계기판-price" oninput="formatInput(this); saveInput('계기판-price'); updateAll()" placeholder="금액(원)">
+      </div>
+      <div class="function-item">
+        <input type="checkbox" data-name="등화류" onchange="updateAll()">
+        등화류
+        <input type="text" class="function-desc" data-key="등화류-desc" oninput="saveInput('등화류-desc'); updateAll()" placeholder="내용">
+        <input type="text" class="function-price" data-key="등화류-price" oninput="formatInput(this); saveInput('등화류-price'); updateAll()" placeholder="금액(원)">
+      </div>
+      <div class="function-item">
+        <input type="checkbox" data-name="에어컨히터" onchange="updateAll()">
+        냉난방류
+        <input type="text" class="function-desc" data-key="에어컨히터-desc" oninput="saveInput('에어컨히터-desc'); updateAll()" placeholder="내용">
+        <input type="text" class="function-price" data-key="에어컨히터-price" oninput="formatInput(this); saveInput('에어컨히터-price'); updateAll()" placeholder="금액(원)">
+      </div>
+      <div class="function-item">
+        <input type="checkbox" data-name="오디오" onchange="updateAll()">
+        <span style="font-size: 11px;">오디오계통</span>
+        <input type="text" class="function-desc" data-key="오디오-desc" oninput="saveInput('오디오-desc'); updateAll()" placeholder="내용">
+        <input type="text" class="function-price" data-key="오디오-price" oninput="formatInput(this); saveInput('오디오-price'); updateAll()" placeholder="금액(원)">
+      </div>
+      <div class="function-item">
+        <input type="checkbox" data-name="미러창문" onchange="updateAll()">
+        미러&창문
+        <input type="text" class="function-desc" data-key="미러창문-desc" oninput="saveInput('미러창문-desc'); updateAll()" placeholder="내용">
+        <input type="text" class="function-price" data-key="미러창문-price" oninput="formatInput(this); saveInput('미러창문-price'); updateAll()" placeholder="금액(원)">
+      </div>
+      <div class="function-item">
+        <input type="checkbox" data-name="버튼류" onchange="updateAll()">
+        버튼류작동
+        <input type="text" class="function-desc" data-key="버튼류-desc" oninput="saveInput('버튼류-desc'); updateAll()" placeholder="내용">
+        <input type="text" class="function-price" data-key="버튼류-price" oninput="formatInput(this); saveInput('버튼류-price'); updateAll()" placeholder="금액(원)">
+      </div>
+      <div class="function-item">
+        <input type="checkbox" data-name="썬팅" onchange="updateAll()">
+        썬팅상태
+        <input type="text" class="function-desc" data-key="썬팅-desc" oninput="saveInput('썬팅-desc'); updateAll()" placeholder="내용">
+        <input type="text" class="function-price" data-key="썬팅-price" oninput="formatInput(this); saveInput('썬팅-price'); updateAll()" placeholder="금액(원)">
+      </div>
+      <div class="function-item">
+        <input type="checkbox" data-name="유리크랙" onchange="updateAll()">
+        유리크랙
+        <input type="text" class="function-desc" data-key="유리크랙-desc" oninput="saveInput('유리크랙-desc'); updateAll()" placeholder="내용">
+        <input type="text" class="function-price" data-key="유리크랙-price" oninput="formatInput(this); saveInput('유리크랙-price'); updateAll()" placeholder="금액(원)">
+      </div>
+      <div class="function-item">
+        <input type="checkbox" data-name="트렁크상태" onchange="updateAll()">
+        트렁크상태
+        <input type="text" class="function-desc" data-key="트렁크상태-desc" oninput="saveInput('트렁크상태-desc'); updateAll()" placeholder="내용">
+        <input type="text" class="function-price" data-key="트렁크상태-price" oninput="formatInput(this); saveInput('트렁크상태-price'); updateAll()" placeholder="금액(원)">
+      </div>
+
+      <div id="interior-items"></div>
+      <button onclick="addExtraItem('인테리어')">+ 기타 항목 추가</button>
+    </div>
   </div>
 
-  <!-- 미션 Part -->
-  <div class="function-category">
-    <h3>미션 Part📝</h3>
-    <div class="function-item"><input type="checkbox" data-name="오일누유(미션)" onchange="updateAll()"> 오일누유 <input type="text" class="function-desc" data-key="오일누유(미션)-desc" oninput="saveInput('오일누유(미션)-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="오일누유(미션)-price" oninput="formatInput(this); saveInput('오일누유(미션)-price'); updateAll()" placeholder="금액(원)"></div>
-    <div class="function-item"><input type="checkbox" data-name="소모품(미션)" onchange="updateAll()"> 소모품 <input type="text" class="function-desc" data-key="소모품(미션)-desc" oninput="saveInput('소모품(미션)-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="소모품(미션)-price" oninput="formatInput(this); saveInput('소모품(미션)-price'); updateAll()" placeholder="금액(원)"></div>
-    <div class="function-item"><input type="checkbox" data-name="기타(미션)" onchange="updateAll()"> 기타 <input type="text" class="function-desc" data-key="기타(미션)-desc" oninput="saveInput('기타(미션)-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="기타(미션)-price" oninput="formatInput(this); saveInput('기타(미션)-price'); updateAll()" placeholder="금액(원)"></div>
-  </div>
-
-  <!-- 하체 Part -->
-  <div class="function-category">
-    <h3>하체 Part📝</h3>
-    <div class="function-item"><input type="checkbox" data-name="쇼버" onchange="updateAll()"> 쇼버 <input type="text" class="function-desc" data-key="쇼버-desc" oninput="saveInput('쇼버-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="쇼버-price" oninput="formatInput(this); saveInput('쇼버-price'); updateAll()" placeholder="금액(원)"></div>
-    <div class="function-item"><input type="checkbox" data-name="서스펜션" onchange="updateAll()"> <span style="font-size: 11px;">서스펜션(암,링크)</span><input type="text" class="function-desc" data-key="서스펜션-desc" oninput="saveInput('서스펜션-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="서스펜션-price" oninput="formatInput(this); saveInput('서스펜션-price'); updateAll()" placeholder="금액(원)"></div>
-    <div class="function-item"><input type="checkbox" data-name="등속조인트" onchange="updateAll()"> 등속조인트 <input type="text" class="function-desc" data-key="등속조인트-desc" oninput="saveInput('등속조인트-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="등속조인트-price" oninput="formatInput(this); saveInput('등속조인트-price'); updateAll()" placeholder="금액(원)"></div>
-    <div class="function-item"><input type="checkbox" data-name="웜기어" onchange="updateAll()"> 웜기어 <input type="text" class="function-desc" data-key="웜기어-desc" oninput="saveInput('웜기어-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="웜기어-price" oninput="formatInput(this); saveInput('웜기어-price'); updateAll()" placeholder="금액(원)"></div>
-    <div class="function-item"><input type="checkbox" data-name="디스크" onchange="updateAll()"> 디스크(패드) <input type="text" class="function-desc" data-key="디스크-desc" oninput="saveInput('디스크-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="디스크-price" oninput="formatInput(this); saveInput('디스크-price'); updateAll()" placeholder="금액(원)"></div>
-    <div class="function-item"><input type="checkbox" data-name="머플러" onchange="updateAll()"> 머플러 <input type="text" class="function-desc" data-key="머플러-desc" oninput="saveInput('머플러-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="머플러-price" oninput="formatInput(this); saveInput('머플러-price'); updateAll()" placeholder="금액(원)"></div>
-    <div class="function-item"><input type="checkbox" data-name="소모품(하체)" onchange="updateAll()"> 소모품 <input type="text" class="function-desc" data-key="소모품(하체)-desc" oninput="saveInput('소모품(하체)-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="소모품(하체)-price" oninput="formatInput(this); saveInput('소모품(하체)-price'); updateAll()" placeholder="금액(원)"></div>
-    <div class="function-item"><input type="checkbox" data-name="기타(하체)" onchange="updateAll()"> 기타 <input type="text" class="function-desc" data-key="기타(하체)-desc" oninput="saveInput('기타(하체)-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="기타(하체)-price" oninput="formatInput(this); saveInput('기타(하체)-price'); updateAll()" placeholder="금액(원)"></div>
-  </div>
-
-  <!-- 인테리어 Part -->
-  <div class="function-category">
-    <h3>인테리어 Part📝</h3>
-    <div class="function-item"><input type="checkbox" data-name="시트" onchange="updateAll()"><span style="font-size: 11px;">시트상태</span>  <input type="text" class="function-desc" data-key="시트-desc" oninput="saveInput('시트-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="시트-price" oninput="formatInput(this); saveInput('시트-price'); updateAll()" placeholder="금액(원)"></div>
-    <div class="function-item"><input type="checkbox" data-name="실내컨디션" onchange="updateAll()"> <span style="font-size: 11px;">실내상태</span> <input type="text" class="function-desc" data-key="실내컨디션-desc" oninput="saveInput('실내컨디션-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="실내컨디션-price" oninput="formatInput(this); saveInput('실내컨디션-price'); updateAll()" placeholder="금액(원)"></div>
-    <div class="function-item"><input type="checkbox" data-name="계기판" onchange="updateAll()"> <span style="font-size: 11px;">계기판</span><input type="text" class="function-desc" data-key="계기판-desc" oninput="saveInput('계기판-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="계기판-price" oninput="formatInput(this); saveInput('계기판-price'); updateAll()" placeholder="금액(원)"></div>
-    <div class="function-item"><input type="checkbox" data-name="등화류" onchange="updateAll()"> 등화류 <input type="text" class="function-desc" data-key="등화류-desc" oninput="saveInput('등화류-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="등화류-price" oninput="formatInput(this); saveInput('등화류-price'); updateAll()" placeholder="금액(원)"></div>
-    <div class="function-item"><input type="checkbox" data-name="에어컨히터" onchange="updateAll()"> 냉난방류 <input type="text" class="function-desc" data-key="에어컨히터-desc" oninput="saveInput('에어컨히터-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="에어컨히터-price" oninput="formatInput(this); saveInput('에어컨히터-price'); updateAll()" placeholder="금액(원)"></div>
-    <div class="function-item"><input type="checkbox" data-name="오디오" onchange="updateAll()"> <span style="font-size: 11px;">오디오계통</span> <input type="text" class="function-desc" data-key="오디오-desc" oninput="saveInput('오디오-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="오디오-price" oninput="formatInput(this); saveInput('오디오-price'); updateAll()" placeholder="금액(원)"></div>
-    <div class="function-item"><input type="checkbox" data-name="미러창문" onchange="updateAll()"> 미러&창문 <input type="text" class="function-desc" data-key="미러창문-desc" oninput="saveInput('미러창문-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="미러창문-price" oninput="formatInput(this); saveInput('미러창문-price'); updateAll()" placeholder="금액(원)"></div>
-    <div class="function-item"><input type="checkbox" data-name="버튼류" onchange="updateAll()"> 버튼류작동 <input type="text" class="function-desc" data-key="버튼류-desc" oninput="saveInput('버튼류-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="버튼류-price" oninput="formatInput(this); saveInput('버튼류-price'); updateAll()" placeholder="금액(원)"></div>
-    <div class="function-item"><input type="checkbox" data-name="썬팅" onchange="updateAll()"> 썬팅상태 <input type="text" class="function-desc" data-key="썬팅-desc" oninput="saveInput('썬팅-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="썬팅-price" oninput="formatInput(this); saveInput('썬팅-price'); updateAll()" placeholder="금액(원)"></div>
-    <div class="function-item"><input type="checkbox" data-name="유리크랙" onchange="updateAll()"> 유리크랙 <input type="text" class="function-desc" data-key="유리크랙-desc" oninput="saveInput('유리크랙-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="유리크랙-price" oninput="formatInput(this); saveInput('유리크랙-price'); updateAll()" placeholder="금액(원)"></div>
-    <div class="function-item"><input type="checkbox" data-name="트렁크상태" onchange="updateAll()"> 트렁크상태 <input type="text" class="function-desc" data-key="트렁크상태-desc" oninput="saveInput('트렁크상태-desc'); updateAll()" placeholder="내용"> <input type="text" class="function-price" data-key="트렁크상태-price" oninput="formatInput(this); saveInput('트렁크상태-price'); updateAll()" placeholder="금액(원)"></div>
-</div>
-
-</div>
-
-      
-  </div>
-      
-  
   <script>
-  // 설정
-  const CONSTANTS = {
-    partPrice: 180000,
-    wheelPrice: 100000,
-      tirePrice: 80000,
-    partNames: [
-    { name: "앞범퍼", top: "2%", left: "53%" },
-    { name: "후드", top: "15%", left: "52%" },
-    { name: "휀다(좌)", top: "20%", left: "24%" },
-    { name: "휀다(우)", top: "20%", left: "86%" },
-    { name: "사이드미러(좌)", top: "37%", left: "40%" },
-    { name: "사이드미러(우)", top: "37%", left: "74%" },
-    { name: "앞문(좌)", top: "40%", left: "21%" },
-    { name: "앞문(우)", top: "40%", left: "87%" },
-    { name: "뒷문(좌)", top: "60%", left: "21%" },
-    { name: "뒷문(우)", top: "60%", left: "87%" },
-    { name: "휀다(좌)", top: "83%", left: "25%" },
-    { name: "휀다(우)", top: "83%", left: "85%" },
-    { name: "루프", top: "60%", left: "52%" },
-    { name: "트렁크", top: "90%", left: "52%" },
-    { name: "뒷범퍼", top: "99%", left: "52%" },
-    { name: "사이드실(좌)", top: "50%", left: "11%" },
-    { name: "사이드실(우)", top: "55%", left: "94%" },
-    { name: "필러(좌)", top: "55%", left: "32%" },
-    { name: "필러(우)", top: "55%", left: "75%" },
-    { name: "휠(FL)", top: "20%", left: "10%" },
-    { name: "휠(FR)", top: "20%", left: "94%" },
-    { name: "휠(RL)", top: "75%", left: "10%" },
-    { name: "휠(RR)", top: "76%", left: "94%" },
-    { name: "타이어(FL)", top: "27%", left: "12%" },  
-    { name: "타이어(FR)", top: "29%", left: "94%" },
-    { name: "타이어(RL)", top: "82%", left: "12%" },
-    { name: "타이어(RR)", top: "85%", left: "94%" }
-    ],
-    
+    // ✅ 가격은 mutable로 관리(국산/수입 토글에서 변경 가능)
+    const PRICE = {
+      partPrice: 180000,
+      wheelPrice: 100000,
+      tirePrice: 90000
+    };
+
+    // ✅ 위치/이름 데이터는 상수
+    const DATA = {
+      partNames: [
+        { key: "front_bumper", name: "앞범퍼", top: "2%", left: "53%" },
+        { key: "hood", name: "후드", top: "15%", left: "52%" },
+        { key: "f_fender_l", name: "휀다(좌)", top: "20%", left: "24%" },
+        { key: "f_fender_r", name: "휀다(우)", top: "20%", left: "86%" },
+        { key: "mirror_l", name: "사이드미러(좌)", top: "37%", left: "40%" },
+        { key: "mirror_r", name: "사이드미러(우)", top: "37%", left: "74%" },
+        { key: "f_door_l", name: "앞문(좌)", top: "40%", left: "21%" },
+        { key: "f_door_r", name: "앞문(우)", top: "40%", left: "87%" },
+        { key: "r_door_l", name: "뒷문(좌)", top: "60%", left: "21%" },
+        { key: "r_door_r", name: "뒷문(우)", top: "60%", left: "87%" },
+        { key: "r_fender_l", name: "휀다(좌)", top: "83%", left: "25%" },
+        { key: "r_fender_r", name: "휀다(우)", top: "83%", left: "85%" },
+        { key: "roof", name: "루프", top: "60%", left: "52%" },
+        { key: "trunk", name: "트렁크", top: "90%", left: "52%" },
+        { key: "rear_bumper", name: "뒷범퍼", top: "99%", left: "52%" },
+        { key: "side_sill_l", name: "사이드실(좌)", top: "50%", left: "11%" },
+        { key: "side_sill_r", name: "사이드실(우)", top: "55%", left: "94%" },
+        { key: "pillar_l", name: "필러(좌)", top: "55%", left: "32%" },
+        { key: "pillar_r", name: "필러(우)", top: "55%", left: "75%" },
+        { key: "wheel_fl", name: "휠(FL)", top: "20%", left: "10%" },
+        { key: "wheel_fr", name: "휠(FR)", top: "20%", left: "94%" },
+        { key: "wheel_rl", name: "휠(RL)", top: "75%", left: "10%" },
+        { key: "wheel_rr", name: "휠(RR)", top: "76%", left: "94%" },
+        { key: "tire_fl", name: "타이어(FL)", top: "27%", left: "12%" },
+        { key: "tire_fr", name: "타이어(FR)", top: "29%", left: "94%" },
+        { key: "tire_rl", name: "타이어(RL)", top: "82%", left: "12%" },
+        { key: "tire_rr", name: "타이어(RR)", top: "85%", left: "94%" }
+      ],
       accidentParts: [
-      { name: "후드", rate: 4, top: '2%', left: '50%' },
-      { name: "휀다(좌)", rate: 3, top: '18%', left: '20%' },
-      { name: "휀다(우)", rate: 3, top: '18%', left: '88%' },
-      { name: "앞문(좌)", rate: 6, top: '40%', left: '17%' },
-      { name: "앞문(우)", rate: 4, top: '40%', left: '87%' },
-      { name: "뒷문(좌)", rate: 4, top: '62%', left: '17%' },
-      { name: "뒷문(우)", rate: 4, top: '62%', left: '87%' },
-      { name: "F.패널", rate: 5, top: '9%', left: '50%' },
-      { name: "인사(좌)", rate: 3, top: '16%', left: '42%' },
-      { name: "사이드(좌)", rate: 4, top: '23%', left: '49%' },
-      { name: "휠하우스(좌)", rate: 7, top: '28%', left: '44%' },
-      { name: "인사(우)", rate: 3, top: '16%', left: '67%' },
-      { name: "사이드(우)", rate: 4, top: '23%', left: '64%' },
-      { name: "휠하우스(우)", rate: 7, top: '28%', left: '70%' },
-      { name: "필러(좌)", rate: 5, top: '55%', left: '30%' },
-      { name: "필러(우)", rate: 5, top: '55%', left: '78%' },
-      { name: "사이드실(좌)", rate: 4, top: '55%', left: '12%' },
-      { name: "사이드실(우)", rate: 4, top: '55%', left: '93%' },
-      { name: "크로스멤버", rate: 5, top: '33%', left: '50%' },
-      { name: "대쉬패널", rate: 4, top: '39%', left: '50%' },
-      { name: "플로어패널", rate: 5, top: '50%', left: '50%' },
-      { name: "휠하우스(좌)", rate: 5, top: '81%', left: '44%' },
-      { name: "사이드(좌)", rate: 5, top: '86%', left: '48%' },
-      { name: "트레이패키지", rate: 4, top: '75%', left: '50%' },
-      { name: "사이드(우)", rate: 5, top: '86%', left: '67%' },
-      { name: "휠하우스(우)", rate: 7, top: '81%', left: '70%' },
-      { name: "루프패널", rate: 8, top: '60%', left: '50%' },
-      { name: "트렁크플로어", rate: 4, top: '91%', left: '55%' },
-      { name: "R.패널", rate: 4, top: '97%', left: '55%' },
-      { name: "트렁크", rate: 4, top: '97%', left: '47%' },
-      { name: "쿼터(좌)", rate: 5, top: '85%', left: '22%' },
-      { name: "쿼터(우)", rate: 5, top: '85%', left: '85%' },
-    ]
-  };
-        
-  // 입력 저장
-  function saveInput(id) {
-  // 기존 요소들 저장
-  const element = document.getElementById(id);
-  if (element) {
-    localStorage.setItem(id, element.value);
-  }
+        { key:"acc_hood", name:"후드", rate:4, top:'2%', left:'50%' },
+        { key:"acc_fender_l", name:"휀다(좌)", rate:3, top:'18%', left:'20%' },
+        { key:"acc_fender_r", name:"휀다(우)", rate:3, top:'18%', left:'88%' },
+        { key:"acc_f_door_l", name:"앞문(좌)", rate:6, top:'40%', left:'17%' },
+        { key:"acc_f_door_r", name:"앞문(우)", rate:4, top:'40%', left:'87%' },
+        { key:"acc_r_door_l", name:"뒷문(좌)", rate:4, top:'62%', left:'17%' },
+        { key:"acc_r_door_r", name:"뒷문(우)", rate:4, top:'62%', left:'87%' },
+        { key:"acc_f_panel", name:"F.패널", rate:5, top:'9%', left:'50%' },
+        { key:"acc_in_sa_l", name:"인사(좌)", rate:3, top:'16%', left:'38%' },
+        { key:"acc_side_l_1", name:"사이드(좌)", rate:4, top:'21%', left:'47%' },
+        { key:"acc_wheelhouse_l_1", name:"휠하우스(좌)", rate:7, top:'26%', left:'38%' },
+        { key:"acc_in_sa_r", name:"인사(우)", rate:3, top:'16%', left:'64%' },
+        { key:"acc_side_r_1", name:"사이드(우)", rate:4, top:'21%', left:'58%' },
+        { key:"acc_wheelhouse_r_1", name:"휠하우스(우)", rate:7, top:'27%', left:'64%' },
+        { key:"acc_pillar_l", name:"필러(좌)", rate:5, top:'55%', left:'30%' },
+        { key:"acc_pillar_r", name:"필러(우)", rate:5, top:'55%', left:'78%' },
+        { key:"acc_sill_l", name:"사이드실(좌)", rate:4, top:'55%', left:'7%' },
+        { key:"acc_sill_r", name:"사이드실(우)", rate:4, top:'55%', left:'93%' },
+        { key:"acc_crossmember", name:"크로스멤버", rate:5, top:'33%', left:'50%' },
+        { key:"acc_dashpanel", name:"대쉬패널", rate:4, top:'39%', left:'50%' },
+        { key:"acc_floorpanel", name:"플로어패널", rate:5, top:'50%', left:'50%' },
+        { key:"acc_wheelhouse_l_2", name:"휠하우스(좌)", rate:5, top:'81%', left:'38%' },
+        { key:"acc_side_l_2", name:"사이드(좌)", rate:5, top:'88%', left:'40%' },
+        { key:"acc_traypkg", name:"트레이패키지", rate:4, top:'75%', left:'50%' },
+        { key:"acc_side_r_2", name:"사이드(우)", rate:5, top:'86%', left:'61%' },
+        { key:"acc_wheelhouse_r_2", name:"휠하우스(우)", rate:7, top:'81%', left:'66%' },
+        { key:"acc_roofpanel", name:"루프패널", rate:8, top:'60%', left:'50%' },
+        { key:"acc_trunkfloor", name:"트렁크플로어", rate:4, top:'90%', left:'52%' },
+        { key:"acc_r_panel", name:"R.패널", rate:4, top:'97%', left:'63%' },
+        { key:"acc_trunk", name:"트렁크", rate:4, top:'97%', left:'40%' },
+        { key:"acc_quarter_l", name:"쿼터(좌)", rate:5, top:'85%', left:'22%' },
+        { key:"acc_quarter_r", name:"쿼터(우)", rate:5, top:'85%', left:'85%' }
+      ]
+    };
 
-  // 모든 function-price 저장
-  document.querySelectorAll('.function-price, .function-desc').forEach(input => {
-    const key = input.dataset.key;
-    if (key) {
-      localStorage.setItem(key, input.value);
+    // ✅ 동적 기타 항목 카운터
+    const extraCounters = {
+      '익스테리어': 0,
+      '엔진': 0,
+      '미션': 0,
+      '하체': 0,
+      '인테리어': 0
+    };
+
+    function addExtraItem(category, savedName = null) {
+      const containerId = {
+        '익스테리어': 'exterior-items',
+        '엔진': 'engine-items',
+        '미션': 'mission-items',
+        '하체': 'under-items',
+        '인테리어': 'interior-items'
+      }[category];
+
+      const container = document.getElementById(containerId);
+      if (!container) return;
+
+      const index = ++extraCounters[category];
+      const name = savedName || `기타${index}(${category})`;
+
+      const item = document.createElement('div');
+      item.className = 'function-item';
+      item.innerHTML = `
+        <input type="checkbox" data-name="${name}" onchange="updateAll()">
+        ${name}
+        <input type="text" class="function-desc" data-key="${name}-desc" placeholder="내용" oninput="saveInput('${name}-desc'); updateAll()">
+        <input type="text" class="function-price" data-key="${name}-price" placeholder="금액(원)" oninput="formatInput(this); saveInput('${name}-price'); updateAll()">
+        <button onclick="this.parentElement.remove(); localStorage.removeItem('${name}-desc'); localStorage.removeItem('${name}-price'); updateAll(); saveExtraItems();">삭제</button>
+      `;
+
+      container.appendChild(item);
+      saveExtraItems();
     }
-  });
-}
-  function saveCheckboxState() {
-    const states = {};
-    document.querySelectorAll("input[type='checkbox']").forEach(cb => {
-      states[cb.dataset.name] = cb.checked;
-    });
-    localStorage.setItem('checkboxStates', JSON.stringify(states));
-  }
-  
-  // 불러오기
-  function loadInputs() {
-  // 기본 항목 로딩
-  const baseKeys = [
-    'bidPriceInput', 'carNumber', 'carName', 'carMileage',
-    'exterior', 'wheelScratch', 'spareKey', 'tire' , 'repair', 'carAdvantage'
-  ];
-  baseKeys.forEach(id => {
-    const el = document.getElementById(id);
-    if (el && localStorage.getItem(id)) {
-      el.value = localStorage.getItem(id);
+
+    function saveExtraItems() {
+      const categories = ['익스테리어', '엔진', '미션', '하체', '인테리어'];
+      const saved = {};
+      categories.forEach(category => {
+        const containerId = {
+          '익스테리어': 'exterior-items',
+          '엔진': 'engine-items',
+          '미션': 'mission-items',
+          '하체': 'under-items',
+          '인테리어': 'interior-items'
+        }[category];
+        const container = document.getElementById(containerId);
+        const names = Array.from(container.querySelectorAll('input[type="checkbox"]')).map(cb => cb.dataset.name);
+        saved[category] = names;
+      });
+      localStorage.setItem('dynamicExtraItems', JSON.stringify(saved));
     }
-  });
 
-  // function 항목 로딩
-  document.querySelectorAll('.function-price, .function-desc').forEach(input => {
-    const key = input.dataset.key;
-    if (key && localStorage.getItem(key)) {
-      input.value = localStorage.getItem(key);
+    function loadExtraItems() {
+      const saved = JSON.parse(localStorage.getItem('dynamicExtraItems') || '{}');
+      Object.keys(saved).forEach(category => {
+        saved[category].forEach(name => addExtraItem(category, name));
+      });
     }
-  });
-autoResize(document.getElementById('carAdvantage'));
-}
 
-  function loadCheckboxState() {
-    const states = JSON.parse(localStorage.getItem('checkboxStates') || '{}');
-    document.querySelectorAll("input[type='checkbox']").forEach(cb => {
-      if (states[cb.dataset.name] !== undefined) {
-        cb.checked = states[cb.dataset.name];
-      }
-    });
-  }
-  
-  // 숫자 포맷
-  function formatInput(input) {
-    input.value = input.value.replace(/[^\d]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-  }
-  
-  // 숫자 추출
-  function getNumericValue(value) {
-    return Number(value.replaceAll(',', '')) || 0;
-  }
-  
-function updateAll() {
-    const bidPrice = getNumericValue(document.getElementById('bidPriceInput').value) || 0;
-    let partDiscount = 0, accidentDiscount = 0, functionDiscount = 0;
-    const deductionDetails = [];
+    function resetExtraItems() {
+      ['exterior-items','engine-items','mission-items','under-items','interior-items'].forEach(id => {
+        const container = document.getElementById(id);
+        if (container) container.innerHTML = '';
+      });
+      localStorage.removeItem('dynamicExtraItems');
+    }
 
-    // 🚗 외관 상태 감가 계산 (part 체크박스)
-    document.querySelectorAll(".part").forEach(checkbox => {
-        const label = checkbox.parentNode;
-        if (checkbox.checked) {
-            const name = checkbox.dataset.name;
-            let discount = 0;
-            
-            // 🚨 타이어, 휠, 일반 부품 감가 금액 다르게 설정
-            if (name.includes('타이어')) {
-                discount = CONSTANTS.tirePrice;
-            } else if (name.includes('휠')) {
-                discount = CONSTANTS.wheelPrice;
-            } else {
-                discount = CONSTANTS.partPrice;
-            }
+    // ✅ 입력 저장
+    function saveInput(id) {
+      const element = document.getElementById(id);
+      if (element) localStorage.setItem(id, element.value);
 
-            partDiscount += discount;
-            deductionDetails.push(`${name}: -${discount.toLocaleString()}원`);
-            label.classList.add('selected');
-        } else {
-            label.classList.remove('selected');
+      document.querySelectorAll('.function-price, .function-desc').forEach(input => {
+        const key = input.dataset.key;
+        if (key) localStorage.setItem(key, input.value);
+      });
+    }
+
+    // ✅ 입력 불러오기
+    function loadInputs() {
+      const baseKeys = [
+        'bidPriceInput', 'carNumber', 'carName',
+        'exterior', 'spareKey', 'repair', 'carAdvantage', 'Memo'
+      ];
+      baseKeys.forEach(id => {
+        const el = document.getElementById(id);
+        if (el && localStorage.getItem(id)) el.value = localStorage.getItem(id);
+      });
+
+      document.querySelectorAll('.function-price, .function-desc').forEach(input => {
+        const key = input.dataset.key;
+        if (key && localStorage.getItem(key)) input.value = localStorage.getItem(key);
+      });
+
+      const adv = document.getElementById('carAdvantage');
+      if (adv) autoResize(adv);
+      const memo = document.getElementById('Memo');
+      if (memo) autoResize(memo);
+    }
+
+    // 숫자 포맷
+    function formatInput(input) {
+      input.value = input.value.replace(/[^\d]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
+    function getNumericValue(value) {
+      return Number(String(value).replaceAll(',', '')) || 0;
+    }
+
+    // ✅ 사고 상태 세팅(없음/판금/교환)
+    function setAccidentState(el, state) {
+      el.dataset.state = state;
+
+      el.classList.remove('repair', 'exchange');
+      if (state) el.classList.add(state);
+
+      const badge = el.querySelector('.acc-badge');
+      if (badge) badge.textContent = state === 'exchange' ? '교환' : (state === 'repair' ? '판금' : '없음');
+
+      el.setAttribute('aria-pressed', state ? 'true' : 'false');
+    }
+
+    // ✅ 외관(터치 선택) 렌더
+    function renderPartItems() {
+      const partSection = document.getElementById('partSection');
+      partSection.innerHTML = '';
+
+      DATA.partNames.forEach(({ key, name, top, left }) => {
+        const el = document.createElement('div');
+        el.className = 'checkbox-item part-item';
+        el.style.top = top;
+        el.style.left = left;
+        el.dataset.key = key;
+        el.dataset.name = name;
+        el.setAttribute('role', 'button');
+        el.setAttribute('aria-pressed', 'false');
+        el.textContent = name;
+
+        el.addEventListener('click', () => {
+          el.classList.toggle('selected');
+          el.setAttribute('aria-pressed', el.classList.contains('selected') ? 'true' : 'false');
+          updateAll();
+          saveCheckboxState();
+        });
+
+        partSection.appendChild(el);
+      });
+    }
+
+    // ✅ 사고(터치로 없음→판금→교환) 렌더
+    function renderAccidentItems() {
+      const accidentSection = document.getElementById('accidentSection');
+      accidentSection.innerHTML = '';
+
+      DATA.accidentParts.forEach(({ key, name, rate, top, left }) => {
+        const el = document.createElement('div');
+        el.className = 'checkbox-item acc-item';
+        el.style.top = top;
+        el.style.left = left;
+
+        el.dataset.key = key || name;
+        el.dataset.name = name;
+        el.dataset.rate = String(rate);
+        el.dataset.state = ''; // '' | 'repair' | 'exchange'
+        el.setAttribute('role', 'button');
+        el.setAttribute('aria-pressed', 'false');
+
+        el.innerHTML = `
+          <div style="text-align:center;">
+            <div>${name}</div>
+            <div class="acc-badge">없음</div>
+          </div>
+        `;
+
+        el.addEventListener('click', () => {
+          const cur = el.dataset.state;
+          const next = cur === '' ? 'repair' : (cur === 'repair' ? 'exchange' : '');
+          setAccidentState(el, next);
+          updateAll();
+          saveCheckboxState();
+        });
+
+        accidentSection.appendChild(el);
+      });
+    }
+
+    function renderAllOverlays() {
+      renderPartItems();
+      renderAccidentItems();
+    }
+
+    // ✅ 체크/상태 저장(외관/사고/기능)
+    function saveCheckboxState() {
+      const states = { parts: {}, accidents: {}, functions: {} };
+
+      document.querySelectorAll('.part-item').forEach(el => {
+        states.parts[el.dataset.key] = el.classList.contains('selected');
+      });
+
+      document.querySelectorAll('.acc-item').forEach(el => {
+        states.accidents[el.dataset.key] = el.dataset.state || '';
+      });
+
+      document.querySelectorAll(".function-item input[type='checkbox']").forEach(cb => {
+        states.functions[cb.dataset.name] = cb.checked;
+      });
+
+      localStorage.setItem('checkboxStates', JSON.stringify(states));
+    }
+
+    function loadCheckboxState() {
+      const states = JSON.parse(localStorage.getItem('checkboxStates') || '{}');
+
+      const partStates = states.parts || {};
+      document.querySelectorAll('.part-item').forEach(el => {
+        const on = partStates[el.dataset.key] === true;
+        el.classList.toggle('selected', on);
+        el.setAttribute('aria-pressed', on ? 'true' : 'false');
+      });
+
+      const accStates = states.accidents || {};
+      document.querySelectorAll('.acc-item').forEach(el => {
+        const state = accStates[el.dataset.key] || '';
+        setAccidentState(el, state);
+      });
+
+      const fnStates = states.functions || {};
+      document.querySelectorAll(".function-item input[type='checkbox']").forEach(cb => {
+        if (fnStates[cb.dataset.name] !== undefined) cb.checked = fnStates[cb.dataset.name];
+      });
+    }
+
+    // ✅ 감가 계산
+    function updateAll() {
+      const bidPrice = getNumericValue(document.getElementById('bidPriceInput').value) || 0;
+
+      let partDiscount = 0;
+      let accidentDiscount = 0;
+      let functionDiscount = 0;
+
+      const deductionDetails = [];
+
+      // 🚗 외관 감가(터치 선택)
+      document.querySelectorAll(".part-item").forEach(el => {
+        if (el.classList.contains('selected')) {
+          const name = el.dataset.name;
+          let discount = 0;
+
+          if (name.includes('타이어')) discount = PRICE.tirePrice;
+          else if (name.includes('휠')) discount = PRICE.wheelPrice;
+          else discount = PRICE.partPrice;
+
+          partDiscount += discount;
+          deductionDetails.push(`${name}: -${discount.toLocaleString()}원`);
         }
-    });
+      });
 
-    // 🚨 사고 감가 계산 (accident 체크박스)
-    document.querySelectorAll(".accident").forEach(checkbox => {
-        const label = checkbox.parentNode;
-        if (checkbox.checked) {
-            const name = checkbox.dataset.name;
-            const rate = Number(checkbox.dataset.rate);
-            const discount = bidPrice * (rate / 100);
+      // 🚑 사고 감가(없음/판금/교환)
+      document.querySelectorAll('#accidentSection .acc-item').forEach(el => {
+        const name = el.dataset.name;
+        const rate = Number(el.dataset.rate);
+        const state = el.dataset.state; // '' | 'repair' | 'exchange'
 
-            accidentDiscount += discount;
-            deductionDetails.push(`${name} 사고 감가: -${discount.toLocaleString()}원`);
-            label.classList.add('selected');
-        } else {
-            label.classList.remove('selected');
+        if (state === 'exchange' || state === 'repair') {
+          const appliedRate = state === 'exchange' ? rate : (rate - 1);
+          const discount = Math.round(bidPrice * (appliedRate / 100));
+          accidentDiscount += discount;
+          deductionDetails.push(`${name} (${state === 'exchange' ? '교환' : '판금'}): -${discount.toLocaleString()}원`);
         }
-    });
+      });
 
-    // 🔧 기능 감가 계산 (function-item 체크박스)
-    document.querySelectorAll('.function-item').forEach(item => {
+      // 🔧 기능 감가(function-item 체크박스)
+      document.querySelectorAll('.function-item').forEach(item => {
         const checkbox = item.querySelector('input[type="checkbox"]');
+        if (!checkbox) return;
+
         const name = checkbox.dataset.name;
         const priceInput = item.querySelector('.function-price');
         const descInput = item.querySelector('.function-desc');
-        
+
         const price = getNumericValue(priceInput?.value || '');
         const desc = descInput?.value || '';
 
         if (checkbox.checked && price > 0) {
-            functionDiscount += price;
-            const detail = desc ? `${name} - ${desc}: -${price.toLocaleString()}원` : `${name}: -${price.toLocaleString()}원`;
-            deductionDetails.push(detail);
+          functionDiscount += price;
+          const detail = desc ? `${name} - ${desc}: -${price.toLocaleString()}원` : `${name}: -${price.toLocaleString()}원`;
+          deductionDetails.push(detail);
         }
-    });
+      });
 
-    // 💰 최종 감가 계산
-    const totalDiscount = partDiscount + accidentDiscount + functionDiscount;
-    const finalPrice = bidPrice - totalDiscount;
+      const totalDiscount = partDiscount + accidentDiscount + functionDiscount;
+      const finalPrice = Math.max(0, Math.round(bidPrice - totalDiscount));
 
-    // 📌 UI 업데이트
-    document.getElementById('finalPrice').textContent = finalPrice.toLocaleString();
-    document.getElementById('deductionArea').innerHTML = deductionDetails.length
+      document.getElementById('finalPrice').textContent = finalPrice.toLocaleString();
+      document.getElementById('deductionArea').innerHTML = deductionDetails.length
         ? `<h3>감가 세부내역</h3><ul>${deductionDetails.map(d => `<li>${d}</li>`).join('')}</ul>
            <div class="deduction-total">감가 총합계: -${totalDiscount.toLocaleString()}원</div>`
         : '';
 
-    // ✅ 체크박스 상태 저장
-    saveCheckboxState();
-}
-  
-  // 체크박스 렌더링
-  function renderCheckboxes() {
-    const partSection = document.getElementById('partSection');
-  CONSTANTS.partNames.forEach(({ name, top, left }) => {
-    const label = document.createElement('label');
-    label.className = 'checkbox-item';
-    label.style.top = top;
-    label.style.left = left;
-    label.innerHTML = `<input type="checkbox" class="part" data-name="${name}" onclick="updateAll()"> ${name}`;
-    partSection.appendChild(label);
-  });
-  
-    const accidentSection = document.getElementById('accidentSection');
-    CONSTANTS.accidentParts.forEach(({ name, rate, top, left }) => {
-      const label = document.createElement('label');
-      label.className = 'checkbox-item';
-      label.style.top = top;
-      label.style.left = left;
-      label.innerHTML = `<input type="checkbox" class="accident" data-name="${name}" data-rate="${rate}" onclick="updateAll()"> ${name}`;
-      accidentSection.appendChild(label);
+      saveCheckboxState();
+    }
+
+    // ✅ 국산/수입 토글
+    function setCarType(type) {
+      if (type === 'domestic') {
+        PRICE.partPrice = 130000;
+        PRICE.tirePrice = 90000;
+      } else {
+        PRICE.partPrice = 180000;
+        PRICE.tirePrice = 90000;
+      }
+      localStorage.setItem('carType', type);
+      updateCarTypeButtons(type);
+      updateAll();
+    }
+
+    function updateCarTypeButtons(selected) {
+      document.getElementById('btnDomestic').classList.toggle('active', selected === 'domestic');
+      document.getElementById('btnImported').classList.toggle('active', selected === 'imported');
+    }
+
+    // ✅ 초기화
+    function resetAll() {
+      localStorage.clear();
+
+      document.querySelectorAll("input[type='text']").forEach(input => input.value = '');
+      document.querySelectorAll("textarea").forEach(textarea => textarea.value = '');
+      document.querySelectorAll(".function-item input[type='checkbox']").forEach(cb => cb.checked = false);
+
+      document.querySelectorAll(".part-item").forEach(el => {
+        el.classList.remove('selected');
+        el.setAttribute('aria-pressed', 'false');
+      });
+
+      document.querySelectorAll(".acc-item").forEach(el => setAccidentState(el, ''));
+
+      document.getElementById('deductionArea').innerHTML = '';
+      const adv = document.getElementById('carAdvantage');
+      if (adv) adv.style.height = 'auto';
+
+      resetExtraItems();
+      updateAll();
+    }
+
+    function autoResize(textarea) {
+      if (!textarea) return;
+      textarea.style.height = 'auto';
+      textarea.style.height = textarea.scrollHeight + 'px';
+    }
+
+    // ✅ 시작
+    window.addEventListener('DOMContentLoaded', () => {
+      renderAllOverlays();
+      loadExtraItems();
+      loadInputs();
+      loadCheckboxState();
+
+      const savedType = localStorage.getItem('carType') || 'imported';
+      setCarType(savedType);
+
+      updateAll();
     });
-  }
-  function setCarType(type) {
-  if (type === 'domestic') {
-    CONSTANTS.partPrice = 130000;
-    CONSTANTS.tirePrice = 90000;
-  } else {
-    CONSTANTS.partPrice = 180000;
-    CONSTANTS.tirePrice = 90000;
-  }
 
-  localStorage.setItem('carType', type);
-  updateAll();
-  updateCarTypeButtons(type);
-}
-
-function updateCarTypeButtons(selected) {
-  document.getElementById('btnDomestic').classList.toggle('active', selected === 'domestic');
-  document.getElementById('btnImported').classList.toggle('active', selected === 'imported');
-}
-
-// 초기 로딩 시
-window.addEventListener('DOMContentLoaded', () => {
-  const savedType = localStorage.getItem('carType') || 'imported';
-  setCarType(savedType);
-});
-
-  
-  // 초기화
-  function resetAll() {
-    localStorage.clear();
-    document.querySelectorAll("input[type='text']").forEach(input => input.value = '');
-    document.querySelectorAll("input[type='checkbox']").forEach(cb => cb.checked = false);
-    document.querySelectorAll(".checkbox-item").forEach(label => label.classList.remove('selected'));
-    document.getElementById('deductionArea').innerHTML = '';
-    document.getElementById('carAdvantage').style.height = 'auto';
-	updateAll();
-  }
-   
-      function resizeInput(input) {
-    input.style.width = (input.value.length + 1) + 'ch';  // 문자 수에 맞게 크기 조정
-  }
-  function autoResize(textarea) {
-  textarea.style.height = 'auto'; // 초기화
-  textarea.style.height = (textarea.scrollHeight) + 'px'; // 실제 내용 높이로 조정
-}
-
-  
-  // 시작
-  renderCheckboxes();
-  loadInputs();
-  loadCheckboxState();
-  updateAll();
+    window.addEventListener('beforeunload', saveExtraItems);
   </script>
-  
-  </body>
-  </html>
+</body>
+</html>
