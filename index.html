@@ -26,8 +26,6 @@
       text-align:center;
     }
     body.dark{background:var(--bg-dark); color:var(--text-light);}
-
-    /* ✅ 모바일에서 삐져나오는 문제의 핵심 해결 */
     *, *::before, *::after { box-sizing: border-box; }
 
     .price-info,.section,.final-price-area,.deduction-list{margin-bottom:20px;}
@@ -87,7 +85,6 @@
       padding-left:25px;
     }
 
-    /* ✅ input/textarea 동일 규격 + 삐져나옴 방지 */
     .price-info input, .input-small, textarea.input-small{
       width:100%;
       max-width:380px;
@@ -165,7 +162,6 @@
       width:100%;height:100%;
     }
 
-    /* ✅ 터치용 공통 */
     .checkbox-item{
       position:absolute;
       font-size:9px;
@@ -180,7 +176,6 @@
       background:rgba(255,255,255,0.85);
       border:1px solid rgba(0,0,0,0.15);
     }
-    /* 외관 선택 */
     .checkbox-item.selected{
       background:rgba(255,92,92,0.18);
       border-color:rgba(255,92,92,0.8);
@@ -188,7 +183,6 @@
       font-weight:700;
     }
 
-    /* 사고 상태 */
     .acc-item.repair{
       background:rgba(255,165,0,0.18);
       border-color:rgba(255,165,0,0.85);
@@ -213,26 +207,8 @@
     .acc-item.repair .acc-badge{background:rgba(255,165,0,0.25);}
     .acc-item.exchange .acc-badge{background:rgba(255,92,92,0.28);}
 
-    .deduction-list{
-      font-size:15px;
-      text-align:left;
-      max-width:500px;
-      margin:20px auto;
-      background:#fff;
-      padding:10px;
-      border-radius:var(--border-radius);
-      box-shadow:0 2px 6px rgba(0,0,0,0.05);
-    }
-    .deduction-list ul{padding-left:20px;margin:10px 0;}
-    .deduction-total{
-      font-weight:bold;
-      color:var(--main-color);
-      margin-top:10px;
-      text-align:right;
-    }
-
-    /* ✅ 선택 요약 영역 */
-    .summary-area{
+    /* ✅ 검차결과(요약+세부내역 통합) */
+    .result-area{
       max-width:500px;
       margin:10px auto 20px;
       background:#fff;
@@ -241,15 +217,24 @@
       box-shadow:0 2px 6px rgba(0,0,0,0.05);
       text-align:left;
       font-size:13px;
-      line-height:1.4;
+      line-height:1.45;
     }
-    .summary-area .title{
-      font-weight:800;
+    .result-area .title{
+      font-weight:900;
       color:var(--main-color);
-      margin-bottom:6px;
+      margin-bottom:8px;
       display:flex;
       align-items:center;
       gap:8px;
+    }
+    .result-area .sub{
+      font-weight:800;
+      margin-top:10px;
+      margin-bottom:6px;
+      display:flex;
+      align-items:center;
+      gap:6px;
+      opacity:0.95;
     }
     .chip{
       display:inline-block;
@@ -262,6 +247,20 @@
     }
     .chip.exchange{ background:rgba(255,92,92,0.18); }
     .chip.repair{ background:rgba(255,165,0,0.18); }
+
+    .result-area ul{
+      margin:6px 0 0;
+      padding-left:18px;
+    }
+    .result-area li{
+      margin:4px 0;
+    }
+    .result-total{
+      margin-top:10px;
+      font-weight:900;
+      color:var(--main-color);
+      text-align:right;
+    }
 
     .function-category{
       margin-bottom:20px;
@@ -318,16 +317,14 @@
            oninput="formatInput(this); saveInput('bidPriceInput')"
            onchange="updateAll()">원
 
-    <!-- ✅ 선택 요약 -->
-    <div id="summaryArea" class="summary-area" style="display:none;"></div>
+    <!-- ✅ 검차결과(요약+감가세부내역 통합) -->
+    <div id="resultArea" class="result-area" style="display:none;"></div>
 
     <div class="final-price-area">
       최종금액 <span id="finalPrice">0</span>원
       <button onclick="resetAll()">초기화</button>
     </div>
   </div>
-
-  <div id="deductionArea" class="deduction-list"></div>
 
   <div class="section">
     <h2><i class="fas fa-car-side"></i> 차량정보</h2>
@@ -382,7 +379,7 @@
     </div>
   </div>
 
-  <!-- ✅ 세부 상태(기능 체크박스) - 기존 유지 -->
+  <!-- 세부 상태 -->
   <div class="section">
     <h2><i class="fas fa-tools"></i> 세부 상태</h2>
 
@@ -769,7 +766,7 @@
       el.setAttribute('aria-pressed', state ? 'true' : 'false');
     }
 
-    // ✅ 외관 렌더
+    // ✅ 외관 렌더(체크박스 제거, 터치 토글)
     function renderPartItems(){
       const partSection=document.getElementById('partSection');
       partSection.innerHTML='';
@@ -796,7 +793,7 @@
       });
     }
 
-    // ✅ 사고 렌더 (순서: 없음 → 교환 → 판금 → 없음)
+    // ✅ 사고 렌더(없음 → 교환 → 판금 → 없음)
     function renderAccidentItems(){
       const accidentSection=document.getElementById('accidentSection');
       accidentSection.innerHTML='';
@@ -810,7 +807,7 @@
         el.dataset.key=key||name;
         el.dataset.name=name;
         el.dataset.rate=String(rate);
-        el.dataset.state=''; // '' | 'exchange' | 'repair'
+        el.dataset.state='';
         el.setAttribute('role','button');
         el.setAttribute('aria-pressed','false');
 
@@ -823,7 +820,6 @@
 
         el.addEventListener('click',()=>{
           const cur = el.dataset.state;
-          // ✅ 변경된 순서
           const next = cur === '' ? 'exchange' : (cur === 'exchange' ? 'repair' : '');
           setAccidentState(el, next);
           updateAll();
@@ -839,12 +835,12 @@
       renderAccidentItems();
     }
 
-    // ✅ 상태 저장(외관/사고/기능)
+    // ✅ 상태 저장(도색/사고/기능)
     function saveCheckboxState(){
-      const states={ parts:{}, accidents:{}, functions:{} };
+      const states={ paint:{}, accidents:{}, functions:{} };
 
       document.querySelectorAll('.part-item').forEach(el=>{
-        states.parts[el.dataset.key] = el.classList.contains('selected');
+        states.paint[el.dataset.key] = el.classList.contains('selected');
       });
       document.querySelectorAll('.acc-item').forEach(el=>{
         states.accidents[el.dataset.key] = el.dataset.state || '';
@@ -859,9 +855,9 @@
     function loadCheckboxState(){
       const states = JSON.parse(localStorage.getItem('checkboxStates') || '{}');
 
-      const partStates=states.parts||{};
+      const paintStates=states.paint||{};
       document.querySelectorAll('.part-item').forEach(el=>{
-        const on = partStates[el.dataset.key] === true;
+        const on = paintStates[el.dataset.key] === true;
         el.classList.toggle('selected', on);
         el.setAttribute('aria-pressed', on ? 'true' : 'false');
       });
@@ -878,22 +874,22 @@
       });
     }
 
-    // ✅ 상단 요약 렌더
-    function renderSummary(selectedParts, selectedAccidents){
-      const box = document.getElementById('summaryArea');
+    // ✅ 검차결과 렌더(도색/사고/세부상태 "내용까지" + 금액)
+    function renderResultBox({selectedPaint, selectedAccidents, functionLines, deductionLines, totalDiscount}){
+      const box = document.getElementById('resultArea');
+      const hasAny = (selectedPaint.length || selectedAccidents.length || functionLines.length || deductionLines.length);
 
-      const hasAny = selectedParts.length || selectedAccidents.length;
       if(!hasAny){
         box.style.display='none';
         box.innerHTML='';
         return;
       }
 
-      const partsHtml = selectedParts.length
-        ? selectedParts.map(n=>`<span class="chip">${n}</span>`).join('')
+      const paintChips = selectedPaint.length
+        ? selectedPaint.map(n=>`<span class="chip">${n}</span>`).join('')
         : `<span style="opacity:.7;">선택 없음</span>`;
 
-      const accHtml = selectedAccidents.length
+      const accidentChips = selectedAccidents.length
         ? selectedAccidents.map(a=>{
             const cls = a.state === 'exchange' ? 'exchange' : 'repair';
             const label = a.state === 'exchange' ? '교환' : '판금';
@@ -901,37 +897,51 @@
           }).join('')
         : `<span style="opacity:.7;">선택 없음</span>`;
 
+      const detailList = deductionLines.length
+        ? `<ul>${deductionLines.map(x=>`<li>${x}</li>`).join('')}</ul>`
+        : `<div style="opacity:.7;">선택 내역이 없습니다.</div>`;
+
       box.innerHTML = `
-        <div class="title"><i class="fa-solid fa-list-check"></i> 선택 요약</div>
-        <div style="margin-bottom:6px;"><b>외관</b> (${selectedParts.length}): ${partsHtml}</div>
-        <div><b>사고</b> (${selectedAccidents.length}): ${accHtml}</div>
+        <div class="title"><i class="fa-solid fa-clipboard-check"></i> 검차결과</div>
+
+        <div class="sub"><i class="fa-solid fa-paint-roller"></i> 도색 (${selectedPaint.length})</div>
+        <div>${paintChips}</div>
+
+        <div class="sub"><i class="fa-solid fa-car-burst"></i> 사고 (${selectedAccidents.length})</div>
+        <div>${accidentChips}</div>
+
+        <div class="sub"><i class="fa-solid fa-list"></i> 감가 내역</div>
+        ${detailList}
+
+        <div class="result-total">감가 총합계: -${totalDiscount.toLocaleString()}원</div>
       `;
       box.style.display='block';
     }
 
-    // ✅ 감가 계산
+    // ✅ 감가 계산(세부상태는 "내용까지" 포함)
     function updateAll(){
       const bidPrice = getNumericValue(document.getElementById('bidPriceInput').value) || 0;
 
-      let partDiscount=0, accidentDiscount=0, functionDiscount=0;
-      const deductionDetails=[];
+      let paintDiscount=0, accidentDiscount=0, functionDiscount=0;
+      const deductionLines=[];
 
-      const selectedParts=[];
+      const selectedPaint=[];
       const selectedAccidents=[];
+      const functionLines=[];
 
-      // 외관(터치 선택)
+      // 도색(기존 외관)
       document.querySelectorAll('.part-item').forEach(el=>{
         if(el.classList.contains('selected')){
           const name = el.dataset.name;
-          selectedParts.push(name);
+          selectedPaint.push(name);
 
           let discount=0;
           if(name.includes('타이어')) discount = PRICE.tirePrice;
           else if(name.includes('휠')) discount = PRICE.wheelPrice;
           else discount = PRICE.partPrice;
 
-          partDiscount += discount;
-          deductionDetails.push(`${name}: -${discount.toLocaleString()}원`);
+          paintDiscount += discount;
+          deductionLines.push(`[도색] ${name}: -${discount.toLocaleString()}원`);
         }
       });
 
@@ -939,7 +949,7 @@
       document.querySelectorAll('#accidentSection .acc-item').forEach(el=>{
         const name = el.dataset.name;
         const rate = Number(el.dataset.rate);
-        const state = el.dataset.state; // '' | 'exchange' | 'repair'
+        const state = el.dataset.state;
 
         if(state === 'exchange' || state === 'repair'){
           selectedAccidents.push({name, state});
@@ -947,11 +957,11 @@
           const appliedRate = state === 'exchange' ? rate : (rate - 1);
           const discount = Math.round(bidPrice * (appliedRate / 100));
           accidentDiscount += discount;
-          deductionDetails.push(`${name} (${state === 'exchange' ? '교환' : '판금'}): -${discount.toLocaleString()}원`);
+          deductionLines.push(`[사고] ${name} (${state === 'exchange' ? '교환' : '판금'}): -${discount.toLocaleString()}원`);
         }
       });
 
-      // 기능 감가
+      // 세부상태(내용까지 포함)
       document.querySelectorAll('.function-item').forEach(item=>{
         const checkbox = item.querySelector('input[type="checkbox"]');
         if(!checkbox) return;
@@ -961,26 +971,33 @@
         const descInput = item.querySelector('.function-desc');
 
         const price = getNumericValue(priceInput?.value || '');
-        const desc = descInput?.value || '';
+        const desc = (descInput?.value || '').trim();
 
         if(checkbox.checked && price > 0){
           functionDiscount += price;
-          const detail = desc ? `${name} - ${desc}: -${price.toLocaleString()}원` : `${name}: -${price.toLocaleString()}원`;
-          deductionDetails.push(detail);
+
+          // ✅ "내용"까지 항상 보여주기(내용 없으면 -)
+          const descText = desc ? ` / ${desc}` : '';
+          const line = `[세부] ${name}${descText}: -${price.toLocaleString()}원`;
+
+          functionLines.push(line);
+          deductionLines.push(line);
         }
       });
 
-      // 상단 요약 렌더
-      renderSummary(selectedParts, selectedAccidents);
-
-      const totalDiscount = partDiscount + accidentDiscount + functionDiscount;
+      const totalDiscount = paintDiscount + accidentDiscount + functionDiscount;
       const finalPrice = Math.max(0, Math.round(bidPrice - totalDiscount));
 
       document.getElementById('finalPrice').textContent = finalPrice.toLocaleString();
-      document.getElementById('deductionArea').innerHTML = deductionDetails.length
-        ? `<h3>감가 세부내역</h3><ul>${deductionDetails.map(d=>`<li>${d}</li>`).join('')}</ul>
-           <div class="deduction-total">감가 총합계: -${totalDiscount.toLocaleString()}원</div>`
-        : '';
+
+      // 검차결과 박스(요약 + 내역 합친 버전)
+      renderResultBox({
+        selectedPaint,
+        selectedAccidents,
+        functionLines,
+        deductionLines,
+        totalDiscount
+      });
 
       saveCheckboxState();
     }
@@ -1017,13 +1034,13 @@
       });
       document.querySelectorAll(".acc-item").forEach(el=>setAccidentState(el,''));
 
-      document.getElementById('deductionArea').innerHTML='';
-      resetExtraItems();
+      document.getElementById('resultArea').innerHTML='';
+      document.getElementById('resultArea').style.display='none';
 
+      resetExtraItems();
       updateAll();
     }
 
-    // 시작
     window.addEventListener('DOMContentLoaded', ()=>{
       renderAllOverlays();
       loadExtraItems();
