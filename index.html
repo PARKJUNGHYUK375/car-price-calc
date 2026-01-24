@@ -288,21 +288,37 @@
     .checkbox-overlay{ position:absolute; inset:0; }
 
     .checkbox-item{
-      position:absolute;
-      transform: translate(-50%, -50%);
-      cursor:pointer;
-      user-select:none;
-      -webkit-tap-highlight-color: transparent;
-      padding: 7px 10px;
-      font-size: 11px;
-      border-radius: 999px;
-      border: 1px solid rgba(226,232,240,0.18);
-      background: rgba(2,6,23,0.55);
-      backdrop-filter: blur(6px);
-      transition: 0.15s;
-      box-shadow: 0 6px 14px rgba(0,0,0,0.28);
-      white-space:nowrap;
-      color: var(--text);
+  position:absolute;
+  transform: translate(-50%, -50%);
+  cursor:pointer;
+  user-select:none;
+  -webkit-tap-highlight-color: transparent;
+
+  /* ✅ 글씨는 작게 */
+  font-size: 10px;
+  line-height: 1.1;
+
+  /* ✅ 터치 영역은 넉넉하게 (보이지 않는 패딩) */
+  padding: 12px 14px;
+
+  /* ✅ 모양은 컴팩트하게 */
+  border-radius: 999px;
+  border: 1px solid rgba(226,232,240,0.18);
+  background: rgba(2,6,23,0.55);
+  backdrop-filter: blur(6px);
+  transition: 0.15s;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.28);
+  white-space:nowrap;
+  color: var(--text);
+}
+
+/* ✅ 글씨만 더 작게, 터치는 유지 (작은 폰용) */
+@media (max-width: 420px){
+  .checkbox-item{
+    font-size: 9px;
+    padding: 12px 14px; /* 터치영역 유지 */
+  }
+}
     }
     .checkbox-item:hover{ transform: translate(-50%, -50%) scale(1.03); }
 
