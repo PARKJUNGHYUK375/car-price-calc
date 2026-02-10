@@ -1878,12 +1878,12 @@
 <!-- ✅ Cloud Sync (Firebase Firestore) -->
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js';
-    import { getAuth, signInAnonymously } from 'https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js';
+    import { getAuth, signInAnonymously, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js';
     import { getFirestore, doc, setDoc, getDoc, getDocs, collection, deleteDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js';
 
     // ✅ Firebase 콘솔(웹앱 > CDN)에서 firebaseConfig 블록을 그대로 붙여넣으세요.
     const firebaseConfig = {
-        apiKey: "AIzaSyAZNPEVJUpNwWM1ZGZnCDMODctC355u4fI",
+      apiKey: "AIzaSyAZNPEVJUpNwWM1ZGZnCDMODctC355u4fI",
   authDomain: "usedcar-001.firebaseapp.com",
   projectId: "usedcar-001",
   storageBucket: "usedcar-001.firebasestorage.app",
@@ -1902,6 +1902,27 @@
       const cred = await signInAnonymously(auth);
       return cred.user;
     };
+    // auth 준비되면 1회만 실행
+    let __authReadyOnce = false;
+    onAuthStateChanged(auth, async (user)=>{
+      if(user && !__authReadyOnce){
+        __authReadyOnce = true;
+        try{
+          await refreshCarList();
+          // 마지막 선택 복구 + 자동 열기(검차결과 자동 재계산)
+          const last = localStorage.getItem('__lastCarKey') || '';
+          if(last && carSelect){
+            carSelect.value = last;
+            syncSelectToInput(last);
+            await cloudLoad().catch(()=>{});
+          }
+        }catch(e){
+          console.error(e);
+          setStatus('리스트 불러오기 실패');
+        }
+      }
+    });
+
 
     const statusEl = document.getElementById('cloudStatus');
     const setStatus = (msg) => { if(statusEl) statusEl.textContent = msg; };
@@ -2010,6 +2031,9 @@
       try{ localStorage.setItem('__lastCarKey', key); }catch(e){}
       await refreshCarList();
       if(carSelect) carSelect.value = key;
+      // 저장 후에도 결과 유지
+      window.__calcRequested = true;
+      try{ const ra=document.getElementById('resultArea'); if(ra) ra.style.display='block'; }catch(e){}
       // 목록 갱신 후 선택 유지
       if(carSelect){ carSelect.value = key; }
       await ensureAnonAuth().then(async ()=>{
