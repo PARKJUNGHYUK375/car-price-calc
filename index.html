@@ -762,7 +762,7 @@
   <!-- 도색 -->
 
   <div class="section">
-    <h2><i class="fas fa-paint-roller"></i> 도색</h2>
+    <h2><i class="fas fa-paint-roller"></i> 외판</h2>
     <div class="container">
       <img src="https://imgur.com/1OGXwOu.png" class="car-image" alt="자동차 외관">
       <div class="checkbox-overlay" id="partSection"></div>
@@ -1070,7 +1070,7 @@
         { key:"tire_rr", name:"타이어(RR)", top:"80%", left:"90%" }
       ],
       accidentParts: [
-        { key:"acc_hood", name:"후드", rate:5, top:'10%', left:'50%' },
+        { key:"acc_hood", name:"후드", rate:4, top:'10%', left:'50%' },
         { key:"acc_fender_l", name:"휀다(좌)", rate:3, top:'10%', left:'19%' },
         { key:"acc_fender_r", name:"휀다(우)", rate:3, top:'10%', left:'81%' },
         { key:"acc_f_door_l", name:"앞문(좌)", rate:4, top:'21%', left:'17%' },
@@ -1414,24 +1414,8 @@
           }</div>`
         : `<div class="result-empty">선택 없음</div>`;
 
-      const hasAnyLines = (paintLines.length || accidentLines.length || detailLines.length);
-
-      const groupBlock = (title, icon, lines) => {
-        if(!lines || !lines.length) return '';
-        return `
-          <div class="subgroup">
-            <div class="subgroup-title"><i class="${icon}"></i> ${title}</div>
-            <ul class="result-list">${lines.map(x=>`<li>${x}</li>`).join('')}</ul>
-          </div>
-        `;
-      };
-
-      const detailList = hasAnyLines
-        ? `
-            ${groupBlock('도색', 'fa-solid fa-paint-roller', paintLines)}
-            ${groupBlock('사고', 'fa-solid fa-car-burst', accidentLines)}
-            ${groupBlock('세부상태', 'fa-solid fa-screwdriver-wrench', detailLines)}
-          `
+      const detailList = (detailLines && detailLines.length)
+        ? `<ul class="result-list">${detailLines.map(x=>`<li>${x}</li>`).join('')}</ul>`
         : `<div class="result-empty">선택 내역이 없습니다.</div>`;
 
       box.innerHTML = `
@@ -1453,17 +1437,40 @@
             </div>
 
             <div class="result-card">
-              <h3><i class="fa-solid fa-paint-roller"></i> 도색 / 휠 / 타이어 (${selectedPaint.length})</h3>
+              <h3><i class="fa-solid fa-paint-roller"></i> 도색 / 휠 / 타이어 (${selectedPaint.length})
+              <span style="margin-left:auto;font-size:12px;color:#f87171;font-weight:900;">
+                -${paintLines.reduce((s,l)=>{
+                    const m=l.match(/-(\d[\d,]*)원/);
+                    return m ? s + Number(m[1].replace(/,/g,'')) : s;
+                },0).toLocaleString()}원
+              </span>
+            </h3>
               ${paintChips}
+              ${paintLines && paintLines.length ? `<ul class="result-list">${paintLines.map(x=>`<li>${x}</li>`).join('')}</ul>` : ``}
             </div>
 
             <div class="result-card">
-              <h3><i class="fa-solid fa-car-burst"></i> 사고 (교환/판금) (${selectedAccidents.length})</h3>
+              <h3><i class="fa-solid fa-car-burst"></i> 사고 (교환/판금) (${selectedAccidents.length})
+              <span style="margin-left:auto;font-size:12px;color:#f87171;font-weight:900;">
+                -${accidentLines.reduce((s,l)=>{
+                    const m=l.match(/-(\d[\d,]*)원/);
+                    return m ? s + Number(m[1].replace(/,/g,'')) : s;
+                },0).toLocaleString()}원
+              </span>
+            </h3>
               ${accidentChips}
+              ${accidentLines && accidentLines.length ? `<ul class="result-list">${accidentLines.map(x=>`<li>${x}</li>`).join('')}</ul>` : ``}
             </div>
 
             <div class="result-card">
-              <h3><i class="fa-solid fa-list"></i> 감가 내역</h3>
+              <h3><i class="fa-solid fa-list"></i> 세부 상태
+              <span style="margin-left:auto;font-size:12px;color:#f87171;font-weight:900;">
+                -${detailLines.reduce((s,l)=>{
+                    const m=l.match(/-(\d[\d,]*)원/);
+                    return m ? s + Number(m[1].replace(/,/g,'')) : s;
+                },0).toLocaleString()}원
+              </span>
+            </h3>
               ${detailList}
             </div>
 
@@ -1476,7 +1483,7 @@
             <div class="result-empty" style="margin-top:10px;">
               * 최종금액 = 입찰금액 - 감가합계
             </div>
-            <div class=\"result-notice\">※ 미리 고지한 수리 필요한 부분을 제외한 금액임</div>
+            <div class=\"result-notice\">※ 기재하신 수리필요 금액 포함하여 계산된 금액임</div>
           </div>
         </div>
       `;
@@ -1528,13 +1535,13 @@
 
       // 감가 내역(✅ 0원 라인 숨김: 실제 감가가 발생한 항목만 표시)
       if(exteriorDiscount > 0){
-        paintLines.push(`[도색] 외판: 선택 ${exteriorSelected.length} - 고객기재 ${exteriorCount} = ${chargeExterior}판 × ${PRICE.partPrice.toLocaleString()}원 = -${exteriorDiscount.toLocaleString()}원`);
+        paintLines.push(` 외판: 선택 ${exteriorSelected.length} - 고객기재 ${exteriorCount} = ${chargeExterior}판 × ${PRICE.partPrice.toLocaleString()}원 = -${exteriorDiscount.toLocaleString()}원`);
       }
       if(wheelDiscount > 0){
-        paintLines.push(`[도색] 휠: 선택 ${wheelSelected.length} - 고객기재 ${wheelScratchCount} = ${chargeWheel}개 × ${PRICE.wheelPrice.toLocaleString()}원 = -${wheelDiscount.toLocaleString()}원`);
+        paintLines.push(` 휠: 선택 ${wheelSelected.length} - 고객기재 ${wheelScratchCount} = ${chargeWheel}개 × ${PRICE.wheelPrice.toLocaleString()}원 = -${wheelDiscount.toLocaleString()}원`);
       }
       if(tireDiscount > 0){
-        paintLines.push(`[도색] 타이어: 선택 ${tireSelected.length} - 고객기재 ${tireCount} = ${chargeTire}개 × ${PRICE.tirePrice.toLocaleString()}원 = -${tireDiscount.toLocaleString()}원`);
+        paintLines.push(` 타이어: 선택 ${tireSelected.length} - 고객기재 ${tireCount} = ${chargeTire}개 × ${PRICE.tirePrice.toLocaleString()}원 = -${tireDiscount.toLocaleString()}원`);
       }
 
       const paintSetoff = {
