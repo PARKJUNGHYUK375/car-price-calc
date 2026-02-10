@@ -2139,19 +2139,14 @@
     };
     initCloudUI();
 
-    // ✅ auth 상태가 늦게 잡히는 경우 대비(1회)
-    let __authReadyOnce = false;
-    onAuthStateChanged(auth, async (user)=>{
-      if(user && !__authReadyOnce){
-        __authReadyOnce = true;
-        await initCloudUI().catch(()=>{});
-      }
+   
     });
 
 </script>
 
 </body>
 </html>
+
 
 
 
