@@ -1865,7 +1865,8 @@
     // 계산하기
     document.getElementById('calcBtn')?.addEventListener('click', ()=>{
       window.__calcRequested = true;
-      try{ window.updateAll?.(); }catch(e){ console.error(e); }
+      try{ window.updateAll?.(); }catch(e){ console.error(e);
+        try{ setStatus('리스트 불러오기 실패'); }catch(_e){} }
       try{ document.getElementById('resultArea')?.scrollIntoView({behavior:'smooth', block:'start'}); }catch(e){}
     });
 
@@ -1881,16 +1882,14 @@
     import { getFirestore, doc, setDoc, getDoc, getDocs, collection, deleteDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js';
 
     // ✅ Firebase 콘솔(웹앱 > CDN)에서 firebaseConfig 블록을 그대로 붙여넣으세요.
-    
     const firebaseConfig = {
-  apiKey: "AIzaSyAZNPEVJUpNwWM1ZGZnCDMODctC355u4fI",
+        apiKey: "AIzaSyAZNPEVJUpNwWM1ZGZnCDMODctC355u4fI",
   authDomain: "usedcar-001.firebaseapp.com",
   projectId: "usedcar-001",
   storageBucket: "usedcar-001.firebasestorage.app",
   messagingSenderId: "267895265804",
   appId: "1:267895265804:web:0148f117f3fdd3c8d9ac29",
   measurementId: "G-RBY3Q5KXQG"
-
     };
 
     const app = initializeApp(firebaseConfig);
@@ -1943,6 +1942,7 @@
         if(keep && ids.includes(keep)) carSelect.value = keep;
       }catch(e){
         console.error(e);
+        try{ setStatus('리스트 불러오기 실패'); }catch(_e){}
       }
     };
 
@@ -2007,9 +2007,19 @@
       };
       await setDoc(doc(db, 'usedcar_inspections', key), payload, { merge: true });
       setStatus('✅ 저장 완료');
+      try{ localStorage.setItem('__lastCarKey', key); }catch(e){}
+      await refreshCarList();
+      if(carSelect) carSelect.value = key;
       // 목록 갱신 후 선택 유지
       if(carSelect){ carSelect.value = key; }
-      await ensureAnonAuth().then(()=>refreshCarList()).catch(e=>{ console.error(e); setStatus('권한 설정 필요'); });
+      await ensureAnonAuth().then(async ()=>{
+      await refreshCarList();
+      try{
+        const last = localStorage.getItem('__lastCarKey') || '';
+        if(last && carSelect){ carSelect.value = last; }
+      }catch(e){}
+    }).catch(e=>{ console.error(e);
+        try{ setStatus('리스트 불러오기 실패'); }catch(_e){} setStatus('권한 설정 필요'); });
       if(carSelect){ carSelect.value = key; }
     }
 
@@ -2030,6 +2040,12 @@
       applyLocalStorage(data.localStorage || {});
       refreshUIFromLocalStorage();
       setStatus('✅ 불러오기 완료');
+      try{ localStorage.setItem('__lastCarKey', key); }catch(e){}
+      if(carSelect) carSelect.value = key;
+      // 불러온 후에는 바로 계산/결과 표시
+      window.__calcRequested = true;
+      try{ window.updateAll?.(); }catch(e){}
+      try{ const ra=document.getElementById('resultArea'); if(ra) ra.style.display='block'; }catch(e){}
     }
 
     async function cloudDelete(){
@@ -2052,6 +2068,7 @@
 
     document.getElementById('cloudSaveBtn')?.addEventListener('click', ()=>cloudSave().catch(e=>{
       console.error(e);
+        try{ setStatus('리스트 불러오기 실패'); }catch(_e){}
       setStatus('❌ 저장 실패');
       
     }));
@@ -2059,6 +2076,7 @@
 
     document.getElementById('cloudDeleteBtn')?.addEventListener('click', ()=>cloudDelete().catch(e=>{
       console.error(e);
+        try{ setStatus('리스트 불러오기 실패'); }catch(_e){}
       setStatus('❌ 삭제 실패');
       
     }));
