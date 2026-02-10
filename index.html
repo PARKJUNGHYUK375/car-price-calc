@@ -382,18 +382,18 @@
     /* 도색 선택 */
     .checkbox-item.selected{
       background: var(--accent);
-      transform: translate(-50%, -50%) scale(2);
+      transform: translate(-50%, -50%) scale(1.3);
       box-shadow: 0 6px 16px rgba(255,92,92,.35);
     }
     /* 사고 상태 */
     .checkbox-item.exchange{
       background: var(--accent);
-      transform: translate(-50%, -50%) scale(2);
+      transform: translate(-50%, -50%) scale(1.3);
       box-shadow: 0 6px 16px rgba(255,92,92,.35);
     }
     .checkbox-item.repair{
       background:  #3b82f6; /* 파랑 */
-      transform: translate(-50%, -50%) scale(2);
+      transform: translate(-50%, -50%) scale(1.3);
       box-shadow: 0 6px 16px rgba(59,130,246,.30);
     }
 
@@ -405,7 +405,7 @@
       display:grid;
       place-items:center;
       font-weight:900;
-      font-size:7px;
+      font-size:6px;
       line-height:1;
       color:#ffffff;
       text-shadow: 0 1px 2px rgba(0,0,0,.55);
@@ -621,6 +621,75 @@
       font-weight:900;
     }
 
+
+    /* ✅ 합계 섹션 미니 칩 */
+    .mini-block{ margin-top:10px; padding-top:10px; border-top:1px dashed rgba(255,255,255,0.18); }
+    .mini-title{
+      font-size:12px;
+      font-weight:900;
+      color: var(--muted);
+      display:flex;
+      align-items:center;
+      gap:8px;
+      margin-bottom:8px;
+    }
+    .mini-chips{ display:flex; flex-wrap:wrap; gap:6px; }
+    .mini-chip{
+      padding:4px 8px;
+      border-radius: 999px;
+      font-size:11px;
+      border:1px solid rgba(255,255,255,0.12);
+      background: rgba(0,0,0,0.18);
+      color: var(--text);
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      max-width:100%;
+      white-space:nowrap;
+    }
+    .mini-chip i{ font-size:11px; opacity:.95; }
+    .mini-chip.exchange{ border-color: rgba(255,92,92,0.45); background: rgba(255,92,92,0.14); color: #ffd1d1; }
+    .mini-chip.repair{ border-color: rgba(245,158,11,0.45); background: rgba(245,158,11,0.14); color: #ffe3b3; }
+    .mini-empty{ font-size:12px; color: var(--muted); font-weight:900; }
+
+
+    /* ✅ 합계 섹션 미니 차량 이미지 */
+
+    .mini-previews{ display:grid; grid-template-columns: 1fr; gap:10px; }
+    .mini-previews .mini-title{ margin-bottom:6px; }
+
+    .mini-preview-wrapper{
+      margin-top:12px;
+      padding-top:12px;
+      border-top:1px dashed rgba(255,255,255,0.18);
+    }
+     .mini-preview{
+      overflow:hidden;
+      width:100%;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,0.08);
+      background: rgba(0,0,0,0.10);
+    }
+    .mini-preview .container{
+      max-width:540px;
+      box-shadow:none;
+      border:1px solid rgba(255,255,255,0.06);
+    }
+
+     .mini-preview{
+      overflow:hidden;
+      width:100%;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,0.08);
+      background: rgba(0,0,0,0.10);
+    }
+    .mini-preview-inner{
+      transform: scale(1.0);
+      transform-origin: top left;
+      pointer-events:none;
+      opacity:.95;
+    }
+
 </style>
 </head>
 
@@ -762,7 +831,7 @@
   <!-- 도색 -->
 
   <div class="section">
-    <h2><i class="fas fa-paint-roller"></i> 외판</h2>
+    <h2><i class="fas fa-paint-roller"></i> 도색</h2>
     <div class="container">
       <img src="https://imgur.com/1OGXwOu.png" class="car-image" alt="자동차 외관">
       <div class="checkbox-overlay" id="partSection"></div>
@@ -1071,12 +1140,12 @@
       ],
       accidentParts: [
         { key:"acc_hood", name:"후드", rate:4, top:'10%', left:'50%' },
-        { key:"acc_fender_l", name:"휀다(좌)", rate:3, top:'10%', left:'19%' },
-        { key:"acc_fender_r", name:"휀다(우)", rate:3, top:'10%', left:'81%' },
-        { key:"acc_f_door_l", name:"앞문(좌)", rate:4, top:'21%', left:'17%' },
-        { key:"acc_f_door_r", name:"앞문(우)", rate:4, top:'21%', left:'83%' },
-        { key:"acc_r_door_l", name:"뒷문(좌)", rate:4, top:'29%', left:'17%' },
-        { key:"acc_r_door_r", name:"뒷문(우)", rate:4, top:'29%', left:'83%' },
+        { key:"acc_fender_l", name:"휀다(좌)", rate:2, top:'10%', left:'19%' },
+        { key:"acc_fender_r", name:"휀다(우)", rate:2, top:'10%', left:'81%' },
+        { key:"acc_f_door_l", name:"앞문(좌)", rate:3, top:'21%', left:'17%' },
+        { key:"acc_f_door_r", name:"앞문(우)", rate:3, top:'21%', left:'83%' },
+        { key:"acc_r_door_l", name:"뒷문(좌)", rate:3, top:'29%', left:'17%' },
+        { key:"acc_r_door_r", name:"뒷문(우)", rate:3, top:'29%', left:'83%' },
         { key:"acc_f_panel", name:"F.패널", rate:4, top:'51%', left:'50%' },
         { key:"acc_in_sa_l", name:"인사(좌)", rate:2, top:'55%', left:'38%' },
         { key:"acc_side_l_1", name:"사이드(좌)", rate:3, top:'57%', left:'45%' },
@@ -1099,7 +1168,7 @@
         { key:"acc_roofpanel", name:"루프패널", rate:8, top:'27%', left:'50%' },
         { key:"acc_trunkfloor", name:"트렁크플로어", rate:4, top:'86%', left:'50%' },
         { key:"acc_r_panel", name:"R.패널", rate:3, top:'91%', left:'50%' },
-        { key:"acc_trunk", name:"트렁크", rate:4, top:'40%', left:'50%' },
+        { key:"acc_trunk", name:"트렁크", rate:3, top:'40%', left:'50%' },
         { key:"acc_quarter_l", name:"쿼터(좌)", rate:4, top:'39%', left:'17%' },
         { key:"acc_quarter_r", name:"쿼터(우)", rate:4, top:'39%', left:'83%' }
       ]
@@ -1298,7 +1367,7 @@
     function saveCheckboxState(){
       const states={ paint:{}, accidents:{}, functions:{} };
 
-      document.querySelectorAll('.part-item').forEach(el=>{
+      document.querySelectorAll('#partSection .part-item').forEach(el=>{
         states.paint[el.dataset.key] = el.classList.contains('selected');
       });
 
@@ -1317,7 +1386,7 @@
       const states = JSON.parse(localStorage.getItem('checkboxStates') || '{}');
 
       const paintStates=states.paint||{};
-      document.querySelectorAll('.part-item').forEach(el=>{
+      document.querySelectorAll('#partSection .part-item').forEach(el=>{
         const on = paintStates[el.dataset.key] === true;
         el.classList.toggle('selected', on);
         el.setAttribute('aria-pressed', on ? 'true' : 'false');
@@ -1375,6 +1444,27 @@
       const carAdvantage = (document.getElementById('carAdvantage')?.value || '').trim();
       const memo = (document.getElementById('Memo')?.value || '').trim();
 
+      // ✅ 합계 섹션 미리보기(체크 위치 작은 그림) - 외판/사고 각각 표시 (id 충돌 방지)
+      const sanitizePreview = (raw) => (raw || '')
+        .replace(/id="partSection"/g, 'id="partSection_preview"')
+        .replace(/id="accidentSection"/g, 'id="accidentSection_preview"');
+
+      const partContainer = document.getElementById('partSection')?.closest('.container');
+      const accidentContainer = document.getElementById('accidentSection')?.closest('.container');
+
+      const partHtml = partContainer ? sanitizePreview(partContainer.outerHTML) : '';
+      const accidentHtml = accidentContainer ? sanitizePreview(accidentContainer.outerHTML) : '';
+
+      const previewHtml = (partHtml || accidentHtml)
+        ? `
+          <div class="mini-previews">
+            ${partHtml ? `<div><div class="mini-title"><i class="fa-solid fa-paint-roller"></i> 외판(도색) 체크</div><div class="mini-preview"><div class="mini-preview-inner">${partHtml}</div></div></div>` : ``}
+            ${accidentHtml ? `<div><div class="mini-title"><i class="fa-solid fa-car-burst"></i> 사고이력 체크</div><div class="mini-preview"><div class="mini-preview-inner">${accidentHtml}</div></div></div>` : ``}
+          </div>
+        `
+        : '';
+
+
       const carLines = [];
       if(carNumber) carLines.push(`<li><b>차량번호</b>: ${escapeHtml(carNumber)}</li>`);
       if(mileage) carLines.push(`<li><b>주행거리</b>: ${escapeHtml(mileage)}</li>`);
@@ -1418,6 +1508,16 @@
         ? `<ul class="result-list">${detailLines.map(x=>`<li>${x}</li>`).join('')}</ul>`
         : `<div class="result-empty">선택 내역이 없습니다.</div>`;
 
+      // 섹션별 합계(도색/사고/세부상태)
+      const sumFromLines = (lines) => (lines||[]).reduce((s,l)=>{
+        const mm = String(l).match(/-(\d[\d,]*)원/);
+        return mm ? s + Number(mm[1].replace(/,/g,'')) : s;
+      },0);
+
+      const paintSum   = sumFromLines(paintLines);
+      const accidentSum= sumFromLines(accidentLines);
+      const detailSum  = sumFromLines(detailLines);
+
       box.innerHTML = `
         <div class="result-head">
           <div class="result-title"><i class="fa-solid fa-clipboard-check"></i> 검차결과</div>
@@ -1437,40 +1537,28 @@
             </div>
 
             <div class="result-card">
-              <h3><i class="fa-solid fa-paint-roller"></i> 도색 / 휠 / 타이어 (${selectedPaint.length})
-              <span style="margin-left:auto;font-size:12px;color:#f87171;font-weight:900;">
-                -${paintLines.reduce((s,l)=>{
-                    const m=l.match(/-(\d[\d,]*)원/);
-                    return m ? s + Number(m[1].replace(/,/g,'')) : s;
-                },0).toLocaleString()}원
-              </span>
-            </h3>
+              <h3 style="display:flex; align-items:center; gap:8px;">
+                <span style="display:flex;align-items:center;gap:8px;"><i class="fa-solid fa-paint-roller"></i> 도색 / 휠 / 타이어 (${selectedPaint.length})</span>
+                <span style="margin-left:auto;font-size:12px;color:#f87171;font-weight:900;">-${paintSum.toLocaleString()}원</span>
+              </h3>
               ${paintChips}
               ${paintLines && paintLines.length ? `<ul class="result-list">${paintLines.map(x=>`<li>${x}</li>`).join('')}</ul>` : ``}
             </div>
 
             <div class="result-card">
-              <h3><i class="fa-solid fa-car-burst"></i> 사고 (교환/판금) (${selectedAccidents.length})
-              <span style="margin-left:auto;font-size:12px;color:#f87171;font-weight:900;">
-                -${accidentLines.reduce((s,l)=>{
-                    const m=l.match(/-(\d[\d,]*)원/);
-                    return m ? s + Number(m[1].replace(/,/g,'')) : s;
-                },0).toLocaleString()}원
-              </span>
-            </h3>
+              <h3 style="display:flex; align-items:center; gap:8px;">
+                <span style="display:flex;align-items:center;gap:8px;"><i class="fa-solid fa-car-burst"></i> 사고 (교환/판금) (${selectedAccidents.length})</span>
+                <span style="margin-left:auto;font-size:12px;color:#f87171;font-weight:900;">-${accidentSum.toLocaleString()}원</span>
+              </h3>
               ${accidentChips}
               ${accidentLines && accidentLines.length ? `<ul class="result-list">${accidentLines.map(x=>`<li>${x}</li>`).join('')}</ul>` : ``}
             </div>
 
             <div class="result-card">
-              <h3><i class="fa-solid fa-list"></i> 세부 상태
-              <span style="margin-left:auto;font-size:12px;color:#f87171;font-weight:900;">
-                -${detailLines.reduce((s,l)=>{
-                    const m=l.match(/-(\d[\d,]*)원/);
-                    return m ? s + Number(m[1].replace(/,/g,'')) : s;
-                },0).toLocaleString()}원
-              </span>
-            </h3>
+              <h3 style="display:flex; align-items:center; gap:8px;">
+                <span style="display:flex;align-items:center;gap:8px;"><i class="fa-solid fa-list"></i> 세부 상태</span>
+                <span style="margin-left:auto;font-size:12px;color:#f87171;font-weight:900;">-${detailSum.toLocaleString()}원</span>
+              </h3>
               ${detailList}
             </div>
 
@@ -1481,9 +1569,14 @@
             <div class="kv"><span>감가 합계</span><b>-${totalDiscount.toLocaleString()}원</b></div>
             <div class="sum-final">최종금액<br><b>${finalPrice.toLocaleString()}원</b></div>
             <div class="result-empty" style="margin-top:10px;">
-              * 최종금액 = 입찰금액 - 감가합계
+            
             </div>
-            <div class=\"result-notice\">※ 기재하신 수리필요 금액 포함하여 계산된 금액임</div>
+            
+
+            <div class="mini-preview-wrapper">
+              
+              ${previewHtml ? previewHtml : `<div class="mini-empty">미리보기 없음</div>`}
+            
           </div>
         </div>
       `;
@@ -1508,7 +1601,7 @@
       const wheelSelected = [];
       const tireSelected = [];
 
-      document.querySelectorAll('.part-item').forEach(el=>{
+      document.querySelectorAll('#partSection .part-item').forEach(el=>{
         if(el.classList.contains('selected')){
           const name = el.dataset.name;
           selectedPaint.push(name);
@@ -1535,13 +1628,13 @@
 
       // 감가 내역(✅ 0원 라인 숨김: 실제 감가가 발생한 항목만 표시)
       if(exteriorDiscount > 0){
-        paintLines.push(` 외판: 선택 ${exteriorSelected.length} - 고객기재 ${exteriorCount} = ${chargeExterior}판 × ${PRICE.partPrice.toLocaleString()}원 = -${exteriorDiscount.toLocaleString()}원`);
+        paintLines.push(`외판: 선택 ${exteriorSelected.length} - 고객기재 ${exteriorCount} = ${chargeExterior}판 × ${PRICE.partPrice.toLocaleString()}원 = -${exteriorDiscount.toLocaleString()}원`);
       }
       if(wheelDiscount > 0){
-        paintLines.push(` 휠: 선택 ${wheelSelected.length} - 고객기재 ${wheelScratchCount} = ${chargeWheel}개 × ${PRICE.wheelPrice.toLocaleString()}원 = -${wheelDiscount.toLocaleString()}원`);
+        paintLines.push(`휠: 선택 ${wheelSelected.length} - 고객기재 ${wheelScratchCount} = ${chargeWheel}개 × ${PRICE.wheelPrice.toLocaleString()}원 = -${wheelDiscount.toLocaleString()}원`);
       }
       if(tireDiscount > 0){
-        paintLines.push(` 타이어: 선택 ${tireSelected.length} - 고객기재 ${tireCount} = ${chargeTire}개 × ${PRICE.tirePrice.toLocaleString()}원 = -${tireDiscount.toLocaleString()}원`);
+        paintLines.push(`타이어: 선택 ${tireSelected.length} - 고객기재 ${tireCount} = ${chargeTire}개 × ${PRICE.tirePrice.toLocaleString()}원 = -${tireDiscount.toLocaleString()}원`);
       }
 
       const paintSetoff = {
@@ -1569,7 +1662,7 @@
           const discount = Math.round(bidPrice * (appliedRate / 100));
 
           accidentDiscount += discount;
-          accidentLines.push(`[사고] ${name} (${state === 'exchange' ? '교환' : '판금'}): -${discount.toLocaleString()}원`);
+          accidentLines.push(`${name} (${state === 'exchange' ? '교환' : '판금'}): -${discount.toLocaleString()}원`);
         }
       });
 
@@ -1628,7 +1721,7 @@
       document.querySelectorAll("select").forEach(s=>{ s.selectedIndex = 0; });
       document.querySelectorAll(".function-item input[type='checkbox']").forEach(cb=>cb.checked=false);
 
-      document.querySelectorAll(".part-item").forEach(el=>{
+      document.querySelectorAll("#partSection .part-item").forEach(el=>{
         el.classList.remove('selected');
         el.setAttribute('aria-pressed','false');
       });
