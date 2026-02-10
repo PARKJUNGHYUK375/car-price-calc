@@ -1874,24 +1874,28 @@
 </script>
 
 <!-- ✅ Cloud Sync (Firebase Firestore) -->
-  <script type="module">
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js';
-    import { getFirestore, doc, setDoc, getDoc, getDocs, collection, deleteDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js';
+ <script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
 
-    // ✅ Firebase 콘솔(웹앱 > CDN)에서 firebaseConfig 블록을 그대로 붙여넣으세요.
-    const firebaseConfig = {
-      apiKey: "AIzaSyAZNPEVJUpNwWM1ZGZnCDMODctC355u4fI",
-  authDomain: "usedcar-001.firebaseapp.com",
-  projectId: "usedcar-001",
-  storageBucket: "usedcar-001.firebasestorage.app",
-  messagingSenderId: "267895265804",
-  appId: "1:267895265804:web:0148f117f3fdd3c8d9ac29",
-  measurementId: "G-RBY3Q5KXQG"
-    };
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyAZNPEVJUpNwWM1ZGZnCDMODctC355u4fI",
+    authDomain: "usedcar-001.firebaseapp.com",
+    projectId: "usedcar-001",
+    storageBucket: "usedcar-001.firebasestorage.app",
+    messagingSenderId: "267895265804",
+    appId: "1:267895265804:web:0148f117f3fdd3c8d9ac29",
+    measurementId: "G-RBY3Q5KXQG"
+  };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
     const statusEl = document.getElementById('cloudStatus');
     const setStatus = (msg) => { if(statusEl) statusEl.textContent = msg; };
     const carSelect = document.getElementById('cloudCarSelect');
@@ -2051,6 +2055,7 @@
 
 </body>
 </html>
+
 
 
 
