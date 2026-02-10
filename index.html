@@ -747,7 +747,8 @@
         <button id="btnDomestic" onclick="setCarType('domestic')">국산차</button>
       </div>
     </div>
-    
+    <p class="app-sub">
+      입찰가 입력 → 도색/사고 핀 터치 → 세부상태 금액 입력하면 <b>검차결과</b>와 최종금액이 자동 계산됩니다.
     
 
     <div class="cloud-bar">
@@ -1207,13 +1208,13 @@
         { key:"tire_rr", name:"타이어(RR)", top:"80%", left:"90%" }
       ],
       accidentParts: [
-        { key:"acc_hood", name:"후드", rate:5, top:'10%', left:'50%' },
-        { key:"acc_fender_l", name:"휀다(좌)", rate:3, top:'10%', left:'19%' },
-        { key:"acc_fender_r", name:"휀다(우)", rate:3, top:'10%', left:'81%' },
-        { key:"acc_f_door_l", name:"앞문(좌)", rate:4, top:'21%', left:'17%' },
-        { key:"acc_f_door_r", name:"앞문(우)", rate:4, top:'21%', left:'83%' },
-        { key:"acc_r_door_l", name:"뒷문(좌)", rate:4, top:'29%', left:'17%' },
-        { key:"acc_r_door_r", name:"뒷문(우)", rate:4, top:'29%', left:'83%' },
+        { key:"acc_hood", name:"후드", rate:4, top:'10%', left:'50%' },
+        { key:"acc_fender_l", name:"휀다(좌)", rate:2, top:'10%', left:'19%' },
+        { key:"acc_fender_r", name:"휀다(우)", rate:2, top:'10%', left:'81%' },
+        { key:"acc_f_door_l", name:"앞문(좌)", rate:3, top:'21%', left:'17%' },
+        { key:"acc_f_door_r", name:"앞문(우)", rate:3, top:'21%', left:'83%' },
+        { key:"acc_r_door_l", name:"뒷문(좌)", rate:3, top:'29%', left:'17%' },
+        { key:"acc_r_door_r", name:"뒷문(우)", rate:3, top:'29%', left:'83%' },
         { key:"acc_f_panel", name:"F.패널", rate:4, top:'51%', left:'50%' },
         { key:"acc_in_sa_l", name:"인사(좌)", rate:2, top:'55%', left:'38%' },
         { key:"acc_side_l_1", name:"사이드(좌)", rate:3, top:'57%', left:'45%' },
@@ -1236,7 +1237,7 @@
         { key:"acc_roofpanel", name:"루프패널", rate:8, top:'27%', left:'50%' },
         { key:"acc_trunkfloor", name:"트렁크플로어", rate:4, top:'86%', left:'50%' },
         { key:"acc_r_panel", name:"R.패널", rate:3, top:'91%', left:'50%' },
-        { key:"acc_trunk", name:"트렁크", rate:4, top:'40%', left:'50%' },
+        { key:"acc_trunk", name:"트렁크", rate:3, top:'40%', left:'50%' },
         { key:"acc_quarter_l", name:"쿼터(좌)", rate:4, top:'39%', left:'17%' },
         { key:"acc_quarter_r", name:"쿼터(우)", rate:4, top:'39%', left:'83%' }
       ]
@@ -1874,28 +1875,35 @@
 </script>
 
 <!-- ✅ Cloud Sync (Firebase Firestore) -->
- <script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-analytics.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js';
+    import { getAuth, signInAnonymously } from 'https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js';
+    import { getFirestore, doc, setDoc, getDoc, getDocs, collection, deleteDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js';
 
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-  const firebaseConfig = {
-    apiKey: "AIzaSyAZNPEVJUpNwWM1ZGZnCDMODctC355u4fI",
-    authDomain: "usedcar-001.firebaseapp.com",
-    projectId: "usedcar-001",
-    storageBucket: "usedcar-001.firebasestorage.app",
-    messagingSenderId: "267895265804",
-    appId: "1:267895265804:web:0148f117f3fdd3c8d9ac29",
-    measurementId: "G-RBY3Q5KXQG"
-  };
+    // ✅ Firebase 콘솔(웹앱 > CDN)에서 firebaseConfig 블록을 그대로 붙여넣으세요.
+    
+    const firebaseConfig = {
+  apiKey: "AIzaSyAZNPEVJUpNwWM1ZGZnCDMODctC355u4fI",
+  authDomain: "usedcar-001.firebaseapp.com",
+  projectId: "usedcar-001",
+  storageBucket: "usedcar-001.firebasestorage.app",
+  messagingSenderId: "267895265804",
+  appId: "1:267895265804:web:0148f117f3fdd3c8d9ac29",
+  measurementId: "G-RBY3Q5KXQG"
 
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    // ✅ 익명 로그인(화면 없이 자동). Firestore Rules를 request.auth 기반으로 안전하게 만들기 위함
+    const ensureAnonAuth = async () => {
+      if(auth.currentUser) return auth.currentUser;
+      const cred = await signInAnonymously(auth);
+      return cred.user;
+    };
+
     const statusEl = document.getElementById('cloudStatus');
     const setStatus = (msg) => { if(statusEl) statusEl.textContent = msg; };
     const carSelect = document.getElementById('cloudCarSelect');
@@ -1988,6 +1996,7 @@
     document.getElementById('cloudNewBtn')?.addEventListener('click', ()=>{ enterNewMode(); });
 
     async function cloudSave(){
+      await ensureAnonAuth();
       const key = getInputCarNumber();
       if(!key){ setStatus('차량번호 입력 필요'); return; }
       setStatus('저장 중...');
@@ -2000,11 +2009,12 @@
       setStatus('✅ 저장 완료');
       // 목록 갱신 후 선택 유지
       if(carSelect){ carSelect.value = key; }
-      await refreshCarList();
+      await ensureAnonAuth().then(()=>refreshCarList()).catch(e=>{ console.error(e); setStatus('권한 설정 필요'); });
       if(carSelect){ carSelect.value = key; }
     }
 
     async function cloudLoad(){
+      await ensureAnonAuth();
       const key = getSelectedCarNumber();
       if(key) syncSelectToInput(key);
 
@@ -2023,6 +2033,7 @@
     }
 
     async function cloudDelete(){
+      await ensureAnonAuth();
       const key = getSelectedCarNumber();
       if(!key){ setStatus('삭제할 차량번호 선택 필요'); return; }
       
@@ -2055,9 +2066,6 @@
 
 </body>
 </html>
-
-
-
 
 
 
