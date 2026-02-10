@@ -1878,7 +1878,7 @@
 <!-- ✅ Cloud Sync (Firebase Firestore) -->
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js';
-    import { getAuth, signInAnonymously, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js';
+    import { getAuth, signInAnonymously } from 'https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js';
     import { getFirestore, doc, setDoc, getDoc, getDocs, collection, deleteDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js';
 
     // ✅ Firebase 콘솔(웹앱 > CDN)에서 firebaseConfig 블록을 그대로 붙여넣으세요.
@@ -1903,6 +1903,12 @@
       return cred.user;
     };
     // auth 준비되면 1회만 실행
+    let __authReadyOnce = false;
+    onAuthStateChanged(auth, async (user)=>{
+      if(user && !__authReadyOnce){
+        __authReadyOnce = true;
+        try{
+          await
 
     // ✅ 드롭다운 선택 시 자동 열기
     carSelect?.addEventListener('change', ()=>{
@@ -1913,20 +1919,7 @@
       }
     });
 
-    // ✅ 신규 버튼: 전체 초기화 + 차량번호 포커스
-    document.getElementById('cloudNewBtn')?.addEventListener('click', ()=>{
-      try{ window.resetAll?.(); }catch(e){
-        try{ localStorage.clear(); }catch(e2){}
-      }
-      try{ if(carSelect) carSelect.value=''; }catch(e){}
-      setStatus('🆕 신규 작성 모드');
-      try{ document.getElementById('carNumber')?.focus(); }catch(e){}
-      // 계산 결과 숨김
-      try{ window.__calcRequested = false; }catch(e){}
-      try{ const ra=document.getElementById('resultArea'); if(ra) ra.style.display='none'; }catch(e){}
-    });
-
-    // ✅ 초기 로딩: auth → 리스트 로드 → 마지막 차량 선택 복구
+    // ✅ 초기 로딩: auth → 리스트 로드 → 마지막 선택 복구
     const initCloudUI = async () => {
       try{
         await ensureAnonAuth();
@@ -1935,7 +1928,6 @@
         if(last && carSelect){
           carSelect.value = last;
         }
-        setStatus('');
       }catch(e){
         console.error(e);
         setStatus('리스트 불러오기 실패');
@@ -1943,7 +1935,7 @@
     };
     initCloudUI();
 
-    // 포커스 돌아오면 목록 갱신
+    // PC/앱 전환 후 목록 갱신
     window.addEventListener('focus', ()=>{ initCloudUI().catch(()=>{}); });
 
 </script>
