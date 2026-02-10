@@ -1903,215 +1903,6 @@
       return cred.user;
     };
     // auth 준비되면 1회만 실행
-    let __authReadyOnce = false;
-    onAuthStateChanged(auth, async (user)=>{
-      if(user && !__authReadyOnce){
-        __authReadyOnce = true;
-        try{
-          await refreshCarList();
-          // 마지막 선택 복구 + 자동 열기(검차결과 자동 재계산)
-          const last = localStorage.getItem('__lastCarKey') || '';
-          if(last && carSelect){
-            carSelect.value = last;
-            syncSelectToInput(last);
-            await cloudLoad().catch(()=>{});
-          }
-        }catch(e){
-          console.error(e);
-          setStatus('리스트 불러오기 실패');
-        }
-      }
-    });
-
-
-    const statusEl = document.getElementById('cloudStatus');
-    const setStatus = (msg) => { if(statusEl) statusEl.textContent = msg; };
-    const carSelect = document.getElementById('cloudCarSelect');
-
-    const getInputCarNumber = () => {
-      const raw = (document.getElementById('carNumber')?.value || '').trim();
-      if(!raw) return null;
-      return raw.replaceAll('/', '_');
-    };
-
-    const getSelectedCarNumber = () => {
-      const v = (carSelect?.value || '').trim();
-      return v || null;
-    };
-
-    const syncSelectToInput = (v) => {
-      const input = document.getElementById('carNumber');
-      if(input && v) input.value = v;
-    };
-
-    const refreshCarList = async () => {
-      if(!carSelect) return;
-      // keep placeholder
-      const keep = carSelect.value;
-      carSelect.innerHTML = '<option value="">차량List</option>';
-      try{
-        const snap = await getDocs(collection(db, 'usedcar_inspections'));
-        const ids = [];
-        snap.forEach(d => ids.push(d.id));
-        ids.sort((a,b)=> a.localeCompare(b,'ko'));
-        for(const id of ids){
-          const opt = document.createElement('option');
-          opt.value = id;
-          opt.textContent = id;
-          carSelect.appendChild(opt);
-        }
-        if(keep && ids.includes(keep)) carSelect.value = keep;
-      }catch(e){
-        console.error(e);
-        try{ setStatus('리스트 불러오기 실패'); }catch(_e){}
-      }
-    };
-
-
-    const getCarKey = () => {
-      const raw = (document.getElementById('carNumber')?.value || '').trim();
-      if(!raw) return null;
-      return raw.replaceAll('/', '_');
-    };
-
-    const snapshotLocalStorage = () => {
-      const obj = {};
-      for(let i=0;i<localStorage.length;i++){
-        const k = localStorage.key(i);
-        if(!k) continue;
-        obj[k] = localStorage.getItem(k);
-      }
-      return obj;
-    };
-
-    const applyLocalStorage = (obj) => {
-      if(!obj || typeof obj !== 'object') return;
-      localStorage.clear();
-      for(const [k,v] of Object.entries(obj)){
-        try{ localStorage.setItem(k, v); }catch(e){}
-      }
-    };
-
-    const refreshUIFromLocalStorage = () => {
-      try{ window.loadInputs?.(); }catch(e){}
-      try{ window.loadCheckboxState?.(); }catch(e){}
-      try{ window.loadExtraItems?.(); }catch(e){}
-      try{ window.updateAll?.(); }catch(e){}
-    };
-
-    const enterNewMode = () => {
-      // 로컬 입력/핀/체크 전체 초기화(기존 초기화 함수 재사용)
-      try{ window.resetAll?.(); }catch(e){
-        try{ localStorage.clear(); }catch(e2){}
-      }
-      // dropdown 선택 해제
-      if(carSelect) carSelect.value = '';
-      setStatus('🆕 신규 작성 모드');
-      // 차량번호로 포커스
-      try{
-        const el = document.getElementById('carNumber');
-        el?.focus();
-      }catch(e){}
-    };
-
-    document.getElementById('cloudNewBtn')?.addEventListener('click', ()=>{ enterNewMode(); });
-
-    async function cloudSave(){
-      await ensureAnonAuth();
-      const key = getInputCarNumber();
-      if(!key){ setStatus('차량번호 입력 필요'); return; }
-      setStatus('저장 중...');
-      // 현재 화면 입력값/체크 상태를 로컬스토리지에 동기화 후 저장
-      try{
-        const baseKeys=['bidPriceInput','carNumber','mileage','carName','carGrade','exteriorCount','wheelScratchCount','spareKey','tireCount','repair','carAdvantage','carDisadvantage','memo'];
-        baseKeys.forEach(k=>{ try{ window.saveInput?.(k); }catch(e){} });
-        try{ window.saveCheckboxState?.(); }catch(e){}
-        try{ window.saveExtraItems?.(); }catch(e){}
-      }catch(e){}
-      const payload = {
-        carNumber: key,
-        localStorage: snapshotLocalStorage(),
-        updatedAt: serverTimestamp()
-      };
-      await setDoc(doc(db, 'usedcar_inspections', key), payload, { merge: true });
-      setStatus('✅ 저장 완료');
-      try{ localStorage.setItem('__lastCarKey', key); }catch(e){}
-      await refreshCarList();
-      if(carSelect) carSelect.value = key;
-      // 저장 후에도 결과 유지
-      window.__calcRequested = true;
-      try{ const ra=document.getElementById('resultArea'); if(ra) ra.style.display='block'; }catch(e){}
-      // 목록 갱신 후 선택 유지
-      if(carSelect){ carSelect.value = key; }
-      await ensureAnonAuth().then(async ()=>{
-      await refreshCarList();
-      try{
-        const last = localStorage.getItem('__lastCarKey') || '';
-        if(last && carSelect){ carSelect.value = last; }
-      }catch(e){}
-    }).catch(e=>{ console.error(e);
-        try{ setStatus('리스트 불러오기 실패'); }catch(_e){} setStatus('권한 설정 필요'); });
-      if(carSelect){ carSelect.value = key; }
-    }
-
-    async function cloudLoad(){
-      await ensureAnonAuth();
-      const key = getSelectedCarNumber();
-      if(key) syncSelectToInput(key);
-
-      if(!key){ setStatus('차량번호 입력 필요'); return; }
-      setStatus('불러오는 중...');
-      const snap = await getDoc(doc(db, 'usedcar_inspections', key));
-      if(!snap.exists()){
-        setStatus('저장된 데이터 없음');
-        
-        return;
-      }
-      const data = snap.data();
-      applyLocalStorage(data.localStorage || {});
-      refreshUIFromLocalStorage();
-      setStatus('✅ 불러오기 완료');
-      try{ localStorage.setItem('__lastCarKey', key); }catch(e){}
-      if(carSelect) carSelect.value = key;
-      // 불러온 후에는 바로 계산/결과 표시
-      window.__calcRequested = true;
-      try{ window.updateAll?.(); }catch(e){}
-      try{ const ra=document.getElementById('resultArea'); if(ra) ra.style.display='block'; }catch(e){}
-    }
-
-    async function cloudDelete(){
-      await ensureAnonAuth();
-      const key = getSelectedCarNumber();
-      if(!key){ setStatus('삭제할 차량번호 선택 필요'); return; }
-      
-      setStatus('삭제 중...');
-      await deleteDoc(doc(db, 'usedcar_inspections', key));
-      setStatus('🗑️ 삭제 완료');
-      await refreshCarList();
-      if(carSelect) carSelect.value = '';
-      enterNewMode();
-// 삭제 후 신규 모드 전환
-      localStorage.clear();
-      refreshUIFromLocalStorage();
-      try{ document.getElementById('carNumber')?.focus(); }catch(e){}
-      setStatus('🗑️ 삭제 완료 → 🆕 신규 작성');
-    }
-
-    document.getElementById('cloudSaveBtn')?.addEventListener('click', ()=>cloudSave().catch(e=>{
-      console.error(e);
-        try{ setStatus('리스트 불러오기 실패'); }catch(_e){}
-      setStatus('❌ 저장 실패');
-      
-    }));
-    
-
-    document.getElementById('cloudDeleteBtn')?.addEventListener('click', ()=>cloudDelete().catch(e=>{
-      console.error(e);
-        try{ setStatus('리스트 불러오기 실패'); }catch(_e){}
-      setStatus('❌ 삭제 실패');
-      
-    }));
-  
 
     // ✅ 드롭다운 선택 시 자동 열기
     carSelect?.addEventListener('change', ()=>{
@@ -2122,6 +1913,19 @@
       }
     });
 
+    // ✅ 신규 버튼: 전체 초기화 + 차량번호 포커스
+    document.getElementById('cloudNewBtn')?.addEventListener('click', ()=>{
+      try{ window.resetAll?.(); }catch(e){
+        try{ localStorage.clear(); }catch(e2){}
+      }
+      try{ if(carSelect) carSelect.value=''; }catch(e){}
+      setStatus('🆕 신규 작성 모드');
+      try{ document.getElementById('carNumber')?.focus(); }catch(e){}
+      // 계산 결과 숨김
+      try{ window.__calcRequested = false; }catch(e){}
+      try{ const ra=document.getElementById('resultArea'); if(ra) ra.style.display='none'; }catch(e){}
+    });
+
     // ✅ 초기 로딩: auth → 리스트 로드 → 마지막 차량 선택 복구
     const initCloudUI = async () => {
       try{
@@ -2130,26 +1934,22 @@
         const last = localStorage.getItem('__lastCarKey') || '';
         if(last && carSelect){
           carSelect.value = last;
-          syncSelectToInput(last);
         }
+        setStatus('');
       }catch(e){
         console.error(e);
         setStatus('리스트 불러오기 실패');
       }
     };
     initCloudUI();
- });
-   
-    
+
+    // 포커스 돌아오면 목록 갱신
+    window.addEventListener('focus', ()=>{ initCloudUI().catch(()=>{}); });
 
 </script>
 
 </body>
 </html>
-
-
-
-
 
 
 
