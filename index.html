@@ -1877,50 +1877,216 @@
 
 <!-- ✅ Cloud Sync (Firebase Firestore) -->
   <script type="module">
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js';
-    import { getAuth, signInAnonymously } from 'https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js';
-    import { getFirestore, doc, setDoc, getDoc, getDocs, collection, deleteDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js';
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js';
+  import { getAuth, signInAnonymously } from 'https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js';
+  import { getFirestore, doc, setDoc, getDoc, getDocs, collection, deleteDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js';
 
-    // ✅ Firebase 콘솔(웹앱 > CDN)에서 firebaseConfig 블록을 그대로 붙여넣으세요.
-    const firebaseConfig = {
-      apiKey: "AIzaSyAZNPEVJUpNwWM1ZGZnCDMODctC355u4fI",
+  // ✅ Firebase 콘솔(웹앱 > CDN)에서 firebaseConfig 블록을 그대로 붙여넣으세요.
+  const firebaseConfig = {
+    apiKey: "AIzaSyAZNPEVJUpNwWM1ZGZnCDMODctC355u4fI",
   authDomain: "usedcar-001.firebaseapp.com",
   projectId: "usedcar-001",
   storageBucket: "usedcar-001.firebasestorage.app",
   messagingSenderId: "267895265804",
   appId: "1:267895265804:web:0148f117f3fdd3c8d9ac29",
   measurementId: "G-RBY3Q5KXQG"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const auth = getAuth(app);
+
+  const statusEl = document.getElementById('cloudStatus');
+  const setStatus = (msg) => { if(statusEl) statusEl.textContent = msg || ''; };
+
+  const carSelect = document.getElementById('cloudCarSelect');
+
+  // ✅ 익명 로그인(화면 없이 자동). Firestore Rules를 request.auth 기반으로 안전하게 쓰기 위함
+  const ensureAnonAuth = async () => {
+    if(auth.currentUser) return auth.currentUser;
+    const cred = await signInAnonymously(auth);
+    return cred.user;
+  };
+
+  const getInputCarNumber = () => {
+    const raw = (document.getElementById('carNumber')?.value || '').trim();
+    if(!raw) return null;
+    return raw.replaceAll('/', '_');
+  };
+
+  const getSelectedCarNumber = () => {
+    const v = (carSelect?.value || '').trim();
+    return v || null;
+  };
+
+  const syncSelectToInput = (v) => {
+    const input = document.getElementById('carNumber');
+    if(input && v) input.value = v;
+  };
+
+  const snapshotLocalStorage = () => {
+    const obj = {};
+    for(let i=0;i<localStorage.length;i++){
+      const k = localStorage.key(i);
+      if(!k) continue;
+      obj[k] = localStorage.getItem(k);
+    }
+    return obj;
+  };
+
+  const applyLocalStorage = (obj) => {
+    if(!obj || typeof obj !== 'object') return;
+    localStorage.clear();
+    for(const [k,v] of Object.entries(obj)){
+      try{ localStorage.setItem(k, v); }catch(e){}
+    }
+  };
+
+  const refreshUIFromLocalStorage = () => {
+    try{ window.loadInputs?.(); }catch(e){}
+    try{ window.loadCheckboxState?.(); }catch(e){}
+    try{ window.loadExtraItems?.(); }catch(e){}
+    // 결과는 "계산하기" 게이트가 있지만, 로드 후에는 결과를 바로 보여주기 위해 calc 플래그 ON
+    try{ window.__calcRequested = true; }catch(e){}
+    try{ window.updateAll?.(); }catch(e){}
+    try{ const ra=document.getElementById('resultArea'); if(ra) ra.style.display='block'; }catch(e){}
+  };
+
+  const refreshCarList = async () => {
+    if(!carSelect) return;
+    const keep = carSelect.value;
+    carSelect.innerHTML = '<option value="">차량List</option>';
+    const snap = await getDocs(collection(db, 'usedcar_inspections'));
+    const ids = [];
+    snap.forEach(d => ids.push(d.id));
+    ids.sort((a,b)=> a.localeCompare(b,'ko'));
+    for(const id of ids){
+      const opt = document.createElement('option');
+      opt.value = id;
+      opt.textContent = id;
+      carSelect.appendChild(opt);
+    }
+    if(keep && ids.includes(keep)) carSelect.value = keep;
+  };
+
+  async function cloudSave(){
+    await ensureAnonAuth();
+    const key = getInputCarNumber();
+    if(!key){ setStatus('차량번호 입력 필요'); return; }
+
+    setStatus('저장 중...');
+
+    // ✅ 현재 화면 입력/체크를 로컬스토리지에 먼저 동기화 (이게 안 되면 로드가 비어보임)
+    try{
+      const baseKeys=['bidPriceInput','carNumber','mileage','carName','carGrade','exteriorCount','wheelScratchCount','spareKey','tireCount','repair','carAdvantage','carDisadvantage','memo'];
+      baseKeys.forEach(k=>{ try{ window.saveInput?.(k); }catch(e){} });
+      try{ window.saveCheckboxState?.(); }catch(e){}
+      try{ window.saveExtraItems?.(); }catch(e){}
+    }catch(e){}
+
+    const payload = {
+      carNumber: key,
+      localStorage: snapshotLocalStorage(),
+      updatedAt: serverTimestamp()
     };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const auth = getAuth(app);
+    try{
+      await setDoc(doc(db, 'usedcar_inspections', key), payload, { merge: true });
+      setStatus('✅ 저장 완료');
+      try{ localStorage.setItem('__lastCarKey', key); }catch(e){}
+      await refreshCarList();
+      if(carSelect) carSelect.value = key;
+      // 저장해도 결과 유지
+      try{ const ra=document.getElementById('resultArea'); if(ra) ra.style.display='block'; }catch(e){}
+    }catch(e){
+      console.error(e);
+      setStatus('❌ 저장 실패');
+    }
+  }
 
-    // ✅ 익명 로그인(화면 없이 자동). Firestore Rules를 request.auth 기반으로 안전하게 만들기 위함
-    const ensureAnonAuth = async () => {
-      if(auth.currentUser) return auth.currentUser;
-      const cred = await signInAnonymously(auth);
-      return cred.user;
-    };
-// ✅ 초기 로딩: auth → 리스트 로드 → 마지막 선택 복구
-    const initCloudUI = async () => {
-      try{
-        await ensureAnonAuth();
-        await refreshCarList();
-        const last = localStorage.getItem('__lastCarKey') || '';
-        if(last && carSelect){
-          carSelect.value = last;
-        }
-      }catch(e){
-        console.error(e);
-        setStatus('리스트 불러오기 실패');
+  async function cloudLoad(){
+    await ensureAnonAuth();
+    const key = getSelectedCarNumber();
+    if(!key){ setStatus('차량List 선택 필요'); return; }
+    syncSelectToInput(key);
+
+    setStatus('불러오는 중...');
+    try{
+      const snap = await getDoc(doc(db, 'usedcar_inspections', key));
+      if(!snap.exists()){
+        setStatus('저장된 데이터 없음');
+        return;
       }
-    };
-    initCloudUI();
+      const data = snap.data();
+      applyLocalStorage(data.localStorage || {});
+      try{ localStorage.setItem('__lastCarKey', key); }catch(e){}
+      if(carSelect) carSelect.value = key;
+      refreshUIFromLocalStorage();
+      setStatus('✅ 열기 완료');
+    }catch(e){
+      console.error(e);
+      setStatus('❌ 열기 실패');
+    }
+  }
 
-    // PC/앱 전환 후 목록 갱신
-    window.addEventListener('focus', ()=>{ initCloudUI().catch(()=>{}); });
+  async function cloudDelete(){
+    await ensureAnonAuth();
+    const key = getSelectedCarNumber();
+    if(!key){ setStatus('삭제할 차량 선택'); return; }
 
+    setStatus('삭제 중...');
+    try{
+      await deleteDoc(doc(db, 'usedcar_inspections', key));
+      setStatus('🗑️ 삭제 완료');
+      await refreshCarList();
+      if(carSelect) carSelect.value = '';
+
+      // 삭제 후 신규 모드 전환
+      try{ window.resetAll?.(); }catch(e){ try{ localStorage.clear(); }catch(e2){} }
+      try{ window.__calcRequested = false; }catch(e){}
+      try{ const ra=document.getElementById('resultArea'); if(ra) ra.style.display='none'; }catch(e){}
+      try{ document.getElementById('carNumber')?.focus(); }catch(e){}
+      setStatus('🗑️ 삭제 완료 → 🆕 신규');
+    }catch(e){
+      console.error(e);
+      setStatus('❌ 삭제 실패');
+    }
+  }
+
+  // ✅ 버튼 연결
+  document.getElementById('cloudSaveBtn')?.addEventListener('click', ()=>cloudSave());
+  document.getElementById('cloudDeleteBtn')?.addEventListener('click', ()=>cloudDelete());
+  document.getElementById('cloudNewBtn')?.addEventListener('click', ()=>{
+    try{ window.resetAll?.(); }catch(e){ try{ localStorage.clear(); }catch(e2){} }
+    if(carSelect) carSelect.value = '';
+    setStatus('🆕 신규 작성 모드');
+    try{ document.getElementById('carNumber')?.focus(); }catch(e){}
+    try{ window.__calcRequested = false; }catch(e){}
+    try{ const ra=document.getElementById('resultArea'); if(ra) ra.style.display='none'; }catch(e){}
+  });
+
+  // ✅ 드롭다운 선택 시 자동 열기
+  carSelect?.addEventListener('change', ()=>{
+    const v = getSelectedCarNumber();
+    if(v) cloudLoad();
+  });
+
+  // ✅ 초기 로딩: auth → 리스트 → 마지막 선택 복구(선택만)
+  const initCloudUI = async () => {
+    try{
+      await ensureAnonAuth();
+      await refreshCarList();
+      const last = localStorage.getItem('__lastCarKey') || '';
+      if(last && carSelect) carSelect.value = last;
+      setStatus('');
+    }catch(e){
+      console.error(e);
+      setStatus('리스트 불러오기 실패');
+    }
+  };
+  initCloudUI();
+
+  window.addEventListener('focus', ()=>{ initCloudUI(); });
 </script>
 
 </body>
