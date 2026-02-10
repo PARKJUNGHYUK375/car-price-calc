@@ -690,6 +690,51 @@
       opacity:.95;
     }
 
+
+    /* ✅ Cloud Bar (상단 동기화) */
+    .app-header{
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(10px);
+      background: linear-gradient(180deg, rgba(11,18,32,0.92), rgba(11,18,32,0.60));
+      border:1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius);
+      padding:14px 14px 12px;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.28);
+    }
+    .cloud-bar{
+      margin-top:10px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:flex-start;
+    }
+    .cloud-select-wrap{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      padding:0 10px;
+      border:1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.04);
+      border-radius: 999px;
+      height:40px;
+    }
+    .cloud-select-wrap i{ color: var(--muted); }
+    #cloudCarSelect{
+      height:36px;
+      border:none;
+      background: transparent;
+      color: var(--text);
+      outline:none;
+      padding-right:28px;
+      min-width:170px;
+    }
+    @media (max-width:560px){
+      #cloudCarSelect{ min-width: 150px; }
+    }
+
 </style>
 </head>
 
@@ -704,7 +749,28 @@
     </div>
     <p class="app-sub">
       입찰가 입력 → 도색/사고 핀 터치 → 세부상태 금액 입력하면 <b>검차결과</b>와 최종금액이 자동 계산됩니다.
-    </p>
+    
+
+    <div class="cloud-bar">
+      <button type="button" class="btn-ghost" id="cloudNewBtn" style="border-color:rgba(59,130,246,0.35);"><i class="fa-solid fa-plus"></i> 신규</button>
+      <button type="button" class="btn-ghost" id="cloudSaveBtn" title="현재 차량번호로 저장">
+        <i class="fa-solid fa-cloud-arrow-up"></i> 저장
+      </button>
+
+      <div class="cloud-select-wrap">
+        <i class="fa-solid fa-list-check"></i>
+        <select id="cloudCarSelect" aria-label="저장된 차량번호 선택">
+          <option value="">차량List</option>
+        </select>
+      </div>
+<button type="button" class="btn-ghost" id="cloudDeleteBtn" title="선택한 차량번호 삭제" style="border-color:rgba(255,92,92,0.35);">
+        <i class="fa-solid fa-trash"></i> 삭제
+      </button>
+
+      <span id="cloudStatus" class="suffix"></span>
+    </div>
+
+</p>
   </div>
 
   <!-- 가격 + 검차결과 -->
@@ -738,8 +804,7 @@
       <label><i class="fas fa-car"></i> 차량번호</label>
       <input type="text" id="carNumber" placeholder="예) 12가3456" oninput="saveInput('carNumber')">
     </div>
-
-    <div class="field">
+<div class="field">
       <label><i class="fas fa-tachometer-alt"></i> 주행거리</label>
       <input type="text" id="mileage" placeholder="예) 123,456 km" oninput="formatMileageInput(this); saveInput('mileage')">
     </div>
@@ -848,7 +913,11 @@
     </div>
     
 
-  <!-- 세부 상태 -->
+  
+    <div class="hint">* 핀을 터치하면 <b>없음 → 교환(X) → 판금(W) → 없음</b> 순서로 변경됩니다.</div>
+  </div>
+
+<!-- 세부 상태 -->
   <div class="section">
     <h2><i class="fas fa-tools"></i> 세부 상태</h2>
 
@@ -1099,7 +1168,7 @@
     </div>
     <div class="bottom-actions">
       <button class="btn-ghost" onclick="window.scrollTo({top:0, behavior:'smooth'})">맨위로</button>
-      <button class="btn-primary" onclick="resetAll()">초기화</button>
+    <button class="btn-primary" id="calcBtn"><i class="fa-solid fa-calculator"></i> 계산하기</button>
     </div>
   </div>
 
@@ -1139,13 +1208,13 @@
         { key:"tire_rr", name:"타이어(RR)", top:"80%", left:"90%" }
       ],
       accidentParts: [
-        { key:"acc_hood", name:"후드", rate:4, top:'10%', left:'50%' },
-        { key:"acc_fender_l", name:"휀다(좌)", rate:2, top:'10%', left:'19%' },
-        { key:"acc_fender_r", name:"휀다(우)", rate:2, top:'10%', left:'81%' },
-        { key:"acc_f_door_l", name:"앞문(좌)", rate:3, top:'21%', left:'17%' },
-        { key:"acc_f_door_r", name:"앞문(우)", rate:3, top:'21%', left:'83%' },
-        { key:"acc_r_door_l", name:"뒷문(좌)", rate:3, top:'29%', left:'17%' },
-        { key:"acc_r_door_r", name:"뒷문(우)", rate:3, top:'29%', left:'83%' },
+        { key:"acc_hood", name:"후드", rate:5, top:'10%', left:'50%' },
+        { key:"acc_fender_l", name:"휀다(좌)", rate:3, top:'10%', left:'19%' },
+        { key:"acc_fender_r", name:"휀다(우)", rate:3, top:'10%', left:'81%' },
+        { key:"acc_f_door_l", name:"앞문(좌)", rate:4, top:'21%', left:'17%' },
+        { key:"acc_f_door_r", name:"앞문(우)", rate:4, top:'21%', left:'83%' },
+        { key:"acc_r_door_l", name:"뒷문(좌)", rate:4, top:'29%', left:'17%' },
+        { key:"acc_r_door_r", name:"뒷문(우)", rate:4, top:'29%', left:'83%' },
         { key:"acc_f_panel", name:"F.패널", rate:4, top:'51%', left:'50%' },
         { key:"acc_in_sa_l", name:"인사(좌)", rate:2, top:'55%', left:'38%' },
         { key:"acc_side_l_1", name:"사이드(좌)", rate:3, top:'57%', left:'45%' },
@@ -1168,7 +1237,7 @@
         { key:"acc_roofpanel", name:"루프패널", rate:8, top:'27%', left:'50%' },
         { key:"acc_trunkfloor", name:"트렁크플로어", rate:4, top:'86%', left:'50%' },
         { key:"acc_r_panel", name:"R.패널", rate:3, top:'91%', left:'50%' },
-        { key:"acc_trunk", name:"트렁크", rate:3, top:'40%', left:'50%' },
+        { key:"acc_trunk", name:"트렁크", rate:4, top:'40%', left:'50%' },
         { key:"acc_quarter_l", name:"쿼터(좌)", rate:4, top:'39%', left:'17%' },
         { key:"acc_quarter_r", name:"쿼터(우)", rate:4, top:'39%', left:'83%' }
       ]
@@ -1585,6 +1654,16 @@
 
     // ✅ 계산
     function updateAll(){
+      window.__calcRequested = window.__calcRequested || false;
+      if(!window.__calcRequested){
+        // 계산하기 버튼을 누르기 전에는 자동 계산/결과 표시하지 않음
+        const box = document.getElementById('resultArea');
+        if(box) box.style.display='none';
+        const fp = document.getElementById('finalPrice');
+        if(fp) fp.textContent = '—';
+        return;
+      }
+
       const bidPrice = getNumericValue(document.getElementById('bidPriceInput').value) || 0;
 
       let paintDiscount=0, accidentDiscount=0, functionDiscount=0, customerDiscount=0;
@@ -1691,6 +1770,8 @@
       document.getElementById('finalPrice').textContent = finalPrice.toLocaleString();
 
       renderResultBox({selectedPaint, selectedAccidents, deductionLines, paintLines, accidentLines, detailLines, totalDiscount, finalPrice, paintSetoff});
+      const box = document.getElementById('resultArea');
+      if(box) box.style.display='block';
       saveCheckboxState();
     }
 
@@ -1750,6 +1831,224 @@
 
     window.addEventListener('beforeunload', saveExtraItems);
   </script>
+
+  
+<script>
+  (function(){
+    const box = document.getElementById('resultArea');
+    const fp  = document.getElementById('finalPrice');
+    const markDirty = ()=>{
+      window.__calcRequested = false;
+      if(box) box.style.display='none';
+      if(fp) fp.textContent = '—';
+    };
+
+    // 어떤 입력/선택이든 바뀌면 "재계산 필요" 상태로 전환
+    document.addEventListener('input', ()=>markDirty(), true);
+    document.addEventListener('change', ()=>markDirty(), true);
+    document.addEventListener('click', (e)=>{
+      // 핀/칩/선택 변경 등 "값 변화"에만 재계산 필요 표시
+      if(e.target.closest('.part-item, .acc-item, .chip')) return markDirty();
+
+      const sel = e.target.closest('select');
+      if(sel) return markDirty();
+
+      const btn = e.target.closest('button');
+      if(btn){
+        const id = btn.id || '';
+        // 계산/클라우드/신규/삭제 버튼은 결과를 숨기지 않음
+        if(['calcBtn','cloudSaveBtn','cloudDeleteBtn','cloudNewBtn'].includes(id)) return;
+        // 기타 버튼이 "값을 바꾸는" 용도면 여기에 추가
+      }
+    }, true);
+
+    // 계산하기
+    document.getElementById('calcBtn')?.addEventListener('click', ()=>{
+      window.__calcRequested = true;
+      try{ window.updateAll?.(); }catch(e){ console.error(e); }
+      try{ document.getElementById('resultArea')?.scrollIntoView({behavior:'smooth', block:'start'}); }catch(e){}
+    });
+
+    // 최초 로딩 시 결과 숨김
+    markDirty();
+  })();
+</script>
+
+<!-- ✅ Cloud Sync (Firebase Firestore) -->
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js';
+    import { getFirestore, doc, setDoc, getDoc, getDocs, collection, deleteDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js';
+
+    // ✅ Firebase 콘솔(웹앱 > CDN)에서 firebaseConfig 블록을 그대로 붙여넣으세요.
+    const firebaseConfig = {
+      apiKey: "PASTE_YOUR_API_KEY",
+      authDomain: "PASTE_YOUR_AUTH_DOMAIN",
+      projectId: "PASTE_YOUR_PROJECT_ID",
+      storageBucket: "PASTE_YOUR_STORAGE_BUCKET",
+      messagingSenderId: "PASTE_YOUR_MESSAGING_SENDER_ID",
+      appId: "PASTE_YOUR_APP_ID"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const statusEl = document.getElementById('cloudStatus');
+    const setStatus = (msg) => { if(statusEl) statusEl.textContent = msg; };
+    const carSelect = document.getElementById('cloudCarSelect');
+
+    const getInputCarNumber = () => {
+      const raw = (document.getElementById('carNumber')?.value || '').trim();
+      if(!raw) return null;
+      return raw.replaceAll('/', '_');
+    };
+
+    const getSelectedCarNumber = () => {
+      const v = (carSelect?.value || '').trim();
+      return v || null;
+    };
+
+    const syncSelectToInput = (v) => {
+      const input = document.getElementById('carNumber');
+      if(input && v) input.value = v;
+    };
+
+    const refreshCarList = async () => {
+      if(!carSelect) return;
+      // keep placeholder
+      const keep = carSelect.value;
+      carSelect.innerHTML = '<option value="">차량List</option>';
+      try{
+        const snap = await getDocs(collection(db, 'usedcar_inspections'));
+        const ids = [];
+        snap.forEach(d => ids.push(d.id));
+        ids.sort((a,b)=> a.localeCompare(b,'ko'));
+        for(const id of ids){
+          const opt = document.createElement('option');
+          opt.value = id;
+          opt.textContent = id;
+          carSelect.appendChild(opt);
+        }
+        if(keep && ids.includes(keep)) carSelect.value = keep;
+      }catch(e){
+        console.error(e);
+      }
+    };
+
+
+    const getCarKey = () => {
+      const raw = (document.getElementById('carNumber')?.value || '').trim();
+      if(!raw) return null;
+      return raw.replaceAll('/', '_');
+    };
+
+    const snapshotLocalStorage = () => {
+      const obj = {};
+      for(let i=0;i<localStorage.length;i++){
+        const k = localStorage.key(i);
+        if(!k) continue;
+        obj[k] = localStorage.getItem(k);
+      }
+      return obj;
+    };
+
+    const applyLocalStorage = (obj) => {
+      if(!obj || typeof obj !== 'object') return;
+      localStorage.clear();
+      for(const [k,v] of Object.entries(obj)){
+        try{ localStorage.setItem(k, v); }catch(e){}
+      }
+    };
+
+    const refreshUIFromLocalStorage = () => {
+      try{ window.loadInputs?.(); }catch(e){}
+      try{ window.loadCheckboxState?.(); }catch(e){}
+      try{ window.loadExtraItems?.(); }catch(e){}
+      try{ window.updateAll?.(); }catch(e){}
+    };
+
+    const enterNewMode = () => {
+      // 로컬 입력/핀/체크 전체 초기화(기존 초기화 함수 재사용)
+      try{ window.resetAll?.(); }catch(e){
+        try{ localStorage.clear(); }catch(e2){}
+      }
+      // dropdown 선택 해제
+      if(carSelect) carSelect.value = '';
+      setStatus('🆕 신규 작성 모드');
+      // 차량번호로 포커스
+      try{
+        const el = document.getElementById('carNumber');
+        el?.focus();
+      }catch(e){}
+    };
+
+    document.getElementById('cloudNewBtn')?.addEventListener('click', ()=>{ enterNewMode(); });
+
+    async function cloudSave(){
+      const key = getInputCarNumber();
+      if(!key){ setStatus('차량번호 입력 필요'); return; }
+      setStatus('저장 중...');
+      const payload = {
+        carNumber: key,
+        localStorage: snapshotLocalStorage(),
+        updatedAt: serverTimestamp()
+      };
+      await setDoc(doc(db, 'usedcar_inspections', key), payload, { merge: true });
+      setStatus('✅ 저장 완료');
+      // 목록 갱신 후 선택 유지
+      if(carSelect){ carSelect.value = key; }
+      await refreshCarList();
+      if(carSelect){ carSelect.value = key; }
+    }
+
+    async function cloudLoad(){
+      const key = getSelectedCarNumber();
+      if(key) syncSelectToInput(key);
+
+      if(!key){ setStatus('차량번호 입력 필요'); return; }
+      setStatus('불러오는 중...');
+      const snap = await getDoc(doc(db, 'usedcar_inspections', key));
+      if(!snap.exists()){
+        setStatus('저장된 데이터 없음');
+        
+        return;
+      }
+      const data = snap.data();
+      applyLocalStorage(data.localStorage || {});
+      refreshUIFromLocalStorage();
+      setStatus('✅ 불러오기 완료');
+    }
+
+    async function cloudDelete(){
+      const key = getSelectedCarNumber();
+      if(!key){ setStatus('삭제할 차량번호 선택 필요'); return; }
+      
+      setStatus('삭제 중...');
+      await deleteDoc(doc(db, 'usedcar_inspections', key));
+      setStatus('🗑️ 삭제 완료');
+      await refreshCarList();
+      if(carSelect) carSelect.value = '';
+      enterNewMode();
+// 삭제 후 신규 모드 전환
+      localStorage.clear();
+      refreshUIFromLocalStorage();
+      try{ document.getElementById('carNumber')?.focus(); }catch(e){}
+      setStatus('🗑️ 삭제 완료 → 🆕 신규 작성');
+    }
+
+    document.getElementById('cloudSaveBtn')?.addEventListener('click', ()=>cloudSave().catch(e=>{
+      console.error(e);
+      setStatus('❌ 저장 실패');
+      
+    }));
+    
+
+    document.getElementById('cloudDeleteBtn')?.addEventListener('click', ()=>cloudDelete().catch(e=>{
+      console.error(e);
+      setStatus('❌ 삭제 실패');
+      
+    }));
+  </script>
+
 </body>
 </html>
 
