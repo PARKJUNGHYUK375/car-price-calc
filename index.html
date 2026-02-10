@@ -1902,24 +1902,7 @@
       const cred = await signInAnonymously(auth);
       return cred.user;
     };
-    // auth 준비되면 1회만 실행
-    let __authReadyOnce = false;
-    onAuthStateChanged(auth, async (user)=>{
-      if(user && !__authReadyOnce){
-        __authReadyOnce = true;
-        try{
-          await
-
-    // ✅ 드롭다운 선택 시 자동 열기
-    carSelect?.addEventListener('change', ()=>{
-      const v = getSelectedCarNumber();
-      if(v){
-        syncSelectToInput(v);
-        cloudLoad().catch(()=>{});
-      }
-    });
-
-    // ✅ 초기 로딩: auth → 리스트 로드 → 마지막 선택 복구
+// ✅ 초기 로딩: auth → 리스트 로드 → 마지막 선택 복구
     const initCloudUI = async () => {
       try{
         await ensureAnonAuth();
