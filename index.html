@@ -1,12 +1,12 @@
 <!DOCTYPE html>
+
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>감가 계산기</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-  <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>감가 계산기</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+<style>
     :root{
       --accent:#ff5c5c;
       --accent-2:#ff7b7b;
@@ -28,6 +28,8 @@
       font-family:'Noto Sans KR',system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
       margin:0;
       padding:12px;
+      /* 모바일 브라우저/안드로이드 하단 네비게이션 + 고정 하단바 공간 확보 */
+      padding-bottom:calc(122px + env(safe-area-inset-bottom, 0px));
       background: radial-gradient(1200px 600px at 30% 10%, rgba(255,92,92,0.14), transparent 55%),
                   radial-gradient(800px 500px at 90% 20%, rgba(99,102,241,0.10), transparent 55%),
                   var(--bg);
@@ -502,18 +504,22 @@
     }
     .btn-soft:hover{ background: rgba(255,92,92,0.18); }
 
-    /* Bottom bar */
+    /* Bottom bar - 모바일 브라우저/안드로이드 네비게이션 대응 */
     .bottom-bar{
-      position: sticky;
-      bottom: 0;
-      z-index: 50;
+      position: fixed;
+      left: 12px;
+      right: 12px;
+      bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+      z-index: 1000;
+      width: auto;
       max-width: 760px;
-      margin: 12px auto 0;
-      background: rgba(0,0,0,0.35);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255,255,255,0.10);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
+      margin: 0 auto;
+      background: rgba(11,18,32,0.96);
+      -webkit-backdrop-filter: blur(14px);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 18px;
+      box-shadow: 0 -6px 30px rgba(0,0,0,0.38), 0 8px 28px rgba(0,0,0,0.28);
       padding: 10px;
       display:flex;
       align-items:center;
@@ -521,30 +527,59 @@
       gap: 10px;
       text-align:left;
     }
-    .bottom-left{ display:grid; gap:2px; }
-    .bottom-left .label{ font-size:11px; color:var(--muted); font-weight:900; }
-    .bottom-left .value{ font-size:16px; font-weight:900; color:var(--accent); letter-spacing:-0.2px; }
-    .bottom-actions{ display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
+    .bottom-left{
+      display:grid;
+      gap:2px;
+      min-width:100px;
+      flex:1 1 auto;
+    }
+    .bottom-left .label{
+      font-size:10px;
+      color:var(--muted);
+      font-weight:900;
+    }
+    .bottom-left .value{
+      font-size:16px;
+      font-weight:900;
+      color:var(--accent);
+      letter-spacing:-0.2px;
+      white-space:nowrap;
+    }
+    .bottom-actions{
+      display:flex;
+      gap:7px;
+      flex:0 0 auto;
+      justify-content:flex-end;
+    }
     .btn-primary{
-      padding:10px 14px;
+      padding:10px 12px;
       border-radius: 12px;
       border:none;
       background: var(--accent);
       color:#fff;
+      font-size:12px;
       font-weight: 900;
       cursor:pointer;
+      white-space:nowrap;
     }
     .btn-ghost{
-      padding:10px 14px;
+      padding:10px 12px;
       border-radius:12px;
       border:1px solid rgba(255,255,255,0.12);
       background: rgba(0,0,0,0.18);
       color: var(--text);
+      font-size:12px;
       font-weight: 900;
       cursor:pointer;
+      white-space:nowrap;
     }
 
     @media (max-width:560px){
+      body{
+        padding-left:10px;
+        padding-right:10px;
+        padding-bottom:calc(116px + env(safe-area-inset-bottom, 0px));
+      }
       .function-item{
         grid-template-columns: 26px 1fr;
         grid-template-rows: auto auto auto;
@@ -553,8 +588,47 @@
       .function-item > :nth-child(3){ grid-column: 1 / 3; }
       .function-item > :nth-child(4){ grid-column: 1 / 3; }
       .function-item input.function-price{ text-align:left; }
-      .bottom-left .value{ font-size:15px; }
-      .btn-primary, .btn-ghost{ padding:10px 12px; }
+
+      .bottom-bar{
+        left:8px;
+        right:8px;
+        bottom:calc(10px + env(safe-area-inset-bottom, 0px));
+        padding:9px;
+        gap:7px;
+        border-radius:16px;
+      }
+      .bottom-left{
+        min-width:82px;
+      }
+      .bottom-left .label{
+        font-size:9px;
+      }
+      .bottom-left .value{
+        font-size:14px;
+      }
+      .btn-primary,
+      .btn-ghost{
+        padding:9px 9px;
+        font-size:11px;
+      }
+    }
+
+    @media (max-width:370px){
+      .bottom-bar{
+        gap:5px;
+        padding:8px;
+      }
+      .bottom-left{
+        min-width:74px;
+      }
+      .bottom-left .value{
+        font-size:13px;
+      }
+      .btn-primary,
+      .btn-ghost{
+        padding:8px 7px;
+        font-size:10px;
+      }
     }
   
 @media (max-width: 480px){
@@ -654,444 +728,363 @@
 
 </style>
 </head>
-
 <body>
-  <div class="app-header">
-    <div class="app-title">
-      <h1><i class="fa-solid fa-car"></i> 감가 계산기</h1>
-      <div class="car-type-toggle">
-        <button id="btnImported" onclick="setCarType('imported')">수입차</button>
-        <button id="btnDomestic" onclick="setCarType('domestic')">국산차</button>
-      </div>
+<div class="app-header">
+<div class="app-title">
+<h1><i class="fa-solid fa-car"></i> 감가 계산기</h1>
+<div class="car-type-toggle">
+<button id="btnImported" onclick="setCarType('imported')">수입차</button>
+<button id="btnDomestic" onclick="setCarType('domestic')">국산차</button>
+</div>
+</div>
+</div>
+<div aria-label="검차 페이지" class="page-tabs">
+<button class="page-tab active" data-page="0" onclick="showPage(0)">기본정보</button>
+<button class="page-tab" data-page="1" onclick="showPage(1)">도색</button>
+<button class="page-tab" data-page="2" onclick="showPage(2)">사고</button>
+<button class="page-tab" data-page="3" onclick="showPage(3)">세부상태</button>
+<button class="page-tab" data-page="4" onclick="showPage(4)">검차결과</button>
+</div>
+<!-- 가격 + 검차결과 -->
+<div class="section page-panel active" data-page-panel="0">
+<h2><i class="fa-solid fa-won-sign"></i> 가격</h2>
+<div class="field">
+<label for="bidPriceInput"><i class="fa-solid fa-tag"></i> 입찰가</label>
+<div class="price-inline">
+<input id="bidPriceInput" onchange="updateAll()" oninput="formatInput(this); saveInput('bidPriceInput')" placeholder="견적가를 입력하세요" type="text"/>
+</div>
+</div>
+<div class="hint">
+      * 입력한 내용과 감가 결과는 <b>검차결과</b>에서 확인할 수 있습니다.
     </div>
-    <p class="app-sub">
-      입찰가 입력 → 도색/사고 핀 터치 → 세부상태 금액 입력하면 <b>검차결과</b>와 최종금액이 자동 계산됩니다.
-    </p>
-  </div>
-
-  <div class="page-tabs" aria-label="검차 페이지">
-    <button class="page-tab active" data-page="0" onclick="showPage(0)">1. 기본정보</button>
-    <button class="page-tab" data-page="1" onclick="showPage(1)">2. 도색</button>
-    <button class="page-tab" data-page="2" onclick="showPage(2)">3. 사고</button>
-    <button class="page-tab" data-page="3" onclick="showPage(3)">4. 세부상태</button>
-    <button class="page-tab" data-page="4" onclick="showPage(4)">5. 검차결과</button>
-  </div>
-
-  <!-- 가격 + 검차결과 -->
-  <div class="section page-panel active" data-page-panel="0">
-    <h2><i class="fa-solid fa-won-sign"></i> 가격</h2>
-
-    <div class="field">
-      <label for="bidPriceInput"><i class="fa-solid fa-tag"></i> 입찰가</label>
-      <div class="price-inline">
-        <input type="text" id="bidPriceInput"
-               oninput="formatInput(this); saveInput('bidPriceInput')"
-               onchange="updateAll()"
-               placeholder="예) 12,300,000">
-        
-      </div>
-    </div>
-
-    <div class="hint">
-      * 입력한 내용과 감가 결과는 <b>5. 검차결과</b>에서 확인할 수 있습니다.
-    </div>
-  </div>
-
-  
-  <!-- 차량정보 -->
-  <div class="section page-panel active" data-page-panel="0">
-    <h2><i class="fas fa-car-side"></i> 차량정보</h2>
-
-    <div class="field">
-      <label><i class="fas fa-car"></i> 차량번호</label>
-      <input type="text" id="carNumber" placeholder="예) 12가3456" oninput="saveInput('carNumber')">
-    </div>
-
-    <div class="field">
-      <label><i class="fas fa-tachometer-alt"></i> 주행거리</label>
-      <input type="text" id="mileage" placeholder="예) 123,456 km" oninput="formatMileageInput(this); saveInput('mileage')">
-    </div>
-
-    <div class="field">
-      <label><i class="fas fa-id-badge"></i> 차량명</label>
-      <input type="text" id="carName" placeholder="예) 랭글러 루비콘" oninput="saveInput('carName')">
-    </div>
-
-    <div class="field">
-      <label><i class="fas fa-star"></i> 차량등급</label>
-      <input type="text" id="carGrade" placeholder="예) 2.0T 4DR" oninput="saveInput('carGrade')">
-    </div>
-  </div>
-
-  
-  <!-- 고객기재 -->
-  <div class="section page-panel active" data-page-panel="0">
-    <h2><i class="fas fa-user-edit"></i> 고객기재</h2>
-
-    <div class="field">
-      <label><i class="fas fa-tools"></i> 외판</label>
-      <select id="exteriorCount" onchange="saveInput('exteriorCount'); updateAll()">
-        <option value="0">0판</option>
-        <option value="1">1판</option>
-        <option value="2">2판</option>
-        <option value="3">3판</option>
-        <option value="4">4판</option>
-        <option value="5">5판</option>
-        <option value="6">6판</option>
-        <option value="7">7판</option>
-        <option value="8">8판</option>
-        <option value="9">9판</option>
-        <option value="10">10판</option>
-        <option value="11">11판</option>
-        <option value="12">12판</option>
-        <option value="13">13판</option>
-      </select>
-    </div>
-
-    <div class="field">
-      <label><i class="fas fa-dot-circle"></i> 휠기스</label>
-      <select id="wheelScratchCount" onchange="saveInput('wheelScratchCount'); updateAll()">
-        <option value="0">0개휠</option>
-        <option value="1">1개휠</option>
-        <option value="2">2개휠</option>
-        <option value="3">3개휠</option>
-        <option value="4">4개휠</option>
-      </select>
-    </div>
-
-    <div class="field">
-      <label><i class="fas fa-key"></i> 보조키</label>
-      <select id="spareKey" onchange="saveInput('spareKey'); updateAll()">
-        <option value="있음">있음</option>
-        <option value="없음">없음</option>
-      </select>
-    </div>
-
-    <div class="field">
-      <label><i class="fas fa-circle-notch"></i> 타이어상태</label>
-      <select id="tireCount" onchange="saveInput('tireCount'); updateAll()">
-        <option value="0">0개</option>
-        <option value="1">1개</option>
-        <option value="2">2개</option>
-        <option value="3">3개</option>
-        <option value="4">4개</option>
-      </select>
-    </div>
-
-    <div class="field">
-      <label><i class="fas fa-wrench"></i> 정비 요망</label>
-      <input type="text" id="repair" placeholder="정비 필요한 항목을 입력" oninput="saveInput('repair')">
-    </div>
-
-    <div class="field">
-      <label><i class="fas fa-comment-dots"></i> 차량 장단점</label>
-      <textarea id="carAdvantage" placeholder="차량 장단점" rows="1"
-                oninput="autoResize(this); saveInput('carAdvantage')"></textarea>
-    </div>
-
-    <div class="field">
-      <label><i class="fas fa-comment-dots"></i> 메모</label>
-      <textarea id="Memo" placeholder="메모 입력" rows="1"
-                oninput="autoResize(this); saveInput('Memo')"></textarea>
-    </div>
-  </div>
-
-  <!-- 도색 -->
-
-  <div class="section page-panel" data-page-panel="1">
-    <h2><i class="fas fa-paint-roller"></i> 도색</h2>
-    <div class="container">
-      <img src="https://imgur.com/1OGXwOu.png" class="car-image" alt="자동차 외관">
-      <div class="checkbox-overlay" id="partSection"></div>
-    </div>
-    <div class="hint">부위를 터치하면 선택/해제됩니다. (휠/타이어는 별도 감가 단가 적용)</div>
-  </div>
-
-  <!-- 사고 -->
-  <div class="section page-panel" data-page-panel="2">
-    <h2><i class="fas fa-car-burst"></i> 사고 이력</h2>
-
-    <div class="hint" style="margin:0 0 10px;">
-      핀을 터치할 때마다 <b>없음 → X(교환) → W(판금) → XX(고객고지 교환) → WW(고객고지 판금) → 없음</b> 순서로 변경됩니다.<br>
-      <b>XX / WW는 검차결과에는 표시되지만 감가금액에는 반영되지 않습니다.</b>
-    </div>
-
-    <div class="container">
-      <img src="https://imgur.com/agbd7Z8.png" class="car-image" alt="사고부위 자동차">
-      <div class="checkbox-overlay" id="accidentSection"></div>
-    </div>
-    
-
-  </div>
-
-  <!-- 세부 상태 -->
-  <div class="section page-panel" data-page-panel="3">
-    <h2><i class="fas fa-tools"></i> 세부 상태</h2>
-
-    <div class="function-category">
-      <h3><i class="fa-solid fa-list-check"></i> 익스테리어&기타 Part📝</h3>
-
-      <div class="function-item">
-        <input type="checkbox" data-name="라이트크랙" onchange="updateAll()">
-        <div style="font-weight:900;">라이트크랙</div>
-        <input type="text" class="function-desc" data-key="라이트크랙-desc" oninput="saveInput('라이트크랙-desc'); updateAll()" placeholder="내용">
-        <input type="text" class="function-price" data-key="라이트크랙-price" oninput="formatInput(this); saveInput('라이트크랙-price'); updateAll()" placeholder="금액(원)">
-      </div>
-
-      <div class="function-item">
-        <input type="checkbox" data-name="안개등크랙" onchange="updateAll()">
-        <div style="font-weight:900;">안개등크랙</div>
-        <input type="text" class="function-desc" data-key="안개등크랙-desc" oninput="saveInput('안개등크랙-desc'); updateAll()" placeholder="내용">
-        <input type="text" class="function-price" data-key="안개등크랙-price" oninput="formatInput(this); saveInput('안개등크랙-price'); updateAll()" placeholder="금액(원)">
-      </div>
-
-      <div class="function-item">
-        <input type="checkbox" data-name="데루등크랙" onchange="updateAll()">
-        <div style="font-weight:900;">데루등크랙</div>
-        <input type="text" class="function-desc" data-key="데루등크랙-desc" oninput="saveInput('데루등크랙-desc'); updateAll()" placeholder="내용">
-        <input type="text" class="function-price" data-key="데루등크랙-price" oninput="formatInput(this); saveInput('데루등크랙-price'); updateAll()" placeholder="금액(원)">
-      </div>
-
-      <div class="function-item">
-        <input type="checkbox" data-name="자동차검사(기타)" onchange="updateAll()">
-        <div style="font-weight:900;">자동차검사</div>
-        <input type="text" class="function-desc" data-key="자동차검사(기타)-desc" oninput="saveInput('자동차검사(기타)-desc'); updateAll()" placeholder="내용">
-        <input type="text" class="function-price" data-key="자동차검사(기타)-price" oninput="formatInput(this); saveInput('자동차검사(기타)-price'); updateAll()" placeholder="금액(원)">
-      </div>
-
-      <div class="function-item">
-        <input type="checkbox" data-name="구변여부(기타)" onchange="updateAll()">
-        <div style="font-weight:900;">구변여부</div>
-        <input type="text" class="function-desc" data-key="구변여부(기타)-desc" oninput="saveInput('구변여부(기타)-desc'); updateAll()" placeholder="내용">
-        <input type="text" class="function-price" data-key="구변여부(기타)-price" oninput="formatInput(this); saveInput('구변여부(기타)-price'); updateAll()" placeholder="금액(원)">
-      </div>
-
-      <div id="exterior-items"></div>
-      <button class="btn-soft" onclick="addExtraItem('익스테리어')">+ 기타 항목 추가</button>
-    </div>
-
-    <div class="function-category">
-      <h3><i class="fa-solid fa-list-check"></i> 엔진 Part📝</h3>
-
-      <div class="function-item">
-        <input type="checkbox" data-name="공회전상태" onchange="updateAll()">
-        <div style="font-weight:900;">공회전상태</div>
-        <input type="text" class="function-desc" data-key="공회전상태-desc" oninput="saveInput('공회전상태-desc'); updateAll()" placeholder="내용">
-        <input type="text" class="function-price" data-key="공회전상태-price" oninput="formatInput(this); saveInput('공회전상태-price'); updateAll()" placeholder="금액(원)">
-      </div>
-
-      <div class="function-item">
-        <input type="checkbox" data-name="오일누유" onchange="updateAll()">
-        <div style="font-weight:900;">오일누유</div>
-        <input type="text" class="function-desc" data-key="오일누유-desc" oninput="saveInput('오일누유-desc'); updateAll()" placeholder="내용">
-        <input type="text" class="function-price" data-key="오일누유-price" oninput="formatInput(this); saveInput('오일누유-price'); updateAll()" placeholder="금액(원)">
-      </div>
-
-      <div class="function-item">
-        <input type="checkbox" data-name="냉각수누수" onchange="updateAll()">
-        <div style="font-weight:900;">냉각수누수</div>
-        <input type="text" class="function-desc" data-key="냉각수누수-desc" oninput="saveInput('냉각수누수-desc'); updateAll()" placeholder="내용">
-        <input type="text" class="function-price" data-key="냉각수누수-price" oninput="formatInput(this); saveInput('냉각수누수-price'); updateAll()" placeholder="금액(원)">
-      </div>
-
-      <div class="function-item">
-        <input type="checkbox" data-name="소모품(엔진)" onchange="updateAll()">
-        <div style="font-weight:900;">소모품</div>
-        <input type="text" class="function-desc" data-key="소모품(엔진)-desc" oninput="saveInput('소모품(엔진)-desc'); updateAll()" placeholder="내용">
-        <input type="text" class="function-price" data-key="소모품(엔진)-price" oninput="formatInput(this); saveInput('소모품(엔진)-price'); updateAll()" placeholder="금액(원)">
-      </div>
-
-      <div id="engine-items"></div>
-      <button class="btn-soft" onclick="addExtraItem('엔진')">+ 기타 항목 추가</button>
-    </div>
-
-    <div class="function-category">
-      <h3><i class="fa-solid fa-list-check"></i> 미션 Part📝</h3>
-
-      <div class="function-item">
-        <input type="checkbox" data-name="오일누유(미션)" onchange="updateAll()">
-        <div style="font-weight:900;">오일누유</div>
-        <input type="text" class="function-desc" data-key="오일누유(미션)-desc" oninput="saveInput('오일누유(미션)-desc'); updateAll()" placeholder="내용">
-        <input type="text" class="function-price" data-key="오일누유(미션)-price" oninput="formatInput(this); saveInput('오일누유(미션)-price'); updateAll()" placeholder="금액(원)">
-      </div>
-
-      <div class="function-item">
-        <input type="checkbox" data-name="소모품(미션)" onchange="updateAll()">
-        <div style="font-weight:900;">소모품</div>
-        <input type="text" class="function-desc" data-key="소모품(미션)-desc" oninput="saveInput('소모품(미션)-desc'); updateAll()" placeholder="내용">
-        <input type="text" class="function-price" data-key="소모품(미션)-price" oninput="formatInput(this); saveInput('소모품(미션)-price'); updateAll()" placeholder="금액(원)">
-      </div>
-
-      <div id="mission-items"></div>
-      <button class="btn-soft" onclick="addExtraItem('미션')">+ 기타 항목 추가</button>
-    </div>
-
-    <div class="function-category">
-      <h3><i class="fa-solid fa-list-check"></i> 하체 Part📝</h3>
-
-      <div class="function-item">
-        <input type="checkbox" data-name="쇼버" onchange="updateAll()">
-        <div style="font-weight:900;">쇼버</div>
-        <input type="text" class="function-desc" data-key="쇼버-desc" oninput="saveInput('쇼버-desc'); updateAll()" placeholder="내용">
-        <input type="text" class="function-price" data-key="쇼버-price" oninput="formatInput(this); saveInput('쇼버-price'); updateAll()" placeholder="금액(원)">
-      </div>
-
-      <div class="function-item">
-        <input type="checkbox" data-name="서스펜션" onchange="updateAll()">
-        <div style="font-weight:900;">서스펜션(암,링크)</div>
-        <input type="text" class="function-desc" data-key="서스펜션-desc" oninput="saveInput('서스펜션-desc'); updateAll()" placeholder="내용">
-        <input type="text" class="function-price" data-key="서스펜션-price" oninput="formatInput(this); saveInput('서스펜션-price'); updateAll()" placeholder="금액(원)">
-      </div>
-
-      <div class="function-item">
-        <input type="checkbox" data-name="등속조인트" onchange="updateAll()">
-        <div style="font-weight:900;">등속조인트</div>
-        <input type="text" class="function-desc" data-key="등속조인트-desc" oninput="saveInput('등속조인트-desc'); updateAll()" placeholder="내용">
-        <input type="text" class="function-price" data-key="등속조인트-price" oninput="formatInput(this); saveInput('등속조인트-price'); updateAll()" placeholder="금액(원)">
-      </div>
-
-      <div class="function-item">
-        <input type="checkbox" data-name="웜기어" onchange="updateAll()">
-        <div style="font-weight:900;">웜기어</div>
-        <input type="text" class="function-desc" data-key="웜기어-desc" oninput="saveInput('웜기어-desc'); updateAll()" placeholder="내용">
-        <input type="text" class="function-price" data-key="웜기어-price" oninput="formatInput(this); saveInput('웜기어-price'); updateAll()" placeholder="금액(원)">
-      </div>
-
-      <div class="function-item">
-        <input type="checkbox" data-name="디스크" onchange="updateAll()">
-        <div style="font-weight:900;">디스크(패드)</div>
-        <input type="text" class="function-desc" data-key="디스크-desc" oninput="saveInput('디스크-desc'); updateAll()" placeholder="내용">
-        <input type="text" class="function-price" data-key="디스크-price" oninput="formatInput(this); saveInput('디스크-price'); updateAll()" placeholder="금액(원)">
-      </div>
-
-      <div class="function-item">
-        <input type="checkbox" data-name="머플러" onchange="updateAll()">
-        <div style="font-weight:900;">머플러</div>
-        <input type="text" class="function-desc" data-key="머플러-desc" oninput="saveInput('머플러-desc'); updateAll()" placeholder="내용">
-        <input type="text" class="function-price" data-key="머플러-price" oninput="formatInput(this); saveInput('머플러-price'); updateAll()" placeholder="금액(원)">
-      </div>
-
-      <div class="function-item">
-        <input type="checkbox" data-name="소모품(하체)" onchange="updateAll()">
-        <div style="font-weight:900;">소모품</div>
-        <input type="text" class="function-desc" data-key="소모품(하체)-desc" oninput="saveInput('소모품(하체)-desc'); updateAll()" placeholder="내용">
-        <input type="text" class="function-price" data-key="소모품(하체)-price" oninput="formatInput(this); saveInput('소모품(하체)-price'); updateAll()" placeholder="금액(원)">
-      </div>
-
-      <div id="under-items"></div>
-      <button class="btn-soft" onclick="addExtraItem('하체')">+ 기타 항목 추가</button>
-    </div>
-
-    <div class="function-category">
-      <h3><i class="fa-solid fa-list-check"></i> 인테리어 Part📝</h3>
-
-      <div class="function-item">
-        <input type="checkbox" data-name="시트" onchange="updateAll()">
-        <div style="font-weight:900;">시트상태</div>
-        <input type="text" class="function-desc" data-key="시트-desc" oninput="saveInput('시트-desc'); updateAll()" placeholder="내용">
-        <input type="text" class="function-price" data-key="시트-price" oninput="formatInput(this); saveInput('시트-price'); updateAll()" placeholder="금액(원)">
-      </div>
-
-      <div class="function-item">
-        <input type="checkbox" data-name="실내컨디션" onchange="updateAll()">
-        <div style="font-weight:900;">실내상태</div>
-        <input type="text" class="function-desc" data-key="실내컨디션-desc" oninput="saveInput('실내컨디션-desc'); updateAll()" placeholder="내용">
-        <input type="text" class="function-price" data-key="실내컨디션-price" oninput="formatInput(this); saveInput('실내컨디션-price'); updateAll()" placeholder="금액(원)">
-      </div>
-
-      <div class="function-item">
-        <input type="checkbox" data-name="계기판" onchange="updateAll()">
-        <div style="font-weight:900;">계기판</div>
-        <input type="text" class="function-desc" data-key="계기판-desc" oninput="saveInput('계기판-desc'); updateAll()" placeholder="내용">
-        <input type="text" class="function-price" data-key="계기판-price" oninput="formatInput(this); saveInput('계기판-price'); updateAll()" placeholder="금액(원)">
-      </div>
-
-      <div class="function-item">
-        <input type="checkbox" data-name="등화류" onchange="updateAll()">
-        <div style="font-weight:900;">등화류</div>
-        <input type="text" class="function-desc" data-key="등화류-desc" oninput="saveInput('등화류-desc'); updateAll()" placeholder="내용">
-        <input type="text" class="function-price" data-key="등화류-price" oninput="formatInput(this); saveInput('등화류-price'); updateAll()" placeholder="금액(원)">
-      </div>
-
-      <div class="function-item">
-        <input type="checkbox" data-name="에어컨히터" onchange="updateAll()">
-        <div style="font-weight:900;">냉난방류</div>
-        <input type="text" class="function-desc" data-key="에어컨히터-desc" oninput="saveInput('에어컨히터-desc'); updateAll()" placeholder="내용">
-        <input type="text" class="function-price" data-key="에어컨히터-price" oninput="formatInput(this); saveInput('에어컨히터-price'); updateAll()" placeholder="금액(원)">
-      </div>
-
-      <div class="function-item">
-        <input type="checkbox" data-name="오디오" onchange="updateAll()">
-        <div style="font-weight:900;">오디오계통</div>
-        <input type="text" class="function-desc" data-key="오디오-desc" oninput="saveInput('오디오-desc'); updateAll()" placeholder="내용">
-        <input type="text" class="function-price" data-key="오디오-price" oninput="formatInput(this); saveInput('오디오-price'); updateAll()" placeholder="금액(원)">
-      </div>
-
-      <div class="function-item">
-        <input type="checkbox" data-name="미러창문" onchange="updateAll()">
-        <div style="font-weight:900;">미러&창문</div>
-        <input type="text" class="function-desc" data-key="미러창문-desc" oninput="saveInput('미러창문-desc'); updateAll()" placeholder="내용">
-        <input type="text" class="function-price" data-key="미러창문-price" oninput="formatInput(this); saveInput('미러창문-price'); updateAll()" placeholder="금액(원)">
-      </div>
-
-      <div class="function-item">
-        <input type="checkbox" data-name="버튼류" onchange="updateAll()">
-        <div style="font-weight:900;">버튼류작동</div>
-        <input type="text" class="function-desc" data-key="버튼류-desc" oninput="saveInput('버튼류-desc'); updateAll()" placeholder="내용">
-        <input type="text" class="function-price" data-key="버튼류-price" oninput="formatInput(this); saveInput('버튼류-price'); updateAll()" placeholder="금액(원)">
-      </div>
-
-      <div class="function-item">
-        <input type="checkbox" data-name="썬팅" onchange="updateAll()">
-        <div style="font-weight:900;">썬팅상태</div>
-        <input type="text" class="function-desc" data-key="썬팅-desc" oninput="saveInput('썬팅-desc'); updateAll()" placeholder="내용">
-        <input type="text" class="function-price" data-key="썬팅-price" oninput="formatInput(this); saveInput('썬팅-price'); updateAll()" placeholder="금액(원)">
-      </div>
-
-      <div class="function-item">
-        <input type="checkbox" data-name="유리크랙" onchange="updateAll()">
-        <div style="font-weight:900;">유리크랙</div>
-        <input type="text" class="function-desc" data-key="유리크랙-desc" oninput="saveInput('유리크랙-desc'); updateAll()" placeholder="내용">
-        <input type="text" class="function-price" data-key="유리크랙-price" oninput="formatInput(this); saveInput('유리크랙-price'); updateAll()" placeholder="금액(원)">
-      </div>
-
-      <div class="function-item">
-        <input type="checkbox" data-name="트렁크상태" onchange="updateAll()">
-        <div style="font-weight:900;">트렁크상태</div>
-        <input type="text" class="function-desc" data-key="트렁크상태-desc" oninput="saveInput('트렁크상태-desc'); updateAll()" placeholder="내용">
-        <input type="text" class="function-price" data-key="트렁크상태-price" oninput="formatInput(this); saveInput('트렁크상태-price'); updateAll()" placeholder="금액(원)">
-      </div>
-
-      <div id="interior-items"></div>
-      <button class="btn-soft" onclick="addExtraItem('인테리어')">+ 기타 항목 추가</button>
-    </div>
-  </div>
-
-  <!-- 검차결과 -->
-  <div class="section page-panel" data-page-panel="4">
-    <h2><i class="fa-solid fa-clipboard-check"></i> 검차결과</h2>
-    <div id="resultArea" class="result-area" style="display:none;"></div>
-    <div class="hint">* 기본정보, 도색, 사고, 세부상태에서 입력한 내용을 종합한 최종 검차결과입니다.</div>
-  </div>
-
-  <div class="page-nav">
-    <button id="prevPageBtn" onclick="changePage(-1)">← 이전</button>
-    <button id="nextPageBtn" class="next" onclick="changePage(1)">다음 →</button>
-  </div>
-
-  <!-- Bottom bar -->
-  <div class="bottom-bar">
-    <div class="bottom-left">
-      <div class="label">최종금액</div>
-      <div class="value"><span id="finalPrice">0</span>원</div>
-    </div>
-    <div class="bottom-actions">
-      <button class="btn-ghost" onclick="window.scrollTo({top:0, behavior:'smooth'})">맨위로</button>
-      <button class="btn-primary" onclick="resetAll()">초기화</button>
-    </div>
-  </div>
-
-  <script>
+</div>
+<!-- 차량정보 -->
+<div class="section page-panel active" data-page-panel="0">
+<h2><i class="fas fa-car-side"></i> 차량정보</h2>
+<div class="field">
+<label for="carNumber"><i class="fas fa-car"></i> 차량번호</label>
+<input id="carNumber" oninput="saveInput('carNumber')" placeholder="예) 12가3456" type="text"/>
+</div>
+<div class="field">
+<label for="mileage"><i class="fas fa-tachometer-alt"></i> 주행거리</label>
+<input id="mileage" oninput="formatMileageInput(this); saveInput('mileage')" placeholder="예) 123,456 km" type="text"/>
+</div>
+<div class="field">
+<label for="carName"><i class="fas fa-id-badge"></i> 차량명</label>
+<input id="carName" oninput="saveInput('carName')" placeholder="차량명 입력하세요" type="text"/>
+</div>
+<div class="field">
+<label for="carGrade"><i class="fas fa-star"></i> 차량등급</label>
+<input id="carGrade" oninput="saveInput('carGrade')" placeholder="등급 및 옵션을 입력하세요" type="text"/>
+</div>
+</div>
+<!-- 고객기재 -->
+<div class="section page-panel active" data-page-panel="0">
+<h2><i class="fas fa-user-edit"></i> 고객기재</h2>
+<div class="field">
+<label for="exteriorCount"><i class="fas fa-tools"></i> 외판</label>
+<select id="exteriorCount" onchange="saveInput('exteriorCount'); updateAll()">
+<option value="0">0판</option>
+<option value="1">1판</option>
+<option value="2">2판</option>
+<option value="3">3판</option>
+<option value="4">4판</option>
+<option value="5">5판</option>
+<option value="6">6판</option>
+<option value="7">7판</option>
+<option value="8">8판</option>
+<option value="9">9판</option>
+<option value="10">10판</option>
+<option value="11">11판</option>
+<option value="12">12판</option>
+<option value="13">13판</option>
+</select>
+</div>
+<div class="field">
+<label for="wheelScratchCount"><i class="fas fa-dot-circle"></i> 휠기스</label>
+<select id="wheelScratchCount" onchange="saveInput('wheelScratchCount'); updateAll()">
+<option value="0">0개휠</option>
+<option value="1">1개휠</option>
+<option value="2">2개휠</option>
+<option value="3">3개휠</option>
+<option value="4">4개휠</option>
+</select>
+</div>
+<div class="field">
+<label for="spareKey"><i class="fas fa-key"></i> 보조키</label>
+<select id="spareKey" onchange="saveInput('spareKey'); updateAll()">
+<option value="있음">있음</option>
+<option value="없음">없음</option>
+</select>
+</div>
+<div class="field">
+<label for="tireCount"><i class="fas fa-circle-notch"></i> 타이어상태</label>
+<select id="tireCount" onchange="saveInput('tireCount'); updateAll()">
+<option value="0">0개</option>
+<option value="1">1개</option>
+<option value="2">2개</option>
+<option value="3">3개</option>
+<option value="4">4개</option>
+</select>
+</div>
+<div class="field">
+<label for="repair"><i class="fas fa-wrench"></i> 정비 요망</label>
+<input id="repair" oninput="saveInput('repair')" placeholder="정비 필요한 항목을 입력" type="text"/>
+</div>
+<div class="field">
+<label for="carAdvantage"><i class="fas fa-comment-dots"></i> 차량 장단점</label>
+<textarea id="carAdvantage" oninput="autoResize(this); saveInput('carAdvantage')" placeholder="차량 장단점" rows="1"></textarea>
+</div>
+<div class="field">
+<label for="Memo"><i class="fas fa-comment-dots"></i> 메모</label>
+<textarea id="Memo" oninput="autoResize(this); saveInput('Memo')" placeholder="메모 입력" rows="1"></textarea>
+</div>
+</div>
+<!-- 도색 -->
+<div class="section page-panel" data-page-panel="1">
+<h2><i class="fas fa-paint-roller"></i> 도색</h2>
+<div class="container">
+<img alt="자동차 외관" class="car-image" src="https://imgur.com/1OGXwOu.png"/>
+<div class="checkbox-overlay" id="partSection"></div>
+</div>
+<div class="hint">부위를 터치하면 선택/해제됩니다. (휠/타이어는 별도 감가 단가 적용)</div>
+</div>
+<!-- 사고 -->
+<div class="section page-panel" data-page-panel="2">
+<h2><i class="fas fa-car-burst"></i> 사고 이력</h2>
+<div class="hint" style="margin:0 0 10px;">
+      
+</div>
+<div class="container">
+<img alt="사고부위 자동차" class="car-image" src="https://imgur.com/agbd7Z8.png"/>
+<div class="checkbox-overlay" id="accidentSection"></div>
+</div>
+</div>
+<!-- 세부 상태 -->
+<div class="section page-panel" data-page-panel="3">
+<h2><i class="fas fa-tools"></i> 세부 상태</h2>
+<div class="function-category">
+<h3><i class="fa-solid fa-list-check"></i> 익스테리어&amp;기타 Part📝</h3>
+<div class="function-item">
+<input aria-label="라이트크랙 선택" data-name="라이트크랙" onchange="updateAll()" title="라이트크랙 선택" type="checkbox"/>
+<div style="font-weight:900;">라이트크랙</div>
+<input aria-label="라이트크랙 내용" class="function-desc" data-key="라이트크랙-desc" oninput="saveInput('라이트크랙-desc'); updateAll()" placeholder="내용" title="라이트크랙 내용" type="text"/>
+<input aria-label="라이트크랙 감가 금액" class="function-price" data-key="라이트크랙-price" oninput="formatInput(this); saveInput('라이트크랙-price'); updateAll()" placeholder="금액(원)" title="라이트크랙 감가 금액" type="text"/>
+</div>
+<div class="function-item">
+<input aria-label="안개등크랙 선택" data-name="안개등크랙" onchange="updateAll()" title="안개등크랙 선택" type="checkbox"/>
+<div style="font-weight:900;">안개등크랙</div>
+<input aria-label="안개등크랙 내용" class="function-desc" data-key="안개등크랙-desc" oninput="saveInput('안개등크랙-desc'); updateAll()" placeholder="내용" title="안개등크랙 내용" type="text"/>
+<input aria-label="안개등크랙 감가 금액" class="function-price" data-key="안개등크랙-price" oninput="formatInput(this); saveInput('안개등크랙-price'); updateAll()" placeholder="금액(원)" title="안개등크랙 감가 금액" type="text"/>
+</div>
+<div class="function-item">
+<input aria-label="데루등크랙 선택" data-name="데루등크랙" onchange="updateAll()" title="데루등크랙 선택" type="checkbox"/>
+<div style="font-weight:900;">데루등크랙</div>
+<input aria-label="데루등크랙 내용" class="function-desc" data-key="데루등크랙-desc" oninput="saveInput('데루등크랙-desc'); updateAll()" placeholder="내용" title="데루등크랙 내용" type="text"/>
+<input aria-label="데루등크랙 감가 금액" class="function-price" data-key="데루등크랙-price" oninput="formatInput(this); saveInput('데루등크랙-price'); updateAll()" placeholder="금액(원)" title="데루등크랙 감가 금액" type="text"/>
+</div>
+<div class="function-item">
+<input aria-label="자동차검사(기타) 선택" data-name="자동차검사(기타)" onchange="updateAll()" title="자동차검사(기타) 선택" type="checkbox"/>
+<div style="font-weight:900;">자동차검사</div>
+<input aria-label="자동차검사(기타) 내용" class="function-desc" data-key="자동차검사(기타)-desc" oninput="saveInput('자동차검사(기타)-desc'); updateAll()" placeholder="내용" title="자동차검사(기타) 내용" type="text"/>
+<input aria-label="자동차검사(기타) 감가 금액" class="function-price" data-key="자동차검사(기타)-price" oninput="formatInput(this); saveInput('자동차검사(기타)-price'); updateAll()" placeholder="금액(원)" title="자동차검사(기타) 감가 금액" type="text"/>
+</div>
+<div class="function-item">
+<input aria-label="구변여부(기타) 선택" data-name="구변여부(기타)" onchange="updateAll()" title="구변여부(기타) 선택" type="checkbox"/>
+<div style="font-weight:900;">구변여부</div>
+<input aria-label="구변여부(기타) 내용" class="function-desc" data-key="구변여부(기타)-desc" oninput="saveInput('구변여부(기타)-desc'); updateAll()" placeholder="내용" title="구변여부(기타) 내용" type="text"/>
+<input aria-label="구변여부(기타) 감가 금액" class="function-price" data-key="구변여부(기타)-price" oninput="formatInput(this); saveInput('구변여부(기타)-price'); updateAll()" placeholder="금액(원)" title="구변여부(기타) 감가 금액" type="text"/>
+</div>
+<div id="exterior-items"></div>
+<button class="btn-soft" onclick="addExtraItem('익스테리어')">+ 기타 항목 추가</button>
+</div>
+<div class="function-category">
+<h3><i class="fa-solid fa-list-check"></i> 엔진 Part📝</h3>
+<div class="function-item">
+<input aria-label="공회전상태 선택" data-name="공회전상태" onchange="updateAll()" title="공회전상태 선택" type="checkbox"/>
+<div style="font-weight:900;">공회전상태</div>
+<input aria-label="공회전상태 내용" class="function-desc" data-key="공회전상태-desc" oninput="saveInput('공회전상태-desc'); updateAll()" placeholder="내용" title="공회전상태 내용" type="text"/>
+<input aria-label="공회전상태 감가 금액" class="function-price" data-key="공회전상태-price" oninput="formatInput(this); saveInput('공회전상태-price'); updateAll()" placeholder="금액(원)" title="공회전상태 감가 금액" type="text"/>
+</div>
+<div class="function-item">
+<input aria-label="오일누유 선택" data-name="오일누유" onchange="updateAll()" title="오일누유 선택" type="checkbox"/>
+<div style="font-weight:900;">오일누유</div>
+<input aria-label="오일누유 내용" class="function-desc" data-key="오일누유-desc" oninput="saveInput('오일누유-desc'); updateAll()" placeholder="내용" title="오일누유 내용" type="text"/>
+<input aria-label="오일누유 감가 금액" class="function-price" data-key="오일누유-price" oninput="formatInput(this); saveInput('오일누유-price'); updateAll()" placeholder="금액(원)" title="오일누유 감가 금액" type="text"/>
+</div>
+<div class="function-item">
+<input aria-label="냉각수누수 선택" data-name="냉각수누수" onchange="updateAll()" title="냉각수누수 선택" type="checkbox"/>
+<div style="font-weight:900;">냉각수누수</div>
+<input aria-label="냉각수누수 내용" class="function-desc" data-key="냉각수누수-desc" oninput="saveInput('냉각수누수-desc'); updateAll()" placeholder="내용" title="냉각수누수 내용" type="text"/>
+<input aria-label="냉각수누수 감가 금액" class="function-price" data-key="냉각수누수-price" oninput="formatInput(this); saveInput('냉각수누수-price'); updateAll()" placeholder="금액(원)" title="냉각수누수 감가 금액" type="text"/>
+</div>
+<div class="function-item">
+<input aria-label="소모품(엔진) 선택" data-name="소모품(엔진)" onchange="updateAll()" title="소모품(엔진) 선택" type="checkbox"/>
+<div style="font-weight:900;">소모품</div>
+<input aria-label="소모품(엔진) 내용" class="function-desc" data-key="소모품(엔진)-desc" oninput="saveInput('소모품(엔진)-desc'); updateAll()" placeholder="내용" title="소모품(엔진) 내용" type="text"/>
+<input aria-label="소모품(엔진) 감가 금액" class="function-price" data-key="소모품(엔진)-price" oninput="formatInput(this); saveInput('소모품(엔진)-price'); updateAll()" placeholder="금액(원)" title="소모품(엔진) 감가 금액" type="text"/>
+</div>
+<div id="engine-items"></div>
+<button class="btn-soft" onclick="addExtraItem('엔진')">+ 기타 항목 추가</button>
+</div>
+<div class="function-category">
+<h3><i class="fa-solid fa-list-check"></i> 미션 Part📝</h3>
+<div class="function-item">
+<input aria-label="오일누유(미션) 선택" data-name="오일누유(미션)" onchange="updateAll()" title="오일누유(미션) 선택" type="checkbox"/>
+<div style="font-weight:900;">오일누유</div>
+<input aria-label="오일누유(미션) 내용" class="function-desc" data-key="오일누유(미션)-desc" oninput="saveInput('오일누유(미션)-desc'); updateAll()" placeholder="내용" title="오일누유(미션) 내용" type="text"/>
+<input aria-label="오일누유(미션) 감가 금액" class="function-price" data-key="오일누유(미션)-price" oninput="formatInput(this); saveInput('오일누유(미션)-price'); updateAll()" placeholder="금액(원)" title="오일누유(미션) 감가 금액" type="text"/>
+</div>
+<div class="function-item">
+<input aria-label="소모품(미션) 선택" data-name="소모품(미션)" onchange="updateAll()" title="소모품(미션) 선택" type="checkbox"/>
+<div style="font-weight:900;">소모품</div>
+<input aria-label="소모품(미션) 내용" class="function-desc" data-key="소모품(미션)-desc" oninput="saveInput('소모품(미션)-desc'); updateAll()" placeholder="내용" title="소모품(미션) 내용" type="text"/>
+<input aria-label="소모품(미션) 감가 금액" class="function-price" data-key="소모품(미션)-price" oninput="formatInput(this); saveInput('소모품(미션)-price'); updateAll()" placeholder="금액(원)" title="소모품(미션) 감가 금액" type="text"/>
+</div>
+<div id="mission-items"></div>
+<button class="btn-soft" onclick="addExtraItem('미션')">+ 기타 항목 추가</button>
+</div>
+<div class="function-category">
+<h3><i class="fa-solid fa-list-check"></i> 하체 Part📝</h3>
+<div class="function-item">
+<input aria-label="쇼버 선택" data-name="쇼버" onchange="updateAll()" title="쇼버 선택" type="checkbox"/>
+<div style="font-weight:900;">쇼버</div>
+<input aria-label="쇼버 내용" class="function-desc" data-key="쇼버-desc" oninput="saveInput('쇼버-desc'); updateAll()" placeholder="내용" title="쇼버 내용" type="text"/>
+<input aria-label="쇼버 감가 금액" class="function-price" data-key="쇼버-price" oninput="formatInput(this); saveInput('쇼버-price'); updateAll()" placeholder="금액(원)" title="쇼버 감가 금액" type="text"/>
+</div>
+<div class="function-item">
+<input aria-label="서스펜션 선택" data-name="서스펜션" onchange="updateAll()" title="서스펜션 선택" type="checkbox"/>
+<div style="font-weight:900;">서스펜션(암,링크)</div>
+<input aria-label="서스펜션 내용" class="function-desc" data-key="서스펜션-desc" oninput="saveInput('서스펜션-desc'); updateAll()" placeholder="내용" title="서스펜션 내용" type="text"/>
+<input aria-label="서스펜션 감가 금액" class="function-price" data-key="서스펜션-price" oninput="formatInput(this); saveInput('서스펜션-price'); updateAll()" placeholder="금액(원)" title="서스펜션 감가 금액" type="text"/>
+</div>
+<div class="function-item">
+<input aria-label="등속조인트 선택" data-name="등속조인트" onchange="updateAll()" title="등속조인트 선택" type="checkbox"/>
+<div style="font-weight:900;">등속조인트</div>
+<input aria-label="등속조인트 내용" class="function-desc" data-key="등속조인트-desc" oninput="saveInput('등속조인트-desc'); updateAll()" placeholder="내용" title="등속조인트 내용" type="text"/>
+<input aria-label="등속조인트 감가 금액" class="function-price" data-key="등속조인트-price" oninput="formatInput(this); saveInput('등속조인트-price'); updateAll()" placeholder="금액(원)" title="등속조인트 감가 금액" type="text"/>
+</div>
+<div class="function-item">
+<input aria-label="웜기어 선택" data-name="웜기어" onchange="updateAll()" title="웜기어 선택" type="checkbox"/>
+<div style="font-weight:900;">웜기어</div>
+<input aria-label="웜기어 내용" class="function-desc" data-key="웜기어-desc" oninput="saveInput('웜기어-desc'); updateAll()" placeholder="내용" title="웜기어 내용" type="text"/>
+<input aria-label="웜기어 감가 금액" class="function-price" data-key="웜기어-price" oninput="formatInput(this); saveInput('웜기어-price'); updateAll()" placeholder="금액(원)" title="웜기어 감가 금액" type="text"/>
+</div>
+<div class="function-item">
+<input aria-label="디스크 선택" data-name="디스크" onchange="updateAll()" title="디스크 선택" type="checkbox"/>
+<div style="font-weight:900;">디스크(패드)</div>
+<input aria-label="디스크 내용" class="function-desc" data-key="디스크-desc" oninput="saveInput('디스크-desc'); updateAll()" placeholder="내용" title="디스크 내용" type="text"/>
+<input aria-label="디스크 감가 금액" class="function-price" data-key="디스크-price" oninput="formatInput(this); saveInput('디스크-price'); updateAll()" placeholder="금액(원)" title="디스크 감가 금액" type="text"/>
+</div>
+<div class="function-item">
+<input aria-label="머플러 선택" data-name="머플러" onchange="updateAll()" title="머플러 선택" type="checkbox"/>
+<div style="font-weight:900;">머플러</div>
+<input aria-label="머플러 내용" class="function-desc" data-key="머플러-desc" oninput="saveInput('머플러-desc'); updateAll()" placeholder="내용" title="머플러 내용" type="text"/>
+<input aria-label="머플러 감가 금액" class="function-price" data-key="머플러-price" oninput="formatInput(this); saveInput('머플러-price'); updateAll()" placeholder="금액(원)" title="머플러 감가 금액" type="text"/>
+</div>
+<div class="function-item">
+<input aria-label="소모품(하체) 선택" data-name="소모품(하체)" onchange="updateAll()" title="소모품(하체) 선택" type="checkbox"/>
+<div style="font-weight:900;">소모품</div>
+<input aria-label="소모품(하체) 내용" class="function-desc" data-key="소모품(하체)-desc" oninput="saveInput('소모품(하체)-desc'); updateAll()" placeholder="내용" title="소모품(하체) 내용" type="text"/>
+<input aria-label="소모품(하체) 감가 금액" class="function-price" data-key="소모품(하체)-price" oninput="formatInput(this); saveInput('소모품(하체)-price'); updateAll()" placeholder="금액(원)" title="소모품(하체) 감가 금액" type="text"/>
+</div>
+<div id="under-items"></div>
+<button class="btn-soft" onclick="addExtraItem('하체')">+ 기타 항목 추가</button>
+</div>
+<div class="function-category">
+<h3><i class="fa-solid fa-list-check"></i> 인테리어 Part📝</h3>
+<div class="function-item">
+<input aria-label="시트 선택" data-name="시트" onchange="updateAll()" title="시트 선택" type="checkbox"/>
+<div style="font-weight:900;">시트상태</div>
+<input aria-label="시트 내용" class="function-desc" data-key="시트-desc" oninput="saveInput('시트-desc'); updateAll()" placeholder="내용" title="시트 내용" type="text"/>
+<input aria-label="시트 감가 금액" class="function-price" data-key="시트-price" oninput="formatInput(this); saveInput('시트-price'); updateAll()" placeholder="금액(원)" title="시트 감가 금액" type="text"/>
+</div>
+<div class="function-item">
+<input aria-label="실내컨디션 선택" data-name="실내컨디션" onchange="updateAll()" title="실내컨디션 선택" type="checkbox"/>
+<div style="font-weight:900;">실내상태</div>
+<input aria-label="실내컨디션 내용" class="function-desc" data-key="실내컨디션-desc" oninput="saveInput('실내컨디션-desc'); updateAll()" placeholder="내용" title="실내컨디션 내용" type="text"/>
+<input aria-label="실내컨디션 감가 금액" class="function-price" data-key="실내컨디션-price" oninput="formatInput(this); saveInput('실내컨디션-price'); updateAll()" placeholder="금액(원)" title="실내컨디션 감가 금액" type="text"/>
+</div>
+<div class="function-item">
+<input aria-label="계기판 선택" data-name="계기판" onchange="updateAll()" title="계기판 선택" type="checkbox"/>
+<div style="font-weight:900;">계기판</div>
+<input aria-label="계기판 내용" class="function-desc" data-key="계기판-desc" oninput="saveInput('계기판-desc'); updateAll()" placeholder="내용" title="계기판 내용" type="text"/>
+<input aria-label="계기판 감가 금액" class="function-price" data-key="계기판-price" oninput="formatInput(this); saveInput('계기판-price'); updateAll()" placeholder="금액(원)" title="계기판 감가 금액" type="text"/>
+</div>
+<div class="function-item">
+<input aria-label="등화류 선택" data-name="등화류" onchange="updateAll()" title="등화류 선택" type="checkbox"/>
+<div style="font-weight:900;">등화류</div>
+<input aria-label="등화류 내용" class="function-desc" data-key="등화류-desc" oninput="saveInput('등화류-desc'); updateAll()" placeholder="내용" title="등화류 내용" type="text"/>
+<input aria-label="등화류 감가 금액" class="function-price" data-key="등화류-price" oninput="formatInput(this); saveInput('등화류-price'); updateAll()" placeholder="금액(원)" title="등화류 감가 금액" type="text"/>
+</div>
+<div class="function-item">
+<input aria-label="에어컨히터 선택" data-name="에어컨히터" onchange="updateAll()" title="에어컨히터 선택" type="checkbox"/>
+<div style="font-weight:900;">냉난방류</div>
+<input aria-label="에어컨히터 내용" class="function-desc" data-key="에어컨히터-desc" oninput="saveInput('에어컨히터-desc'); updateAll()" placeholder="내용" title="에어컨히터 내용" type="text"/>
+<input aria-label="에어컨히터 감가 금액" class="function-price" data-key="에어컨히터-price" oninput="formatInput(this); saveInput('에어컨히터-price'); updateAll()" placeholder="금액(원)" title="에어컨히터 감가 금액" type="text"/>
+</div>
+<div class="function-item">
+<input aria-label="오디오 선택" data-name="오디오" onchange="updateAll()" title="오디오 선택" type="checkbox"/>
+<div style="font-weight:900;">오디오계통</div>
+<input aria-label="오디오 내용" class="function-desc" data-key="오디오-desc" oninput="saveInput('오디오-desc'); updateAll()" placeholder="내용" title="오디오 내용" type="text"/>
+<input aria-label="오디오 감가 금액" class="function-price" data-key="오디오-price" oninput="formatInput(this); saveInput('오디오-price'); updateAll()" placeholder="금액(원)" title="오디오 감가 금액" type="text"/>
+</div>
+<div class="function-item">
+<input aria-label="미러창문 선택" data-name="미러창문" onchange="updateAll()" title="미러창문 선택" type="checkbox"/>
+<div style="font-weight:900;">미러&amp;창문</div>
+<input aria-label="미러창문 내용" class="function-desc" data-key="미러창문-desc" oninput="saveInput('미러창문-desc'); updateAll()" placeholder="내용" title="미러창문 내용" type="text"/>
+<input aria-label="미러창문 감가 금액" class="function-price" data-key="미러창문-price" oninput="formatInput(this); saveInput('미러창문-price'); updateAll()" placeholder="금액(원)" title="미러창문 감가 금액" type="text"/>
+</div>
+<div class="function-item">
+<input aria-label="버튼류 선택" data-name="버튼류" onchange="updateAll()" title="버튼류 선택" type="checkbox"/>
+<div style="font-weight:900;">버튼류작동</div>
+<input aria-label="버튼류 내용" class="function-desc" data-key="버튼류-desc" oninput="saveInput('버튼류-desc'); updateAll()" placeholder="내용" title="버튼류 내용" type="text"/>
+<input aria-label="버튼류 감가 금액" class="function-price" data-key="버튼류-price" oninput="formatInput(this); saveInput('버튼류-price'); updateAll()" placeholder="금액(원)" title="버튼류 감가 금액" type="text"/>
+</div>
+<div class="function-item">
+<input aria-label="썬팅 선택" data-name="썬팅" onchange="updateAll()" title="썬팅 선택" type="checkbox"/>
+<div style="font-weight:900;">썬팅상태</div>
+<input aria-label="썬팅 내용" class="function-desc" data-key="썬팅-desc" oninput="saveInput('썬팅-desc'); updateAll()" placeholder="내용" title="썬팅 내용" type="text"/>
+<input aria-label="썬팅 감가 금액" class="function-price" data-key="썬팅-price" oninput="formatInput(this); saveInput('썬팅-price'); updateAll()" placeholder="금액(원)" title="썬팅 감가 금액" type="text"/>
+</div>
+<div class="function-item">
+<input aria-label="유리크랙 선택" data-name="유리크랙" onchange="updateAll()" title="유리크랙 선택" type="checkbox"/>
+<div style="font-weight:900;">유리크랙</div>
+<input aria-label="유리크랙 내용" class="function-desc" data-key="유리크랙-desc" oninput="saveInput('유리크랙-desc'); updateAll()" placeholder="내용" title="유리크랙 내용" type="text"/>
+<input aria-label="유리크랙 감가 금액" class="function-price" data-key="유리크랙-price" oninput="formatInput(this); saveInput('유리크랙-price'); updateAll()" placeholder="금액(원)" title="유리크랙 감가 금액" type="text"/>
+</div>
+<div class="function-item">
+<input aria-label="트렁크상태 선택" data-name="트렁크상태" onchange="updateAll()" title="트렁크상태 선택" type="checkbox"/>
+<div style="font-weight:900;">트렁크상태</div>
+<input aria-label="트렁크상태 내용" class="function-desc" data-key="트렁크상태-desc" oninput="saveInput('트렁크상태-desc'); updateAll()" placeholder="내용" title="트렁크상태 내용" type="text"/>
+<input aria-label="트렁크상태 감가 금액" class="function-price" data-key="트렁크상태-price" oninput="formatInput(this); saveInput('트렁크상태-price'); updateAll()" placeholder="금액(원)" title="트렁크상태 감가 금액" type="text"/>
+</div>
+<div id="interior-items"></div>
+<button class="btn-soft" onclick="addExtraItem('인테리어')">+ 기타 항목 추가</button>
+</div>
+</div>
+<!-- 검차결과 -->
+<div class="section page-panel" data-page-panel="4">
+<h2><i class="fa-solid fa-clipboard-check"></i> 검차결과</h2>
+<div class="result-area" id="resultArea" style="display:none;"></div>
+<div class="hint">* 기본정보, 도색, 사고, 세부상태에서 입력한 내용을 종합한 최종 검차결과입니다.</div>
+</div>
+<div class="page-nav">
+<button id="prevPageBtn" onclick="changePage(-1)">← 이전</button>
+<button class="next" id="nextPageBtn" onclick="changePage(1)">다음 →</button>
+</div>
+<!-- Bottom bar -->
+<div class="bottom-bar">
+<div class="bottom-left">
+<div class="label">최종금액</div>
+<div class="value"><span id="finalPrice">0</span>원</div>
+</div>
+<div class="bottom-actions">
+<button class="btn-ghost" onclick="window.scrollTo({top:0, behavior:'smooth'})">맨위로</button>
+<button class="btn-primary" onclick="resetAll()">초기화</button>
+</div>
+</div>
+<script>
     // ✅ 가격(국산/수입 토글)
     const PRICE = { partPrice: 180000, wheelPrice: 80000, tirePrice: 80000, spareKeyMissing: 150000 };
 
@@ -1178,11 +1171,11 @@
       const item = document.createElement('div');
       item.className='function-item has-delete';
       item.innerHTML = `
-        <input type="checkbox" data-name="${name}" onchange="updateAll()">
+        <input type="checkbox" data-name="${name}" aria-label="${name} 선택" title="${name} 선택" onchange="updateAll()">
         <div style="font-weight:900;">${name}</div>
-        <input type="text" class="function-desc" data-key="${name}-desc" placeholder="내용" oninput="saveInput('${name}-desc'); updateAll()">
-        <input type="text" class="function-price" data-key="${name}-price" placeholder="금액(원)" oninput="formatInput(this); saveInput('${name}-price'); updateAll()">
-        <button class="btn-del" onclick="this.parentElement.remove(); localStorage.removeItem('${name}-desc'); localStorage.removeItem('${name}-price'); updateAll(); saveExtraItems();">삭제</button>
+        <input type="text" class="function-desc" data-key="${name}-desc" aria-label="${name} 내용" title="${name} 내용" placeholder="내용" oninput="saveInput('${name}-desc'); updateAll()">
+        <input type="text" class="function-price" data-key="${name}-price" aria-label="${name} 감가 금액" title="${name} 감가 금액" placeholder="금액(원)" oninput="formatInput(this); saveInput('${name}-price'); updateAll()">
+        <button class="btn-del" type="button" aria-label="${name} 삭제" title="${name} 삭제" onclick="this.parentElement.remove(); localStorage.removeItem('${name}-desc'); localStorage.removeItem('${name}-price'); updateAll(); saveExtraItems();">삭제</button>
       `;
       container.appendChild(item);
       saveExtraItems();
@@ -1758,7 +1751,3 @@
   </script>
 </body>
 </html>
-
-
-
-
