@@ -415,6 +415,25 @@
     .acc-item.exchange::after{ content:"X"; }
     .acc-item.repair::after{ content:"W"; }
 
+    /* 고객 사전고지 사고: 감가 제외 (XX / WW) */
+    .checkbox-item.disclosed-exchange{
+      background:#22c55e;
+      transform: translate(-50%, -50%) scale(2);
+      box-shadow: 0 6px 16px rgba(34,197,94,.30);
+    }
+    .checkbox-item.disclosed-repair{
+      background:#14b8a6;
+      transform: translate(-50%, -50%) scale(2);
+      box-shadow: 0 6px 16px rgba(20,184,166,.30);
+    }
+    .acc-item.disclosed-exchange::after{ content:"XX"; font-size:5.5px; }
+    .acc-item.disclosed-repair::after{ content:"WW"; font-size:5.5px; }
+
+    .chip.disclosed{
+      border-color:rgba(34,197,94,.42);
+      background:rgba(34,197,94,.12);
+      color:#bbf7d0;
+    }
 
     @media (max-width:420px){
       .checkbox-item{ width:10px; height:10px;}
@@ -791,6 +810,12 @@
   <!-- 사고 -->
   <div class="section page-panel" data-page-panel="2">
     <h2><i class="fas fa-car-burst"></i> 사고 이력</h2>
+
+    <div class="hint" style="margin:0 0 10px;">
+      핀을 터치할 때마다 <b>없음 → X(교환) → W(판금) → XX(고객고지 교환) → WW(고객고지 판금) → 없음</b> 순서로 변경됩니다.<br>
+      <b>XX / WW는 검차결과에는 표시되지만 감가금액에는 반영되지 않습니다.</b>
+    </div>
+
     <div class="container">
       <img src="https://imgur.com/agbd7Z8.png" class="car-image" alt="사고부위 자동차">
       <div class="checkbox-overlay" id="accidentSection"></div>
@@ -1259,7 +1284,7 @@
     // 사고 state helper
     function setAccidentState(el, state){
       el.dataset.state = state || '';
-      el.classList.remove('exchange','repair');
+      el.classList.remove('exchange','repair','disclosed-exchange','disclosed-repair');
       if(state) el.classList.add(state);
       el.setAttribute('aria-pressed', state ? 'true' : 'false');
     }
@@ -1311,8 +1336,22 @@
 
         el.addEventListener('click', ()=>{
           const cur = el.dataset.state || '';
-          const next = (cur === '') ? 'exchange' : (cur === 'exchange' ? 'repair' : '');
-          setAccidentState(el, next);
+
+          // 없음 → X(교환) → W(판금) → XX(고객고지 교환) → WW(고객고지 판금) → 없음
+          const stateOrder = [
+            '',
+            'exchange',
+            'repair',
+            'disclosed-exchange',
+            'disclosed-repair'
+          ];
+
+          const currentIndex = stateOrder.indexOf(cur);
+          const nextIndex = currentIndex >= 0
+            ? (currentIndex + 1) % stateOrder.length
+            : 0;
+
+          setAccidentState(el, stateOrder[nextIndex]);
           updateAll();
           saveCheckboxState();
         });
@@ -1438,10 +1477,14 @@
       const accidentChips = selectedAccidents.length
         ? `<div class="chips">${
             selectedAccidents.map(a=>{
-              const cls = a.state === 'exchange' ? 'exchange' : 'repair';
-              const label = a.state === 'exchange' ? '교환' : '판금';
-              const icon = a.state === 'exchange' ? 'fa-solid fa-arrows-rotate' : 'fa-solid fa-screwdriver-wrench';
-              return `<span class="chip ${cls}"><i class="${icon}"></i>${a.name} · ${label}</span>`;
+              const disclosed = a.state === 'disclosed-exchange' || a.state === 'disclosed-repair';
+              const exchange = a.state === 'exchange' || a.state === 'disclosed-exchange';
+              const cls = disclosed ? 'disclosed' : (exchange ? 'exchange' : 'repair');
+              const label = exchange ? '교환' : '판금';
+              const mark = disclosed ? (exchange ? 'XX' : 'WW') : (exchange ? 'X' : 'W');
+              const icon = disclosed ? 'fa-solid fa-circle-check' : (exchange ? 'fa-solid fa-arrows-rotate' : 'fa-solid fa-screwdriver-wrench');
+              const suffix = disclosed ? ' · 고객고지 · 감가제외' : '';
+              return `<span class="chip ${cls}"><i class="${icon}"></i>${a.name} · ${label}(${mark})${suffix}</span>`;
             }).join('')
           }</div>`
         : `<div class="result-empty">선택 없음</div>`;
@@ -1587,14 +1630,22 @@
         const rate = Number(el.dataset.rate);
         const state = el.dataset.state || '';
 
-        if(state === 'exchange' || state === 'repair'){
+        if(state === 'exchange' || state === 'repair' || state === 'disclosed-exchange' || state === 'disclosed-repair'){
           selectedAccidents.push({name, state});
 
-          const appliedRate = state === 'exchange' ? rate : (rate - 1);
-          const discount = Math.round(bidPrice * (appliedRate / 100));
+          const isDisclosed = state === 'disclosed-exchange' || state === 'disclosed-repair';
+          const isExchange = state === 'exchange' || state === 'disclosed-exchange';
 
-          accidentDiscount += discount;
-          accidentLines.push(`[사고] ${name} (${state === 'exchange' ? '교환' : '판금'}): -${discount.toLocaleString()}원`);
+          if(isDisclosed){
+            const mark = isExchange ? 'XX' : 'WW';
+            accidentLines.push(`[고객고지] ${name} (${isExchange ? '교환' : '판금'} ${mark}): 감가 제외`);
+          }else{
+            const appliedRate = isExchange ? rate : (rate - 1);
+            const discount = Math.round(bidPrice * (appliedRate / 100));
+
+            accidentDiscount += discount;
+            accidentLines.push(`[사고] ${name} (${isExchange ? '교환' : '판금'}): -${discount.toLocaleString()}원`);
+          }
         }
       });
 
