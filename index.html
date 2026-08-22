@@ -716,7 +716,7 @@
 
 
     /* ===== 페이지형 UI (차량 이미지/핀 CSS는 원본 그대로 유지) ===== */
-    .page-tabs{max-width:760px;margin:12px auto;display:grid;grid-template-columns:repeat(5,1fr);gap:8px;position:sticky;top:8px;z-index:80;padding:8px;background:rgba(11,18,32,.88);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.10);border-radius:var(--radius);box-shadow:var(--shadow-soft)}
+    .page-tabs{max-width:760px;margin:12px auto;display:grid;grid-template-columns:repeat(6,1fr);gap:8px;position:sticky;top:8px;z-index:80;padding:8px;background:rgba(11,18,32,.88);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.10);border-radius:var(--radius);box-shadow:var(--shadow-soft)}
     .page-tab{padding:10px 8px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.18);color:var(--muted);font-weight:900;cursor:pointer;font-size:12px}
     .page-tab.active{background:rgba(255,92,92,.16);border-color:rgba(255,92,92,.45);color:var(--accent)}
     .page-panel{display:none}
@@ -724,17 +724,1666 @@
     .page-nav{max-width:760px;margin:12px auto;display:flex;gap:8px;justify-content:space-between}
     .page-nav button{flex:1;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(0,0,0,.18);color:var(--text);font-weight:900;cursor:pointer}
     .page-nav button.next{background:var(--accent);border-color:var(--accent);color:#fff}
-    @media(max-width:560px){.page-tabs{grid-template-columns:repeat(5,1fr);gap:5px;padding:6px}.page-tab{padding:9px 4px;font-size:11px}}
+    @media(max-width:560px){.page-tabs{grid-template-columns:repeat(6,1fr);gap:5px;padding:6px}.page-tab{padding:9px 4px;font-size:11px}}
+
+
+
+/* =========================================================
+   LIGHT DEALER APP UI — 기능/구조는 그대로, 색상/UI만 변경
+   ========================================================= */
+:root{
+  --accent:#2563eb;
+  --accent-2:#3b82f6;
+  --bg:#f3f6fb;
+  --card:#ffffff;
+  --card-2:#f8fafc;
+  --text:#172033;
+  --muted:#6b7280;
+  --line:#dfe5ee;
+  --shadow:0 10px 28px rgba(15,23,42,.08);
+  --shadow-soft:0 4px 14px rgba(15,23,42,.07);
+  --focus:0 0 0 4px rgba(37,99,235,.14);
+}
+html,.app{color-scheme:light;}
+body{
+  background:
+    radial-gradient(900px 420px at 20% 0%, rgba(37,99,235,.08), transparent 58%),
+    linear-gradient(180deg,#f8faff 0%,#f3f6fb 55%,#eef2f7 100%);
+  color:var(--text);
+}
+.app-header{
+  background:linear-gradient(135deg,#ffffff,#f3f7ff);
+  border-color:#dce5f2;
+  box-shadow:var(--shadow-soft);
+}
+.app-title h1 i,.section h2 i{
+  color:var(--accent);
+  background:#eaf1ff;
+  border-color:#d8e5ff;
+}
+.car-type-toggle button{
+  background:#fff;
+  color:#4b5563;
+  border-color:#d9e0ea;
+  box-shadow:0 2px 7px rgba(15,23,42,.04);
+}
+.car-type-toggle button.active{
+  background:#eaf1ff;
+  color:var(--accent);
+  border-color:#9dbcf8;
+}
+.section{
+  background:#fff;
+  border-color:#e0e6ef;
+  box-shadow:var(--shadow);
+}
+input[type="text"],textarea,select{
+  background:#f8fafc;
+  color:var(--text);
+  border-color:#dce3ec;
+}
+input[type="text"]::placeholder,textarea::placeholder{
+  color:#a2aab7;
+}
+input[type="text"]:focus,textarea:focus,select:focus{
+  background:#fff;
+  border-color:#7aa2f7;
+  box-shadow:var(--focus);
+}
+select{
+  background-image:
+    linear-gradient(45deg,transparent 50%,#64748b 50%),
+    linear-gradient(135deg,#64748b 50%,transparent 50%);
+}
+select option{background:#fff;color:#172033;}
+
+.result-area{
+  background:#f7faff;
+  border-color:#b8cdf8;
+}
+.result-title,.result-total{color:var(--accent);}
+.result-list li{color:#253047;}
+.chip{
+  background:#fff;
+  color:#334155;
+  border-color:#dbe3ee;
+}
+.chip.exchange{
+  background:#fff0f0;
+  border-color:#ffc2c2;
+  color:#d63b3b;
+}
+.chip.repair{
+  background:#fff8e8;
+  border-color:#f5d38a;
+  color:#a86608;
+}
+.container{
+  background:#fff;
+  border-color:#dfe5ee;
+  box-shadow:0 5px 16px rgba(15,23,42,.08);
+}
+.function-category{
+  background:#f8fafc;
+  border-color:#e0e6ef;
+}
+.function-category h3{color:#315fae;}
+.function-item{
+  background:#fff;
+  border-color:#e0e6ef;
+}
+.function-item:has(input[type="checkbox"]:checked){
+  background:#f3f7ff;
+  border-color:#a9c3f8;
+}
+.function-item input[type="text"]{
+  background:#f8fafc;
+  color:var(--text);
+  border-color:#dce3ec;
+}
+.btn-soft{
+  background:#eef4ff;
+  border-color:#b8cdf8;
+  color:#2558a8;
+}
+.btn-soft:hover{background:#e4edff;}
+.btn-del{
+  background:#fff;
+  color:#64748b;
+  border-color:#dce3ec;
+}
+.btn-del:hover{background:#f8fafc;}
+
+.page-tabs{
+  background:rgba(255,255,255,.94);
+  border-color:#dce3ec;
+  box-shadow:0 6px 20px rgba(15,23,42,.08);
+}
+.page-tab{
+  background:#f6f8fb;
+  color:#7b8493;
+  border-color:#e0e6ef;
+}
+.page-tab.active{
+  background:#eaf1ff;
+  border-color:#9dbcf8;
+  color:#1f5cc4;
+}
+.page-nav button{
+  background:#fff;
+  color:#334155;
+  border-color:#dce3ec;
+}
+.page-nav button.next{
+  background:var(--accent);
+  border-color:var(--accent);
+  color:#fff;
+}
+.bottom-bar{
+  background:rgba(255,255,255,.96);
+  border-color:#dce3ec;
+  box-shadow:0 -4px 22px rgba(15,23,42,.10);
+}
+.bottom-left .label{color:#7b8493;}
+.bottom-left .value{color:#e34a4a;}
+.btn-ghost{
+  background:#f8fafc;
+  color:#334155;
+  border-color:#dce3ec;
+}
+.btn-primary{
+  background:#2563eb;
+  color:#fff;
+}
+
+/* 핀은 밝은 배경에서 더 또렷하게 */
+.checkbox-item{
+  background:#64748b;
+  border:2px solid rgba(255,255,255,.95);
+  box-shadow:0 2px 7px rgba(15,23,42,.28);
+}
+.checkbox-item.selected{
+  background:#ef4444;
+  box-shadow:0 4px 12px rgba(239,68,68,.30);
+}
+.checkbox-item.exchange{
+  background:#ef4444;
+  box-shadow:0 4px 12px rgba(239,68,68,.30);
+}
+.checkbox-item.repair{
+  background:#3b82f6;
+  box-shadow:0 4px 12px rgba(59,130,246,.30);
+}
+
+/* 고객고지 XX / WW 상태는 기존 의미색 유지하되 밝게 정리 */
+.checkbox-item.notice-exchange{
+  background:#22c55e !important;
+}
+.checkbox-item.notice-repair{
+  background:#14b8a6 !important;
+}
+
+/* 모바일에서 카드 경계/탭을 조금 더 깔끔하게 */
+@media(max-width:560px){
+  body{padding-left:10px;padding-right:10px;}
+  .section,.app-header{border-radius:16px;}
+  .page-tabs{border-radius:14px;}
+  .page-tab{font-size:10.5px;padding:9px 2px;}
+}
+
+
+
+/* =========================================================
+   PREMIUM LIGHT UI — 기능/위치 유지, 비주얼만 고급화
+   ========================================================= */
+:root{
+  --accent:#1f5fae;
+  --accent-2:#2f73c9;
+  --bg:#f2f4f7;
+  --card:#ffffff;
+  --card-2:#f8fafc;
+  --text:#182230;
+  --muted:#7b8798;
+  --line:#e3e8ef;
+  --shadow:0 12px 32px rgba(22,34,51,.07);
+  --shadow-soft:0 5px 16px rgba(22,34,51,.055);
+  --focus:0 0 0 4px rgba(31,95,174,.11);
+}
+
+body{
+  background:
+    radial-gradient(760px 360px at 50% -120px, rgba(47,115,201,.09), transparent 65%),
+    linear-gradient(180deg,#fafbfd 0%,#f3f5f8 42%,#eef2f6 100%);
+  color:var(--text);
+}
+
+/* 헤더 */
+.app-header{
+  background:rgba(255,255,255,.93);
+  border:1px solid rgba(213,220,230,.92);
+  box-shadow:
+    0 12px 28px rgba(25,39,58,.065),
+    inset 0 1px 0 rgba(255,255,255,.92);
+  border-radius:20px;
+  padding:15px 16px;
+}
+.app-title{
+  align-items:center;
+}
+.app-title h1{
+  font-size:18px;
+  color:#162033;
+  letter-spacing:-.45px;
+}
+.app-title h1 i{
+  width:38px;
+  height:38px;
+  border-radius:13px;
+  color:#1f5fae;
+  background:linear-gradient(145deg,#edf4fc,#e4eef9);
+  border:1px solid #d8e5f4;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9);
+}
+
+/* 차종 토글 */
+.car-type-toggle{
+  gap:6px;
+  padding:3px;
+  border-radius:14px;
+  background:#f2f5f9;
+  border:1px solid #e1e6ed;
+}
+.car-type-toggle button{
+  min-width:70px;
+  padding:8px 12px;
+  border:0;
+  background:transparent;
+  color:#7b8798;
+  box-shadow:none;
+}
+.car-type-toggle button.active{
+  background:#fff;
+  color:#1f5fae;
+  border:0;
+  box-shadow:
+    0 3px 10px rgba(28,50,78,.08),
+    inset 0 0 0 1px rgba(31,95,174,.13);
+}
+
+/* 상단 페이지 네비게이션 */
+.page-tabs{
+  top:8px;
+  gap:4px;
+  padding:5px;
+  border-radius:17px;
+  background:rgba(255,255,255,.94);
+  border:1px solid #dfe5ec;
+  box-shadow:
+    0 8px 22px rgba(25,39,58,.065),
+    inset 0 1px 0 rgba(255,255,255,.95);
+  -webkit-backdrop-filter:blur(14px);
+  backdrop-filter:blur(14px);
+}
+.page-tab{
+  min-height:39px;
+  padding:9px 6px;
+  border:0;
+  border-radius:12px;
+  background:transparent;
+  color:#8994a3;
+  font-size:11.5px;
+  letter-spacing:-.2px;
+  transition:.18s ease;
+}
+.page-tab.active{
+  color:#fff;
+  background:linear-gradient(135deg,#1c5a9f,#2f73c9);
+  border:0;
+  box-shadow:0 5px 14px rgba(31,95,174,.22);
+}
+
+/* 카드 */
+.section{
+  border-radius:20px;
+  background:rgba(255,255,255,.97);
+  border:1px solid #e2e7ed;
+  box-shadow:
+    0 12px 30px rgba(25,39,58,.06),
+    inset 0 1px 0 rgba(255,255,255,.95);
+  padding:15px;
+}
+.section h2{
+  font-size:15px;
+  color:#1d2939;
+  letter-spacing:-.35px;
+}
+.section h2 i{
+  width:33px;
+  height:33px;
+  border-radius:11px;
+  color:#295f99;
+  background:#eef4fa;
+  border:1px solid #dae6f2;
+}
+
+/* 입력 */
+.field label{
+  color:#697586;
+  font-size:11.5px;
+}
+input[type="text"],textarea,select,
+.function-item input[type="text"]{
+  background:#fbfcfd;
+  color:#182230;
+  border:1px solid #dde3ea;
+  border-radius:12px;
+  box-shadow:inset 0 1px 2px rgba(23,34,51,.018);
+}
+input[type="text"]:hover,textarea:hover,select:hover{
+  border-color:#cbd5df;
+}
+input[type="text"]:focus,textarea:focus,select:focus{
+  background:#fff;
+  border-color:#6f9ed3;
+  box-shadow:0 0 0 4px rgba(47,115,201,.10);
+}
+input[type="text"]::placeholder,textarea::placeholder{
+  color:#aab2bd;
+}
+
+/* 도면 */
+.container{
+  border-radius:18px;
+  border:1px solid #dde4eb;
+  background:#fff;
+  box-shadow:
+    0 9px 24px rgba(26,40,59,.07),
+    inset 0 0 0 1px rgba(255,255,255,.8);
+}
+
+/* 세부 상태 */
+.function-category{
+  background:#f9fafc;
+  border:1px solid #e4e9ef;
+  border-radius:17px;
+}
+.function-category h3{
+  color:#385c85;
+  letter-spacing:-.15px;
+}
+.function-item{
+  background:#fff;
+  border:1px solid #e4e9ef;
+  border-radius:13px;
+  box-shadow:0 2px 8px rgba(25,39,58,.025);
+}
+.function-item:has(input[type="checkbox"]:checked){
+  background:#f5f9ff;
+  border-color:#b7cee9;
+  box-shadow:0 4px 12px rgba(31,95,174,.055);
+}
+.function-item input[type="checkbox"]{
+  accent-color:#2f73c9;
+}
+
+/* 결과 */
+.result-area{
+  background:linear-gradient(180deg,#f7faff,#f4f8fd);
+  border:1px solid #cfdff1;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.8);
+}
+.result-title,.result-total{
+  color:#1f5fae;
+}
+.chip{
+  background:#fff;
+  color:#334155;
+  border-color:#dce3eb;
+  box-shadow:0 2px 7px rgba(25,39,58,.035);
+}
+
+/* 보조 버튼 */
+.btn-soft{
+  color:#285d98;
+  background:#eef5fc;
+  border-color:#cbdcf0;
+}
+.btn-soft:hover{
+  background:#e8f1fb;
+}
+.btn-del{
+  background:#fff;
+  color:#7b8798;
+  border-color:#dfe5ec;
+}
+
+/* 페이지 이동 */
+.page-nav button{
+  min-height:45px;
+  border-radius:13px;
+  border:1px solid #dfe5ec;
+  background:#fff;
+  color:#344054;
+  box-shadow:0 4px 12px rgba(25,39,58,.04);
+}
+.page-nav button.next{
+  border:0;
+  color:#fff;
+  background:linear-gradient(135deg,#1c5a9f,#2f73c9);
+  box-shadow:0 6px 16px rgba(31,95,174,.20);
+}
+
+/* 하단바 */
+.bottom-bar{
+  background:rgba(255,255,255,.96);
+  border:1px solid #dde4eb;
+  box-shadow:
+    0 -3px 22px rgba(25,39,58,.08),
+    0 8px 24px rgba(25,39,58,.07);
+}
+.bottom-left .label{
+  color:#7b8798;
+}
+.bottom-left .value{
+  color:#d74747;
+  letter-spacing:-.3px;
+}
+.btn-ghost{
+  background:#f7f9fb;
+  color:#475467;
+  border-color:#dce3ea;
+}
+.btn-primary{
+  border:0;
+  color:#fff;
+  background:linear-gradient(135deg,#1c5a9f,#2f73c9);
+  box-shadow:0 5px 14px rgba(31,95,174,.18);
+}
+
+/* 핀: 의미색은 유지하면서 광택 제거 */
+.checkbox-item{
+  border:2px solid rgba(255,255,255,.98);
+  box-shadow:0 2px 7px rgba(28,40,58,.25);
+}
+.checkbox-item.selected,
+.checkbox-item.exchange{
+  background:#e5484d;
+  box-shadow:0 3px 10px rgba(229,72,77,.28);
+}
+.checkbox-item.repair{
+  background:#367bc3;
+  box-shadow:0 3px 10px rgba(54,123,195,.27);
+}
+
+/* 작은 화면 */
+@media(max-width:560px){
+  .app-header{
+    padding:12px 13px;
+    border-radius:17px;
+  }
+  .app-title h1{
+    font-size:16px;
+  }
+  .app-title h1 i{
+    width:34px;
+    height:34px;
+  }
+  .car-type-toggle button{
+    min-width:58px;
+    padding:7px 8px;
+    font-size:11px;
+  }
+  .page-tabs{
+    gap:3px;
+    padding:4px;
+    border-radius:15px;
+  }
+  .page-tab{
+    min-height:37px;
+    padding:8px 2px;
+    font-size:10.2px;
+  }
+  .section{
+    border-radius:17px;
+    padding:12px;
+  }
+}
+
+
+
+/* =========================================================
+   LIGHT / DARK MODE TOGGLE
+========================================================= */
+.header-actions{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex:0 0 auto;
+}
+.theme-toggle{
+  width:38px;
+  height:38px;
+  display:grid;
+  place-items:center;
+  flex:0 0 auto;
+  padding:0;
+  border:1px solid #dfe5ec;
+  border-radius:12px;
+  background:#fff;
+  color:#536176;
+  box-shadow:0 3px 10px rgba(25,39,58,.06);
+  cursor:pointer;
+  transition:.18s ease;
+}
+.theme-toggle:active{transform:scale(.96)}
+.theme-toggle i{font-size:14px;pointer-events:none}
+
+/* 다크모드 */
+body.dark-mode{
+  --accent:#ff6464;
+  --accent-2:#ff7f7f;
+  --bg:#0b1220;
+  --card:rgba(255,255,255,.06);
+  --card-2:rgba(255,255,255,.08);
+  --text:#e8edf5;
+  --muted:#9ba6b6;
+  --line:rgba(255,255,255,.11);
+  --shadow:0 15px 34px rgba(0,0,0,.30);
+  --shadow-soft:0 5px 16px rgba(0,0,0,.22);
+  --focus:0 0 0 4px rgba(255,100,100,.15);
+  background:
+    radial-gradient(900px 430px at 28% -50px,rgba(255,92,92,.13),transparent 62%),
+    radial-gradient(700px 400px at 95% 8%,rgba(65,105,225,.08),transparent 55%),
+    #0b1220;
+  color:var(--text);
+  color-scheme:dark;
+}
+body.dark-mode .app-header{
+  background:rgba(16,24,39,.95);
+  border-color:rgba(255,255,255,.10);
+  box-shadow:0 12px 30px rgba(0,0,0,.26);
+}
+body.dark-mode .app-title h1,
+body.dark-mode .section h2{color:#eef2f7}
+body.dark-mode .app-title h1 i,
+body.dark-mode .section h2 i{
+  color:#ff7474;
+  background:rgba(255,92,92,.12);
+  border-color:rgba(255,92,92,.18);
+}
+body.dark-mode .theme-toggle{
+  background:rgba(255,255,255,.06);
+  color:#ffd46b;
+  border-color:rgba(255,255,255,.12);
+  box-shadow:none;
+}
+body.dark-mode .car-type-toggle{
+  background:rgba(0,0,0,.18);
+  border-color:rgba(255,255,255,.10);
+}
+body.dark-mode .car-type-toggle button{color:#9ba6b6}
+body.dark-mode .car-type-toggle button.active{
+  color:#fff;
+  background:rgba(255,92,92,.16);
+  box-shadow:inset 0 0 0 1px rgba(255,92,92,.28);
+}
+body.dark-mode .page-tabs{
+  background:rgba(16,24,39,.94);
+  border-color:rgba(255,255,255,.10);
+  box-shadow:0 8px 22px rgba(0,0,0,.22);
+}
+body.dark-mode .page-tab{color:#8f9baa}
+body.dark-mode .page-tab.active{
+  color:#fff;
+  background:linear-gradient(135deg,#d84b4b,#ff6969);
+  box-shadow:0 5px 14px rgba(255,92,92,.20);
+}
+body.dark-mode .section{
+  background:linear-gradient(180deg,rgba(255,255,255,.065),rgba(255,255,255,.035));
+  border-color:rgba(255,255,255,.10);
+  box-shadow:0 14px 34px rgba(0,0,0,.22);
+}
+body.dark-mode .field label{color:#a0aaba}
+body.dark-mode input[type="text"],
+body.dark-mode textarea,
+body.dark-mode select,
+body.dark-mode .function-item input[type="text"]{
+  color:#edf1f7;
+  background:rgba(0,0,0,.20);
+  border-color:rgba(255,255,255,.12);
+}
+body.dark-mode input[type="text"]::placeholder,
+body.dark-mode textarea::placeholder{color:#6f7b8b}
+body.dark-mode input[type="text"]:focus,
+body.dark-mode textarea:focus,
+body.dark-mode select:focus{
+  background:rgba(0,0,0,.26);
+  border-color:rgba(255,100,100,.54);
+  box-shadow:0 0 0 4px rgba(255,92,92,.12);
+}
+body.dark-mode .function-category{
+  background:rgba(255,255,255,.035);
+  border-color:rgba(255,255,255,.09);
+}
+body.dark-mode .function-category h3{color:#ff8a8a}
+body.dark-mode .function-item{
+  background:rgba(0,0,0,.17);
+  border-color:rgba(255,255,255,.10);
+  box-shadow:none;
+}
+body.dark-mode .function-item:has(input[type="checkbox"]:checked){
+  background:rgba(255,92,92,.075);
+  border-color:rgba(255,92,92,.28);
+}
+body.dark-mode .function-item input[type="checkbox"]{accent-color:#ff6464}
+body.dark-mode .container{
+  border-color:rgba(255,255,255,.11);
+  box-shadow:0 8px 22px rgba(0,0,0,.24);
+}
+body.dark-mode .result-area{
+  background:rgba(255,92,92,.055);
+  border-color:rgba(255,92,92,.30);
+}
+body.dark-mode .result-title,
+body.dark-mode .result-total{color:#ff7777}
+body.dark-mode .result-list li{color:#e7ebf2}
+body.dark-mode .chip{
+  background:rgba(0,0,0,.18);
+  color:#e4e9f0;
+  border-color:rgba(255,255,255,.11);
+  box-shadow:none;
+}
+body.dark-mode .btn-soft{
+  background:rgba(255,92,92,.10);
+  color:#ff8c8c;
+  border-color:rgba(255,92,92,.27);
+}
+body.dark-mode .btn-del{
+  background:rgba(255,255,255,.04);
+  color:#9ca7b6;
+  border-color:rgba(255,255,255,.10);
+}
+body.dark-mode .page-nav button{
+  background:rgba(255,255,255,.055);
+  color:#dce2ea;
+  border-color:rgba(255,255,255,.11);
+  box-shadow:none;
+}
+body.dark-mode .page-nav button.next{
+  color:#fff;
+  border:0;
+  background:linear-gradient(135deg,#d84b4b,#ff6969);
+}
+body.dark-mode .bottom-bar{
+  background:rgba(11,18,32,.96);
+  border-color:rgba(255,255,255,.11);
+  box-shadow:0 -4px 22px rgba(0,0,0,.25);
+}
+body.dark-mode .bottom-left .label{color:#99a4b4}
+body.dark-mode .bottom-left .value{color:#ff6868}
+body.dark-mode .btn-ghost{
+  color:#dce2e9;
+  background:rgba(255,255,255,.05);
+  border-color:rgba(255,255,255,.11);
+}
+body.dark-mode .btn-primary{
+  color:#fff;
+  background:linear-gradient(135deg,#d84b4b,#ff6969);
+  box-shadow:0 5px 14px rgba(255,92,92,.16);
+}
+
+@media(max-width:560px){
+  .header-actions{gap:5px}
+  .theme-toggle{
+    width:34px;
+    height:34px;
+    border-radius:11px;
+  }
+}
+
+
+
+/* =========================================================
+   차량 저장 / 사진 / 저장목록
+========================================================= */
+.record-action-panel{
+  margin-top:14px;
+  padding:13px;
+  border:1px solid var(--line);
+  border-radius:18px;
+  background:var(--card-2);
+}
+.record-action-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:12px;
+}
+.record-action-title{
+  font-size:13px;
+  font-weight:900;
+  color:var(--text);
+  display:flex;
+  align-items:center;
+  gap:7px;
+}
+.record-action-title i{color:var(--accent)}
+.record-action-sub{
+  margin-top:3px;
+  color:var(--muted);
+  font-size:10.5px;
+  line-height:1.4;
+}
+.photo-section{
+  padding:11px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:rgba(255,255,255,.55);
+}
+.photo-title-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+}
+.photo-title{
+  font-size:11.5px;
+  font-weight:900;
+  color:var(--text);
+}
+.photo-title i{color:var(--accent);margin-right:5px}
+.photo-add-button{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+  min-height:36px;
+  padding:7px 10px;
+  border:1px solid var(--line);
+  border-radius:11px;
+  background:#fff;
+  color:var(--text);
+  font-size:10.5px;
+  font-weight:900;
+  cursor:pointer;
+}
+.photo-preview{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:7px;
+  margin-top:10px;
+}
+.photo-item{
+  position:relative;
+  aspect-ratio:1 / 1;
+  overflow:hidden;
+  border-radius:11px;
+  border:1px solid var(--line);
+  background:#edf1f5;
+}
+.photo-item img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+.photo-delete{
+  position:absolute;
+  top:4px;
+  right:4px;
+  width:26px;
+  height:26px;
+  border:0;
+  border-radius:50%;
+  padding:0;
+  color:#fff;
+  background:rgba(17,24,39,.76);
+  display:grid;
+  place-items:center;
+  cursor:pointer;
+}
+.photo-empty{
+  grid-column:1 / -1;
+  padding:16px 8px;
+  text-align:center;
+  color:var(--muted);
+  font-size:10.5px;
+}
+.record-actions{
+  display:grid;
+  grid-template-columns:1.2fr 1fr 1fr;
+  gap:7px;
+  margin-top:11px;
+}
+.record-btn{
+  min-height:43px;
+  padding:9px 10px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  color:var(--text);
+  background:#fff;
+  font-size:10.8px;
+  font-weight:900;
+  cursor:pointer;
+}
+.record-btn.primary{
+  border-color:transparent;
+  color:#fff;
+  background:linear-gradient(135deg,#1c5a9f,#2f73c9);
+  box-shadow:0 5px 14px rgba(31,95,174,.16);
+}
+
+/* 저장목록 */
+.saved-toolbar{
+  display:grid;
+  grid-template-columns:1fr auto;
+  align-items:center;
+  gap:9px;
+  margin-bottom:12px;
+}
+.saved-search-wrap{
+  position:relative;
+}
+.saved-search-wrap i{
+  position:absolute;
+  left:12px;
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--muted);
+  font-size:12px;
+  pointer-events:none;
+}
+.saved-search-wrap input{
+  padding-left:34px;
+}
+.saved-count{
+  color:var(--muted);
+  font-size:10.5px;
+  font-weight:900;
+  white-space:nowrap;
+}
+.saved-record-list{
+  display:grid;
+  gap:9px;
+}
+.saved-record-card{
+  padding:12px;
+  border:1px solid var(--line);
+  border-radius:16px;
+  background:var(--card-2);
+  box-shadow:0 4px 12px rgba(25,39,58,.035);
+}
+.saved-card-top{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  align-items:flex-start;
+}
+.saved-car-number{
+  font-size:15px;
+  font-weight:1000;
+  color:var(--text);
+}
+.saved-car-name{
+  margin-top:3px;
+  font-size:11px;
+  color:var(--muted);
+  line-height:1.4;
+}
+.saved-date{
+  flex:0 0 auto;
+  color:var(--muted);
+  font-size:9.5px;
+  text-align:right;
+}
+.saved-price-row{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:6px;
+  margin-top:10px;
+}
+.saved-price-box{
+  padding:8px;
+  border-radius:11px;
+  border:1px solid var(--line);
+  background:#fff;
+}
+.saved-price-label{
+  font-size:9px;
+  color:var(--muted);
+}
+.saved-price-value{
+  margin-top:2px;
+  font-size:11px;
+  font-weight:900;
+  color:var(--text);
+  word-break:break-all;
+}
+.saved-price-value.final{color:var(--accent)}
+.saved-photo-strip{
+  display:flex;
+  gap:5px;
+  margin-top:9px;
+  overflow:hidden;
+}
+.saved-photo-strip img{
+  width:42px;
+  height:42px;
+  object-fit:cover;
+  border-radius:9px;
+  border:1px solid var(--line);
+}
+.saved-card-actions{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:7px;
+  margin-top:10px;
+}
+.saved-load-btn,
+.saved-delete-btn{
+  min-height:38px;
+  border-radius:11px;
+  font-size:10.5px;
+  font-weight:900;
+  cursor:pointer;
+}
+.saved-load-btn{
+  border:0;
+  color:#fff;
+  background:linear-gradient(135deg,#1c5a9f,#2f73c9);
+}
+.saved-delete-btn{
+  padding:0 12px;
+  color:#c24141;
+  border:1px solid #efcece;
+  background:#fff7f7;
+}
+.saved-empty{
+  padding:36px 12px;
+  text-align:center;
+  color:var(--muted);
+  border:1px dashed var(--line);
+  border-radius:16px;
+  font-size:11px;
+}
+.saved-empty i{
+  display:block;
+  margin-bottom:9px;
+  font-size:24px;
+  opacity:.6;
+}
+
+/* dark */
+body.dark-mode .record-action-panel,
+body.dark-mode .saved-record-card{
+  background:rgba(255,255,255,.035);
+}
+body.dark-mode .photo-section{
+  background:rgba(0,0,0,.13);
+}
+body.dark-mode .photo-add-button,
+body.dark-mode .record-btn,
+body.dark-mode .saved-price-box{
+  background:rgba(255,255,255,.055);
+  color:#e5eaf1;
+  border-color:rgba(255,255,255,.11);
+}
+body.dark-mode .saved-delete-btn{
+  background:rgba(239,68,68,.08);
+  border-color:rgba(239,68,68,.22);
+  color:#ff9393;
+}
+
+@media(max-width:560px){
+  .page-tabs{
+    grid-template-columns:repeat(6,1fr);
+    gap:2px;
+  }
+  .page-tab{
+    padding:8px 1px;
+    font-size:9px;
+  }
+  .photo-preview{
+    grid-template-columns:repeat(3,1fr);
+  }
+  .record-actions{
+    grid-template-columns:1fr 1fr;
+  }
+  .record-btn.primary{
+    grid-column:1 / -1;
+  }
+  .saved-price-row{
+    grid-template-columns:1fr 1fr 1fr;
+  }
+}
+
+/* 인쇄 시 결과만 깔끔하게 */
+@media print{
+  body{
+    background:#fff !important;
+    color:#111 !important;
+    padding:0 !important;
+  }
+  .app-header,.page-tabs,.page-nav,.bottom-bar,
+  .record-action-panel,.page-panel:not([data-page-panel="4"]){
+    display:none !important;
+  }
+  .page-panel[data-page-panel="4"]{
+    display:block !important;
+  }
+  .section{
+    box-shadow:none !important;
+    border:0 !important;
+    background:#fff !important;
+  }
+  #resultArea{
+    display:block !important;
+    color:#111 !important;
+    background:#fff !important;
+    border:1px solid #ddd !important;
+  }
+  #resultArea *{color:#111 !important}
+}
+
+
+
+/* =========================================================
+   SUPABASE CLOUD SYNC / AUTH
+========================================================= */
+.cloud-auth-button{
+  min-width:38px;
+  height:38px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  padding:0 10px;
+  border:1px solid #dfe5ec;
+  border-radius:12px;
+  background:#fff;
+  color:#536176;
+  box-shadow:0 3px 10px rgba(25,39,58,.06);
+  cursor:pointer;
+  font-size:10.5px;
+  font-weight:900;
+  white-space:nowrap;
+}
+.cloud-auth-button.connected{
+  color:#146c43;
+  background:#effaf4;
+  border-color:#cbe9d9;
+}
+.cloud-auth-button i{font-size:13px}
+
+.auth-overlay{
+  position:fixed;
+  inset:0;
+  z-index:5000;
+  display:grid;
+  place-items:center;
+  padding:18px;
+  background:rgba(10,18,30,.52);
+  -webkit-backdrop-filter:blur(8px);
+  backdrop-filter:blur(8px);
+}
+.auth-overlay[hidden]{display:none}
+.auth-card{
+  position:relative;
+  width:min(100%,390px);
+  padding:23px 20px 18px;
+  border-radius:22px;
+  border:1px solid #e0e6ed;
+  background:#fff;
+  color:#182230;
+  text-align:left;
+  box-shadow:0 24px 70px rgba(9,21,38,.24);
+}
+.auth-close{
+  position:absolute;
+  top:12px;
+  right:12px;
+  width:34px;
+  height:34px;
+  display:grid;
+  place-items:center;
+  padding:0;
+  border:0;
+  border-radius:50%;
+  background:#f3f5f8;
+  color:#687386;
+  cursor:pointer;
+}
+.auth-icon{
+  width:46px;
+  height:46px;
+  display:grid;
+  place-items:center;
+  margin-bottom:11px;
+  border-radius:15px;
+  color:#1f5fae;
+  background:#eaf2fc;
+  font-size:19px;
+}
+.auth-card h2{
+  margin:0;
+  font-size:19px;
+  letter-spacing:-.4px;
+}
+.auth-card > p{
+  margin:7px 0 16px;
+  color:#768295;
+  font-size:11.5px;
+  line-height:1.55;
+}
+.auth-field{
+  display:grid;
+  gap:6px;
+  margin-top:10px;
+}
+.auth-field label{
+  font-size:11px;
+  font-weight:900;
+  color:#687386;
+}
+.auth-field input{
+  min-height:44px;
+  padding:11px 12px;
+  border:1px solid #dce3eb;
+  border-radius:12px;
+  background:#fafbfd;
+  color:#182230;
+  outline:none;
+  font-size:14px;
+}
+.auth-field input:focus{
+  border-color:#7ca6d7;
+  box-shadow:0 0 0 4px rgba(47,115,201,.10);
+}
+.auth-message{
+  min-height:18px;
+  margin-top:9px;
+  color:#c34040;
+  font-size:10.5px;
+  line-height:1.45;
+}
+.auth-message.success{color:#157347}
+.auth-buttons{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:7px;
+  margin-top:8px;
+}
+.auth-primary,.auth-secondary,.auth-later{
+  min-height:43px;
+  border-radius:12px;
+  font-size:11px;
+  font-weight:900;
+  cursor:pointer;
+}
+.auth-primary{
+  border:0;
+  color:#fff;
+  background:linear-gradient(135deg,#1c5a9f,#2f73c9);
+}
+.auth-secondary{
+  border:1px solid #dce3eb;
+  color:#344054;
+  background:#fff;
+}
+.auth-later{
+  width:100%;
+  margin-top:8px;
+  border:0;
+  color:#7c8797;
+  background:transparent;
+}
+.config-warning{
+  margin-bottom:11px;
+  padding:9px 10px;
+  border-radius:11px;
+  color:#8a5800;
+  background:#fff7df;
+  border:1px solid #f0dca4;
+  font-size:10.5px;
+  line-height:1.45;
+}
+
+.cloud-sync-banner{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:11px;
+  padding:10px 11px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:var(--card-2);
+}
+.cloud-sync-left{
+  min-width:0;
+  display:flex;
+  align-items:center;
+  gap:9px;
+}
+.cloud-sync-left > i{
+  flex:0 0 auto;
+  color:var(--accent);
+}
+.cloud-sync-title{
+  font-size:10.8px;
+  font-weight:900;
+  color:var(--text);
+}
+.cloud-sync-sub{
+  margin-top:2px;
+  font-size:9.4px;
+  color:var(--muted);
+  line-height:1.35;
+}
+.cloud-sync-action{
+  flex:0 0 auto;
+  min-height:34px;
+  padding:6px 10px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:#fff;
+  color:#344054;
+  font-size:9.8px;
+  font-weight:900;
+  cursor:pointer;
+}
+
+body.dark-mode .cloud-auth-button{
+  color:#dce4ee;
+  background:rgba(255,255,255,.06);
+  border-color:rgba(255,255,255,.11);
+  box-shadow:none;
+}
+body.dark-mode .cloud-auth-button.connected{
+  color:#9de7bd;
+  background:rgba(34,197,94,.08);
+  border-color:rgba(34,197,94,.18);
+}
+body.dark-mode .auth-card{
+  color:#e9edf4;
+  background:#151e2d;
+  border-color:rgba(255,255,255,.11);
+}
+body.dark-mode .auth-close{
+  color:#aab4c2;
+  background:rgba(255,255,255,.06);
+}
+body.dark-mode .auth-card > p,
+body.dark-mode .auth-field label{color:#9da8b8}
+body.dark-mode .auth-field input{
+  color:#edf1f7;
+  background:rgba(0,0,0,.20);
+  border-color:rgba(255,255,255,.12);
+}
+body.dark-mode .auth-secondary,
+body.dark-mode .cloud-sync-action{
+  color:#dfe5ec;
+  background:rgba(255,255,255,.055);
+  border-color:rgba(255,255,255,.11);
+}
+body.dark-mode .cloud-sync-banner{
+  background:rgba(255,255,255,.035);
+}
+body.dark-mode .config-warning{
+  color:#ffd880;
+  background:rgba(245,158,11,.09);
+  border-color:rgba(245,158,11,.20);
+}
+
+@media(max-width:560px){
+  .cloud-auth-button{
+    width:34px;
+    min-width:34px;
+    height:34px;
+    padding:0;
+  }
+  .cloud-auth-button span{display:none}
+  .auth-card{padding:21px 17px 16px}
+}
+
+
+
+/* 기본정보 차량사진 */
+.vehicle-photo-section{display:none}
+body[data-current-page="0"] .vehicle-photo-section{display:block}
+.vehicle-photo-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.vehicle-photo-copy{min-width:0}
+.vehicle-photo-title{font-size:12px;font-weight:900;color:var(--text)}
+.vehicle-photo-sub{margin-top:3px;color:var(--muted);font-size:10.2px;line-height:1.4}
+.vehicle-photo-add{
+  flex:0 0 auto;min-height:38px;display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  padding:7px 11px;border:1px solid var(--line);border-radius:11px;background:#fff;color:var(--text);
+  font-size:10.5px;font-weight:900;cursor:pointer
+}
+.vehicle-photo-preview{margin-top:11px}
+.vehicle-photo-count{margin-top:7px;text-align:right;color:var(--muted);font-size:9.8px;font-weight:800}
+body.dark-mode .vehicle-photo-add{color:#e3e9f1;background:rgba(255,255,255,.055);border-color:rgba(255,255,255,.11)}
+
+
+
+/* =========================================================
+   사진 소스 선택 바텀시트
+========================================================= */
+.photo-add-button,
+.vehicle-photo-add{
+  appearance:none;
+  -webkit-appearance:none;
+}
+
+.photo-source-overlay{
+  position:fixed;
+  inset:0;
+  z-index:6000;
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  padding:12px;
+  padding-bottom:calc(12px + env(safe-area-inset-bottom,0px));
+  background:rgba(12,20,32,.44);
+  -webkit-backdrop-filter:blur(7px);
+  backdrop-filter:blur(7px);
+}
+.photo-source-overlay[hidden]{display:none}
+
+.photo-source-sheet{
+  width:min(100%,480px);
+  padding:10px 12px 12px;
+  border:1px solid #e0e6ed;
+  border-radius:22px 22px 18px 18px;
+  background:#fff;
+  color:#182230;
+  box-shadow:0 22px 60px rgba(8,20,36,.22);
+  animation:photoSheetIn .18s ease;
+}
+@keyframes photoSheetIn{
+  from{transform:translateY(18px);opacity:.3}
+  to{transform:none;opacity:1}
+}
+.photo-source-handle{
+  width:38px;
+  height:4px;
+  margin:1px auto 11px;
+  border-radius:999px;
+  background:#d8dee7;
+}
+.photo-source-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:10px;
+  padding:0 3px 10px;
+}
+.photo-source-title{
+  font-size:16px;
+  font-weight:1000;
+  letter-spacing:-.35px;
+}
+.photo-source-sub{
+  margin-top:3px;
+  color:#7b8798;
+  font-size:10.5px;
+}
+.photo-source-close{
+  width:34px;
+  height:34px;
+  display:grid;
+  place-items:center;
+  flex:0 0 auto;
+  padding:0;
+  border:0;
+  border-radius:50%;
+  background:#f3f5f8;
+  color:#697586;
+  cursor:pointer;
+}
+.photo-source-options{
+  display:grid;
+  gap:8px;
+}
+.photo-source-option{
+  min-height:72px;
+  display:grid;
+  grid-template-columns:48px minmax(0,1fr) 20px;
+  align-items:center;
+  gap:10px;
+  width:100%;
+  padding:10px 12px;
+  border:1px solid #e1e7ee;
+  border-radius:15px;
+  background:#fbfcfd;
+  color:#182230;
+  text-align:left;
+  cursor:pointer;
+}
+.photo-source-option:active{
+  transform:scale(.99);
+  background:#f5f8fb;
+}
+.photo-source-icon{
+  width:45px;
+  height:45px;
+  display:grid;
+  place-items:center;
+  border-radius:13px;
+  font-size:17px;
+}
+.photo-source-option.camera .photo-source-icon{
+  color:#1f5fae;
+  background:#eaf2fc;
+}
+.photo-source-option.album .photo-source-icon{
+  color:#6b4fc2;
+  background:#f0ecff;
+}
+.photo-source-copy{
+  min-width:0;
+  display:grid;
+  gap:3px;
+}
+.photo-source-copy b{
+  font-size:12px;
+}
+.photo-source-copy small{
+  color:#7b8798;
+  font-size:10px;
+  line-height:1.35;
+}
+.photo-source-arrow{
+  color:#a2aab6;
+  font-size:11px;
+}
+.photo-source-cancel{
+  width:100%;
+  min-height:43px;
+  margin-top:9px;
+  border:1px solid #dfe5ec;
+  border-radius:12px;
+  background:#fff;
+  color:#536176;
+  font-size:11px;
+  font-weight:900;
+  cursor:pointer;
+}
+
+body.dark-mode .photo-source-sheet{
+  color:#edf1f7;
+  background:#151e2d;
+  border-color:rgba(255,255,255,.11);
+}
+body.dark-mode .photo-source-handle{
+  background:#465266;
+}
+body.dark-mode .photo-source-sub,
+body.dark-mode .photo-source-copy small{
+  color:#99a5b4;
+}
+body.dark-mode .photo-source-close{
+  color:#b0bac7;
+  background:rgba(255,255,255,.06);
+}
+body.dark-mode .photo-source-option{
+  color:#edf1f7;
+  background:rgba(255,255,255,.045);
+  border-color:rgba(255,255,255,.10);
+}
+body.dark-mode .photo-source-option.camera .photo-source-icon{
+  color:#85baf4;
+  background:rgba(59,130,246,.12);
+}
+body.dark-mode .photo-source-option.album .photo-source-icon{
+  color:#b9a5ff;
+  background:rgba(139,92,246,.12);
+}
+body.dark-mode .photo-source-cancel{
+  color:#dce3eb;
+  background:rgba(255,255,255,.05);
+  border-color:rgba(255,255,255,.11);
+}
+
+
+
+/* ===== 모바일 상단 제목 한 줄 유지 ===== */
+.app-title h1{
+  font-size:16px !important;
+  line-height:1.1 !important;
+  white-space:nowrap !important;
+  flex:0 1 auto;
+  min-width:0;
+}
+.app-title{
+  align-items:center !important;
+}
+@media(max-width:430px){
+  .app-title h1{
+    font-size:14px !important;
+    gap:6px !important;
+  }
+  .app-title h1 i{
+    width:30px !important;
+    height:30px !important;
+    border-radius:10px !important;
+  }
+  .header-actions{
+    gap:4px !important;
+  }
+}
+
+
+
+/* 신규검차등록 버튼 */
+.bottom-actions .btn-primary{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+}
+@media(max-width:390px){
+  .bottom-actions .btn-primary{
+    font-size:10px;
+    padding-left:8px;
+    padding-right:8px;
+  }
+}
 
 </style>
 </head>
 <body>
+<div id="photoSourceOverlay" class="photo-source-overlay" hidden>
+  <div class="photo-source-sheet" role="dialog" aria-modal="true" aria-labelledby="photoSourceTitle">
+    <div class="photo-source-handle"></div>
+
+    <div class="photo-source-head">
+      <div>
+        <div class="photo-source-title" id="photoSourceTitle">사진 추가</div>
+        <div class="photo-source-sub">사진을 가져올 방법을 선택하세요.</div>
+      </div>
+      <button type="button" class="photo-source-close" onclick="closePhotoSourceSheet()" aria-label="사진 추가 메뉴 닫기">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <div class="photo-source-options">
+      <button type="button" class="photo-source-option camera" onclick="choosePhotoSource('camera')">
+        <span class="photo-source-icon"><i class="fa-solid fa-camera"></i></span>
+        <span class="photo-source-copy">
+          <b>직접 촬영</b>
+          <small>카메라로 바로 촬영합니다.</small>
+        </span>
+        <i class="fa-solid fa-chevron-right photo-source-arrow"></i>
+      </button>
+
+      <button type="button" class="photo-source-option album" onclick="choosePhotoSource('album')">
+        <span class="photo-source-icon"><i class="fa-regular fa-images"></i></span>
+        <span class="photo-source-copy">
+          <b>앨범에서 선택</b>
+          <small>저장된 사진을 여러 장 선택할 수 있습니다.</small>
+        </span>
+        <i class="fa-solid fa-chevron-right photo-source-arrow"></i>
+      </button>
+    </div>
+
+    <button type="button" class="photo-source-cancel" onclick="closePhotoSourceSheet()">취소</button>
+  </div>
+</div>
+
+<div id="authOverlay" class="auth-overlay" hidden>
+  <div class="auth-card" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+    <button type="button" class="auth-close" id="authCloseButton" aria-label="로그인 창 닫기">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+
+    <div class="auth-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+    <h2 id="authTitle">내 검차기록</h2>
+    <p>한 번 로그인하면 휴대폰과 PC 어디서든 저장된 검차기록을 이어서 사용할 수 있습니다.</p>
+
+    <div id="supabaseConfigWarning" class="config-warning" hidden>
+      HTML 안의 <b>SUPABASE_URL</b>과 <b>SUPABASE_PUBLISHABLE_KEY</b>를 먼저 입력해주세요.
+    </div>
+
+    <div class="auth-field">
+      <label for="authEmail">이메일</label>
+      <input id="authEmail" type="email" autocomplete="email" placeholder="example@email.com">
+    </div>
+
+    <div class="auth-field">
+      <label for="authPassword">비밀번호</label>
+      <input id="authPassword" type="password" autocomplete="current-password" placeholder="비밀번호">
+    </div>
+
+    <div id="authMessage" class="auth-message" aria-live="polite"></div>
+
+    <div class="auth-buttons">
+      <button type="button" class="auth-primary" id="authSignInButton">로그인</button>
+      <button type="button" class="auth-secondary" id="authSignUpButton">회원가입</button>
+    </div>
+
+    <button type="button" class="auth-later" id="authLaterButton">나중에 로그인</button>
+  </div>
+</div>
+
 <div class="app-header">
 <div class="app-title">
 <h1><i class="fa-solid fa-car"></i> 감가 계산기</h1>
+
+<div class="header-actions">
+<button type="button" id="themeToggle" class="theme-toggle" aria-label="다크모드로 변경" title="화면 모드 변경">
+<i class="fa-solid fa-moon"></i>
+</button>
+<button type="button" id="cloudAuthButton" class="cloud-auth-button" aria-label="계정 로그인" title="계정 로그인">
+<i class="fa-solid fa-cloud"></i>
+<span id="cloudAuthText">로그인</span>
+</button>
+
 <div class="car-type-toggle">
 <button id="btnImported" onclick="setCarType('imported')">수입차</button>
 <button id="btnDomestic" onclick="setCarType('domestic')">국산차</button>
+</div>
 </div>
 </div>
 </div>
@@ -744,6 +2393,7 @@
 <button class="page-tab" data-page="2" onclick="showPage(2)">사고</button>
 <button class="page-tab" data-page="3" onclick="showPage(3)">세부상태</button>
 <button class="page-tab" data-page="4" onclick="showPage(4)">검차결과</button>
+<button class="page-tab" data-page="5" onclick="showPage(5)">저장목록</button>
 </div>
 <!-- 가격 + 검차결과 -->
 <div class="section page-panel active" data-page-panel="0">
@@ -751,7 +2401,7 @@
 <div class="field">
 <label for="bidPriceInput"><i class="fa-solid fa-tag"></i> 입찰가</label>
 <div class="price-inline">
-<input id="bidPriceInput" onchange="updateAll()" oninput="formatInput(this); saveInput('bidPriceInput')" placeholder="견적가를 입력하세요" type="text"/>
+<input id="bidPriceInput" onchange="updateAll()" oninput="formatInput(this); saveInput('bidPriceInput')" placeholder="예) 12,300,000" type="text"/>
 </div>
 </div>
 <div class="hint">
@@ -771,11 +2421,11 @@
 </div>
 <div class="field">
 <label for="carName"><i class="fas fa-id-badge"></i> 차량명</label>
-<input id="carName" oninput="saveInput('carName')" placeholder="차량명 입력하세요" type="text"/>
+<input id="carName" oninput="saveInput('carName')" placeholder="차량정보 입력하세요" type="text"/>
 </div>
 <div class="field">
 <label for="carGrade"><i class="fas fa-star"></i> 차량등급</label>
-<input id="carGrade" oninput="saveInput('carGrade')" placeholder="등급 및 옵션을 입력하세요" type="text"/>
+<input id="carGrade" oninput="saveInput('carGrade')" placeholder="옵션 또는 등급을 입력하세요" type="text"/>
 </div>
 </div>
 <!-- 고객기재 -->
@@ -841,6 +2491,37 @@
 </div>
 </div>
 <!-- 도색 -->
+
+<!-- 기본정보 - 차량사진 -->
+<div class="section vehicle-photo-section">
+  <h2><i class="fa-solid fa-camera"></i> 차량사진</h2>
+  <div class="vehicle-photo-head">
+    <div class="vehicle-photo-copy">
+      <div class="vehicle-photo-title">검차 사진</div>
+      <div class="vehicle-photo-sub">차량 상태 사진을 최대 20장까지 저장할 수 있습니다.</div>
+    </div>
+    <button type="button" class="vehicle-photo-add" onclick="openPhotoSourceSheet()">
+      <i class="fa-solid fa-camera"></i><span>사진 추가</span>
+    </button>
+    <input id="inspectionCameraInputTop"
+           type="file"
+           accept="image/*"
+           capture="environment"
+           hidden
+           aria-label="카메라로 차량 사진 촬영">
+    <input id="inspectionAlbumInputTop"
+           type="file"
+           accept="image/*"
+           multiple
+           hidden
+           aria-label="앨범에서 차량 사진 선택">
+  </div>
+  <div id="photoPreviewTop" class="photo-preview vehicle-photo-preview">
+    <div class="photo-empty">첨부된 사진이 없습니다.</div>
+  </div>
+  <div class="vehicle-photo-count"><span id="photoCountTextTop">0</span> / 20</div>
+</div>
+
 <div class="section page-panel" data-page-panel="1">
 <h2><i class="fas fa-paint-roller"></i> 도색</h2>
 <div class="container">
@@ -852,9 +2533,6 @@
 <!-- 사고 -->
 <div class="section page-panel" data-page-panel="2">
 <h2><i class="fas fa-car-burst"></i> 사고 이력</h2>
-<div class="hint" style="margin:0 0 10px;">
-      
-</div>
 <div class="container">
 <img alt="사고부위 자동차" class="car-image" src="https://imgur.com/agbd7Z8.png"/>
 <div class="checkbox-overlay" id="accidentSection"></div>
@@ -1067,8 +2745,84 @@
 <div class="section page-panel" data-page-panel="4">
 <h2><i class="fa-solid fa-clipboard-check"></i> 검차결과</h2>
 <div class="result-area" id="resultArea" style="display:none;"></div>
-<div class="hint">* 기본정보, 도색, 사고, 세부상태에서 입력한 내용을 종합한 최종 검차결과입니다.</div>
+
+<div class="record-action-panel">
+  <div class="record-action-head">
+    <div>
+      <div class="record-action-title"><i class="fa-solid fa-floppy-disk"></i> 차량 검차 저장</div>
+      <div class="record-action-sub" id="recordSaveStatus">사진과 검차내용은 검차 저장을 누르면 계정에 함께 저장됩니다.</div>
+    </div>
+  </div>
+
+  <div class="photo-section">
+    <div class="photo-title-row">
+      <div class="photo-title"><i class="fa-solid fa-camera"></i> 검차 사진 <span id="photoCountText">0</span>/20</div>
+      <button type="button" class="photo-add-button" onclick="openPhotoSourceSheet()">
+        <i class="fa-solid fa-plus"></i> 사진 추가
+      </button>
+      <input id="inspectionCameraInput"
+             type="file"
+             accept="image/*"
+             capture="environment"
+             hidden
+             aria-label="카메라로 검차 사진 촬영">
+      <input id="inspectionAlbumInput"
+             type="file"
+             accept="image/*"
+             multiple
+             hidden
+             aria-label="앨범에서 검차 사진 선택">
+    </div>
+    <div id="photoPreview" class="photo-preview">
+      <div class="photo-empty">첨부된 사진이 없습니다.</div>
+    </div>
+  </div>
+
+  <div class="record-actions">
+    <button type="button" class="record-btn primary" onclick="saveInspectionRecord()">
+      <i class="fa-solid fa-floppy-disk"></i> 검차 저장
+    </button>
+    <button type="button" class="record-btn" onclick="copyInspectionSummary()">
+      <i class="fa-solid fa-copy"></i> 결과 복사
+    </button>
+    <button type="button" class="record-btn" onclick="captureInspectionResult()">
+      <i class="fa-solid fa-camera-retro"></i> 결과 이미지
+    </button>
+  </div>
 </div>
+</div>
+<!-- 저장목록 -->
+<div class="section page-panel" data-page-panel="5">
+<h2><i class="fa-solid fa-folder-open"></i> 저장목록</h2>
+
+<div class="cloud-sync-banner" id="cloudSyncBanner">
+  <div class="cloud-sync-left">
+    <i class="fa-solid fa-cloud"></i>
+    <div>
+      <div class="cloud-sync-title" id="cloudSyncTitle">계정 연결 확인 중</div>
+      <div class="cloud-sync-sub" id="cloudSyncSub">같은 계정으로 로그인하면 휴대폰과 PC에서 같은 검차기록을 사용할 수 있습니다.</div>
+    </div>
+  </div>
+  <button type="button" id="cloudSyncAction" class="cloud-sync-action" onclick="openAuthOverlay()">로그인</button>
+</div>
+
+<div class="saved-toolbar">
+  <div class="saved-search-wrap">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input id="savedRecordSearch" type="text" aria-label="저장 차량 검색"
+           placeholder="차량번호, 차량명, 등급 검색">
+  </div>
+  <div class="saved-count" id="savedRecordCount">0대 저장</div>
+</div>
+
+<div id="savedRecordList" class="saved-record-list">
+  <div class="saved-empty">
+    <i class="fa-regular fa-folder-open"></i>
+    <div>저장된 검차 차량이 없습니다.</div>
+  </div>
+</div>
+</div>
+
 <div class="page-nav">
 <button id="prevPageBtn" onclick="changePage(-1)">← 이전</button>
 <button class="next" id="nextPageBtn" onclick="changePage(1)">다음 →</button>
@@ -1081,9 +2835,10 @@
 </div>
 <div class="bottom-actions">
 <button class="btn-ghost" onclick="window.scrollTo({top:0, behavior:'smooth'})">맨위로</button>
-<button class="btn-primary" onclick="resetAll()">초기화</button>
+<button class="btn-primary" onclick="startNewInspection()"><i class="fa-solid fa-file-circle-plus"></i> 신규검차등록</button>
 </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
     // ✅ 가격(국산/수입 토글)
     const PRICE = { partPrice: 180000, wheelPrice: 80000, tirePrice: 80000, spareKeyMissing: 150000 };
@@ -1634,7 +3389,7 @@
             accidentLines.push(`[고객고지] ${name} (${isExchange ? '교환' : '판금'} ${mark}): 감가 제외`);
           }else{
             const appliedRate = isExchange ? rate : (rate - 1);
-            const discount = Math.round(bidPrice * (appliedRate / 100));
+            const discount = Math.round(bidPrice * (appliedRate / 200));
 
             accidentDiscount += discount;
             accidentLines.push(`[사고] ${name} (${isExchange ? '교환' : '판금'}): -${discount.toLocaleString()}원`);
@@ -1688,36 +3443,180 @@
       document.getElementById('btnImported').classList.toggle('active', selected === 'imported');
     }
 
-    // 초기화
-    function resetAll(){
-      localStorage.clear();
+    // =====================================================
+    // 신규 검차 등록
+    // Supabase 로그인 세션은 유지하고 현재 작성 중인 검차내용만 비웁니다.
+    // localStorage.clear()를 사용하지 않기 때문에 자동로그인이 풀리지 않습니다.
+    // =====================================================
+    function startNewInspection(){
 
-      document.querySelectorAll("input[type='text']").forEach(i=>i.value='');
-      document.querySelectorAll("textarea").forEach(t=>{ t.value=''; autoResize(t); });
-      document.querySelectorAll("select").forEach(s=>{ s.selectedIndex = 0; });
-      document.querySelectorAll(".function-item input[type='checkbox']").forEach(cb=>cb.checked=false);
+      const hasCurrentData = [
+        'carNumber','mileage','carName','carGrade','bidPriceInput'
+      ].some(id => (document.getElementById(id)?.value || '').trim());
 
-      document.querySelectorAll(".part-item").forEach(el=>{
+      if(hasCurrentData){
+        const ok = confirm(
+          '현재 작성 중인 내용을 비우고 새로운 차량 검차를 시작할까요?\n' +
+          '저장하지 않은 내용은 사라집니다.'
+        );
+        if(!ok) return;
+      }
+
+      // -----------------------------------------------------
+      // 1. 현재 불러온 저장기록과 연결 해제
+      //    다음 저장 시 기존 기록 수정이 아니라 "새 기록"으로 생성됨
+      // -----------------------------------------------------
+      localStorage.removeItem('activeInspectionRecordId');
+
+      // -----------------------------------------------------
+      // 2. 기본 입력값 localStorage만 제거
+      //    Supabase 인증키(sb-...-auth-token)는 절대 삭제하지 않음
+      // -----------------------------------------------------
+      const baseKeys = [
+        'bidPriceInput',
+        'carNumber',
+        'mileage',
+        'carName',
+        'carGrade',
+        'exteriorCount',
+        'wheelScratchCount',
+        'spareKey',
+        'tireCount',
+        'repair',
+        'carAdvantage',
+        'Memo',
+        'checkboxStates',
+        'dynamicExtraItems',
+        'currentPage'
+      ];
+
+      baseKeys.forEach(key => localStorage.removeItem(key));
+
+      // -----------------------------------------------------
+      // 3. 고정 세부상태 입력값 제거
+      // -----------------------------------------------------
+      document.querySelectorAll('.function-price, .function-desc').forEach(input => {
+        const key = input.dataset.key;
+        if(key) localStorage.removeItem(key);
+      });
+
+      // -----------------------------------------------------
+      // 4. 동적으로 추가된 기타항목의 저장값도 제거
+      // -----------------------------------------------------
+      try{
+        const savedExtras = JSON.parse(
+          localStorage.getItem('dynamicExtraItems_backup_for_reset') || '{}'
+        );
+
+        Object.values(savedExtras).flat().forEach(name => {
+          localStorage.removeItem(`${name}-desc`);
+          localStorage.removeItem(`${name}-price`);
+        });
+      }catch(e){
+        // 별도 처리 필요 없음
+      }
+
+      // 현재 DOM의 동적 항목 key도 한 번 더 제거
+      document.querySelectorAll(
+        '#exterior-items .function-desc, #exterior-items .function-price,' +
+        '#engine-items .function-desc, #engine-items .function-price,' +
+        '#mission-items .function-desc, #mission-items .function-price,' +
+        '#under-items .function-desc, #under-items .function-price,' +
+        '#interior-items .function-desc, #interior-items .function-price'
+      ).forEach(input => {
+        if(input.dataset.key) localStorage.removeItem(input.dataset.key);
+      });
+
+      // -----------------------------------------------------
+      // 5. 화면 입력값 초기화
+      // -----------------------------------------------------
+      document.querySelectorAll("input[type='text']").forEach(input => {
+        input.value = '';
+      });
+
+      document.querySelectorAll("textarea").forEach(textarea => {
+        textarea.value = '';
+        autoResize(textarea);
+      });
+
+      document.querySelectorAll("select").forEach(select => {
+        select.selectedIndex = 0;
+      });
+
+      document.querySelectorAll(
+        ".function-item input[type='checkbox']"
+      ).forEach(cb => {
+        cb.checked = false;
+      });
+
+      // 도색 핀
+      document.querySelectorAll(".part-item").forEach(el => {
         el.classList.remove('selected');
         el.setAttribute('aria-pressed','false');
       });
 
-      document.querySelectorAll(".acc-item").forEach(el=>setAccidentState(el,''));
+      // 사고 핀
+      document.querySelectorAll(".acc-item").forEach(el => {
+        setAccidentState(el,'');
+      });
 
-      const box=document.getElementById('resultArea');
-      box.innerHTML='';
-      box.style.display='none';
-
+      // -----------------------------------------------------
+      // 6. 기타항목 제거
+      // -----------------------------------------------------
       resetExtraItems();
+
+      // -----------------------------------------------------
+      // 7. 사진도 새 검차용으로 비움
+      //    이미 Supabase에 저장된 이전 차량 사진은 삭제하지 않음
+      // -----------------------------------------------------
+      currentInspectionPhotos = [];
+      renderInspectionPhotos();
+
+      // -----------------------------------------------------
+      // 8. 검차결과 / 저장상태 초기화
+      // -----------------------------------------------------
+      const resultBox = document.getElementById('resultArea');
+      if(resultBox){
+        resultBox.innerHTML = '';
+        resultBox.style.display = 'none';
+      }
+
+      const status = document.getElementById('recordSaveStatus');
+      if(status){
+        status.textContent =
+          '새 차량 검차를 시작했습니다. 내용을 입력한 뒤 검차 저장을 눌러주세요.';
+      }
+
+      // -----------------------------------------------------
+      // 9. 현재 차종/테마/로그인 세션은 그대로 유지
+      // -----------------------------------------------------
+      const savedType = localStorage.getItem('carType') || 'imported';
+      updateCarTypeButtons(savedType);
+
       updateAll();
+
+      // 첫 페이지로 이동
+      showPage(0, true);
+
+      // 차량번호 입력칸으로 포커스
+      setTimeout(() => {
+        document.getElementById('carNumber')?.focus();
+      }, 250);
+    }
+
+    // 기존 코드/외부 호출 호환용
+    // resetAll을 호출해도 앞으로는 안전한 신규검차등록으로 동작
+    function resetAll(){
+      startNewInspection();
     }
 
 
     // ===== 페이지 이동 =====
     let currentPage = 0;
-    const PAGE_COUNT = 5;
+    const PAGE_COUNT = 6;
     function showPage(page, scrollTop=true){
       currentPage = Math.max(0, Math.min(PAGE_COUNT-1, Number(page)||0));
+      document.body.dataset.currentPage = String(currentPage);
       document.querySelectorAll('[data-page-panel]').forEach(el=>{
         el.classList.toggle('active', Number(el.dataset.pagePanel)===currentPage);
       });
@@ -1729,11 +3628,1190 @@
       if(prev) prev.style.visibility=currentPage===0?'hidden':'visible';
       if(next){ next.style.visibility=currentPage===PAGE_COUNT-1?'hidden':'visible'; }
       localStorage.setItem('currentPage', String(currentPage));
+      if(currentPage === 5 && typeof renderSavedRecords === 'function'){
+        renderSavedRecords();
+      }
       if(scrollTop) window.scrollTo({top:0,behavior:'smooth'});
     }
     function changePage(delta){ showPage(currentPage+delta); }
 
-    window.addEventListener('DOMContentLoaded', ()=>{
+
+
+
+/* =========================================================
+   SUPABASE CLOUD SYNC
+   아래 두 값만 본인의 Supabase 값으로 변경하세요.
+   service_role 키는 절대 넣지 말고 Publishable key 또는 anon key만 사용합니다.
+========================================================= */
+const SUPABASE_URL = 'https://crmeeegayzezeqhgkagx.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_6wpAz2ELkD2Eh2ircwzVGw_78QKns9C';
+
+const CLOUD_RECORD_TABLE = 'inspection_records';
+const CLOUD_PHOTO_BUCKET = 'inspection-photos';
+
+let supabaseClient = null;
+let currentCloudUser = null;
+let currentInspectionPhotos = [];
+const signedUrlCache = new Map();
+
+function isSupabaseConfigured(){
+  return Boolean(
+    SUPABASE_URL &&
+    SUPABASE_PUBLISHABLE_KEY &&
+    !SUPABASE_URL.includes('YOUR_SUPABASE_') &&
+    !SUPABASE_PUBLISHABLE_KEY.includes('YOUR_SUPABASE_')
+  );
+}
+
+function initSupabaseClient(){
+  if(!isSupabaseConfigured() || !window.supabase){
+    return null;
+  }
+
+  if(!supabaseClient){
+    supabaseClient = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_PUBLISHABLE_KEY,
+      {
+        auth:{
+          persistSession:true,
+          autoRefreshToken:true,
+          detectSessionInUrl:true
+        }
+      }
+    );
+  }
+
+  return supabaseClient;
+}
+
+function openAuthOverlay(){
+  const overlay=document.getElementById('authOverlay');
+  if(!overlay) return;
+
+  const warning=document.getElementById('supabaseConfigWarning');
+  if(warning) warning.hidden=isSupabaseConfigured();
+
+  setAuthMessage('');
+  overlay.hidden=false;
+  setTimeout(()=>document.getElementById('authEmail')?.focus(),50);
+}
+
+function closeAuthOverlay(){
+  const overlay=document.getElementById('authOverlay');
+  if(overlay) overlay.hidden=true;
+}
+
+function setAuthMessage(message,success=false){
+  const el=document.getElementById('authMessage');
+  if(!el) return;
+  el.textContent=message||'';
+  el.classList.toggle('success',Boolean(success));
+}
+
+
+async function restoreSupabaseSession(){
+  if(!isSupabaseConfigured()) return null;
+  const client=initSupabaseClient();
+  if(!client) return null;
+
+  try{
+    const {data,error}=await client.auth.getSession();
+    if(error) throw error;
+
+    if(data?.session?.user){
+      currentCloudUser=data.session.user;
+      updateCloudAuthUI(currentCloudUser);
+      return data.session;
+    }
+  }catch(error){
+    console.warn('Supabase 세션 자동복원 실패',error);
+  }
+  return null;
+}
+
+async function initializeCloudAuth(){
+  const client=initSupabaseClient();
+
+  bindAuthControls();
+
+  if(!client){
+    updateCloudAuthUI(null);
+    return;
+  }
+
+  try{
+    const restoredSession=await restoreSupabaseSession();
+    currentCloudUser=restoredSession?.user||null;
+    updateCloudAuthUI(currentCloudUser);
+
+    client.auth.onAuthStateChange((_event,session)=>{
+      currentCloudUser=session?.user||null;
+      updateCloudAuthUI(currentCloudUser);
+
+      if(currentCloudUser){
+        closeAuthOverlay();
+        loadActiveInspectionRecord();
+        renderSavedRecords();
+      }else{
+        currentInspectionPhotos=[];
+        renderInspectionPhotos();
+        renderSavedRecords();
+      }
+    });
+  }catch(error){
+    console.error('Supabase auth init error',error);
+    updateCloudAuthUI(null);
+  }
+}
+
+function bindAuthControls(){
+  const cloudButton=document.getElementById('cloudAuthButton');
+  const closeButton=document.getElementById('authCloseButton');
+  const laterButton=document.getElementById('authLaterButton');
+  const signInButton=document.getElementById('authSignInButton');
+  const signUpButton=document.getElementById('authSignUpButton');
+  const authPassword=document.getElementById('authPassword');
+
+  if(cloudButton && !cloudButton.dataset.bound){
+    cloudButton.addEventListener('click',async ()=>{
+      if(currentCloudUser){
+        if(confirm(`${currentCloudUser.email||'현재 계정'}에서 로그아웃할까요?`)){
+          await signOutCloud();
+        }
+      }else{
+        openAuthOverlay();
+      }
+    });
+    cloudButton.dataset.bound='1';
+  }
+
+  if(closeButton) closeButton.onclick=closeAuthOverlay;
+  if(laterButton) laterButton.onclick=closeAuthOverlay;
+  if(signInButton) signInButton.onclick=signInCloud;
+  if(signUpButton) signUpButton.onclick=signUpCloud;
+
+  if(authPassword && !authPassword.dataset.enterBound){
+    authPassword.addEventListener('keydown',event=>{
+      if(event.key==='Enter') signInCloud();
+    });
+    authPassword.dataset.enterBound='1';
+  }
+}
+
+function updateCloudAuthUI(user){
+  const btn=document.getElementById('cloudAuthButton');
+  const text=document.getElementById('cloudAuthText');
+  const title=document.getElementById('cloudSyncTitle');
+  const sub=document.getElementById('cloudSyncSub');
+  const action=document.getElementById('cloudSyncAction');
+
+  if(btn){
+    btn.classList.toggle('connected',Boolean(user));
+    btn.setAttribute('aria-label',user?'로그아웃':'계정 로그인');
+    btn.title=user?(user.email||'로그아웃'):'계정 로그인';
+  }
+
+  if(text) text.textContent=user?'연결됨':'로그인';
+
+  if(user){
+    if(title) title.textContent='검차기록 동기화 완료';
+    if(sub) sub.textContent=user.email||'로그인 완료';
+    if(action){
+      action.textContent='로그아웃';
+      action.onclick=signOutCloud;
+    }
+  }else{
+    if(title) title.textContent=isSupabaseConfigured()?'로그인이 필요합니다':'Supabase 설정이 필요합니다';
+    if(sub) sub.textContent=isSupabaseConfigured()
+      ? '로그인하면 휴대폰과 PC에서 같은 저장목록을 볼 수 있습니다.'
+      : 'HTML의 Supabase URL과 Publishable Key를 입력해주세요.';
+    if(action){
+      action.textContent='로그인';
+      action.onclick=openAuthOverlay;
+    }
+  }
+}
+
+async function signInCloud(){
+  if(!isSupabaseConfigured()){
+    setAuthMessage('먼저 HTML의 Supabase URL과 Publishable Key를 입력해주세요.');
+    return;
+  }
+
+  const email=(document.getElementById('authEmail')?.value||'').trim();
+  const password=document.getElementById('authPassword')?.value||'';
+
+  if(!email || !password){
+    setAuthMessage('이메일과 비밀번호를 입력해주세요.');
+    return;
+  }
+
+  try{
+    setAuthMessage('로그인 중...');
+    const client=initSupabaseClient();
+    const {data,error}=await client.auth.signInWithPassword({email,password});
+    if(error) throw error;
+
+    currentCloudUser=data?.user||data?.session?.user||null;
+    setAuthMessage('로그인되었습니다.',true);
+    updateCloudAuthUI(currentCloudUser);
+    setTimeout(closeAuthOverlay,350);
+    await loadActiveInspectionRecord();
+    await renderSavedRecords();
+  }catch(error){
+    console.error(error);
+    setAuthMessage(error?.message||'로그인에 실패했습니다.');
+  }
+}
+
+async function signUpCloud(){
+  if(!isSupabaseConfigured()){
+    setAuthMessage('먼저 HTML의 Supabase URL과 Publishable Key를 입력해주세요.');
+    return;
+  }
+
+  const email=(document.getElementById('authEmail')?.value||'').trim();
+  const password=document.getElementById('authPassword')?.value||'';
+
+  if(!email || !password){
+    setAuthMessage('이메일과 비밀번호를 입력해주세요.');
+    return;
+  }
+  if(password.length<6){
+    setAuthMessage('비밀번호는 6자 이상으로 입력해주세요.');
+    return;
+  }
+
+  try{
+    setAuthMessage('회원가입 중...');
+    const client=initSupabaseClient();
+    const {data,error}=await client.auth.signUp({email,password});
+    if(error) throw error;
+
+    if(data?.session){
+      currentCloudUser=data.user;
+      setAuthMessage('회원가입과 로그인이 완료되었습니다.',true);
+      updateCloudAuthUI(currentCloudUser);
+      setTimeout(closeAuthOverlay,350);
+    }else{
+      setAuthMessage('회원가입 완료! 이메일 인증 메일을 확인한 뒤 로그인해주세요.',true);
+    }
+  }catch(error){
+    console.error(error);
+    setAuthMessage(error?.message||'회원가입에 실패했습니다.');
+  }
+}
+
+async function signOutCloud(){
+  try{
+    if(supabaseClient){
+      await supabaseClient.auth.signOut();
+    }
+  }catch(error){
+    console.error(error);
+  }
+
+  currentCloudUser=null;
+  localStorage.removeItem('activeInspectionRecordId');
+  currentInspectionPhotos=[];
+  renderInspectionPhotos();
+  updateCloudAuthUI(null);
+  await renderSavedRecords();
+}
+
+function requireCloudUser(){
+  if(!isSupabaseConfigured()){
+    alert('HTML의 SUPABASE_URL과 SUPABASE_PUBLISHABLE_KEY를 먼저 입력해주세요.');
+    openAuthOverlay();
+    return null;
+  }
+  if(!currentCloudUser){
+    alert('클라우드 저장을 사용하려면 로그인해주세요.');
+    openAuthOverlay();
+    return null;
+  }
+  return currentCloudUser;
+}
+
+function uuidForInspection(){
+  if(window.crypto && typeof crypto.randomUUID==='function'){
+    return crypto.randomUUID();
+  }
+  return 'inspection-' + Date.now() + '-' + Math.random().toString(36).slice(2);
+}
+
+function captureInspectionWorkspace(){
+  saveExtraItems();
+  saveCheckboxState();
+
+  const baseKeys=[
+    'bidPriceInput','carNumber','mileage','carName','carGrade',
+    'exteriorCount','wheelScratchCount','spareKey','tireCount',
+    'repair','carAdvantage','Memo'
+  ];
+
+  const base={};
+  baseKeys.forEach(id=>{
+    const el=document.getElementById(id);
+    base[id]=el ? el.value : '';
+  });
+
+  const functionValues={};
+  document.querySelectorAll('.function-price,.function-desc').forEach(input=>{
+    if(input.dataset.key){
+      functionValues[input.dataset.key]=input.value;
+    }
+  });
+
+  let checkboxStates={};
+  let dynamicExtraItems={};
+  try{ checkboxStates=JSON.parse(localStorage.getItem('checkboxStates')||'{}'); }catch{}
+  try{ dynamicExtraItems=JSON.parse(localStorage.getItem('dynamicExtraItems')||'{}'); }catch{}
+
+  return {
+    base,
+    functionValues,
+    checkboxStates,
+    dynamicExtraItems,
+    carType:localStorage.getItem('carType')||'imported'
+  };
+}
+
+function restoreInspectionWorkspace(workspace){
+  const keepTheme=localStorage.getItem('calculatorTheme');
+
+  const base=workspace?.base||{};
+  Object.entries(base).forEach(([key,value])=>{
+    localStorage.setItem(key,String(value??''));
+  });
+
+  Object.entries(workspace?.functionValues||{}).forEach(([key,value])=>{
+    localStorage.setItem(key,String(value??''));
+  });
+
+  localStorage.setItem('checkboxStates',JSON.stringify(workspace?.checkboxStates||{}));
+  localStorage.setItem('dynamicExtraItems',JSON.stringify(workspace?.dynamicExtraItems||{}));
+  localStorage.setItem('carType',workspace?.carType||'imported');
+  localStorage.setItem('currentPage','0');
+
+  if(keepTheme) localStorage.setItem('calculatorTheme',keepTheme);
+}
+
+function getCurrentSummaryValues(){
+  updateAll();
+  const bidPrice=getNumericValue(document.getElementById('bidPriceInput')?.value||'');
+  const finalPrice=getNumericValue(document.getElementById('finalPrice')?.textContent||'');
+  return {
+    bidPrice,
+    finalPrice,
+    totalDiscount:Math.max(0,bidPrice-finalPrice)
+  };
+}
+
+function dataUrlToBlob(dataUrl){
+  const parts=String(dataUrl).split(',');
+  const mime=(parts[0].match(/data:(.*?);base64/)||[])[1]||'image/jpeg';
+  const bytes=atob(parts[1]||'');
+  const arr=new Uint8Array(bytes.length);
+  for(let i=0;i<bytes.length;i++) arr[i]=bytes.charCodeAt(i);
+  return new Blob([arr],{type:mime});
+}
+
+async function uploadPendingPhotos(recordId){
+  const user=requireCloudUser();
+  if(!user) throw new Error('로그인이 필요합니다.');
+
+  const uploaded=[];
+
+  for(const photo of currentInspectionPhotos){
+    if(photo.path){
+      uploaded.push({name:photo.name||'photo.jpg',path:photo.path});
+      continue;
+    }
+
+    if(!photo.dataUrl) continue;
+
+    const filename=(photo.name||'photo.jpg').replace(/[^\w.\-가-힣]/g,'_');
+    const blob=dataUrlToBlob(photo.dataUrl);
+    const ext=blob.type==='image/png'?'png':'jpg';
+    const objectName=`${user.id}/${recordId}/${uuidForInspection()}.${ext}`;
+
+    const {error}=await supabaseClient.storage
+      .from(CLOUD_PHOTO_BUCKET)
+      .upload(objectName,blob,{
+        contentType:blob.type||'image/jpeg',
+        upsert:false
+      });
+
+    if(error){
+      console.error('Supabase Storage 사진 업로드 실패', {
+        message:error.message,
+        statusCode:error.statusCode,
+        objectName,
+        blobType:blob.type,
+        blobSize:blob.size
+      });
+      throw new Error('사진 업로드 실패: ' + (error.message||'Storage 오류'));
+    }
+
+    uploaded.push({
+      name:photo.name||'photo.jpg',
+      path:objectName
+    });
+  }
+
+  return uploaded;
+}
+
+async function deletePhotoPaths(paths){
+  if(!paths?.length || !supabaseClient) return;
+  try{
+    const {error}=await supabaseClient.storage.from(CLOUD_PHOTO_BUCKET).remove(paths);
+    if(error) console.warn('photo remove warning',error);
+  }catch(error){
+    console.warn(error);
+  }
+}
+
+async function saveInspectionRecord(){
+  const user=requireCloudUser();
+  if(!user) return;
+
+  const carNumber=(document.getElementById('carNumber')?.value||'').trim();
+  if(!carNumber){
+    alert('차량번호를 입력한 후 저장해주세요.');
+    showPage(0);
+    document.getElementById('carNumber')?.focus();
+    return;
+  }
+
+  try{
+    const activeId=localStorage.getItem('activeInspectionRecordId');
+    const recordId=activeId||uuidForInspection();
+
+    let existing=null;
+    if(activeId){
+      const {data,error}=await supabaseClient
+        .from(CLOUD_RECORD_TABLE)
+        .select('*')
+        .eq('id',activeId)
+        .eq('user_id',user.id)
+        .maybeSingle();
+      if(error) throw error;
+      existing=data||null;
+    }
+
+    const oldPaths=(existing?.photos||[]).map(p=>p.path).filter(Boolean);
+    const photoMeta=await uploadPendingPhotos(recordId);
+    const newPaths=photoMeta.map(p=>p.path).filter(Boolean);
+    const removedPaths=oldPaths.filter(path=>!newPaths.includes(path));
+
+    const summary=getCurrentSummaryValues();
+    const payload={
+      id:recordId,
+      user_id:user.id,
+      car_number:carNumber,
+      mileage:(document.getElementById('mileage')?.value||'').trim(),
+      car_name:(document.getElementById('carName')?.value||'').trim(),
+      car_grade:(document.getElementById('carGrade')?.value||'').trim(),
+      bid_price:summary.bidPrice,
+      final_price:summary.finalPrice,
+      total_discount:summary.totalDiscount,
+      workspace:captureInspectionWorkspace(),
+      photos:photoMeta,
+      updated_at:new Date().toISOString()
+    };
+
+    const {data,error}=await supabaseClient
+      .from(CLOUD_RECORD_TABLE)
+      .upsert(payload,{onConflict:'id'})
+      .select()
+      .single();
+
+    if(error) throw error;
+
+    await deletePhotoPaths(removedPaths);
+
+    localStorage.setItem('activeInspectionRecordId',data.id);
+    currentInspectionPhotos=await hydratePhotoMetadata(data.photos||[]);
+    renderInspectionPhotos();
+
+    const status=document.getElementById('recordSaveStatus');
+    if(status){
+      status.textContent='저장 완료 · '+formatRecordDate(data.updated_at);
+    }
+
+    alert(existing?'검차 기록을 업데이트했습니다.':'검차 기록을 저장했습니다.');
+    await renderSavedRecords();
+  }catch(error){
+    console.error(error);
+    alert('저장 중 오류가 발생했습니다.\n'+(error?.message||''));
+  }
+}
+
+async function fetchCloudRecord(id){
+  const user=requireCloudUser();
+  if(!user) return null;
+
+  const {data,error}=await supabaseClient
+    .from(CLOUD_RECORD_TABLE)
+    .select('*')
+    .eq('id',id)
+    .eq('user_id',user.id)
+    .single();
+
+  if(error) throw error;
+  return data;
+}
+
+async function loadInspectionRecord(id){
+  if(!requireCloudUser()) return;
+
+  try{
+    const record=await fetchCloudRecord(id);
+    restoreInspectionWorkspace(record.workspace);
+    localStorage.setItem('activeInspectionRecordId',record.id);
+    location.reload();
+  }catch(error){
+    console.error(error);
+    alert('저장된 기록을 불러오지 못했습니다.\n'+(error?.message||''));
+  }
+}
+
+async function deleteInspectionRecord(id){
+  if(!requireCloudUser()) return;
+
+  try{
+    const record=await fetchCloudRecord(id);
+    const label=record?.car_number||'이 기록';
+    if(!confirm(`${label} 저장 기록을 삭제할까요?`)) return;
+
+    const paths=(record?.photos||[]).map(p=>p.path).filter(Boolean);
+    await deletePhotoPaths(paths);
+
+    const {error}=await supabaseClient
+      .from(CLOUD_RECORD_TABLE)
+      .delete()
+      .eq('id',id)
+      .eq('user_id',currentCloudUser.id);
+
+    if(error) throw error;
+
+    if(localStorage.getItem('activeInspectionRecordId')===id){
+      localStorage.removeItem('activeInspectionRecordId');
+      currentInspectionPhotos=[];
+      renderInspectionPhotos();
+    }
+
+    await renderSavedRecords();
+  }catch(error){
+    console.error(error);
+    alert('삭제 중 오류가 발생했습니다.\n'+(error?.message||''));
+  }
+}
+
+function formatRecordDate(value){
+  if(!value) return '';
+  try{
+    const date=typeof value==='number'?new Date(value):new Date(value);
+    return new Intl.DateTimeFormat('ko-KR',{
+      year:'2-digit',month:'2-digit',day:'2-digit',
+      hour:'2-digit',minute:'2-digit'
+    }).format(date);
+  }catch{
+    return String(value);
+  }
+}
+
+function formatWon(value){
+  return Number(value||0).toLocaleString()+'원';
+}
+
+async function createPhotoSignedUrl(path,expiresIn=3600){
+  if(!path) return '';
+  const cacheKey=`${path}:${Math.floor(Date.now()/1800000)}`;
+  if(signedUrlCache.has(cacheKey)) return signedUrlCache.get(cacheKey);
+
+  const {data,error}=await supabaseClient.storage
+    .from(CLOUD_PHOTO_BUCKET)
+    .createSignedUrl(path,expiresIn);
+
+  if(error){
+    console.warn(error);
+    return '';
+  }
+
+  const url=data?.signedUrl||'';
+  signedUrlCache.set(cacheKey,url);
+  return url;
+}
+
+async function hydratePhotoMetadata(meta){
+  const result=[];
+  for(const photo of Array.isArray(meta)?meta:[]){
+    if(!photo?.path) continue;
+    const url=await createPhotoSignedUrl(photo.path);
+    result.push({
+      name:photo.name||'검차 사진',
+      path:photo.path,
+      url
+    });
+  }
+  return result;
+}
+
+async function renderSavedRecords(){
+  const list=document.getElementById('savedRecordList');
+  const count=document.getElementById('savedRecordCount');
+  if(!list) return;
+
+  if(!isSupabaseConfigured()){
+    if(count) count.textContent='클라우드 미설정';
+    list.innerHTML=`
+      <div class="saved-empty">
+        <i class="fa-solid fa-cloud"></i>
+        <div>HTML에 Supabase URL과 Publishable Key를 입력해주세요.</div>
+      </div>`;
+    return;
+  }
+
+  if(!currentCloudUser){
+    if(count) count.textContent='로그인 필요';
+    list.innerHTML=`
+      <div class="saved-empty">
+        <i class="fa-solid fa-cloud-arrow-up"></i>
+        <div>로그인하면 모든 기기에서 같은 저장목록을 볼 수 있습니다.</div>
+      </div>`;
+    return;
+  }
+
+  try{
+    const {data,error}=await supabaseClient
+      .from(CLOUD_RECORD_TABLE)
+      .select('*')
+      .eq('user_id',currentCloudUser.id)
+      .order('updated_at',{ascending:false});
+
+    if(error) throw error;
+
+    const records=data||[];
+    const keyword=(document.getElementById('savedRecordSearch')?.value||'').trim().toLowerCase();
+    const filtered=records.filter(record=>{
+      if(!keyword) return true;
+      return [
+        record.car_number,record.car_name,record.car_grade,record.mileage
+      ].some(v=>String(v||'').toLowerCase().includes(keyword));
+    });
+
+    if(count){
+      count.textContent=keyword
+        ? `${filtered.length} / ${records.length}대`
+        : `${records.length}대 저장`;
+    }
+
+    if(!filtered.length){
+      list.innerHTML=`
+        <div class="saved-empty">
+          <i class="fa-regular fa-folder-open"></i>
+          <div>${records.length?'검색 결과가 없습니다.':'저장된 검차 차량이 없습니다.'}</div>
+        </div>`;
+      return;
+    }
+
+    const cards=[];
+    for(const record of filtered){
+      const photos=await hydratePhotoMetadata((record.photos||[]).slice(0,5));
+      const photoStrip=photos.length
+        ? `<div class="saved-photo-strip">${photos.map(p=>p.url?`<img src="${p.url}" alt="검차 사진">`:'').join('')}</div>`
+        : '';
+
+      cards.push(`
+        <div class="saved-record-card">
+          <div class="saved-card-top">
+            <div>
+              <div class="saved-car-number">${escapeHtml(record.car_number||'차량번호 없음')}</div>
+              <div class="saved-car-name">
+                ${escapeHtml([record.car_name,record.car_grade].filter(Boolean).join(' · ')||'차량정보 없음')}
+                ${record.mileage?`<br>${escapeHtml(record.mileage)}`:''}
+              </div>
+            </div>
+            <div class="saved-date">${escapeHtml(formatRecordDate(record.updated_at||record.created_at))}</div>
+          </div>
+
+          <div class="saved-price-row">
+            <div class="saved-price-box">
+              <div class="saved-price-label">입찰가</div>
+              <div class="saved-price-value">${formatWon(record.bid_price)}</div>
+            </div>
+            <div class="saved-price-box">
+              <div class="saved-price-label">감가</div>
+              <div class="saved-price-value">-${formatWon(record.total_discount)}</div>
+            </div>
+            <div class="saved-price-box">
+              <div class="saved-price-label">최종금액</div>
+              <div class="saved-price-value final">${formatWon(record.final_price)}</div>
+            </div>
+          </div>
+
+          ${photoStrip}
+
+          <div class="saved-card-actions">
+            <button type="button" class="saved-load-btn" onclick="loadInspectionRecord('${record.id}')">
+              <i class="fa-solid fa-arrow-rotate-left"></i> 불러오기 / 수정
+            </button>
+            <button type="button" class="saved-delete-btn" onclick="deleteInspectionRecord('${record.id}')">
+              삭제
+            </button>
+          </div>
+        </div>`);
+    }
+
+    list.innerHTML=cards.join('');
+  }catch(error){
+    console.error(error);
+    list.innerHTML=`<div class="saved-empty">저장목록을 불러오지 못했습니다.<br>${escapeHtml(error?.message||'')}</div>`;
+  }
+}
+
+
+/* =========================================================
+   PHOTO SOURCE PICKER
+========================================================= */
+function openPhotoSourceSheet(){
+  const overlay=document.getElementById('photoSourceOverlay');
+  if(!overlay) return;
+  overlay.hidden=false;
+}
+
+function closePhotoSourceSheet(){
+  const overlay=document.getElementById('photoSourceOverlay');
+  if(overlay) overlay.hidden=true;
+}
+
+function choosePhotoSource(source){
+  closePhotoSourceSheet();
+
+  let input=null;
+
+  if(source==='camera'){
+    input=
+      document.getElementById('inspectionCameraInputTop') ||
+      document.getElementById('inspectionCameraInput');
+  }else{
+    input=
+      document.getElementById('inspectionAlbumInputTop') ||
+      document.getElementById('inspectionAlbumInput');
+  }
+
+  if(input){
+    input.click();
+  }
+}
+
+
+/* =========================================================
+   PHOTO HANDLING
+========================================================= */
+function renderInspectionPhotos(){
+  const previews=[
+    document.getElementById('photoPreview'),
+    document.getElementById('photoPreviewTop')
+  ].filter(Boolean);
+
+  const counts=[
+    document.getElementById('photoCountText'),
+    document.getElementById('photoCountTextTop')
+  ].filter(Boolean);
+
+  counts.forEach(el=>el.textContent=String(currentInspectionPhotos.length));
+
+  if(!previews.length) return;
+
+  if(!currentInspectionPhotos.length){
+    previews.forEach(preview=>{
+      preview.innerHTML='<div class="photo-empty">첨부된 사진이 없습니다.</div>';
+    });
+    return;
+  }
+
+  const markup=currentInspectionPhotos.map((photo,index)=>{
+    const src=photo.dataUrl||photo.url||'';
+    return `
+      <div class="photo-item">
+        ${src?`<img src="${src}" alt="${escapeHtml(photo.name||'검차 사진')}">`:''}
+        <button type="button" class="photo-delete" aria-label="사진 삭제" onclick="removeInspectionPhoto(${index})">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>`;
+  }).join('');
+
+  previews.forEach(preview=>preview.innerHTML=markup);
+}
+
+function removeInspectionPhoto(index){
+  currentInspectionPhotos.splice(index,1);
+  renderInspectionPhotos();
+}
+
+function compressImageFile(file){
+  return new Promise((resolve,reject)=>{
+    if(!file){
+      reject(new Error('사진 파일이 없습니다.'));
+      return;
+    }
+
+    // Android WebView 카메라 촬영 파일은 type/name 정보가 약한 경우가 있어
+    // Blob URL 우선 + FileReader 폴백으로 처리한다.
+    const objectUrl = URL.createObjectURL(file);
+    const img = new Image();
+
+    const processImage = image => {
+      try{
+        const max = 1600;
+        let width = image.naturalWidth || image.width;
+        let height = image.naturalHeight || image.height;
+
+        if(!width || !height){
+          throw new Error('촬영 사진의 크기를 확인할 수 없습니다.');
+        }
+
+        if(width > max || height > max){
+          const scale = Math.min(max / width, max / height);
+          width = Math.round(width * scale);
+          height = Math.round(height * scale);
+        }
+
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+
+        const ctx = canvas.getContext('2d', {alpha:false});
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0,0,width,height);
+        ctx.drawImage(image,0,0,width,height);
+
+        let filename = String(file.name || '').trim();
+        if(!filename || !/\.(jpe?g|png|webp)$/i.test(filename)){
+          filename = `inspection_${Date.now()}.jpg`;
+        }
+
+        resolve({
+          name:filename,
+          type:'image/jpeg',
+          dataUrl:canvas.toDataURL('image/jpeg',0.82)
+        });
+      }catch(error){
+        reject(error);
+      }
+    };
+
+    img.onload = ()=>{
+      URL.revokeObjectURL(objectUrl);
+      processImage(img);
+    };
+
+    img.onerror = ()=>{
+      URL.revokeObjectURL(objectUrl);
+
+      const reader = new FileReader();
+      reader.onerror = ()=>reject(reader.error || new Error('촬영 사진을 읽을 수 없습니다.'));
+      reader.onload = ()=>{
+        const fallbackImg = new Image();
+        fallbackImg.onload = ()=>processImage(fallbackImg);
+        fallbackImg.onerror = ()=>reject(new Error('촬영 사진을 불러올 수 없습니다.'));
+        fallbackImg.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    };
+
+    img.src = objectUrl;
+  });
+}
+
+async function handleInspectionPhotos(files){
+  const remaining=20-currentInspectionPhotos.length;
+
+  const incoming=Array.from(files||[]);
+
+  // Android WebView + FileProvider 카메라 촬영본은
+  // file.type 이 빈 문자열("")로 전달되는 기기가 있습니다.
+  // MIME type만 보고 거르면 촬영 사진이 여기서 사라질 수 있으므로
+  // 빈 MIME도 이미지 후보로 허용하고 실제 디코딩은 compressImageFile에서 확인합니다.
+  const selected=incoming
+    .filter(file=>{
+      if(!file) return false;
+
+      const type=String(file.type||'').toLowerCase();
+      const name=String(file.name||'').toLowerCase();
+
+      return (
+        !type ||
+        type.startsWith('image/') ||
+        /\.(jpg|jpeg|png|webp|heic|heif)$/i.test(name)
+      );
+    })
+    .slice(0,remaining);
+
+  if(!selected.length){
+    if(remaining<=0){
+      alert('사진은 최대 20장까지 저장할 수 있습니다.');
+    }else if(incoming.length){
+      alert('선택한 사진을 읽지 못했습니다. 다시 촬영하거나 앨범에서 선택해주세요.');
+    }
+    return;
+  }
+
+  let successCount=0;
+
+  for(const file of selected){
+    try{
+      const photo=await compressImageFile(file);
+      currentInspectionPhotos.push(photo);
+      successCount++;
+      renderInspectionPhotos();
+    }catch(error){
+      console.error('사진 변환 실패',error,file);
+    }
+  }
+
+  if(successCount===0){
+    alert('촬영한 사진을 처리하지 못했습니다. 다시 촬영해주세요.');
+    return;
+  }
+
+  if(incoming.length>remaining){
+    alert('사진은 최대 20장까지 저장됩니다.');
+  }
+
+  // 안내 문구 갱신
+  const status=document.getElementById('recordSaveStatus');
+  if(status){
+    status.textContent=currentCloudUser
+      ? `사진 ${currentInspectionPhotos.length}장 준비됨 · 검차 저장을 누르면 계정에 저장됩니다.`
+      : `사진 ${currentInspectionPhotos.length}장 준비됨`;
+  }
+}
+
+async function loadActiveInspectionRecord(){
+  const id=localStorage.getItem('activeInspectionRecordId');
+
+  if(!id || !currentCloudUser || !supabaseClient){
+    currentInspectionPhotos=[];
+    renderInspectionPhotos();
+    return;
+  }
+
+  try{
+    const record=await fetchCloudRecord(id);
+    currentInspectionPhotos=await hydratePhotoMetadata(record?.photos||[]);
+    renderInspectionPhotos();
+
+    const status=document.getElementById('recordSaveStatus');
+    if(status && record){
+      status.textContent='저장된 기록 · 마지막 저장 '+formatRecordDate(record.updated_at||record.created_at);
+    }
+  }catch(error){
+    console.error(error);
+    localStorage.removeItem('activeInspectionRecordId');
+    currentInspectionPhotos=[];
+    renderInspectionPhotos();
+  }
+}
+
+/* 결과 복사 */
+async function copyInspectionSummary(){
+  updateAll();
+
+  const carNumber=(document.getElementById('carNumber')?.value||'').trim();
+  const carName=(document.getElementById('carName')?.value||'').trim();
+  const carGrade=(document.getElementById('carGrade')?.value||'').trim();
+  const mileage=(document.getElementById('mileage')?.value||'').trim();
+  const bid=getNumericValue(document.getElementById('bidPriceInput')?.value||'');
+  const final=getNumericValue(document.getElementById('finalPrice')?.textContent||'');
+  const resultText=(document.getElementById('resultArea')?.innerText||'').trim();
+
+  const text=[
+    '[차량 검차결과]',
+    `차량번호: ${carNumber||'-'}`,
+    `차량: ${[carName,carGrade].filter(Boolean).join(' / ')||'-'}`,
+    `주행거리: ${mileage||'-'}`,
+    `입찰가: ${formatWon(bid)}`,
+    '',
+    resultText,
+    '',
+    `최종금액: ${formatWon(final)}`
+  ].join('\n');
+
+  try{
+    if(navigator.clipboard && window.isSecureContext){
+      await navigator.clipboard.writeText(text);
+      alert('검차결과를 복사했습니다.');
+    }else{
+      const ta=document.createElement('textarea');
+      ta.value=text;
+      ta.style.position='fixed';
+      ta.style.opacity='0';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      ta.remove();
+      alert('검차결과를 복사했습니다.');
+    }
+  }catch{
+    prompt('아래 내용을 복사해주세요.',text);
+  }
+}
+
+function printInspection(){
+  updateAll();
+  window.print();
+}
+
+
+
+
+/* =========================================================
+   검차결과 이미지 캡처
+========================================================= */
+async function captureInspectionResult(){
+  updateAll();
+
+  const target=document.getElementById('resultArea');
+  if(!target || target.style.display==='none'){
+    alert('캡처할 검차결과가 없습니다.');
+    return;
+  }
+
+  if(typeof html2canvas!=='function'){
+    alert('이미지 캡처 기능을 불러오지 못했습니다.');
+    return;
+  }
+
+  try{
+    const canvas=await html2canvas(target,{
+      backgroundColor:'#ffffff',
+      scale:Math.min(window.devicePixelRatio||2,2.5),
+      useCORS:true,
+      logging:false
+    });
+
+    const carNumber=(document.getElementById('carNumber')?.value||'vehicle')
+      .trim()
+      .replace(/[^\w가-힣-]/g,'_') || 'vehicle';
+
+    canvas.toBlob(async blob=>{
+      if(!blob){
+        alert('검차결과 이미지를 만들지 못했습니다.');
+        return;
+      }
+
+      const filename=`검차결과_${carNumber}_${new Date().toISOString().slice(0,10)}.png`;
+      const file=new File([blob],filename,{type:'image/png'});
+
+      // Android WebView/모바일 브라우저에서 공유 API 지원 시
+      if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
+        try{
+          await navigator.share({
+            files:[file],
+            title:'검차결과',
+            text:`${carNumber} 검차결과`
+          });
+          return;
+        }catch(error){
+          if(error?.name==='AbortError') return;
+        }
+      }
+
+      // 공유 기능이 없으면 PNG 파일 다운로드
+      const url=URL.createObjectURL(blob);
+      const link=document.createElement('a');
+      link.href=url;
+      link.download=filename;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),1500);
+    },'image/png');
+
+  }catch(error){
+    console.error(error);
+    alert('검차결과 이미지 생성 중 오류가 발생했습니다.');
+  }
+}
+
+
+/* =========================================================
+   THEME MODE
+========================================================= */
+function applyTheme(theme){
+  const isDark = theme === "dark";
+  document.body.classList.toggle("dark-mode", isDark);
+
+  const button = document.getElementById("themeToggle");
+  if(!button) return;
+
+  const icon = button.querySelector("i");
+  if(icon){
+    icon.className = isDark ? "fa-solid fa-sun" : "fa-solid fa-moon";
+  }
+
+  button.setAttribute(
+    "aria-label",
+    isDark ? "화이트모드로 변경" : "다크모드로 변경"
+  );
+  button.title = isDark ? "화이트모드로 변경" : "다크모드로 변경";
+}
+
+function toggleTheme(){
+  const nextTheme = document.body.classList.contains("dark-mode") ? "light" : "dark";
+  localStorage.setItem("calculatorTheme", nextTheme);
+  applyTheme(nextTheme);
+}
+
+function initTheme(){
+  const savedTheme = localStorage.getItem("calculatorTheme") || "light";
+  applyTheme(savedTheme);
+
+  const button = document.getElementById("themeToggle");
+  if(button && !button.dataset.themeBound){
+    button.addEventListener("click", toggleTheme);
+    button.dataset.themeBound = "1";
+  }
+}
+
+    window.addEventListener('DOMContentLoaded', async ()=>{
+      initTheme();
+      await initializeCloudAuth();
+
+      const photoInputs=[
+        document.getElementById('inspectionCameraInput'),
+        document.getElementById('inspectionAlbumInput'),
+        document.getElementById('inspectionCameraInputTop'),
+        document.getElementById('inspectionAlbumInputTop')
+      ].filter(Boolean);
+
+      photoInputs.forEach(photoInput=>{
+        photoInput.addEventListener('change', async event=>{
+          await handleInspectionPhotos(event.target.files);
+          event.target.value='';
+        });
+      });
+
+      const photoSourceOverlay=document.getElementById('photoSourceOverlay');
+      if(photoSourceOverlay){
+        photoSourceOverlay.addEventListener('click',event=>{
+          if(event.target===photoSourceOverlay){
+            closePhotoSourceSheet();
+          }
+        });
+      }
+
+      const searchInput=document.getElementById('savedRecordSearch');
+      if(searchInput){
+        searchInput.addEventListener('input', renderSavedRecords);
+      }
+
       renderAllOverlays();
       loadExtraItems();
       loadInputs();
@@ -1745,6 +4823,8 @@
       updateAll();
       const savedPage = parseInt(localStorage.getItem('currentPage') || '0', 10);
       showPage(Number.isFinite(savedPage) ? savedPage : 0, false);
+      loadActiveInspectionRecord();
+      renderSavedRecords();
     });
 
     window.addEventListener('beforeunload', saveExtraItems);
