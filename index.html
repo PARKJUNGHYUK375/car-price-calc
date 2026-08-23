@@ -2291,6 +2291,54 @@ body.dark-mode .photo-source-cancel{
   }
 }
 
+
+
+/* 저장 사진 다운로드 */
+.photo-download{
+  position:absolute;
+  left:4px;
+  bottom:4px;
+  width:28px;
+  height:28px;
+  display:grid;
+  place-items:center;
+  padding:0;
+  border:0;
+  border-radius:50%;
+  color:#fff;
+  background:rgba(17,24,39,.72);
+  cursor:pointer;
+  z-index:2;
+}
+.saved-card-actions-3{
+  grid-template-columns:1fr auto auto !important;
+}
+.saved-download-btn{
+  min-height:38px;
+  padding:0 11px;
+  border-radius:11px;
+  border:1px solid #c9d8ea;
+  background:#f4f8fd;
+  color:#285d98;
+  font-size:10.5px;
+  font-weight:900;
+  cursor:pointer;
+  white-space:nowrap;
+}
+body.dark-mode .saved-download-btn{
+  color:#9cc8f6;
+  background:rgba(59,130,246,.08);
+  border-color:rgba(59,130,246,.20);
+}
+@media(max-width:560px){
+  .saved-card-actions-3{
+    grid-template-columns:1fr 1fr !important;
+  }
+  .saved-card-actions-3 .saved-load-btn{
+    grid-column:1 / -1;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -4356,9 +4404,12 @@ async function renderSavedRecords(){
 
           ${photoStrip}
 
-          <div class="saved-card-actions">
+          <div class="saved-card-actions saved-card-actions-3">
             <button type="button" class="saved-load-btn" onclick="loadInspectionRecord('${record.id}')">
               <i class="fa-solid fa-arrow-rotate-left"></i> 불러오기 / 수정
+            </button>
+            <button type="button" class="saved-download-btn" onclick="downloadRecordPhotos('${record.id}')">
+              <i class="fa-solid fa-download"></i> 사진 다운로드
             </button>
             <button type="button" class="saved-delete-btn" onclick="deleteInspectionRecord('${record.id}')">
               삭제
@@ -4440,6 +4491,9 @@ function renderInspectionPhotos(){
     return `
       <div class="photo-item">
         ${src?`<img src="${src}" alt="${escapeHtml(photo.name||'검차 사진')}">`:''}
+        ${src?`<button type="button" class="photo-download" aria-label="사진 다운로드" onclick="downloadCurrentPhoto(${index})">
+          <i class="fa-solid fa-download"></i>
+        </button>`:''}
         <button type="button" class="photo-delete" aria-label="사진 삭제" onclick="removeInspectionPhoto(${index})">
           <i class="fa-solid fa-xmark"></i>
         </button>
@@ -4737,6 +4791,112 @@ async function captureInspectionResult(){
   }catch(error){
     console.error(error);
     alert('검차결과 이미지 생성 중 오류가 발생했습니다.');
+  }
+}
+
+
+
+/* =========================================================
+   SAVED PHOTO DOWNLOAD
+========================================================= */
+function sanitizeDownloadName(name){
+  return String(name||'inspection_photo.jpg')
+    .replace(/[\\/:*?"<>|]+/g,'_')
+    .replace(/\s+/g,'_');
+}
+
+async function downloadBlob(blob, filename){
+  const safeName=sanitizeDownloadName(filename);
+
+  try{
+    const file=new File([blob],safeName,{type:blob.type||'image/jpeg'});
+    if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
+      await navigator.share({
+        files:[file],
+        title:'검차 사진',
+        text:safeName
+      });
+      return true;
+    }
+  }catch(error){
+    if(error?.name==='AbortError') return true;
+    console.warn('share fallback',error);
+  }
+
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download=safeName;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),2000);
+  return true;
+}
+
+async function fetchPhotoBlobFromUrl(url){
+  const response=await fetch(url);
+  if(!response.ok){
+    throw new Error('사진을 불러오지 못했습니다.');
+  }
+  return await response.blob();
+}
+
+async function downloadCurrentPhoto(index){
+  const photo=currentInspectionPhotos[index];
+  if(!photo) return;
+
+  try{
+    let blob=null;
+
+    if(photo.dataUrl){
+      blob=dataUrlToBlob(photo.dataUrl);
+    }else if(photo.url){
+      blob=await fetchPhotoBlobFromUrl(photo.url);
+    }else if(photo.path){
+      const signed=await createPhotoSignedUrl(photo.path,3600);
+      if(!signed) throw new Error('사진 주소를 만들지 못했습니다.');
+      blob=await fetchPhotoBlobFromUrl(signed);
+    }
+
+    if(!blob) throw new Error('다운로드할 사진이 없습니다.');
+
+    await downloadBlob(blob, photo.name || `검차사진_${index+1}.jpg`);
+  }catch(error){
+    console.error(error);
+    alert('사진 다운로드 중 오류가 발생했습니다.\n'+(error?.message||''));
+  }
+}
+
+async function downloadRecordPhotos(recordId){
+  if(!requireCloudUser()) return;
+
+  try{
+    const record=await fetchCloudRecord(recordId);
+    const photos=Array.isArray(record?.photos)?record.photos:[];
+
+    if(!photos.length){
+      alert('저장된 사진이 없습니다.');
+      return;
+    }
+
+    const carNumber=sanitizeDownloadName(record.car_number||'vehicle');
+
+    for(let i=0;i<photos.length;i++){
+      const photo=photos[i];
+      const signed=await createPhotoSignedUrl(photo.path,3600);
+      if(!signed) continue;
+
+      const blob=await fetchPhotoBlobFromUrl(signed);
+      const ext=blob.type==='image/png'?'png':'jpg';
+      const filename=`${carNumber}_${String(i+1).padStart(2,'0')}.${ext}`;
+
+      await downloadBlob(blob,filename);
+      await new Promise(resolve=>setTimeout(resolve,250));
+    }
+  }catch(error){
+    console.error(error);
+    alert('사진 다운로드 중 오류가 발생했습니다.\n'+(error?.message||''));
   }
 }
 
