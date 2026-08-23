@@ -1552,7 +1552,7 @@ body.dark-mode .btn-primary{
 }
 .record-actions{
   display:grid;
-  grid-template-columns:1.2fr 1fr 1fr;
+  grid-template-columns:1.2fr 1fr;
   gap:7px;
   margin-top:11px;
 }
@@ -2830,11 +2830,8 @@ body.dark-mode .saved-download-btn{
     <button type="button" class="record-btn primary" onclick="saveInspectionRecord()">
       <i class="fa-solid fa-floppy-disk"></i> 검차 저장
     </button>
-    <button type="button" class="record-btn" onclick="copyInspectionSummary()">
-      <i class="fa-solid fa-copy"></i> 결과 복사
-    </button>
     <button type="button" class="record-btn" onclick="captureInspectionResult()">
-      <i class="fa-solid fa-camera-retro"></i> 결과 이미지
+      <i class="fa-solid fa-image"></i> 결과 이미지 저장
     </button>
   </div>
 </div>
@@ -4491,7 +4488,7 @@ function renderInspectionPhotos(){
     return `
       <div class="photo-item">
         ${src?`<img src="${src}" alt="${escapeHtml(photo.name||'검차 사진')}">`:''}
-        ${src?`<button type="button" class="photo-download" aria-label="사진 다운로드" onclick="downloadCurrentPhoto(${index})">
+        ${src?`<button type="button" class="photo-download" aria-label="사진 저장" onclick="downloadCurrentPhoto(${index})">
           <i class="fa-solid fa-download"></i>
         </button>`:''}
         <button type="button" class="photo-delete" aria-label="사진 삭제" onclick="removeInspectionPhoto(${index})">
@@ -4731,69 +4728,150 @@ function printInspection(){
 async function captureInspectionResult(){
   updateAll();
 
-  const target=document.getElementById('resultArea');
-  if(!target || target.style.display==='none'){
-    alert('캡처할 검차결과가 없습니다.');
-    return;
-  }
-
-  if(typeof html2canvas!=='function'){
-    alert('이미지 캡처 기능을 불러오지 못했습니다.');
+  const resultArea=document.getElementById('resultArea');
+  if(!resultArea || resultArea.style.display==='none'){
+    alert('저장할 검차결과가 없습니다.');
     return;
   }
 
   try{
-    const canvas=await html2canvas(target,{
-      backgroundColor:'#ffffff',
-      scale:Math.min(window.devicePixelRatio||2,2.5),
-      useCORS:true,
-      logging:false
+    const carNumber=(document.getElementById('carNumber')?.value||'-').trim();
+    const carName=(document.getElementById('carName')?.value||'').trim();
+    const carGrade=(document.getElementById('carGrade')?.value||'').trim();
+    const mileage=(document.getElementById('mileage')?.value||'').trim();
+    const bid=(document.getElementById('bidPriceInput')?.value||'0').trim();
+    const finalPrice=(document.getElementById('finalPrice')?.textContent||'0').trim();
+
+    const rawLines=(resultArea.innerText||'')
+      .split('\n')
+      .map(v=>v.trim())
+      .filter(Boolean);
+
+    const canvas=document.createElement('canvas');
+    const ctx=canvas.getContext('2d');
+
+    const W=1200;
+    const PAD=72;
+    const CONTENT=W-(PAD*2);
+    const LINE=42;
+    const BODY_FONT='30px sans-serif';
+    const SMALL_FONT='25px sans-serif';
+
+    ctx.font=BODY_FONT;
+
+    function wrapText(text,maxWidth){
+      const chars=Array.from(String(text||''));
+      const lines=[];
+      let line='';
+
+      chars.forEach(ch=>{
+        const test=line+ch;
+        if(ctx.measureText(test).width>maxWidth && line){
+          lines.push(line);
+          line=ch;
+        }else{
+          line=test;
+        }
+      });
+
+      if(line) lines.push(line);
+      return lines.length?lines:[''];
+    }
+
+    const wrapped=[];
+    rawLines.forEach(line=>{
+      wrapText(line,CONTENT).forEach(x=>wrapped.push(x));
     });
 
-    const carNumber=(document.getElementById('carNumber')?.value||'vehicle')
-      .trim()
-      .replace(/[^\w가-힣-]/g,'_') || 'vehicle';
+    const infoLines=[
+      `차량번호  ${carNumber}`,
+      `차량정보  ${[carName,carGrade].filter(Boolean).join(' / ')||'-'}`,
+      `주행거리  ${mileage||'-'}`,
+      `입찰가    ${bid}원`,
+      `최종금액  ${finalPrice}원`
+    ];
 
-    canvas.toBlob(async blob=>{
-      if(!blob){
-        alert('검차결과 이미지를 만들지 못했습니다.');
-        return;
-      }
+    const height=
+      120 +            // 헤더
+      infoLines.length*46 +
+      44 +             // 구분선/간격
+      Math.max(wrapped.length,1)*LINE +
+      100;
 
-      const filename=`검차결과_${carNumber}_${new Date().toISOString().slice(0,10)}.png`;
-      const file=new File([blob],filename,{type:'image/png'});
+    canvas.width=W;
+    canvas.height=Math.max(height,650);
 
-      // Android WebView/모바일 브라우저에서 공유 API 지원 시
-      if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
-        try{
-          await navigator.share({
-            files:[file],
-            title:'검차결과',
-            text:`${carNumber} 검차결과`
-          });
-          return;
-        }catch(error){
-          if(error?.name==='AbortError') return;
-        }
-      }
+    // background
+    ctx.fillStyle='#ffffff';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
 
-      // 공유 기능이 없으면 PNG 파일 다운로드
-      const url=URL.createObjectURL(blob);
-      const link=document.createElement('a');
-      link.href=url;
-      link.download=filename;
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      setTimeout(()=>URL.revokeObjectURL(url),1500);
-    },'image/png');
+    // header
+    ctx.fillStyle='#152238';
+    ctx.fillRect(0,0,W,112);
 
+    ctx.fillStyle='#ffffff';
+    ctx.font='bold 42px sans-serif';
+    ctx.fillText('차량 검차결과',PAD,70);
+
+    ctx.fillStyle='#8793a5';
+    ctx.font='23px sans-serif';
+    const now=new Date().toLocaleString('ko-KR');
+    ctx.textAlign='right';
+    ctx.fillText(now,W-PAD,68);
+    ctx.textAlign='left';
+
+    // vehicle info
+    let y=160;
+    ctx.font='28px sans-serif';
+    infoLines.forEach((line,index)=>{
+      ctx.fillStyle=index===4?'#d54444':'#344054';
+      if(index===4) ctx.font='bold 30px sans-serif';
+      else ctx.font='28px sans-serif';
+      ctx.fillText(line,PAD,y);
+      y+=46;
+    });
+
+    // divider
+    y+=12;
+    ctx.strokeStyle='#dfe5ec';
+    ctx.lineWidth=2;
+    ctx.beginPath();
+    ctx.moveTo(PAD,y);
+    ctx.lineTo(W-PAD,y);
+    ctx.stroke();
+
+    y+=54;
+    ctx.fillStyle='#1f5fae';
+    ctx.font='bold 31px sans-serif';
+    ctx.fillText('검차 내역',PAD,y);
+    y+=54;
+
+    // result text
+    ctx.font=BODY_FONT;
+    wrapped.forEach(line=>{
+      const isTotal=line.includes('감가 합계') || line.includes('최종');
+      ctx.fillStyle=isTotal?'#d54444':'#26364d';
+      ctx.font=isTotal?'bold 30px sans-serif':BODY_FONT;
+      ctx.fillText(line,PAD,y);
+      y+=LINE;
+    });
+
+    ctx.fillStyle='#9aa4b2';
+    ctx.font=SMALL_FONT;
+    ctx.fillText('감가계산기 검차기록',PAD,canvas.height-42);
+
+    const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png',1));
+    if(!blob) throw new Error('이미지를 만들지 못했습니다.');
+
+    const safeCar=String(carNumber||'vehicle').replace(/[\\/:*?"<>|\s]+/g,'_');
+    const filename=`검차결과_${safeCar}_${new Date().toISOString().slice(0,10)}.png`;
+
+    await saveBlobToDevice(blob,filename);
   }catch(error){
     console.error(error);
-    alert('검차결과 이미지 생성 중 오류가 발생했습니다.');
+    alert('검차결과 이미지 저장 중 오류가 발생했습니다.\n'+(error?.message||''));
   }
 }
-
 
 
 /* =========================================================
@@ -4805,24 +4883,26 @@ function sanitizeDownloadName(name){
     .replace(/\s+/g,'_');
 }
 
-async function downloadBlob(blob, filename){
+function blobToDataUrl(blob){
+  return new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.onerror=()=>reject(reader.error||new Error('파일 변환 실패'));
+    reader.onload=()=>resolve(reader.result);
+    reader.readAsDataURL(blob);
+  });
+}
+
+async function saveBlobToDevice(blob,filename){
   const safeName=sanitizeDownloadName(filename);
 
-  try{
-    const file=new File([blob],safeName,{type:blob.type||'image/jpeg'});
-    if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
-      await navigator.share({
-        files:[file],
-        title:'검차 사진',
-        text:safeName
-      });
-      return true;
-    }
-  }catch(error){
-    if(error?.name==='AbortError') return true;
-    console.warn('share fallback',error);
+  // Android WebView 네이티브 저장 브리지 우선 사용
+  if(window.AndroidFile && typeof window.AndroidFile.saveBase64Image==='function'){
+    const dataUrl=await blobToDataUrl(blob);
+    window.AndroidFile.saveBase64Image(String(dataUrl),safeName);
+    return true;
   }
 
+  // 일반 브라우저 fallback
   const url=URL.createObjectURL(blob);
   const a=document.createElement('a');
   a.href=url;
@@ -4832,6 +4912,10 @@ async function downloadBlob(blob, filename){
   a.remove();
   setTimeout(()=>URL.revokeObjectURL(url),2000);
   return true;
+}
+
+async function downloadBlob(blob,filename){
+  return saveBlobToDevice(blob,filename);
 }
 
 async function fetchPhotoBlobFromUrl(url){
@@ -4892,7 +4976,7 @@ async function downloadRecordPhotos(recordId){
       const filename=`${carNumber}_${String(i+1).padStart(2,'0')}.${ext}`;
 
       await downloadBlob(blob,filename);
-      await new Promise(resolve=>setTimeout(resolve,250));
+      await new Promise(resolve=>setTimeout(resolve,450));
     }
   }catch(error){
     console.error(error);
