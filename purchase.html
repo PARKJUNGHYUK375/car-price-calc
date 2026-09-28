@@ -307,6 +307,7 @@ body.purchase-exporting .sheet td{border-width:1px!important}
 .field select{width:100%}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 // ===== 자동차등록증 온디바이스 OCR =====
 async function runRegistrationOcr(input){
@@ -462,9 +463,107 @@ window.onRegistrationOcrResult=function(json){
 </div></div>
 </div>
 </div>
-<div class="actions" id="actions"><div><button class="btn secondary" onclick="saveForm(false)">임시저장</button><button class="btn primary" onclick="showTab('preview')">원본양식 미리보기</button></div></div>
+<div class="actions" id="actions"><div><button class="btn secondary" onclick="savePurchaseDraftCloud()">임시저장</button><button class="btn primary" onclick="showTab('preview')">원본양식 미리보기</button></div><div id="purchaseCloudStatus" style="max-width:900px;margin:5px auto 0;font-size:10px;color:#758092;text-align:center">PC·앱 공용 저장 준비 중…</div></div>
 <script>
 const KEY='dealerPurchaseDraft_v2';
+
+/* ===== Supabase: 매입품의서 PC ↔ 앱 공용 임시저장 ===== */
+const PURCHASE_SUPABASE_URL='https://crmeeegayzezeqhgkagx.supabase.co';
+const PURCHASE_SUPABASE_KEY='sb_publishable_6wpAz2ELkD2Eh2ircwzVGw_78QKns9C';
+const PURCHASE_CLOUD_TABLE='purchase_drafts';
+let purchaseSupabase=null;
+let purchaseCloudUser=null;
+
+function purchaseCloudStatus(msg){
+  const el=document.getElementById('purchaseCloudStatus');
+  if(el) el.textContent=msg||'';
+}
+function initPurchaseSupabase(){
+  if(!window.supabase) return null;
+  if(!purchaseSupabase){
+    purchaseSupabase=window.supabase.createClient(PURCHASE_SUPABASE_URL,PURCHASE_SUPABASE_KEY,{
+      auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}
+    });
+  }
+  return purchaseSupabase;
+}
+async function getPurchaseCloudUser(){
+  const client=initPurchaseSupabase();
+  if(!client) return null;
+  const {data,error}=await client.auth.getSession();
+  if(error) throw error;
+  purchaseCloudUser=data?.session?.user||null;
+  return purchaseCloudUser;
+}
+async function savePurchaseDraftCloud(){
+  // 기기 안에도 즉시 저장
+  saveForm();
+  try{
+    const user=await getPurchaseCloudUser();
+    if(!user){
+      purchaseCloudStatus('감가계산기에서 로그인하면 PC·앱 공용 저장을 사용할 수 있습니다.');
+      alert('먼저 감가계산기에서 Supabase 계정으로 로그인해주세요.\n로그인 후 매입품의서로 돌아와 임시저장을 누르면 PC와 앱이 공유됩니다.');
+      return;
+    }
+    purchaseCloudStatus('클라우드에 저장 중…');
+    const payload={
+      user_id:user.id,
+      workspace:vals(),
+      updated_at:new Date().toISOString()
+    };
+    const {error}=await purchaseSupabase.from(PURCHASE_CLOUD_TABLE)
+      .upsert(payload,{onConflict:'user_id'});
+    if(error) throw error;
+    purchaseCloudStatus('저장 완료 · PC와 앱에서 같은 내용이 보입니다.');
+    alert('임시저장했습니다.\nPC와 앱에서 같은 내용을 사용할 수 있습니다.');
+  }catch(error){
+    console.error('매입품의서 클라우드 저장 실패',error);
+    purchaseCloudStatus('클라우드 저장 실패 · 이 기기에는 임시저장됨');
+    alert('이 기기에는 저장했지만 클라우드 저장은 실패했습니다.\n'+(error?.message||''));
+  }
+}
+function applyPurchaseWorkspace(workspace){
+  if(!workspace || typeof workspace!=='object') return;
+  fields().forEach(e=>{
+    if(workspace[e.dataset.k]!=null) setStoredValue(e,workspace[e.dataset.k]);
+  });
+  saveForm();
+}
+async function loadPurchaseDraftCloud(){
+  try{
+    const user=await getPurchaseCloudUser();
+    if(!user){
+      purchaseCloudStatus('감가계산기에서 로그인하면 PC·앱 공용 저장을 사용할 수 있습니다.');
+      return;
+    }
+    purchaseCloudStatus('공용 임시저장을 확인하는 중…');
+    const {data,error}=await purchaseSupabase.from(PURCHASE_CLOUD_TABLE)
+      .select('workspace,updated_at')
+      .eq('user_id',user.id)
+      .maybeSingle();
+    if(error) throw error;
+    if(data?.workspace){
+      applyPurchaseWorkspace(data.workspace);
+      purchaseCloudStatus('공용 임시저장을 불러왔습니다.');
+    }else{
+      purchaseCloudStatus('연결됨 · 아직 공용 임시저장이 없습니다.');
+    }
+  }catch(error){
+    console.error('매입품의서 클라우드 불러오기 실패',error);
+    purchaseCloudStatus('공용 저장 연결 실패 · 로컬 임시저장 사용 중');
+  }
+}
+async function initializePurchaseCloud(){
+  const client=initPurchaseSupabase();
+  if(!client){ purchaseCloudStatus('공용 저장을 시작하지 못했습니다.'); return; }
+  await loadPurchaseDraftCloud();
+  client.auth.onAuthStateChange((_event,session)=>{
+    purchaseCloudUser=session?.user||null;
+    if(purchaseCloudUser) setTimeout(loadPurchaseDraftCloud,0);
+    else purchaseCloudStatus('감가계산기에서 로그인하면 PC·앱 공용 저장을 사용할 수 있습니다.');
+  });
+}
+
 const fields=()=>[...document.querySelectorAll('[data-k]')];
 function directInputFor(key){return document.querySelector('[data-direct-for="'+key+'"]')}
 function directChoice(sel){
@@ -518,6 +617,7 @@ window.addEventListener('resize',()=>{if(document.getElementById('preview').styl
 const __hadDraft=!!localStorage.getItem(KEY);
 loadForm();
 if(!__hadDraft)setDefaults();
+initializePurchaseCloud();
 
 async function exportPurchase(type){
   render();
