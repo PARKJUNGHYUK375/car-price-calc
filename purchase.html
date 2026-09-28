@@ -463,105 +463,101 @@ window.onRegistrationOcrResult=function(json){
 </div></div>
 </div>
 </div>
-<div class="actions" id="actions"><div><button class="btn secondary" onclick="savePurchaseDraftCloud()">임시저장</button><button class="btn primary" onclick="showTab('preview')">원본양식 미리보기</button></div><div id="purchaseCloudStatus" style="max-width:900px;margin:5px auto 0;font-size:10px;color:#758092;text-align:center">PC·앱 공용 저장 준비 중…</div></div>
+<div class="actions" id="actions"><div><button class="btn secondary" onclick="openPurchaseRecords()">저장목록</button><button class="btn secondary" onclick="savePurchaseRecord()">저장</button><button class="btn primary" onclick="showTab('preview')">원본양식 미리보기</button></div><div id="purchaseCloudStatus" style="max-width:900px;margin:5px auto 0;font-size:10px;color:#758092;text-align:center">PC·앱 공용 저장 준비 중…</div></div>
+<div id="purchaseRecordsModal" hidden style="position:fixed;inset:0;background:#0008;z-index:100;align-items:center;justify-content:center;padding:18px">
+ <div style="background:#fff;width:min(680px,100%);max-height:82vh;overflow:auto;border-radius:16px;padding:16px;color:#172033">
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><b style="font-size:17px">저장된 매입품의서</b><button class="smallbtn" onclick="closePurchaseRecords()">닫기</button></div>
+  <input id="purchaseRecordSearch" placeholder="차량번호 · 차명 검색" oninput="renderPurchaseRecords()" style="width:100%;margin:12px 0;padding:11px;border:1px solid #dfe4ea;border-radius:10px">
+  <div id="purchaseRecordsList"></div>
+ </div>
+</div>
 <script>
 const KEY='dealerPurchaseDraft_v2';
 
-/* ===== Supabase: 매입품의서 PC ↔ 앱 공용 임시저장 ===== */
+/* ===== Supabase: 매입품의서 저장 / 불러오기 ===== */
 const PURCHASE_SUPABASE_URL='https://crmeeegayzezeqhgkagx.supabase.co';
 const PURCHASE_SUPABASE_KEY='sb_publishable_6wpAz2ELkD2Eh2ircwzVGw_78QKns9C';
-const PURCHASE_CLOUD_TABLE='purchase_drafts';
-let purchaseSupabase=null;
-let purchaseCloudUser=null;
+const PURCHASE_CLOUD_TABLE='purchase_records';
+let purchaseSupabase=null, purchaseCloudUser=null, currentPurchaseRecordId=null, purchaseRecordCache=[];
 
-function purchaseCloudStatus(msg){
-  const el=document.getElementById('purchaseCloudStatus');
-  if(el) el.textContent=msg||'';
-}
+function purchaseCloudStatus(msg){const el=document.getElementById('purchaseCloudStatus');if(el)el.textContent=msg||''}
 function initPurchaseSupabase(){
-  if(!window.supabase) return null;
-  if(!purchaseSupabase){
-    purchaseSupabase=window.supabase.createClient(PURCHASE_SUPABASE_URL,PURCHASE_SUPABASE_KEY,{
-      auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}
-    });
-  }
-  return purchaseSupabase;
+ if(!window.supabase)return null;
+ if(!purchaseSupabase) purchaseSupabase=window.supabase.createClient(PURCHASE_SUPABASE_URL,PURCHASE_SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+ return purchaseSupabase;
 }
 async function getPurchaseCloudUser(){
-  const client=initPurchaseSupabase();
-  if(!client) return null;
-  const {data,error}=await client.auth.getSession();
-  if(error) throw error;
-  purchaseCloudUser=data?.session?.user||null;
-  return purchaseCloudUser;
+ const c=initPurchaseSupabase(); if(!c)return null;
+ const {data,error}=await c.auth.getSession(); if(error)throw error;
+ purchaseCloudUser=data?.session?.user||null; return purchaseCloudUser;
 }
-async function savePurchaseDraftCloud(){
-  // 기기 안에도 즉시 저장
-  saveForm();
-  try{
-    const user=await getPurchaseCloudUser();
-    if(!user){
-      purchaseCloudStatus('감가계산기에서 로그인하면 PC·앱 공용 저장을 사용할 수 있습니다.');
-      alert('먼저 감가계산기에서 Supabase 계정으로 로그인해주세요.\n로그인 후 매입품의서로 돌아와 임시저장을 누르면 PC와 앱이 공유됩니다.');
-      return;
-    }
-    purchaseCloudStatus('클라우드에 저장 중…');
-    const payload={
-      user_id:user.id,
-      workspace:vals(),
-      updated_at:new Date().toISOString()
-    };
-    const {error}=await purchaseSupabase.from(PURCHASE_CLOUD_TABLE)
-      .upsert(payload,{onConflict:'user_id'});
-    if(error) throw error;
-    purchaseCloudStatus('저장 완료 · PC와 앱에서 같은 내용이 보입니다.');
-    alert('임시저장했습니다.\nPC와 앱에서 같은 내용을 사용할 수 있습니다.');
-  }catch(error){
-    console.error('매입품의서 클라우드 저장 실패',error);
-    purchaseCloudStatus('클라우드 저장 실패 · 이 기기에는 임시저장됨');
-    alert('이 기기에는 저장했지만 클라우드 저장은 실패했습니다.\n'+(error?.message||''));
-  }
+function uuidPurchase(){return crypto?.randomUUID?crypto.randomUUID():'purchase-'+Date.now()+'-'+Math.random().toString(36).slice(2)}
+function applyPurchaseWorkspace(w){
+ if(!w||typeof w!=='object')return;
+ fields().forEach(e=>{if(w[e.dataset.k]!=null)setStoredValue(e,w[e.dataset.k])});
+ saveForm();
 }
-function applyPurchaseWorkspace(workspace){
-  if(!workspace || typeof workspace!=='object') return;
-  fields().forEach(e=>{
-    if(workspace[e.dataset.k]!=null) setStoredValue(e,workspace[e.dataset.k]);
-  });
-  saveForm();
+async function savePurchaseRecord(){
+ saveForm();
+ try{
+  const user=await getPurchaseCloudUser();
+  if(!user){purchaseCloudStatus('감가계산기에서 같은 계정으로 로그인해주세요.');alert('먼저 감가계산기에서 Supabase 계정으로 로그인해주세요.');return}
+  const o=vals(), id=currentPurchaseRecordId||uuidPurchase();
+  const payload={id,user_id:user.id,car_no:(o.carNo||'').trim(),car_name:(o.carName||'').trim(),purchase_date:o.purchaseDate||null,purchase_price:o.purchasePrice||'',workspace:o,updated_at:new Date().toISOString()};
+  purchaseCloudStatus('저장 중…');
+  const {data,error}=await purchaseSupabase.from(PURCHASE_CLOUD_TABLE).upsert(payload,{onConflict:'id'}).select().single();
+  if(error)throw error;
+  currentPurchaseRecordId=data.id;
+  purchaseCloudStatus('저장 완료 · '+(o.carNo||o.carName||'매입품의서'));
+  alert('매입품의서를 저장했습니다.');
+ }catch(error){console.error(error);purchaseCloudStatus('클라우드 저장 실패 · 로컬에는 저장됨');alert('저장 중 오류가 발생했습니다.\n'+(error?.message||''))}
 }
-async function loadPurchaseDraftCloud(){
-  try{
-    const user=await getPurchaseCloudUser();
-    if(!user){
-      purchaseCloudStatus('감가계산기에서 로그인하면 PC·앱 공용 저장을 사용할 수 있습니다.');
-      return;
-    }
-    purchaseCloudStatus('공용 임시저장을 확인하는 중…');
-    const {data,error}=await purchaseSupabase.from(PURCHASE_CLOUD_TABLE)
-      .select('workspace,updated_at')
-      .eq('user_id',user.id)
-      .maybeSingle();
-    if(error) throw error;
-    if(data?.workspace){
-      applyPurchaseWorkspace(data.workspace);
-      purchaseCloudStatus('공용 임시저장을 불러왔습니다.');
-    }else{
-      purchaseCloudStatus('연결됨 · 아직 공용 임시저장이 없습니다.');
-    }
-  }catch(error){
-    console.error('매입품의서 클라우드 불러오기 실패',error);
-    purchaseCloudStatus('공용 저장 연결 실패 · 로컬 임시저장 사용 중');
-  }
+async function fetchPurchaseRecords(){
+ const user=await getPurchaseCloudUser(); if(!user)return [];
+ const {data,error}=await purchaseSupabase.from(PURCHASE_CLOUD_TABLE).select('*').eq('user_id',user.id).order('updated_at',{ascending:false});
+ if(error)throw error; purchaseRecordCache=data||[]; return purchaseRecordCache;
+}
+function escapePurchaseHtml(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function renderPurchaseRecords(){
+ const box=document.getElementById('purchaseRecordsList'); if(!box)return;
+ const q=(document.getElementById('purchaseRecordSearch')?.value||'').trim().toLowerCase();
+ const rows=purchaseRecordCache.filter(r=>!q||[r.car_no,r.car_name,r.purchase_date,r.purchase_price].some(v=>String(v||'').toLowerCase().includes(q)));
+ if(!rows.length){box.innerHTML='<div style="padding:28px;text-align:center;color:#758092">저장된 매입품의서가 없습니다.</div>';return}
+ box.innerHTML=rows.map(r=>`<div style="border:1px solid #dfe4ea;border-radius:12px;padding:12px;margin:8px 0">
+  <div style="font-weight:900;font-size:15px">${escapePurchaseHtml(r.car_no||'차량번호 없음')} · ${escapePurchaseHtml(r.car_name||'차명 없음')}</div>
+  <div style="font-size:12px;color:#758092;margin:5px 0">매입일 ${escapePurchaseHtml(r.purchase_date||'-')} · 매입금액 ${escapePurchaseHtml(r.purchase_price||'-')}</div>
+  <div style="display:flex;gap:7px"><button class="smallbtn" onclick="loadPurchaseRecord('${r.id}')">불러오기</button><button class="smallbtn" onclick="deletePurchaseRecord('${r.id}')">삭제</button></div>
+ </div>`).join('');
+}
+async function openPurchaseRecords(){
+ try{
+  const user=await getPurchaseCloudUser(); if(!user){alert('먼저 감가계산기에서 Supabase 계정으로 로그인해주세요.');return}
+  const m=document.getElementById('purchaseRecordsModal');m.hidden=false;m.style.display='flex';
+  document.getElementById('purchaseRecordsList').innerHTML='<div style="padding:28px;text-align:center">불러오는 중…</div>';
+  await fetchPurchaseRecords();renderPurchaseRecords();
+ }catch(e){console.error(e);alert('저장목록을 불러오지 못했습니다.\n'+(e?.message||''))}
+}
+function closePurchaseRecords(){const m=document.getElementById('purchaseRecordsModal');m.hidden=true;m.style.display='none'}
+async function loadPurchaseRecord(id){
+ try{
+  const user=await getPurchaseCloudUser(); if(!user)return;
+  const {data,error}=await purchaseSupabase.from(PURCHASE_CLOUD_TABLE).select('*').eq('id',id).eq('user_id',user.id).single();if(error)throw error;
+  applyPurchaseWorkspace(data.workspace);currentPurchaseRecordId=data.id;closePurchaseRecords();showTab('form');purchaseCloudStatus('불러옴 · '+(data.car_no||data.car_name||'매입품의서'));
+ }catch(e){console.error(e);alert('불러오지 못했습니다.\n'+(e?.message||''))}
+}
+async function deletePurchaseRecord(id){
+ const r=purchaseRecordCache.find(x=>x.id===id);if(!confirm((r?.car_no||r?.car_name||'이 매입품의서')+' 기록을 삭제할까요?'))return;
+ try{
+  const user=await getPurchaseCloudUser();if(!user)return;
+  const {error}=await purchaseSupabase.from(PURCHASE_CLOUD_TABLE).delete().eq('id',id).eq('user_id',user.id);if(error)throw error;
+  if(currentPurchaseRecordId===id)currentPurchaseRecordId=null;
+  await fetchPurchaseRecords();renderPurchaseRecords();
+ }catch(e){console.error(e);alert('삭제하지 못했습니다.\n'+(e?.message||''))}
 }
 async function initializePurchaseCloud(){
-  const client=initPurchaseSupabase();
-  if(!client){ purchaseCloudStatus('공용 저장을 시작하지 못했습니다.'); return; }
-  await loadPurchaseDraftCloud();
-  client.auth.onAuthStateChange((_event,session)=>{
-    purchaseCloudUser=session?.user||null;
-    if(purchaseCloudUser) setTimeout(loadPurchaseDraftCloud,0);
-    else purchaseCloudStatus('감가계산기에서 로그인하면 PC·앱 공용 저장을 사용할 수 있습니다.');
-  });
+ const c=initPurchaseSupabase();if(!c){purchaseCloudStatus('공용 저장을 시작하지 못했습니다.');return}
+ try{const u=await getPurchaseCloudUser();purchaseCloudStatus(u?'클라우드 저장 연결됨':'감가계산기에서 로그인하면 PC·앱 저장목록을 공유합니다.')}catch(e){purchaseCloudStatus('클라우드 연결 확인 실패')}
+ c.auth.onAuthStateChange((_e,session)=>{purchaseCloudUser=session?.user||null;purchaseCloudStatus(purchaseCloudUser?'클라우드 저장 연결됨':'감가계산기에서 로그인하면 PC·앱 저장목록을 공유합니다.')});
 }
 
 const fields=()=>[...document.querySelectorAll('[data-k]')];
@@ -602,7 +598,7 @@ function setDefaults(){
   set('mortgageCount','없음'); set('businessStatus','없음');
   set('mortgageMethod','고객직접 납입'); set('etc','헤이딜러(셀프)'); set('etcDetail','저당, 고객직접 납입');
 }
-function newForm(){if(!confirm('현재 작성 내용을 비우고 새 품의서를 작성할까요?'))return;localStorage.removeItem(KEY);fields().forEach(e=>e.value='');document.querySelectorAll('[data-direct-for]').forEach(e=>{e.value='';e.style.display='none'});setDefaults();showTab('form')}
+function newForm(){currentPurchaseRecordId=null;if(!confirm('현재 작성 내용을 비우고 새 품의서를 작성할까요?'))return;localStorage.removeItem(KEY);fields().forEach(e=>e.value='');document.querySelectorAll('[data-direct-for]').forEach(e=>{e.value='';e.style.display='none'});setDefaults();showTab('form')}
 function autoLocation(){let s=document.querySelector('[data-k="saleType"]').value,l=document.querySelector('[data-k="location"]');l.value=s==='소매'?'오토허브':s==='경매'?'안성':'';saveForm()}
 function moneyInput(el){let n=el.value.replace(/\D/g,'');el.value=n?Number(n).toLocaleString('ko-KR'):'';document.querySelector('[data-k="purchasePriceKor"]').value=numberKor(n);saveForm()}
 function numberKor(v){let n=String(v||'').replace(/\D/g,'');if(!n)return '';let nums=['','일','이','삼','사','오','육','칠','팔','구'],small=['','십','백','천'],big=['','만','억','조','경'],out='',g=0;while(n.length){let ch=n.slice(-4);n=n.slice(0,-4);let p='';for(let i=0;i<ch.length;i++){let d=+ch[ch.length-1-i];if(d)p=nums[d]+small[i]+p}if(p)out=p+big[g]+out;g++}return out+'원';}
