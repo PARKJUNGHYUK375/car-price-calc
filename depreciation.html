@@ -2550,7 +2550,7 @@ body.dark-mode .saved-download-btn{
 </div>
 <!-- 사고 -->
 <div class="section page-panel" data-page-panel="2">
-<h2><i class="fas fa-car-burst"></i> 사고 이력</h2>
+<h2 style="display:flex;align-items:center;justify-content:space-between;gap:10px"><span><i class="fas fa-car-burst"></i> 사고 이력</span><span style="display:flex;align-items:center;gap:7px;font-size:12px"><button type="button" onclick="changeAccidentRateOffset(-1)" aria-label="사고 감가율 1% 내리기" style="width:32px;height:32px;border-radius:9px;border:1px solid rgba(255,255,255,.14);background:var(--card);color:var(--text);font-size:18px;font-weight:900">−</button><b id="accidentRateOffset" style="min-width:38px;text-align:center">±0%</b><button type="button" onclick="changeAccidentRateOffset(1)" aria-label="사고 감가율 1% 올리기" style="width:32px;height:32px;border-radius:9px;border:1px solid rgba(255,255,255,.14);background:var(--card);color:var(--text);font-size:18px;font-weight:900">+</button></span></h2>
 <div class="container">
 <img alt="사고부위 자동차" class="car-image" src="https://imgur.com/agbd7Z8.png"/>
 <div class="checkbox-overlay" id="accidentSection"></div>
@@ -2857,6 +2857,18 @@ body.dark-mode .saved-download-btn{
 <script>
     // ✅ 가격(국산/수입 토글)
     const PRICE = { partPrice: 180000, wheelPrice: 80000, tirePrice: 80000, spareKeyMissing: 150000 };
+    let accidentRateOffset = Number(localStorage.getItem('accidentRateOffset') || 0);
+    function refreshAccidentRateOffset(){
+      const el=document.getElementById('accidentRateOffset');
+      if(el) el.textContent=(accidentRateOffset>0?'+':'')+accidentRateOffset+'%';
+    }
+    function changeAccidentRateOffset(step){
+      accidentRateOffset += step;
+      localStorage.setItem('accidentRateOffset',String(accidentRateOffset));
+      refreshAccidentRateOffset();
+      updateAll();
+    }
+
 
     // ✅ 데이터(좌표/이름)
     const DATA = {
@@ -3434,7 +3446,8 @@ body.dark-mode .saved-download-btn{
             const mark = isExchange ? 'XX' : 'WW';
             accidentLines.push(`[고객고지] ${name} (${isExchange ? '교환' : '판금'} ${mark}): 감가 제외`);
           }else{
-            const appliedRate = isExchange ? rate : (rate - 1);
+            const baseAppliedRate = isExchange ? rate : (rate - 1);
+            const appliedRate = Math.max(0, baseAppliedRate + accidentRateOffset);
             const discount = Math.round(bidPrice * (appliedRate / 100));
 
             accidentDiscount += discount;
@@ -5065,7 +5078,8 @@ function initTheme(){
       const savedType = localStorage.getItem('carType') || 'imported';
       setCarType(savedType);
 
-      updateAll();
+      refreshAccidentRateOffset();
+    updateAll();
       const savedPage = parseInt(localStorage.getItem('currentPage') || '0', 10);
       showPage(Number.isFinite(savedPage) ? savedPage : 0, false);
       loadActiveInspectionRecord();
