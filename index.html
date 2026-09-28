@@ -12,7 +12,8 @@
 .menu{display:grid;grid-template-columns:1fr 1fr;gap:13px}.card{border:1px solid var(--line);background:var(--card);border-radius:22px;min-height:200px;padding:21px 19px;text-decoration:none;color:inherit;display:flex;flex-direction:column;box-shadow:0 10px 28px rgba(22,34,51,.07);-webkit-tap-highlight-color:transparent}.card:active{transform:scale(.985)}
 .icon{width:50px;height:50px;border-radius:16px;display:grid;place-items:center;font-size:25px;margin-bottom:22px}.calc .icon{background:#fff0f0;color:var(--red)}.purchase .icon{background:#eef5fc;color:var(--blue)}
 .title{font-size:19px;font-weight:900}.desc{font-size:12px;line-height:1.55;color:var(--muted);margin-top:7px}.open{margin-top:auto;padding-top:18px;font-size:12px;font-weight:900;color:#596477}.foot{text-align:center;color:#a0a8b4;font-size:10px;margin-top:23px}
-@media(max-width:520px){.menu{grid-template-columns:1fr}.card{min-height:155px}.icon{margin-bottom:14px}}
+.cloudbox{margin:0 0 18px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:13px 14px;box-shadow:0 7px 20px rgba(22,34,51,.05);display:flex;align-items:center;justify-content:space-between;gap:10px}.cloudstate{font-size:12px;color:var(--muted);line-height:1.45}.cloudstate b{display:block;color:var(--text);font-size:13px}.cloudbtn{border:0;border-radius:10px;padding:10px 13px;font-weight:900;background:var(--blue);color:#fff;white-space:nowrap}.cloudbtn.connected{background:#eef5fc;color:var(--blue)}.auth-overlay{position:fixed;inset:0;background:#0008;z-index:100;display:flex;align-items:center;justify-content:center;padding:18px}.auth-overlay[hidden]{display:none}.auth-card{width:min(390px,100%);background:#fff;border-radius:20px;padding:22px;position:relative;box-shadow:0 20px 60px #0004}.auth-card h2{margin:0 0 6px;font-size:20px}.auth-card p{font-size:12px;color:var(--muted);line-height:1.5;margin:0 0 16px}.auth-close{position:absolute;right:12px;top:12px;border:0;background:#f2f4f7;border-radius:9px;width:34px;height:34px;font-size:18px}.auth-field{margin:10px 0}.auth-field label{display:block;font-size:11px;font-weight:800;color:var(--muted);margin-bottom:5px}.auth-field input{width:100%;border:1px solid var(--line);border-radius:10px;padding:11px}.auth-message{min-height:18px;font-size:11px;color:#d44;margin:6px 0}.auth-message.success{color:#287a4b}.auth-buttons{display:flex;gap:8px}.auth-buttons button{flex:1;border:0;border-radius:10px;padding:11px;font-weight:900}.auth-primary{background:var(--blue);color:#fff}.auth-secondary{background:#eef1f5;color:var(--text)}
+@media(max-width:520px){.menu{grid-template-columns:1fr}.card{min-height:155px}.icon{margin-bottom:14px}.cloudbox{align-items:flex-start}}
 </style>
 </head>
 <body>
@@ -20,6 +21,10 @@
 <div class="eyebrow">DEALER SOLUTION</div>
 <h1>딜러솔루션</h1>
 <p class="sub">차량 매입 업무에 필요한 기능을 선택하세요.</p>
+<div class="cloudbox">
+ <div class="cloudstate"><b id="cloudTitle">클라우드 로그인</b><span id="cloudSub">로그인하면 PC와 앱에서 저장기록을 함께 사용할 수 있습니다.</span></div>
+ <button id="cloudButton" class="cloudbtn" type="button" onclick="handleCloudButton()">로그인</button>
+</div>
 <section class="menu">
 <a class="card calc" href="depreciation.html">
 <div class="icon">🚗</div><div class="title">감가계산기</div>
@@ -32,4 +37,31 @@
 </section>
 <div class="foot">Dealer Solution</div>
 </main>
+<div id="authOverlay" class="auth-overlay" hidden>
+ <div class="auth-card">
+  <button class="auth-close" type="button" onclick="closeAuth()">×</button>
+  <h2>딜러솔루션 로그인</h2>
+  <p>감가계산기와 매입품의서가 같은 계정을 사용합니다.</p>
+  <div class="auth-field"><label>이메일</label><input id="authEmail" type="email" autocomplete="email"></div>
+  <div class="auth-field"><label>비밀번호</label><input id="authPassword" type="password" autocomplete="current-password"></div>
+  <div id="authMessage" class="auth-message"></div>
+  <div class="auth-buttons"><button class="auth-primary" type="button" onclick="signInCloud()">로그인</button><button class="auth-secondary" type="button" onclick="signUpCloud()">회원가입</button></div>
+ </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL='https://crmeeegayzezeqhgkagx.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY='sb_publishable_6wpAz2ELkD2Eh2ircwzVGw_78QKns9C';
+let sb=null,currentUser=null;
+function client(){if(!sb&&window.supabase)sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});return sb}
+function openAuth(){document.getElementById('authOverlay').hidden=false}
+function closeAuth(){document.getElementById('authOverlay').hidden=true}
+function msg(t,ok=false){const e=document.getElementById('authMessage');e.textContent=t||'';e.classList.toggle('success',ok)}
+function updateUser(u){currentUser=u||null;document.getElementById('cloudTitle').textContent=u?'클라우드 연결됨':'클라우드 로그인';document.getElementById('cloudSub').textContent=u?(u.email||'로그인 완료'):'로그인하면 PC와 앱에서 저장기록을 함께 사용할 수 있습니다.';const b=document.getElementById('cloudButton');b.textContent=u?'로그아웃':'로그인';b.classList.toggle('connected',!!u)}
+async function handleCloudButton(){if(currentUser){if(confirm('로그아웃할까요?'))await client().auth.signOut()}else openAuth()}
+async function signInCloud(){const email=document.getElementById('authEmail').value.trim(),password=document.getElementById('authPassword').value;if(!email||!password){msg('이메일과 비밀번호를 입력해주세요.');return}try{msg('로그인 중…');const {data,error}=await client().auth.signInWithPassword({email,password});if(error)throw error;updateUser(data.user||data.session?.user);msg('로그인되었습니다.',true);setTimeout(closeAuth,300)}catch(e){msg(e.message||'로그인에 실패했습니다.')}}
+async function signUpCloud(){const email=document.getElementById('authEmail').value.trim(),password=document.getElementById('authPassword').value;if(!email||password.length<6){msg('이메일과 6자 이상의 비밀번호를 입력해주세요.');return}try{const {data,error}=await client().auth.signUp({email,password});if(error)throw error;if(data.session){updateUser(data.user);msg('가입 및 로그인 완료',true);setTimeout(closeAuth,300)}else msg('가입 완료! 이메일 인증 후 로그인해주세요.',true)}catch(e){msg(e.message||'회원가입에 실패했습니다.')}}
+(async()=>{const c=client();if(!c)return;const {data}=await c.auth.getSession();updateUser(data?.session?.user);c.auth.onAuthStateChange((_e,s)=>updateUser(s?.user));})();
+document.getElementById('authPassword').addEventListener('keydown',e=>{if(e.key==='Enter')signInCloud()});
+</script>
 </body></html>
