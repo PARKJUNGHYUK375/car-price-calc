@@ -2380,53 +2380,16 @@ body.dark-mode .saved-download-btn{
   </div>
 </div>
 
-<div id="authOverlay" class="auth-overlay" hidden>
-  <div class="auth-card" role="dialog" aria-modal="true" aria-labelledby="authTitle">
-    <button type="button" class="auth-close" id="authCloseButton" aria-label="로그인 창 닫기">
-      <i class="fa-solid fa-xmark"></i>
-    </button>
-
-    <div class="auth-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
-    <h2 id="authTitle">내 검차기록</h2>
-    <p>한 번 로그인하면 휴대폰과 PC 어디서든 저장된 검차기록을 이어서 사용할 수 있습니다.</p>
-
-    <div id="supabaseConfigWarning" class="config-warning" hidden>
-      HTML 안의 <b>SUPABASE_URL</b>과 <b>SUPABASE_PUBLISHABLE_KEY</b>를 먼저 입력해주세요.
-    </div>
-
-    <div class="auth-field">
-      <label for="authEmail">이메일</label>
-      <input id="authEmail" type="email" autocomplete="email" placeholder="example@email.com">
-    </div>
-
-    <div class="auth-field">
-      <label for="authPassword">비밀번호</label>
-      <input id="authPassword" type="password" autocomplete="current-password" placeholder="비밀번호">
-    </div>
-
-    <div id="authMessage" class="auth-message" aria-live="polite"></div>
-
-    <div class="auth-buttons">
-      <button type="button" class="auth-primary" id="authSignInButton">로그인</button>
-      <button type="button" class="auth-secondary" id="authSignUpButton">회원가입</button>
-    </div>
-
-    <button type="button" class="auth-later" id="authLaterButton">나중에 로그인</button>
-  </div>
-</div>
-
 <div class="app-header">
 <div class="app-title">
 <h1><i class="fa-solid fa-car"></i> 감가 계산기</h1>
 
 <div class="header-actions">
+<a href="index.html" class="theme-toggle" aria-label="첫화면으로" title="첫화면으로" style="text-decoration:none;display:grid;place-items:center"><i class="fa-solid fa-house"></i></a>
 <button type="button" id="themeToggle" class="theme-toggle" aria-label="다크모드로 변경" title="화면 모드 변경">
 <i class="fa-solid fa-moon"></i>
 </button>
-<button type="button" id="cloudAuthButton" class="cloud-auth-button" aria-label="계정 로그인" title="계정 로그인">
-<i class="fa-solid fa-cloud"></i>
-<span id="cloudAuthText">로그인</span>
-</button>
+
 
 <div class="car-type-toggle">
 <button id="btnImported" onclick="setCarType('imported')">수입차</button>
