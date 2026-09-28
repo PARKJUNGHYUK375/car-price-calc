@@ -3435,7 +3435,7 @@ body.dark-mode .saved-download-btn{
             accidentLines.push(`[고객고지] ${name} (${isExchange ? '교환' : '판금'} ${mark}): 감가 제외`);
           }else{
             const appliedRate = isExchange ? rate : (rate - 1);
-            const discount = Math.round(bidPrice * (appliedRate / 200));
+            const discount = Math.round(bidPrice * (appliedRate / 100));
 
             accidentDiscount += discount;
             accidentLines.push(`[사고] ${name} (${isExchange ? '교환' : '판금'}): -${discount.toLocaleString()}원`);
