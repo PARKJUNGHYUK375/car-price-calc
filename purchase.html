@@ -307,6 +307,58 @@ body.purchase-exporting .sheet td{border-width:1px!important}
 .field select{width:100%}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script>
+// ===== 자동차등록증 온디바이스 OCR =====
+async function runRegistrationOcr(input){
+  const file=input.files && input.files[0];
+  if(!file)return;
+  const status=document.getElementById('regOcrStatus');
+  if(!window.AndroidRegistrationOCR){
+    status.textContent='Android 앱에서만 등록증 OCR을 사용할 수 있습니다.';
+    input.value=''; return;
+  }
+  status.textContent='사진을 준비하는 중…';
+  try{
+    const dataUrl=await resizeImageForOcr(file,2000);
+    status.textContent='등록증 글자를 읽는 중…';
+    AndroidRegistrationOCR.recognizeRegistration(dataUrl);
+  }catch(e){
+    console.error(e); status.textContent='사진을 읽지 못했습니다. 다시 촬영해주세요.';
+  }finally{ input.value=''; }
+}
+function resizeImageForOcr(file,maxSide){
+  return new Promise((resolve,reject)=>{
+    const img=new Image(), url=URL.createObjectURL(file);
+    img.onload=()=>{
+      try{
+        let w=img.naturalWidth,h=img.naturalHeight;
+        const sc=Math.min(1,maxSide/Math.max(w,h)); w=Math.round(w*sc);h=Math.round(h*sc);
+        const c=document.createElement('canvas');c.width=w;c.height=h;
+        c.getContext('2d').drawImage(img,0,0,w,h);
+        URL.revokeObjectURL(url); resolve(c.toDataURL('image/jpeg',0.92));
+      }catch(e){URL.revokeObjectURL(url);reject(e)}
+    };
+    img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error('image load failed'))};
+    img.src=url;
+  });
+}
+window.onRegistrationOcrResult=function(json){
+  const status=document.getElementById('regOcrStatus');
+  try{
+    const o=typeof json==='string'?JSON.parse(json):json;
+    const keys=['carNo','carName','year','capacity','vin','sellerName','sellerId','address'];
+    let count=0;
+    keys.forEach(k=>{
+      if(!o[k])return;
+      const el=document.querySelector('[data-k="'+k+'"]');
+      if(el){el.value=o[k];el.dispatchEvent(new Event('input',{bubbles:true}));count++;}
+    });
+    saveForm();
+    status.textContent=count?('등록증에서 '+count+'개 항목을 자동입력했습니다. 내용 확인 후 사용해주세요.'):'글자는 읽었지만 자동으로 매칭된 항목이 없습니다. 사진을 정면에서 다시 촬영해보세요.';
+  }catch(e){console.error(e);status.textContent='인식 결과를 적용하지 못했습니다.';}
+};
+
+</script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 </head>
 <body>
@@ -317,6 +369,17 @@ body.purchase-exporting .sheet td{border-width:1px!important}
 <section class="section"><h2>매입 정보</h2><div class="grid">
 <div class="field span2"><label>매입날짜</label><input data-k="purchaseDate" type="date"/></div>
 </div></section>
+<section class="section"><h2>등록증 자동입력</h2><div class="grid">
+<div class="field span2">
+  <label>자동차등록증 OCR (휴대폰 내부 처리)</label>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <button type="button" class="smallbtn" onclick="document.getElementById('regCameraInput').click()">📷 등록증 촬영</button>
+    <button type="button" class="smallbtn" onclick="document.getElementById('regGalleryInput').click()">🖼 등록증 사진 선택</button>
+  </div>
+  <input id="regCameraInput" type="file" accept="image/*" capture="environment" style="display:none" onchange="runRegistrationOcr(this)"/>
+  <input id="regGalleryInput" type="file" accept="image/*" style="display:none" onchange="runRegistrationOcr(this)"/>
+  <div id="regOcrStatus" style="margin-top:7px;font-size:12px;color:#666">인식 후 자동으로 입력되며, 최종 내용은 꼭 확인해주세요.</div>
+</div></div></section>
 <section class="section"><h2>자동차 내역</h2><div class="grid">
 <div class="field"><label>차량번호</label><input data-k="carNo"/></div><div class="field"><label>등급</label><input data-k="grade"/></div>
 <div class="field"><label>차명</label><input data-k="carName"/></div><div class="field"><label>차량경력</label><input data-k="history"/></div>
@@ -459,31 +522,21 @@ if(!__hadDraft)setDefaults();
 async function exportPurchase(type){
   render();
 
-  // Android app: existing native bridge remains the preferred path.
-  if(window.AndroidPurchase){
-    document.body.classList.add('purchase-exporting');
-    requestAnimationFrame(()=>requestAnimationFrame(()=>{
-      try{
-        if(type==='image') AndroidPurchase.savePurchaseImage();
-        else if(type==='pdf') AndroidPurchase.savePurchasePdf();
-        else if(type==='share') AndroidPurchase.sharePurchaseImage();
-      }catch(e){
-        alert('저장 기능을 실행하지 못했습니다.');
-      }
-      setTimeout(()=>document.body.classList.remove('purchase-exporting'),1200);
-    }));
-    return;
-  }
-
-  // PC/browser fallback.
   try{
     document.body.classList.add('purchase-exporting');
     await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+
+    // PDF는 기존 Android 네이티브 기능 유지
+    if(type==='pdf' && window.AndroidPurchase){
+      AndroidPurchase.savePurchasePdf();
+      return;
+    }
 
     if(typeof html2canvas==='undefined'){
       throw new Error('html2canvas library not loaded');
     }
 
+    // 화면 전체가 아니라 실제 품의서 종이 영역만 캡처
     const paper=document.getElementById('paper');
     const canvas=await html2canvas(paper,{
       scale:3,
@@ -493,12 +546,30 @@ async function exportPurchase(type){
       width:paper.scrollWidth,
       height:paper.scrollHeight,
       windowWidth:paper.scrollWidth,
-      windowHeight:paper.scrollHeight
+      windowHeight:paper.scrollHeight,
+      scrollX:0,
+      scrollY:0
     });
-    const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png',1));
+
     const stamp=fileStamp();
     const pngName=`매입품의서_${stamp}.png`;
 
+    // Android 앱에서는 #paper만 만든 PNG를 Java 브리지에 전달
+    if(window.AndroidPurchase && (type==='image' || type==='share')){
+      const dataUrl=canvas.toDataURL('image/png',1);
+      if(type==='image' && typeof AndroidPurchase.savePurchaseBase64Image==='function'){
+        AndroidPurchase.savePurchaseBase64Image(dataUrl);
+        return;
+      }
+      if(type==='share' && typeof AndroidPurchase.sharePurchaseBase64Image==='function'){
+        AndroidPurchase.sharePurchaseBase64Image(dataUrl);
+        return;
+      }
+      throw new Error('AndroidPurchase bridge update required');
+    }
+
+    // PC / 일반 브라우저
+    const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png',1));
     if(type==='image'){
       downloadBlob(blob,pngName);
     }else if(type==='pdf'){
@@ -519,7 +590,7 @@ async function exportPurchase(type){
     }
   }catch(e){
     console.error(e);
-    alert('저장/공유 기능을 실행하지 못했습니다. 인터넷 연결 또는 브라우저 설정을 확인해주세요.');
+    alert('저장/공유 기능을 실행하지 못했습니다.');
   }finally{
     document.body.classList.remove('purchase-exporting');
   }
