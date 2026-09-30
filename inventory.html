@@ -42,13 +42,14 @@ header{display:flex;align-items:center;gap:11px;margin-bottom:12px}.home{width:3
 <div class="field"><label>도색비</label><select id="paintMode" onchange="toggleCostInput('paint')"><option value="auto">0원</option><option value="manual">직접입력</option></select><input id="paint" inputmode="numeric" oninput="liveMoneyFormat(this);calc()" style="display:none;margin-top:5px"></div>
 <div class="field"><label>광택비</label><select id="polishMode" onchange="toggleCostInput('polish')"><option value="auto">143,000원</option><option value="manual">직접입력</option></select><input id="polish" inputmode="numeric" oninput="liveMoneyFormat(this);calc()" style="display:none;margin-top:5px"></div>
 <div class="field"><label>휠복원</label><input id="wheel" inputmode="numeric" oninput="liveMoneyFormat(this);calc()"></div>
+<div class="field"><label>매입취득세</label><input id="acqTax" inputmode="numeric" oninput="liveMoneyFormat(this);calc()"></div>
 <div class="field full"><label>상품화추가(수리비용)</label><div id="repairRows"></div><button type="button" class="btn ghost" style="margin-top:7px;width:100%" onclick="addRepairRow()">＋ 내용 추가</button><input id="prepExtra" type="hidden"></div>
 </div></div>
 <div class="section"><h3>기타 비용</h3><div class="grid">
 <div class="field"><label>엔카광고</label><select id="encarMode" onchange="toggleOtherCost('encar')"><option value="auto">241,950원</option><option value="manual">직접입력</option></select><input id="encar" inputmode="numeric" oninput="liveMoneyFormat(this);calc()" style="display:none;margin-top:5px"></div>
 <div class="field"><label>헤딜수수료</label><input id="heyd" inputmode="numeric" oninput="liveMoneyFormat(this);calc()"></div>
 <div class="field full"><label>소개수수료</label><div id="introRows"></div><button type="button" class="btn ghost" style="margin-top:7px;width:100%" onclick="addCostRow('intro')">＋ 내용 추가</button><input id="intro" type="hidden"></div>
-<div class="field"><label>매입취득세</label><input id="acqTax" inputmode="numeric" oninput="liveMoneyFormat(this);calc()"></div>
+
 <div class="field full"><label>탁송료</label><div id="transportRows"></div><button type="button" class="btn ghost" style="margin-top:7px;width:100%" onclick="addCostRow('transport')">＋ 내용 추가</button><input id="transport" type="hidden"></div>
 <div class="field full"><label>업무대행</label><div id="agencyRows"></div><button type="button" class="btn ghost" style="margin-top:7px;width:100%" onclick="addCostRow('agency')">＋ 내용 추가</button><input id="agency" type="hidden"></div>
 <div class="field"><label>경매 횟수</label><input id="auctionCount" type="number" min="0" oninput="calc()"></div><div class="field"><label>오토마트</label><input id="automart" inputmode="numeric" oninput="liveMoneyFormat(this);calc()"></div>
