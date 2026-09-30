@@ -32,19 +32,19 @@ header{display:flex;align-items:center;gap:11px;margin-bottom:12px}.home{width:3
 <div class="field"><label>차량번호</label><input id="carNo"></div><div class="field"><label>국산 / 수입</label><select id="origin"><option>국산</option><option>수입</option></select></div>
 <div class="field full"><label>차량</label><input id="carName" placeholder="예: 520D M 스포츠"></div>
 <div class="field"><label>매입일</label><input id="buyDate" type="date"></div><div class="field"><label>판매일</label><input id="sellDate" type="date"></div>
-<div class="field"><label>매입금액</label><input id="buyPrice" inputmode="numeric" oninput="calc()"></div><div class="field"><label>매입원가</label><input id="purchaseCost" readonly></div>
-<input id="sellPrice" type="hidden"><div class="field"><label>판매가</label><input id="sellPriceBottom" inputmode="numeric" oninput="syncSellPrice(this.value)"></div><div class="field"><label>예상수익</label><input id="expectedProfit" readonly></div>
+<div class="field"><label>매입금액</label><input id="buyPrice" inputmode="numeric" oninput="liveMoneyFormat(this);calc()"></div><div class="field"><label>매입원가</label><input id="purchaseCost" readonly></div>
+<input id="sellPrice" type="hidden"><div class="field"><label>판매가</label><input id="sellPriceBottom" inputmode="numeric" oninput="liveMoneyFormat(this);syncSellPrice(this.value)"></div><div class="field"><label>예상수익</label><input id="expectedProfit" readonly></div>
 <div class="field full"><label>특이사항</label><textarea id="note"></textarea></div></div></div>
 <div class="section"><h3>상품화 비용</h3><div class="grid">
-<div class="field"><label>성능</label><input id="inspection" inputmode="numeric" oninput="calc()"></div><div class="field"><label>성능보험</label><input id="insurance" inputmode="numeric" oninput="calc()"></div>
-<div class="field"><label>도색 판수</label><input id="paintPanels" type="number" min="0" oninput="calc()"></div><div class="field"><label>도색비</label><input id="paint" inputmode="numeric" oninput="calc()"></div>
-<div class="field"><label>광택비</label><input id="polish" inputmode="numeric" oninput="calc()"></div><div class="field"><label>휠복원</label><input id="wheel" inputmode="numeric" oninput="calc()"></div>
-<div class="field full"><label>상품화추가</label><input id="prepExtra" inputmode="numeric" oninput="calc()"></div></div></div>
+<div class="field"><label>성능</label><input id="inspection" inputmode="numeric" oninput="liveMoneyFormat(this);calc()"></div><div class="field"><label>성능보험</label><input id="insurance" inputmode="numeric" oninput="liveMoneyFormat(this);calc()"></div>
+<div class="field"><label>도색 판수</label><input id="paintPanels" type="number" min="0" oninput="calc()"></div><div class="field"><label>도색비</label><input id="paint" inputmode="numeric" oninput="liveMoneyFormat(this);calc()"></div>
+<div class="field"><label>광택비</label><input id="polish" inputmode="numeric" oninput="liveMoneyFormat(this);calc()"></div><div class="field"><label>휠복원</label><input id="wheel" inputmode="numeric" oninput="liveMoneyFormat(this);calc()"></div>
+<div class="field full"><label>상품화추가</label><input id="prepExtra" inputmode="numeric" oninput="liveMoneyFormat(this);calc()"></div></div></div>
 <div class="section"><h3>기타 비용</h3><div class="grid">
-<div class="field"><label>엔카광고</label><input id="encar" inputmode="numeric" oninput="calc()"></div><div class="field"><label>헤딜수수료</label><input id="heyd" inputmode="numeric" oninput="calc()"></div>
-<div class="field"><label>소개수수료</label><input id="intro" inputmode="numeric" oninput="calc()"></div><div class="field"><label>매입취득세</label><input id="acqTax" inputmode="numeric" oninput="calc()"></div>
-<div class="field"><label>탁송료</label><input id="transport" inputmode="numeric" oninput="calc()"></div><div class="field"><label>업무대행</label><input id="agency" inputmode="numeric" oninput="calc()"></div>
-<div class="field"><label>경매 횟수</label><input id="auctionCount" type="number" min="0" oninput="calc()"></div><div class="field"><label>오토마트</label><input id="automart" inputmode="numeric" oninput="calc()"></div>
+<div class="field"><label>엔카광고</label><input id="encar" inputmode="numeric" oninput="liveMoneyFormat(this);calc()"></div><div class="field"><label>헤딜수수료</label><input id="heyd" inputmode="numeric" oninput="liveMoneyFormat(this);calc()"></div>
+<div class="field"><label>소개수수료</label><input id="intro" inputmode="numeric" oninput="liveMoneyFormat(this);calc()"></div><div class="field"><label>매입취득세</label><input id="acqTax" inputmode="numeric" oninput="liveMoneyFormat(this);calc()"></div>
+<div class="field"><label>탁송료</label><input id="transport" inputmode="numeric" oninput="liveMoneyFormat(this);calc()"></div><div class="field"><label>업무대행</label><input id="agency" inputmode="numeric" oninput="liveMoneyFormat(this);calc()"></div>
+<div class="field"><label>경매 횟수</label><input id="auctionCount" type="number" min="0" oninput="calc()"></div><div class="field"><label>오토마트</label><input id="automart" inputmode="numeric" oninput="liveMoneyFormat(this);calc()"></div>
 </div></div>
 <div class="section"><h3>손익</h3><div class="result">
 <div><span>경과기간</span><b id="rDays">0일</b></div><div><span>재고이자</span><b id="rInterest">0원</b></div>
@@ -59,8 +59,15 @@ const ids=['type','status','carNo','origin','carName','buyDate','sellDate','buyP
 const moneyIds=['buyPrice','sellPrice','inspection','insurance','paint','polish','wheel','prepExtra','encar','heyd','intro','acqTax','transport','agency','automart'];
 function all(){try{return JSON.parse(localStorage.getItem(KEY)||'[]')}catch{return[]}} function put(a){localStorage.setItem(KEY,JSON.stringify(a))}
 function n(id){return Number(String(document.getElementById(id).value||'').replace(/[^0-9.-]/g,''))||0}function won(v){return Math.round(v).toLocaleString()+'원'}function short(v){return v?Math.round(v/10000).toLocaleString()+'만':'0'}
-moneyIds.forEach(id=>document.getElementById(id).addEventListener('blur',e=>{let v=n(id);e.target.value=v?v.toLocaleString():''}));
-document.getElementById('sellPriceBottom').addEventListener('blur',e=>{let v=Number(String(e.target.value||'').replace(/[^0-9.-]/g,''))||0;e.target.value=v?v.toLocaleString():''});
+function liveMoneyFormat(el){
+  const raw=String(el.value||'').replace(/[^0-9]/g,'');
+  el.value=raw?Number(raw).toLocaleString():'';
+}
+moneyIds.forEach(id=>{
+  const el=document.getElementById(id);
+  if(el.type!=='hidden') el.addEventListener('input',e=>liveMoneyFormat(e.target));
+});
+document.getElementById('sellPriceBottom').addEventListener('input',e=>liveMoneyFormat(e.target));
 function setType(t){currentType=t;document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.type===t));render()}
 function setFilter(f){filter=f;document.querySelectorAll('.chip').forEach(x=>x.classList.toggle('active',x.dataset.filter===f));render()}
 function days(r){let a=r.buyDate?new Date(r.buyDate+'T00:00:00'):null,b=r.sellDate?new Date(r.sellDate+'T00:00:00'):new Date();if(!a)return 0;return Math.max(1,Math.floor((b-a)/86400000)+1)}
