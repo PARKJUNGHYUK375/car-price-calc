@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>매입·경매 계산기</title>
+<style>
+:root{--bg:#f5f7fa;--card:#fff;--text:#172033;--muted:#7b8494;--line:#e3e8ef;--blue:#4777ad;--red:#ef5b5b;--green:#25855a}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",sans-serif}.wrap{max-width:760px;margin:auto;padding:18px 14px 40px}.top{display:flex;align-items:center;gap:10px;margin-bottom:14px}.home{width:42px;height:42px;border:1px solid var(--line);border-radius:13px;background:#fff;display:grid;place-items:center;text-decoration:none;color:var(--text);font-size:20px}.top h1{font-size:22px;margin:0}.tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}.tab{border:1px solid var(--line);background:#fff;border-radius:13px;padding:12px;font-weight:900;font-size:14px}.tab.on{background:var(--blue);color:#fff;border-color:var(--blue)}.result{background:#172033;color:#fff;border-radius:20px;padding:18px;margin-bottom:14px}.result .label{font-size:12px;color:#b9c2d0}.big{font-size:31px;font-weight:950;letter-spacing:-1px;margin:4px 0}.summary{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:13px}.summary>div{background:#ffffff12;border-radius:12px;padding:10px}.summary b{display:block;font-size:16px;margin-top:3px}.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:15px;margin-bottom:12px}.card h2{font-size:15px;margin:0 0 12px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field{min-width:0}.field.full{grid-column:1/-1}.field label{display:block;font-size:11px;font-weight:850;color:var(--muted);margin:0 0 5px}.field input,.field select{width:100%;height:44px;border:1px solid var(--line);border-radius:11px;background:#fff;padding:0 11px;font-size:16px;color:var(--text)}.unit{position:relative}.unit input{padding-right:42px;text-align:right;font-weight:800}.unit span{position:absolute;right:11px;bottom:13px;font-size:11px;color:var(--muted)}.breakdown{font-size:12px}.row{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid #edf0f4}.row:last-child{border:0}.row.total{font-weight:900;font-size:14px}.note{font-size:11px;color:var(--muted);line-height:1.5;margin-top:8px}.auctionOnly{display:none}body.auction .auctionOnly{display:block}body.auction .retailOnly{display:none}@media(max-width:520px){.grid{grid-template-columns:1fr}.field.full{grid-column:auto}.big{font-size:27px}}</style></head>
+<body><main class="wrap">
+<div class="top"><a class="home" href="index.html">⌂</a><div><h1>매입·경매 계산기</h1><div style="font-size:11px;color:var(--muted)">엑셀 매입계산기 / 경매계산기 기준</div></div></div>
+<div class="tabs"><button class="tab on" id="retailTab" type="button">소매 매입계산기</button><button class="tab" id="auctionTab" type="button">경매계산기</button></div>
+<section class="result"><div class="label" id="resultLabel">최종입찰가</div><div class="big" id="finalBid">0원</div><div class="summary"><div><span class="label" id="baseLabel">예상소매가</span><b id="basePriceOut">0원</b></div><div><span class="label" id="marginLabel">예상마진</span><b id="marginOut">0원</b></div><div><span class="label">부대비용 합계</span><b id="costOut">0원</b></div><div><span class="label">만원 단위</span><b id="finalMan">0만원</b></div></div></section>
+<section class="card"><h2 id="mainInputTitle">💰 입찰가 선정</h2><div class="grid">
+<div class="field"><label id="baseInputLabel">예상소매가</label><div class="unit"><input id="basePrice" inputmode="decimal" value="1350"><span>만원</span></div></div>
+<div class="field retailOnly"><label>추가입찰 📉</label><div class="unit"><input id="minusBid" inputmode="decimal" value="70"><span>만원</span></div></div>
+<div class="field retailOnly"><label>추가입찰 📈</label><div class="unit"><input id="plusBid" inputmode="decimal" value="0"><span>만원</span></div></div>
+<div class="field auctionOnly"><label>마진 추가</label><div class="unit"><input id="auctionMargin" inputmode="decimal" value="50"><span>만원</span></div></div>
+<div class="field"><label>헤이딜러 방식</label><select id="mode"><option value="general">일반</option><option value="self">SELF</option></select></div>
+<div class="field"><label>제로 차량</label><select id="zero"><option value="N">N</option><option value="Y">Y</option></select></div>
+</div></section>
+<section class="card"><h2>🛠️ 수리 비용</h2><div class="grid">
+<div class="field"><label>외판(국산)</label><select id="domesticPanels"></select></div><div class="field"><label>외판(수입)</label><select id="importPanels"></select></div>
+<div class="field"><label>휠 복원</label><select id="wheels"></select></div><div class="field"><label>타이어</label><select id="tires"><option>모두 양호</option><option>앞 타이어 교체 필요</option><option>뒤 타이어 교체 필요</option><option value="4">4개 교체</option></select></div>
+<div class="field"><label>보조키</label><select id="key"><option>있음</option><option>없음</option><option>1개</option><option>2개</option><option>3개</option></select></div><div class="field"><label>추가수리</label><div class="unit"><input id="repair" inputmode="decimal" value="0"><span>만원</span></div></div>
+</div></section>
+<section class="card"><h2>🚚 기타 비용</h2><div class="grid">
+<div class="field"><label>추가탁송 지역</label><select id="region"><option value="">없음/경기</option><option>강원</option><option>충남</option><option>충북</option><option>세종</option><option>대전</option><option>전북</option><option>광주</option><option>대구</option><option>전남</option><option>경남</option><option>경북</option><option>울산</option><option>부산</option><option>제주</option></select></div>
+<div class="field"><label>추가재고이자 개월</label><input id="extraInterest" type="number" min="0" step="1" value="0"></div>
+</div></section>
+<section class="card"><h2>📊 비용 상세</h2><div id="breakdown" class="breakdown"></div><div class="note">수수료 구간, 고정비, 취득세, 재고이자, 마진세금은 업로드한 엑셀의 「매입계산기」「경매계산기」 수식을 기준으로 계산합니다.</div></section>
+</main><script>
+const $=id=>document.getElementById(id);let type='retail';
+for(let i=0;i<=12;i++){let o=document.createElement('option');o.value=i;o.textContent=i?i+'판':'없음';$('domesticPanels').appendChild(o);let p=o.cloneNode(true);$('importPanels').appendChild(p)}
+for(let i=0;i<=4;i++){let o=document.createElement('option');o.value=i;o.textContent=i?i+'개 휠':'없음';$('wheels').appendChild(o)}
+const num=id=>Math.max(0,parseFloat($(id).value)||0),won=n=>Math.round(n).toLocaleString()+'원',man=n=>Math.floor(n/10000).toLocaleString()+'만원';
+function fee(price,zero,mode){if(mode==='general')return 0;const t=zero?[[1e6,140000],[5010000,300000],[1e7,365000],[3e7,395000],[Infinity,500000]]:[[1e6,75000],[5010000,185000],[1e7,245000],[3e7,250000],[Infinity,360000]];if(price<=1e6)return t[0][1];if(price<=5010000)return t[1][1];if(price<=1e7)return t[2][1];if(price<=3e7)return t[3][1];return t[4][1]}
+function transport(r){if(['강원','충남','충북','세종','대전','전북'].includes(r))return 50000;if(['광주','대구'].includes(r))return 100000;if(['전남','경남','경북','울산','부산'].includes(r))return 150000;if(r==='제주')return 500000;return 0}
+function calcAt(bid){
+ const zero=$('zero').value==='Y',mode=$('mode').value;
+ const repair={dom:num('domesticPanels')*(type==='auction'?110000:130000),imp:num('importPanels')*165000,wheel:num('wheels')*70000,tire:($('tires').value==='4'?4:($('tires').value==='모두 양호'?0:2))*70000,key:(['없음','1개'].includes($('key').value)?250000:0),extra:num('repair')*10000};
+ const extraTransport=transport($('region').value),extraStock=num('extraInterest')*bid*.008;
+ const fixed=type==='auction'?{purchase:205000,inspect:33000,polish:0,tow:50000,wash:0,ad:0}:{purchase:154000,inspect:35000,polish:143000,tow:50000,wash:40000,ad:241800};
+ const hd=fee(bid,zero,mode),acq=bid>=31200000?bid*.01:0,stock=bid*(type==='auction'?.011:.008);
+ const repairSum=Object.values(repair).reduce((a,b)=>a+b,0);
+ const base=num('basePrice')*10000;
+ let marginTax;
+ if(type==='auction') marginTax=num('auctionMargin')*10000*.133;
+ else marginTax=Math.max(0,(base-bid-repairSum-hd-fixed.inspect-fixed.polish-fixed.ad)*.133);
+ const total=repairSum+extraTransport+extraStock+fixed.purchase+hd+fixed.inspect+fixed.polish+fixed.tow+fixed.wash+fixed.ad+acq+stock+marginTax;
+ return {repair,extraTransport,extraStock,fixed,hd,acq,stock,marginTax,total};
+}
+function calculate(){
+ const base=num('basePrice')*10000,zero=$('zero').value==='Y';
+ let bid=base;
+ if(type==='retail'){const pct=base<=5e6?.80:base<=1e7?.90:base<=2e7?.94:base<=3e7?.95:.94;const target=base*pct;const extra=(-num('minusBid')+num('plusBid'))*10000;bid=target+extra;for(let i=0;i<30;i++){const c=calcAt(bid);const next=target-c.total+extra;if(Math.abs(next-bid)<1){bid=next;break}bid=next}}
+ else{const margin=num('auctionMargin')*10000;bid=base-margin;for(let i=0;i<30;i++){const c=calcAt(bid);const rounded=Math.ceil(c.total/10000)*10000;const next=base-rounded-margin;if(Math.abs(next-bid)<1){bid=next;break}bid=next}}
+ bid=Math.max(0,bid);const c=calcAt(bid);
+ const expectedMargin=type==='retail'?(base-(base<=5e6?base*.80:base<=1e7?base*.90:base<=2e7?base*.94:base<=3e7?base*.95:base*.94)-((-num('minusBid')+num('plusBid'))*10000)):num('auctionMargin')*10000;
+ $('finalBid').textContent=won(bid);$('basePriceOut').textContent=won(base);$('marginOut').textContent=won(expectedMargin);$('costOut').textContent=won(c.total);$('finalMan').textContent=man(bid);
+ const rows=[['외판(국산)',c.repair.dom],['외판(수입)',c.repair.imp],['휠 복원',c.repair.wheel],['타이어',c.repair.tire],['보조키',c.repair.key],['추가수리',c.repair.extra],['추가탁송비',c.extraTransport],['추가재고이자',c.extraStock],['매입비',c.fixed.purchase],['헤이딜러수수료',c.hd],[type==='auction'?'출품수수료':'성능점검비',c.fixed.inspect],['광택비',c.fixed.polish],['탁송료',c.fixed.tow],['누유세척',c.fixed.wash],['엔카광고비',c.fixed.ad],['매입취득세',c.acq],['재고이자(1개월)',c.stock],['마진세금',c.marginTax]];
+ $('breakdown').innerHTML=rows.filter(x=>x[1]).map(x=>'<div class="row"><span>'+x[0]+'</span><b>'+won(x[1])+'</b></div>').join('')+'<div class="row total"><span>총합계</span><b>'+won(c.total)+'</b></div>';
+}
+function setType(t){type=t;document.body.classList.toggle('auction',t==='auction');$('retailTab').classList.toggle('on',t==='retail');$('auctionTab').classList.toggle('on',t==='auction');$('baseInputLabel').textContent=t==='retail'?'예상소매가':'예상낙찰가';$('baseLabel').textContent=t==='retail'?'예상소매가':'예상낙찰가';$('marginLabel').textContent=t==='retail'?'예상마진':'마진 추가';$('basePrice').value=t==='retail'?1350:700;calculate()}
+document.querySelectorAll('input,select').forEach(e=>e.addEventListener('input',calculate));$('retailTab').addEventListener('click',()=>setType('retail'));$('auctionTab').addEventListener('click',()=>setType('auction'));calculate();
+</script></body></html>
