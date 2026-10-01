@@ -149,7 +149,7 @@ async function exportTransfer(type){
   await new Promise(res=>requestAnimationFrame(()=>requestAnimationFrame(res)));
   if(typeof html2canvas==='undefined')throw new Error('html2canvas not loaded');
   const paper=$('transferPaper'),canvas=await html2canvas(paper,{scale:3,backgroundColor:'#fff',useCORS:true,logging:false});
-  const dataUrl=canvas.toDataURL('image/png',1),stamp=transferStamp(),name='이전비산출_'+stamp+'.png';
+  const dataUrl=canvas.toDataURL('image/png',1),selectedRecord=inventoryRecords().find(x=>String(x.id)===String($('inventoryCar').value)),carNo=selectedRecord&&selectedRecord.carNo?String(selectedRecord.carNo).replace(/\s/g,''):'차량번호',name='이전비_'+carNo+'.png';
   if(window.AndroidPurchase){
    if(type==='image'&&typeof AndroidPurchase.savePurchaseBase64Image==='function'){AndroidPurchase.savePurchaseBase64Image(dataUrl);return}
    if(type==='share'&&typeof AndroidPurchase.sharePurchaseBase64Image==='function'){AndroidPurchase.sharePurchaseBase64Image(dataUrl);return}
