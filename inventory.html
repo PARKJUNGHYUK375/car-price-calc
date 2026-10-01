@@ -178,26 +178,35 @@ function render(){
  let a=records.filter(r=>(currentType==='소매'?r.type==='소매':r.type!=='소매')&&r.status===filter&&(!q||(r.carNo+' '+r.carName).toLowerCase().includes(q)));
  list.innerHTML=a.length?a.sort((x,y)=>(y.buyDate||'').localeCompare(x.buyDate||'')).map(r=>{
   let c=computed(r),warning=(r.status==='판매중'&&c.d>90)?'<b class="stockWarning">⚠ 재고 90일 초과</b>':'';
-  let price=(+r.sellPrice||0)?(+r.sellPrice).toLocaleString()+'원':'';
+  let price=(+r.sellPrice||0)?Math.round((+r.sellPrice)/10000).toLocaleString()+'만원':'';
   let profit=(c.profit>=0?'+':'')+won(c.profit);
   let encar=r.type==='소매'?'<button type="button" class="btn primary quickEncar" data-encar-id="'+esc(r.id)+'">엔카</button>':'';
-  return '<article class="car" data-open-id="'+esc(r.id)+'"><div><div class="carTop"><span class="badge '+(r.status==='판매중'?'sale':'done')+'">'+r.status+'</span><span class="badge '+(r.type!=='소매'?'auction':'')+'">'+r.type+'</span></div><div class="carName">'+esc(r.carName||'차량명 없음')+'</div><div class="carNo">'+esc(r.carNo||'번호 없음')+'</div></div><div class="money"><b>'+short(+r.sellPrice||0)+'</b><small data-card-profit="'+esc(r.id)+'">'+((c.profit>=0?'+':'')+short(c.profit))+'</small></div><div class="quickTools"><div class="quickSell"><label>판매금액</label><input inputmode="numeric" data-sell-id="'+esc(r.id)+'" value="'+price+'" placeholder="판매금액"><b class="quickProfit '+(c.profit<0?'minus':'')+'" data-quick-profit="'+esc(r.id)+'">'+profit+'</b></div>'+encar+'</div><div class="meta"><span>매입 '+(r.buyDate||'-')+warning+'</span><span>'+c.d+'일 · 원가 '+short((+r.buyPrice||0)+c.expense)+'</span></div></article>'
+  return '<article class="car" data-open-id="'+esc(r.id)+'"><div><div class="carTop"><span class="badge '+(r.status==='판매중'?'sale':'done')+'">'+r.status+'</span><span class="badge '+(r.type!=='소매'?'auction':'')+'">'+r.type+'</span></div><div class="carName">'+esc(r.carName||'차량명 없음')+'</div><div class="carNo">'+esc(r.carNo||'번호 없음')+'</div></div><div class="money"><b>'+short(+r.sellPrice||0)+'</b><small data-card-profit="'+esc(r.id)+'">'+((c.profit>=0?'+':'')+short(c.profit))+'</small></div><div class="quickTools"><div class="quickSell"><label>판매금액</label><input inputmode="numeric" data-sell-id="'+esc(r.id)+'" value="'+price+'" placeholder="예: 1000만원"><b class="quickProfit '+(c.profit<0?'minus':'')+'" data-quick-profit="'+esc(r.id)+'">'+profit+'</b></div>'+encar+'</div><div class="meta"><span>매입 '+(r.buyDate||'-')+warning+'</span><span>'+c.d+'일 · 원가 '+short((+r.buyPrice||0)+c.expense)+'</span></div></article>'
  }).join(''):'<div class="empty">등록된 차량이 없습니다.<br><b>＋ 등록</b>으로 첫 차량을 추가해보세요.</div>';
  bindQuickCardEvents();
 }
 function bindQuickCardEvents(){
- document.querySelectorAll('.car[data-open-id]').forEach(card=>card.onclick=e=>{if(e.target.closest('.quickTools'))return;openForm(card.dataset.openId)});
+ document.querySelectorAll('.car[data-open-id]').forEach(card=>card.addEventListener('click',e=>{if(e.target.closest('.quickTools'))return;openForm(card.dataset.openId)}));
+ const stop=e=>e.stopPropagation();
  document.querySelectorAll('input[data-sell-id]').forEach(el=>{
-  el.onkeydown=moneyDeleteKey;
-  el.oninput=()=>quickSellPrice(el.dataset.sellId,el);
-  el.onclick=e=>e.stopPropagation();
+  ['click','pointerdown','touchstart','focus'].forEach(ev=>el.addEventListener(ev,stop));
+  el.addEventListener('input',()=>quickSellPrice(el.dataset.sellId,el));
+  el.addEventListener('blur',()=>formatQuickSell(el));
  });
- document.querySelectorAll('button[data-encar-id]').forEach(btn=>btn.onclick=e=>{e.stopPropagation();openRecordEncar(btn.dataset.encarId)});
+ document.querySelectorAll('button[data-encar-id]').forEach(btn=>{
+  ['pointerdown','touchstart'].forEach(ev=>btn.addEventListener(ev,stop));
+  btn.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();openRecordEncar(btn.dataset.encarId)});
+ });
+}
+function formatQuickSell(el){
+ const raw=String(el.value||'').replace(/[^0-9]/g,'');
+ el.value=raw?Number(raw).toLocaleString()+'만원':'';
 }
 function quickSellPrice(id,el){
- liveMoneyFormat(el);
+ const raw=String(el.value||'').replace(/[^0-9]/g,'');
+ const man=Number(raw)||0;
  let a=all(),i=a.findIndex(x=>String(x.id)===String(id));if(i<0)return;
- let r=a[i];r.sellPrice=Number(String(el.value||'').replace(/[^0-9]/g,''))||0;r.updatedAt=Date.now();a[i]=r;put(a);cloudUpsert(r);
+ let r=a[i];r.sellPrice=man*10000;r.updatedAt=Date.now();a[i]=r;put(a);cloudUpsert(r);
  let c=computed(r),full=document.querySelector('[data-quick-profit="'+CSS.escape(String(id))+'"]'),small=document.querySelector('[data-card-profit="'+CSS.escape(String(id))+'"]');
  if(full){full.textContent=(c.profit>=0?'+':'')+won(c.profit);full.classList.toggle('minus',c.profit<0)}
  if(small)small.textContent=(c.profit>=0?'+':'')+short(c.profit);
