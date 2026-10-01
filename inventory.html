@@ -30,22 +30,17 @@ header{display:flex;align-items:center;gap:11px;margin-bottom:12px}.home{width:3
 <div class="field"><label>구분</label><select id="type"><option>소매</option><option>경매</option></select></div>
 <div class="field"><label>상태</label><select id="status"><option>판매중</option><option>완료</option></select></div>
 <div class="field"><label>차량번호</label><input id="carNo"></div><div class="field"><label>국산 / 수입</label><select id="origin" onchange="applyAutoCosts()"><option>국산</option><option>수입</option></select></div>
-<div class="field full"><label>차량</label><input id="carName" placeholder="예: 520D M 스포츠"></div>
-<div class="field"><label>매입일</label><input id="buyDate" type="date"></div><div class="field"><label>판매일</label><input id="sellDate" type="date"></div>
+<div class="field full"><label>차량</label><input id="carName" placeholder="예: 르노코리아(삼성) 마스터 2.3 밴 S"></div>
+<div class="field"><label>연식</label><input id="carYear" inputmode="numeric" maxlength="4" placeholder="예: 2021"></div><div class="field"><label>매입일</label><input id="buyDate" type="date"></div>
+<div class="field"><label>판매일</label><input id="sellDate" type="date"></div><div class="field"></div>
 <div class="field"><label>매입금액</label><input id="buyPrice" inputmode="numeric" oninput="liveMoneyFormat(this);calc()"></div><div class="field"><label>매입원가</label><input id="purchaseCost" readonly></div>
 <input id="sellPrice" type="hidden"><div class="field"><label>판매가</label><input id="sellPriceBottom" inputmode="numeric" oninput="liveMoneyFormat(this);syncSellPrice(this.value)"></div><div class="field"><label>예상수익</label><input id="expectedProfit" readonly></div>
 <div class="field full"><label>특이사항</label><textarea id="note"></textarea></div>
-<div class="field full"><label>엔카 가격비교 · 테스트</label><div class="encarGrid">
-<select id="encarPreset" class="full" onchange="applyEncarPreset()">
-<option value="">차량 선택</option>
-<option value="master23s">르노코리아(삼성) 마스터 2.3 밴 S</option>
-</select>
-<input id="encarYear" inputmode="numeric" maxlength="4" placeholder="연식 · 예: 2021">
-<button type="button" class="btn primary compareOpenBtn" onclick="openEncarCompare()">엔카 가격비교</button>
-<div class="encarHint">테스트 차량: 르노코리아(삼성) 마스터 2.3 밴 S · 기준연식 ±1년 · 주행거리 제한 없음</div>
-<input id="compareUrl" type="hidden">
-<input id="encarManufacturer" type="hidden"><input id="encarModelGroup" type="hidden"><input id="encarModel" type="hidden"><input id="encarBadgeGroup" type="hidden"><input id="encarBadge" type="hidden"><input id="encarBadgeDetail" type="hidden">
-</div></div></div></div>
+<div class="field full" id="encarCompareField"><label>엔카 가격비교</label>
+<div id="encarUrlEditor" class="compareLinkRow"><input id="compareUrl" placeholder="PC에서 엔카 검색결과 URL 붙여넣기"><button type="button" class="btn primary compareOpenBtn" onclick="openEncarCompare()">열기</button></div>
+<button id="encarCompareOnlyBtn" type="button" class="btn primary" style="width:100%;display:none" onclick="openEncarCompare()">엔카 가격비교</button>
+<div class="encarHint" style="margin-top:6px">PC에서 검색결과 URL을 한 번 저장하면 앱에서는 가격비교 버튼만 사용합니다.</div>
+</div></div>
 <div class="section"><h3>상품화 비용</h3><div class="grid">
 <div class="field"><label>성능비</label><select id="inspectionMode" onchange="toggleCostInput('inspection')"><option value="auto">35,000원</option><option value="manual">직접입력</option></select><input id="inspection" inputmode="numeric" oninput="liveMoneyFormat(this);calc()" style="display:none;margin-top:5px"></div>
 <div class="field"><label>성능보험비</label><input id="insurance" inputmode="numeric" oninput="liveMoneyFormat(this);calc()"></div>
@@ -81,7 +76,7 @@ const SUPABASE_PUBLISHABLE_KEY='sb_publishable_6wpAz2ELkD2Eh2ircwzVGw_78QKns9C';
 const CLOUD_TABLE='inventory_records';
 let supabaseClient=null,currentCloudUser=null,cloudReady=false;
 const KEY='dealerInventory_v1';let currentType='소매',filter='판매중',editing=null;
-const ids=['type','status','carNo','origin','carName','buyDate','sellDate','buyPrice','sellPrice','note','inspectionMode','inspection','insurance','paintPanels','paintMode','paint','polishMode','polish','wheel','prepExtra','encarMode','encar','heyd','intro','acqTax','transport','auctionCount','automartStatus','compareUrl','encarManufacturer','encarModelGroup','encarModel','encarBadgeGroup','encarBadge','encarBadgeDetail','encarYear','encarPreset'];
+const ids=['type','status','carNo','origin','carName','carYear','buyDate','sellDate','buyPrice','sellPrice','note','inspectionMode','inspection','insurance','paintPanels','paintMode','paint','polishMode','polish','wheel','prepExtra','encarMode','encar','heyd','intro','acqTax','transport','auctionCount','automartStatus','compareUrl'];
 const moneyIds=['buyPrice','sellPrice','inspection','insurance','paint','polish','wheel','prepExtra','encar','heyd','intro','acqTax','transport'];
 function all(){try{return JSON.parse(localStorage.getItem(KEY)||'[]').map(r=>{if(r.type==='경매(오토마트)')r.type='경매';return r})}catch{return[]}}
 function put(a){localStorage.setItem(KEY,JSON.stringify(a))}
@@ -185,29 +180,20 @@ function render(){
  }).join(''):'<div class="empty">등록된 차량이 없습니다.<br><b>＋ 등록</b>으로 첫 차량을 추가해보세요.</div>'
 }
 function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
-function openForm(id){editing=id||null;let r=id?all().find(x=>x.id===id):null;ids.forEach(k=>document.getElementById(k).value=r?.[k]??'');if(!r){type.value=currentType;status.value='판매중';origin.value='국산';buyDate.value=new Date().toISOString().slice(0,10);inspectionMode.value='auto';paintMode.value='auto';polishMode.value='auto';encarMode.value='auto';paintPanels.value='0';encar.value=(241950).toLocaleString()+'원';auctionCount.value=currentType==='경매'?1:0;automartStatus.value='미출품'}else{inspectionMode.value=r.inspectionMode||'auto';paintMode.value=r.paintMode||'auto';polishMode.value=r.polishMode||'auto';encarMode.value=r.encarMode||'auto';automartStatus.value=r.automartStatus||'미출품'}moneyIds.forEach(k=>{let v=n(k);document.getElementById(k).value=v?v.toLocaleString()+'원':''});loadRepairs(r?.repairs||((+r?.prepExtra||0)?[{memo:'기존 상품화추가',amount:+r.prepExtra}]:[{}]));loadCostRows('intro',r?.introItems,+r?.intro||0);loadCostRows('transport',r?.transportItems,+r?.transport||0);formTitle.textContent=r?'차량 수정':'차량 등록';deleteBtn.style.display=r?'block':'none';transferBtn.style.display=r&&r.type==='소매'?'block':'none';transferRetailBtn.style.display=r&&r.type!=='소매'?'block':'none';overlay.classList.add('show');applyAutoCosts();toggleOtherCost('encar')}
+function openForm(id){editing=id||null;let r=id?all().find(x=>x.id===id):null;ids.forEach(k=>document.getElementById(k).value=r?.[k]??'');if(!r){type.value=currentType;status.value='판매중';origin.value='국산';buyDate.value=new Date().toISOString().slice(0,10);inspectionMode.value='auto';paintMode.value='auto';polishMode.value='auto';encarMode.value='auto';paintPanels.value='0';encar.value=(241950).toLocaleString()+'원';auctionCount.value=currentType==='경매'?1:0;automartStatus.value='미출품'}else{inspectionMode.value=r.inspectionMode||'auto';paintMode.value=r.paintMode||'auto';polishMode.value=r.polishMode||'auto';encarMode.value=r.encarMode||'auto';automartStatus.value=r.automartStatus||'미출품'}moneyIds.forEach(k=>{let v=n(k);document.getElementById(k).value=v?v.toLocaleString()+'원':''});loadRepairs(r?.repairs||((+r?.prepExtra||0)?[{memo:'기존 상품화추가',amount:+r.prepExtra}]:[{}]));loadCostRows('intro',r?.introItems,+r?.intro||0);loadCostRows('transport',r?.transportItems,+r?.transport||0);formTitle.textContent=r?'차량 수정':'차량 등록';deleteBtn.style.display=r?'block':'none';transferBtn.style.display=r&&r.type==='소매'?'block':'none';transferRetailBtn.style.display=r&&r.type!=='소매'?'block':'none';overlay.classList.add('show');applyAutoCosts();toggleOtherCost('encar');updateEncarCompareUI()}
 function closeForm(){overlay.classList.remove('show')}
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&overlay.classList.contains('show')){e.preventDefault();e.stopPropagation()}});
-function applyEncarPreset(){
- const p=encarPreset.value;
- if(p==='master23s'){
-  origin.value='국산';encarManufacturer.value='르노코리아(삼성)';encarModelGroup.value='마스터';encarModel.value='마스터';encarBadgeGroup.value='디젤 2300cc';encarBadge.value='2.3 밴 S';encarBadgeDetail.value='';
- }else{encarManufacturer.value='';encarModelGroup.value='';encarModel.value='';encarBadgeGroup.value='';encarBadge.value='';encarBadgeDetail.value=''}
- applyAutoCosts();
-}
-function encarToken(v){return String(v||'').trim().replace(/\./g,'_.').replace(/\)/g,'_)')}
-function buildEncarCompareUrl(){
- const manufacturer=encarManufacturer.value.trim(),modelGroup=encarModelGroup.value.trim(),model=encarModel.value.trim(),badgeGroup=encarBadgeGroup.value.trim(),badge=encarBadge.value.trim(),badgeDetail=encarBadgeDetail.value.trim(),year=parseInt(encarYear.value,10);
- if(!manufacturer||!modelGroup||!model||!badgeGroup||!badge||!year)return '';
- const domestic=origin.value!=='수입',base=domestic?'https://www.encar.com/dc/dc_carsearchlist.do?carType=kor#!':'https://www.encar.com/fc/fc_carsearchlist.do?carType=for#!';
- const carType=domestic?'Y':'N',start=(year-1)+'01',end=(year+1)+'12';
- const detail=badgeDetail?'._.BadgeDetail.'+encarToken(badgeDetail):'';
- let action='(And.Year.range('+start+'..'+end+')._.Hidden.N._.(C.CarType.'+carType+'._.(C.Manufacturer.'+encarToken(manufacturer)+'._.(C.ModelGroup.'+encarToken(modelGroup)+'._.(C.Model.'+encarToken(model)+'._.(C.BadgeGroup.'+encarToken(badgeGroup)+'._.Badge.'+encarToken(badge)+detail+'.))))))';
- const payload={action,toggle:{},layer:'',sort:'Mileage',page:1,limit:20,searchKey:'',loginCheck:false};
- return base+encodeURIComponent(JSON.stringify(payload));
+function isAndroidApp(){return !!(window.AndroidFile||window.AndroidPurchase||window.AndroidRegistrationOCR||window.AndroidExternal)}
+function updateEncarCompareUI(){
+ const app=isAndroidApp(),editor=document.getElementById('encarUrlEditor'),btn=document.getElementById('encarCompareOnlyBtn');
+ if(editor)editor.style.display=app?'none':'grid';
+ if(btn)btn.style.display=app?'block':'none';
 }
 function openEncarCompare(){
- if(!encarPreset.value){alert('차량을 선택해주세요.');return}applyEncarPreset();const url=buildEncarCompareUrl();if(!url){alert('연식 4자리를 입력해주세요.');return}
+ let url=String(compareUrl.value||'').trim();
+ if(!url){alert(isAndroidApp()?'PC에서 이 차량의 엔카 검색결과 URL을 먼저 저장해주세요.':'엔카 검색결과 URL을 붙여넣어주세요.');return}
+ if(!/^https?:\/\//i.test(url))url='https://'+url;
+ try{new URL(url)}catch(e){alert('올바른 엔카 URL을 입력해주세요.');return}
  compareUrl.value=url;
  if(window.AndroidExternal&&typeof window.AndroidExternal.openUrl==='function'){window.AndroidExternal.openUrl(url);return}
  window.open(url,'_blank','noopener,noreferrer');
