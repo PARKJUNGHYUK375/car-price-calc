@@ -7,7 +7,7 @@
 <div class="top"><a class="home" href="index.html">⌂</a><h1>이전비산출</h1></div>
 <div class="tabs"><button id="directTab" class="tab on">직접매도</button><button id="brokerTab" class="tab">알선매매</button><button id="downTab" class="tab">다운계약용</button></div>
 <section class="result"><div class="label">이전비용 정산액</div><div class="big" id="transferTotal">0원</div><div class="summary"><div><span class="label">차량 구매시 총금액</span><b id="grandTotal">0원</b></div><div><span class="label">적용 차량금액</span><b id="taxBaseOut">0원</b></div></div></section>
-<section class="card"><h2>🚗 차량 정보</h2><div class="grid">
+<section class="card"><div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px"><h2 style="margin:0">🚗 차량 정보</h2><div style="display:flex;gap:5px"><button id="domesticBtn" type="button" class="tab on" style="padding:7px 13px">내수</button><button id="exportBtn" type="button" class="tab" style="padding:7px 13px">수출</button></div></div><div class="grid">
 <div class="field" style="grid-column:1/-1"><label>매입관리 차량 선택</label><select id="inventoryCar"><option value="">차량을 선택하세요</option></select></div>
 <div class="field"><label>차량명</label><input id="selectedCarName" readonly placeholder="차량 선택 시 자동표시"></div>
 <div class="field"><label>연식</label><input id="selectedCarYear" readonly placeholder="차량 선택 시 자동표시"></div>
@@ -23,7 +23,7 @@
 <div class="note">엑셀 ‘이전비산출’ 시트 기준: 화물차 취득세 6%, 일반 7%, 경차 취득세·공채 면제, 공채 0.5%, 인/증지 4천원, 우편 5천원, 매도비 44만원, 매매알선 수수료 20만원. 이전비 합계에 10만원을 더한 뒤 만원 단위로 절사합니다.</div>
 </section></main>
 <script>
-let mode='direct';const $=id=>document.getElementById(id),won=n=>Math.round(n).toLocaleString()+'원',num=id=>Number(String($(id).value||'').replace(/[^0-9.]/g,''))||0;
+let mode='direct',market='domestic';const $=id=>document.getElementById(id),won=n=>Math.round(n).toLocaleString()+'원',num=id=>Number(String($(id).value||'').replace(/[^0-9.]/g,''))||0;
 const INVENTORY_KEY='dealerInventory_v1';
 function inventoryRecords(){try{return JSON.parse(localStorage.getItem(INVENTORY_KEY)||'[]')}catch(e){return[]}}
 function loadInventoryCars(){
@@ -51,7 +51,9 @@ function calc(){
  $('insuranceOut').textContent=won(ins);$('brokerFee').textContent=won(broker);$('downDiff').textContent=won(diff);
  $('transferTotal').textContent=$('transferTotal2').textContent=won(transfer);$('grandTotal').textContent=won(grand);$('taxBaseOut').textContent=won(base);
 }
+function setMarket(m){market=m;$('domesticBtn').classList.toggle('on',m==='domestic');$('exportBtn').classList.toggle('on',m==='export');calc()}
 function setMode(m){mode=m;document.body.classList.toggle('down',m==='down');$('directTab').classList.toggle('on',m==='direct');$('brokerTab').classList.toggle('on',m==='broker');$('downTab').classList.toggle('on',m==='down');calc()}
+$('domesticBtn').onclick=()=>setMarket('domestic');$('exportBtn').onclick=()=>setMarket('export');
 $('directTab').onclick=()=>setMode('direct');$('brokerTab').onclick=()=>setMode('broker');$('downTab').onclick=()=>setMode('down');
 document.querySelectorAll('input,select').forEach(e=>e.addEventListener('input',calc));
 $('inventoryCar').addEventListener('change',selectInventoryCar);
