@@ -112,7 +112,7 @@ function calc(){
  renderTransferPreview({sale,contract,base,ins,light,truck,broker,diff,acqWithExtra,bond,transfer,grand,isExport});
 }
 function setMarket(m){market=m;$('domesticBtn').classList.toggle('on',m==='domestic');$('exportBtn').classList.toggle('on',m==='export');calc()}
-function setMode(m){mode=m;document.body.classList.toggle('down',m==='down');$('directTab').classList.toggle('on',m==='direct');$('brokerTab').classList.toggle('on',m==='broker');$('downTab').classList.toggle('on',m==='down');
+function setMode(m){mode=m;if(m==='broker'&&market==='export')setMarket('domestic');$('exportBtn').style.display=m==='broker'?'none':'';document.body.classList.toggle('down',m==='down');$('directTab').classList.toggle('on',m==='direct');$('brokerTab').classList.toggle('on',m==='broker');$('downTab').classList.toggle('on',m==='down');
  document.querySelectorAll('.directAccount').forEach(el=>el.style.display=m==='direct'?'block':'none');
  document.querySelectorAll('.brokerAccount').forEach(el=>el.style.display=m==='broker'?'block':'none');
  document.querySelectorAll('.downAccount').forEach(el=>el.style.display=m==='down'?'block':'none');
