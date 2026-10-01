@@ -100,7 +100,7 @@ function calc(){
  const sale=num('salePrice')*10000, contract=num('contractPrice')*10000, base=mode==='down'?contract:sale, ins=num('insurance'), light=$('light').value==='Y',truck=$('truck').value==='Y',deal=mode==='broker'?'broker':'direct';
  const isExport=market==='export';
  document.querySelectorAll('.domesticCost').forEach(el=>el.style.display=isExport?'none':'');
- const normalAcq=base*(truck?.06:.07), lightTax=Math.max(0,base*.07-750000), acq=light?lightTax:normalAcq, bond=light?0:base*.005, stamp=4000,mail=5000,saleFee=440000,broker=deal==='broker'?200000:0,diff=mode==='down'?Math.max(0,sale-contract):0;
+ const normalAcq=base*(truck?.06:.07), lightTax=Math.max(0,base*.07-750000), acq=light?lightTax:normalAcq, bond=light?0:base*.005, stamp=4000,mail=5000,saleFee=440000,broker=deal==='broker'?(sale<14000000?300000:sale*.022):0,diff=mode==='down'?Math.max(0,sale-contract):0;
  const acqWithExtra=light?acq:(acq+100000);
  $('acqExplain').textContent=light?'(판매금액 × 7% - 75만원)':'';
  const raw=isExport?saleFee:(acqWithExtra+bond+stamp+mail+saleFee+ins+broker+diff);
