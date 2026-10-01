@@ -16,7 +16,7 @@ body.transfer-exporting{background:#fff!important}body.transfer-exporting .top,b
 <div id="formView">
 <div class="tabs"><button id="directTab" class="tab on">직접매도</button><button id="brokerTab" class="tab">알선매매</button><button id="downTab" class="tab">다운계약용</button></div>
 <section class="result"><div class="label">이전비용 정산액</div><div class="big" id="transferTotal">0원</div><div class="summary"><div><span class="label">차량 구매시 총금액</span><b id="grandTotal">0원</b></div><div><span class="label">적용 차량금액</span><b id="taxBaseOut">0원</b></div></div></section>
-<section class="card"><div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px"><h2 style="margin:0">🚗 차량 정보</h2><div style="display:flex;gap:5px"><button id="domesticBtn" type="button" class="tab on" style="padding:7px 13px">내수</button><button id="exportBtn" type="button" class="tab" style="padding:7px 13px">수출</button></div></div><div class="grid">
+<section class="card"><div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px"><h2 style="margin:0">🚗 차량 정보</h2><div id="marketButtons" style="display:flex;gap:5px"><button id="domesticBtn" type="button" class="tab on" style="padding:7px 13px">내수</button><button id="exportBtn" type="button" class="tab" style="padding:7px 13px">수출</button></div><div id="downDealButtons" style="display:none;gap:5px"><button id="downDirectBtn" type="button" class="tab on" style="padding:7px 13px">직접매도</button><button id="downBrokerBtn" type="button" class="tab" style="padding:7px 13px">알선</button></div></div><div class="grid">
 <div class="field inventoryVehicle" style="grid-column:1/-1"><label>매입관리 차량 선택</label><select id="inventoryCar"><option value="">차량을 선택하세요</option></select></div>
 <div class="field inventoryVehicle"><label>차량명</label><input id="selectedCarName" readonly placeholder="차량 선택 시 자동표시"></div>
 <div class="field inventoryVehicle"><label>연식</label><input id="selectedCarYear" readonly placeholder="차량 선택 시 자동표시"></div>
@@ -33,12 +33,9 @@ body.transfer-exporting{background:#fff!important}body.transfer-exporting .top,b
 <div class="field accountField directAccount"><label>이전비 계좌</label><input id="nhAccount" value="농협 302-1224-1439-81 안준환" readonly></div>
 <div class="field accountField brokerAccount" style="display:none"><label>차량대금 계좌</label><input id="brokerCarAccount" placeholder="계좌번호 직접 입력"></div>
 <div class="field accountField brokerAccount" style="display:none"><label>이전비 계좌</label><input id="brokerTransferAccount" placeholder="계좌번호 직접 입력"></div>
-<div class="field accountField downAccount" style="display:none"><label>차량대금 계좌</label><input id="downShinhanAccount" placeholder="신한 계좌번호 입력"></div>
-<div class="field accountField downAccount" style="display:none"><label>이전비 계좌</label><input id="downNhAccount" placeholder="농협 계좌번호 입력"></div>
-<div class="field accountField downAccount" style="display:none;grid-column:1/-1"><label>추가 입금 계좌</label><input id="downCustomAccount" placeholder="계좌번호 직접 입력"></div>
 </div></section>
 <section class="card" id="costCard"><h2>🧾 이전비 내역</h2>
-<div class="row domesticCost"><span>취득세 <small id="acqExplain" style="font-weight:400;color:#7b8494;margin-left:6px"></small></span><b id="acq">0원</b></div><div class="row domesticCost"><span>지역개발공채 (0.5%)</span><b id="bond">0원</b></div><div class="row domesticCost"><span>인 / 증지대</span><b id="stamp">4,000원</b></div><div class="row domesticCost"><span>우편 등기료</span><b id="mail">5,000원</b></div><div class="row"><span>매도비</span><b id="saleFee">440,000원</b></div><div class="row domesticCost"><span>성능보험료</span><b id="insuranceOut">0원</b></div><div class="row domesticCost"><span>알선수수료</span><b id="brokerFee">0원</b></div><div class="row downOnly domesticCost"><span>다운계약 차액</span><b id="downDiff">0원</b></div><div class="row total"><span>이전비용 정산액</span><b id="transferTotal2">0원</b></div>
+<div class="row domesticCost"><span>취득세 <small id="acqExplain" style="font-weight:400;color:#7b8494;margin-left:6px"></small></span><b id="acq">0원</b></div><div class="row domesticCost"><span>지역개발공채 (0.5%)</span><b id="bond">0원</b></div><div class="row domesticCost"><span>인 / 증지대</span><b id="stamp">4,000원</b></div><div class="row domesticCost"><span>우편 등기료</span><b id="mail">5,000원</b></div><div class="row"><span>매도비</span><b id="saleFee">440,000원</b></div><div class="row domesticCost"><span>성능보험료</span><b id="insuranceOut">0원</b></div><div class="row domesticCost"><span>알선수수료</span><b id="brokerFee">0원</b></div><div class="row downOnly domesticCost"><span>차액</span><b id="downDiff">0원</b></div><div class="row total"><span>이전비용 정산액</span><b id="transferTotal2">0원</b></div>
 <div class="note">엑셀 ‘이전비산출’ 시트 기준: 화물차 취득세 6%, 일반 7%, 경차 취득세·공채 면제, 공채 0.5%, 인/증지 4천원, 우편 5천원, 매도비 44만원, 매매알선 수수료 20만원. 취득세 항목에 10만원을 더해 계산한 뒤 만원 단위로 절사합니다.</div>
 </section></div>
 <div id="previewView">
@@ -51,7 +48,6 @@ body.transfer-exporting{background:#fff!important}body.transfer-exporting .top,b
    <tr class="pAccount pNh"><th>이전비 계좌</th><td id="pNh"></td></tr>
    <tr class="pAccount pBrokerCar"><th>차량대금 계좌</th><td id="pBrokerCarAccount"></td></tr>
    <tr class="pAccount pBrokerTransfer"><th>이전비 계좌</th><td id="pBrokerTransferAccount"></td></tr>
-   <tr class="pAccount pCustom"><th>추가 입금 계좌</th><td id="pCustomAccount"></td></tr>
   </table>
   <div class="depositGuide">차량대금 및 이전비 입금 시 보내는 사람 이름을 <strong id="pDepositCarNo">차량번호</strong>로 변경하여 입금 부탁드립니다.</div>
   <table class="costTable">
@@ -64,14 +60,14 @@ body.transfer-exporting{background:#fff!important}body.transfer-exporting .top,b
    <tr><th>매도비</th><td>440,000원</td></tr>
    <tr class="pDomestic"><th>성능보험료</th><td id="pInsurance">0원</td></tr>
    <tr class="pDomestic"><th>알선수수료</th><td id="pBroker">0원</td></tr>
-   <tr class="pDown pDomestic"><th>다운계약 차액</th><td id="pDiff">0원</td></tr>
+   <tr class="pDown pDomestic"><th>차액</th><td id="pDiff">0원</td></tr>
    <tr class="paperTotal"><th>이전비용 정산액</th><td id="pTransfer">0원</td></tr>
    <tr class="paperTotal"><th>차량 구매시 총금액</th><td id="pGrand">0원</td></tr>
   </table>
  </div></div>
 </div></main>
 <script>
-let mode='direct',market='domestic';const $=id=>document.getElementById(id),won=n=>Math.round(n).toLocaleString()+'원',num=id=>Number(String($(id).value||'').replace(/[^0-9.]/g,''))||0;
+let mode='direct',market='domestic',downDeal='direct';const $=id=>document.getElementById(id),won=n=>Math.round(n).toLocaleString()+'원',num=id=>Number(String($(id).value||'').replace(/[^0-9.]/g,''))||0;
 const INVENTORY_KEY='dealerInventory_v1';
 function inventoryRecords(){try{return JSON.parse(localStorage.getItem(INVENTORY_KEY)||'[]')}catch(e){return[]}}
 function loadInventoryCars(){
@@ -97,7 +93,7 @@ function selectInventoryCar(){
  calc();
 }
 function calc(){
- const sale=num('salePrice')*10000, contract=num('contractPrice')*10000, base=mode==='down'?contract:sale, ins=num('insurance'), light=$('light').value==='Y',truck=$('truck').value==='Y',deal=mode==='broker'?'broker':'direct';
+ const sale=num('salePrice')*10000, contract=num('contractPrice')*10000, base=mode==='down'?contract:sale, ins=num('insurance'), light=$('light').value==='Y',truck=$('truck').value==='Y',deal=(mode==='broker'||(mode==='down'&&downDeal==='broker'))?'broker':'direct';
  const isExport=market==='export';
  document.querySelectorAll('.domesticCost').forEach(el=>el.style.display=isExport?'none':'');
  const normalAcq=base*(truck?.06:.07), lightTax=Math.max(0,base*.07-750000), acq=light?lightTax:normalAcq, bond=light?0:base*.005, stamp=4000,mail=5000,saleFee=440000,broker=deal==='broker'?(sale<14000000?300000:sale*.022):0,diff=mode==='down'?Math.max(0,sale-contract):0;
@@ -112,16 +108,20 @@ function calc(){
  renderTransferPreview({sale,contract,base,ins,light,truck,broker,diff,acqWithExtra,bond,transfer,grand,isExport});
 }
 function setMarket(m){market=m;$('domesticBtn').classList.toggle('on',m==='domestic');$('exportBtn').classList.toggle('on',m==='export');calc()}
-function setMode(m){mode=m;if(m==='broker'&&market==='export')setMarket('domestic');$('exportBtn').style.display=m==='broker'?'none':'';document.body.classList.toggle('down',m==='down');$('directTab').classList.toggle('on',m==='direct');$('brokerTab').classList.toggle('on',m==='broker');$('downTab').classList.toggle('on',m==='down');
- document.querySelectorAll('.directAccount').forEach(el=>el.style.display=m==='direct'?'block':'none');
- document.querySelectorAll('.brokerAccount').forEach(el=>el.style.display=m==='broker'?'block':'none');
- document.querySelectorAll('.downAccount').forEach(el=>el.style.display=m==='down'?'block':'none');
- document.querySelectorAll('.inventoryVehicle').forEach(el=>el.style.display=m==='broker'?'none':'block');
- document.querySelectorAll('.brokerVehicle').forEach(el=>el.style.display=m==='broker'?'block':'none');calc()}
+function setMode(m){mode=m;if((m==='broker'||m==='down')&&market==='export')setMarket('domestic');$('marketButtons').style.display=m==='down'?'none':'flex';$('exportBtn').style.display=m==='broker'?'none':'';$('downDealButtons').style.display=m==='down'?'flex':'none';document.body.classList.toggle('down',m==='down');$('directTab').classList.toggle('on',m==='direct');$('brokerTab').classList.toggle('on',m==='broker');$('downTab').classList.toggle('on',m==='down');
+ applyModeFields();calc()}
+function setDownDeal(d){downDeal=d;$('downDirectBtn').classList.toggle('on',d==='direct');$('downBrokerBtn').classList.toggle('on',d==='broker');applyModeFields();calc()}
+function applyModeFields(){
+ const brokerLike=mode==='broker'||(mode==='down'&&downDeal==='broker'),directLike=mode==='direct'||(mode==='down'&&downDeal==='direct');
+ document.querySelectorAll('.directAccount').forEach(el=>el.style.display=mode==='direct'?'block':'none');
+ document.querySelectorAll('.brokerAccount').forEach(el=>el.style.display=mode==='broker'?'block':'none');
+ document.querySelectorAll('.inventoryVehicle').forEach(el=>el.style.display=brokerLike?'none':'block');
+ document.querySelectorAll('.brokerVehicle').forEach(el=>el.style.display=brokerLike?'block':'none');
+}
 function renderTransferPreview(v){
  const selected=$('inventoryCar').options[$('inventoryCar').selectedIndex];
  const selectedRecord=inventoryRecords().find(x=>String(x.id)===String($('inventoryCar').value));
- const brokerMode=mode==='broker';
+ const brokerMode=mode==='broker'||(mode==='down'&&downDeal==='broker');
  const carNo=brokerMode?($('brokerCarNo').value.trim()||'차량번호'):(selectedRecord&&selectedRecord.carNo?String(selectedRecord.carNo).trim():'차량번호');
  const brokerInfo=[$('brokerCarNo').value.trim(),$('brokerCarName').value.trim(),$('brokerCarYear').value.trim()].filter(Boolean).join(' · ');
  $('pCar').textContent=brokerMode?(brokerInfo||'차량정보 미입력'):(selected&&$('inventoryCar').value?selected.textContent:'차량 미선택');
@@ -129,15 +129,13 @@ function renderTransferPreview(v){
  $('pSale').textContent=won(v.sale);$('pContract').textContent=won(v.contract);$('pAcq').textContent=won(v.acqWithExtra);
  $('pBond').textContent=v.light?'면제':won(v.bond);$('pInsurance').textContent=won(v.ins);$('pBroker').textContent=won(v.broker);$('pDiff').textContent=won(v.diff);
  $('pTransfer').textContent=won(v.transfer);$('pGrand').textContent=won(v.grand);
- const isBroker=mode==='broker',isDown=mode==='down';
- $('pShinhan').textContent=isDown?$('downShinhanAccount').value:$('shinhanAccount').value;
- $('pNh').textContent=isDown?$('downNhAccount').value:$('nhAccount').value;
+ const isBroker=mode==='broker'||(mode==='down'&&downDeal==='broker');
+ $('pShinhan').textContent=$('shinhanAccount').value;
+ $('pNh').textContent=$('nhAccount').value;
  $('pBrokerCarAccount').textContent=$('brokerCarAccount').value;
  $('pBrokerTransferAccount').textContent=$('brokerTransferAccount').value;
- $('pCustomAccount').textContent=$('downCustomAccount').value;
- document.querySelectorAll('.pShinhan,.pNh').forEach(el=>el.style.display=(!isBroker)?'table-row':'none');
+ document.querySelectorAll('.pShinhan,.pNh').forEach(el=>el.style.display=!isBroker?'table-row':'none');
  document.querySelectorAll('.pBrokerCar,.pBrokerTransfer').forEach(el=>el.style.display=isBroker?'table-row':'none');
- document.querySelectorAll('.pCustom').forEach(el=>el.style.display=isDown&&$('downCustomAccount').value.trim()?'table-row':'none');
  document.querySelectorAll('.pDomestic').forEach(el=>el.style.display=v.isExport?'none':'');
  document.querySelectorAll('.pDown').forEach(el=>el.style.display=mode==='down'&&!v.isExport?'table-row':'none');
 }
@@ -159,7 +157,7 @@ async function exportTransfer(type){
   await new Promise(res=>requestAnimationFrame(()=>requestAnimationFrame(res)));
   if(typeof html2canvas==='undefined')throw new Error('html2canvas not loaded');
   const paper=$('transferPaper'),canvas=await html2canvas(paper,{scale:3,backgroundColor:'#fff',useCORS:true,logging:false});
-  const dataUrl=canvas.toDataURL('image/png',1),selectedRecord=inventoryRecords().find(x=>String(x.id)===String($('inventoryCar').value)),carNo=(mode==='broker'?$('brokerCarNo').value:(selectedRecord&&selectedRecord.carNo||'차량번호')).trim().replace(/\s/g,'')||'차량번호',name='이전비_'+carNo+'.png';
+  const dataUrl=canvas.toDataURL('image/png',1),selectedRecord=inventoryRecords().find(x=>String(x.id)===String($('inventoryCar').value)),carNo=((mode==='broker'||(mode==='down'&&downDeal==='broker'))?$('brokerCarNo').value:(selectedRecord&&selectedRecord.carNo||'차량번호')).trim().replace(/\s/g,'')||'차량번호',name='이전비_'+carNo+'.png';
   if(window.AndroidPurchase){
    if(type==='image'&&typeof AndroidPurchase.savePurchaseBase64Image==='function'){AndroidPurchase.savePurchaseBase64Image(dataUrl);return}
    if(type==='share'&&typeof AndroidPurchase.sharePurchaseBase64Image==='function'){AndroidPurchase.sharePurchaseBase64Image(dataUrl);return}
@@ -176,7 +174,7 @@ function downloadTransferBlob(blob,name){const url=URL.createObjectURL(blob),a=d
 function transferStamp(){const d=new Date(),p=n=>String(n).padStart(2,'0');return ''+d.getFullYear()+p(d.getMonth()+1)+p(d.getDate())+'_'+p(d.getHours())+p(d.getMinutes())+p(d.getSeconds())}
 window.addEventListener('resize',()=>{if($('previewView').style.display==='block')fitTransferPaper()});
 $('domesticBtn').onclick=()=>setMarket('domestic');$('exportBtn').onclick=()=>setMarket('export');
-$('directTab').onclick=()=>setMode('direct');$('brokerTab').onclick=()=>setMode('broker');$('downTab').onclick=()=>setMode('down');
+$('directTab').onclick=()=>setMode('direct');$('brokerTab').onclick=()=>setMode('broker');$('downTab').onclick=()=>setMode('down');$('downDirectBtn').onclick=()=>setDownDeal('direct');$('downBrokerBtn').onclick=()=>setDownDeal('broker');
 document.querySelectorAll('input,select').forEach(e=>e.addEventListener('input',calc));
 $('inventoryCar').addEventListener('change',selectInventoryCar);
 loadInventoryCars();calc();
