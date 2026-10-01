@@ -191,17 +191,18 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&overlay.classList.c
 function applyEncarPreset(){
  const p=encarPreset.value;
  if(p==='master23s'){
-  origin.value='국산';encarManufacturer.value='르노코리아(삼성)';encarModelGroup.value='마스터';encarModel.value='마스터';encarBadgeGroup.value='디젤 2300cc';encarBadge.value='2.3 밴';encarBadgeDetail.value='S';
+  origin.value='국산';encarManufacturer.value='르노코리아(삼성)';encarModelGroup.value='마스터';encarModel.value='마스터';encarBadgeGroup.value='디젤 2300cc';encarBadge.value='2.3 밴 S';encarBadgeDetail.value='';
  }else{encarManufacturer.value='';encarModelGroup.value='';encarModel.value='';encarBadgeGroup.value='';encarBadge.value='';encarBadgeDetail.value=''}
  applyAutoCosts();
 }
 function encarToken(v){return String(v||'').trim().replace(/\./g,'_.').replace(/\)/g,'_)')}
 function buildEncarCompareUrl(){
  const manufacturer=encarManufacturer.value.trim(),modelGroup=encarModelGroup.value.trim(),model=encarModel.value.trim(),badgeGroup=encarBadgeGroup.value.trim(),badge=encarBadge.value.trim(),badgeDetail=encarBadgeDetail.value.trim(),year=parseInt(encarYear.value,10);
- if(!manufacturer||!modelGroup||!model||!badgeGroup||!badge||!badgeDetail||!year)return '';
- const domestic=origin.value!=='수입',base=domestic?'https://www.encar.com/dc/dc_carsearchlist.do?carType=kor&searchType=model&TG.R=A#!':'https://www.encar.com/fc/fc_carsearchlist.do?carType=for&searchType=model&TG.R=A#!';
+ if(!manufacturer||!modelGroup||!model||!badgeGroup||!badge||!year)return '';
+ const domestic=origin.value!=='수입',base=domestic?'https://www.encar.com/dc/dc_carsearchlist.do?carType=kor#!':'https://www.encar.com/fc/fc_carsearchlist.do?carType=for#!';
  const carType=domestic?'Y':'N',start=(year-1)+'01',end=(year+1)+'12';
- let action='(And.Year.range('+start+'..'+end+')._.Hidden.N._.(C.CarType.'+carType+'._.(C.Manufacturer.'+encarToken(manufacturer)+'._.(C.ModelGroup.'+encarToken(modelGroup)+'._.(C.Model.'+encarToken(model)+'._.(C.BadgeGroup.'+encarToken(badgeGroup)+'._.(C.Badge.'+encarToken(badge)+'._.BadgeDetail.'+encarToken(badgeDetail)+'.))))))_.Separation.B.)';
+ const detail=badgeDetail?'._.BadgeDetail.'+encarToken(badgeDetail):'';
+ let action='(And.Year.range('+start+'..'+end+')._.Hidden.N._.(C.CarType.'+carType+'._.(C.Manufacturer.'+encarToken(manufacturer)+'._.(C.ModelGroup.'+encarToken(modelGroup)+'._.(C.Model.'+encarToken(model)+'._.(C.BadgeGroup.'+encarToken(badgeGroup)+'._.Badge.'+encarToken(badge)+detail+'.))))))';
  const payload={action,toggle:{},layer:'',sort:'Mileage',page:1,limit:20,searchKey:'',loginCheck:false};
  return base+encodeURIComponent(JSON.stringify(payload));
 }
