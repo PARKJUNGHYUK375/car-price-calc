@@ -27,9 +27,16 @@ let mode='direct',market='domestic';const $=id=>document.getElementById(id),won=
 const INVENTORY_KEY='dealerInventory_v1';
 function inventoryRecords(){try{return JSON.parse(localStorage.getItem(INVENTORY_KEY)||'[]')}catch(e){return[]}}
 function loadInventoryCars(){
- const sel=$('inventoryCar'),rows=inventoryRecords().filter(r=>r&&r.id&&r.type==='소매');
+ const sel=$('inventoryCar'),source=inventoryRecords().filter(r=>r&&r.id&&r.type==='소매');
+ const unique=new Map();
+ source.sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0)).forEach(r=>{
+  const no=String(r.carNo||'').replace(/\s/g,'').toUpperCase();
+  const key=no||('ID:'+String(r.id));
+  if(!unique.has(key))unique.set(key,r);
+ });
+ const rows=[...unique.values()];
  sel.innerHTML='<option value="">차량을 선택하세요</option>';
- rows.sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0)).forEach(r=>{
+ rows.forEach(r=>{
   const o=document.createElement('option');o.value=String(r.id);o.textContent=[r.carNo,r.carName,r.carYear].filter(Boolean).join(' · ')||'차량정보 없음';sel.appendChild(o);
  });
 }
