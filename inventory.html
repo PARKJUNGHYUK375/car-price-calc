@@ -101,11 +101,21 @@ function liveMoneyFormat(el){
   const raw=String(el.value||'').replace(/[^0-9]/g,'');
   el.value=raw?Number(raw).toLocaleString()+'원':'';
 }
+function moneyDeleteKey(e){
+  const el=e.target,v=String(el.value||'');
+  if(e.key==='Backspace'&&v.endsWith('원')&&el.selectionStart===v.length&&el.selectionEnd===v.length){
+    e.preventDefault();
+    const raw=v.replace(/[^0-9]/g,'');
+    const next=raw.slice(0,-1);
+    el.value=next?Number(next).toLocaleString()+'원':'';
+    el.dispatchEvent(new Event('input',{bubbles:true}));
+  }
+}
 moneyIds.forEach(id=>{
   const el=document.getElementById(id);
-  if(el.type!=='hidden') el.addEventListener('input',e=>liveMoneyFormat(e.target));
+  if(el.type!=='hidden'){el.addEventListener('input',e=>liveMoneyFormat(e.target));el.addEventListener('keydown',moneyDeleteKey);}
 });
-document.getElementById('sellPriceBottom').addEventListener('input',e=>liveMoneyFormat(e.target));
+document.getElementById('sellPriceBottom').addEventListener('input',e=>liveMoneyFormat(e.target));document.getElementById('sellPriceBottom').addEventListener('keydown',moneyDeleteKey);
 function setAutoLabel(modeId,amount){
  const sel=document.getElementById(modeId),opt=sel.querySelector('option[value="auto"]');
  opt.textContent=Math.round(amount).toLocaleString()+'원';
