@@ -35,7 +35,7 @@ body.transfer-exporting{background:#fff!important}body.transfer-exporting .top,b
  <div class="previewbar"><button class="actionBtn" type="button" onclick="showTransferView('form')">← 수정</button><button class="actionBtn" type="button" onclick="exportTransfer('image')">이미지 저장</button><button class="actionBtn" type="button" onclick="exportTransfer('share')">다른 앱으로 공유</button><button class="actionBtn" type="button" onclick="exportTransfer('print')">프린터 출력</button></div>
  <div class="paperScroll"><div class="paper" id="transferPaper">
   <div class="paperTitle">이전비 산출서</div>
-  <div class="paperMeta"><b id="pCar">차량 미선택</b><span id="pType"></span></div>
+  <div class="paperMeta"><b id="pCar">차량 미선택</b></div>
   <table>
    <tr><th>차량 판매금액</th><td id="pSale">0원</td></tr>
    <tr class="pDown"><th>다운계약 차량금액</th><td id="pContract">0원</td></tr>
@@ -50,7 +50,6 @@ body.transfer-exporting{background:#fff!important}body.transfer-exporting .top,b
    <tr class="paperTotal"><th>이전비용 정산액</th><td id="pTransfer">0원</td></tr>
    <tr class="paperTotal"><th>차량 구매시 총금액</th><td id="pGrand">0원</td></tr>
   </table>
-  <div class="paperNote" id="pNote"></div>
  </div></div>
 </div></main>
 <script>
@@ -99,14 +98,11 @@ function setMode(m){mode=m;document.body.classList.toggle('down',m==='down');$('
 function renderTransferPreview(v){
  const selected=$('inventoryCar').options[$('inventoryCar').selectedIndex];
  $('pCar').textContent=selected&&$('inventoryCar').value?selected.textContent:'차량 미선택';
- const modeName=mode==='direct'?'직접매도':mode==='broker'?'알선매매':'다운계약용';
- $('pType').textContent=(market==='export'?'수출':'내수')+' · '+modeName;
  $('pSale').textContent=won(v.sale);$('pContract').textContent=won(v.contract);$('pAcq').textContent=won(v.acqWithExtra);
  $('pBond').textContent=v.light?'면제':won(v.bond);$('pInsurance').textContent=won(v.ins);$('pBroker').textContent=won(v.broker);$('pDiff').textContent=won(v.diff);
  $('pTransfer').textContent=won(v.transfer);$('pGrand').textContent=won(v.grand);
  document.querySelectorAll('.pDomestic').forEach(el=>el.style.display=v.isExport?'none':'');
  document.querySelectorAll('.pDown').forEach(el=>el.style.display=mode==='down'&&!v.isExport?'table-row':'none');
- $('pNote').textContent=v.isExport?'수출 이전비는 매도비 440,000원만 적용됩니다.':(v.light?'경차 취득세는 판매금액 × 7%에서 75만원을 공제하며 취득세 추가 10만원은 적용하지 않습니다.':'취득세에는 정산용 100,000원이 포함되어 있습니다.');
 }
 function showTransferView(view){
  const preview=view==='preview';$('formView').style.display=preview?'none':'block';$('previewView').style.display=preview?'block':'none';
