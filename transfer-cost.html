@@ -34,7 +34,7 @@ body.transfer-exporting{background:#fff!important}body.transfer-exporting .top,b
 <div id="previewView">
  <div class="previewbar"><button class="actionBtn" type="button" onclick="showTransferView('form')">← 수정</button><button class="actionBtn" type="button" onclick="exportTransfer('image')">이미지 저장</button><button class="actionBtn" type="button" onclick="exportTransfer('share')">다른 앱으로 공유</button><button class="actionBtn" type="button" onclick="exportTransfer('print')">프린터 출력</button></div>
  <div class="paperScroll"><div class="paper" id="transferPaper">
-  <div class="paperTitle">이전비 산출서</div>
+  <div class="paperTitle">차량구매비용 내역서</div>
   <div class="paperMeta"><b id="pCar">차량 미선택</b></div>
   <table>
    <tr><th>차량 판매금액</th><td id="pSale">0원</td></tr>
@@ -130,7 +130,7 @@ async function exportTransfer(type){
   const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png',1));
   if(type==='image'){downloadTransferBlob(blob,name);return}
   const file=new File([blob],name,{type:'image/png'});
-  if(navigator.share&&(!navigator.canShare||navigator.canShare({files:[file]})))await navigator.share({title:'이전비 산출서',files:[file]});
+  if(navigator.share&&(!navigator.canShare||navigator.canShare({files:[file]})))await navigator.share({title:'차량구매비용 내역서',files:[file]});
   else{downloadTransferBlob(blob,name);alert('공유 기능을 지원하지 않아 이미지로 저장했습니다.')}
  }catch(e){console.error(e);alert('저장/공유 기능을 실행하지 못했습니다.')}
  finally{document.body.classList.remove('transfer-exporting');fitTransferPaper()}
