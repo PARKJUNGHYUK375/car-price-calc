@@ -8,6 +8,9 @@
 <div class="tabs"><button id="directTab" class="tab on">직접매도</button><button id="brokerTab" class="tab">알선매매</button><button id="downTab" class="tab">다운계약용</button></div>
 <section class="result"><div class="label">이전비용 정산액</div><div class="big" id="transferTotal">0원</div><div class="summary"><div><span class="label">차량 구매시 총금액</span><b id="grandTotal">0원</b></div><div><span class="label">적용 차량금액</span><b id="taxBaseOut">0원</b></div></div></section>
 <section class="card"><h2>🚗 차량 정보</h2><div class="grid">
+<div class="field" style="grid-column:1/-1"><label>매입관리 차량 선택</label><select id="inventoryCar"><option value="">차량을 선택하세요</option></select></div>
+<div class="field"><label>차량명</label><input id="selectedCarName" readonly placeholder="차량 선택 시 자동표시"></div>
+<div class="field"><label>연식</label><input id="selectedCarYear" readonly placeholder="차량 선택 시 자동표시"></div>
 <div class="field"><label>차량판매금액</label><div class="unit"><input id="salePrice" inputmode="numeric" value="2050"><span>만원</span></div></div>
 <div class="field downOnly"><label>다운계약 차량금액</label><div class="unit"><input id="contractPrice" inputmode="numeric" value="1600"><span>만원</span></div></div>
 <div class="field"><label>성능보험료</label><div class="unit"><input id="insurance" inputmode="numeric" value="0"><span>원</span></div></div>
@@ -21,6 +24,23 @@
 </section></main>
 <script>
 let mode='direct';const $=id=>document.getElementById(id),won=n=>Math.round(n).toLocaleString()+'원',num=id=>Number(String($(id).value||'').replace(/[^0-9.]/g,''))||0;
+const INVENTORY_KEY='dealerInventory_v1';
+function inventoryRecords(){try{return JSON.parse(localStorage.getItem(INVENTORY_KEY)||'[]')}catch(e){return[]}}
+function loadInventoryCars(){
+ const sel=$('inventoryCar'),rows=inventoryRecords().filter(r=>r&&r.id);
+ sel.innerHTML='<option value="">차량을 선택하세요</option>';
+ rows.sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0)).forEach(r=>{
+  const o=document.createElement('option');o.value=String(r.id);o.textContent=[r.carNo,r.carName,r.carYear].filter(Boolean).join(' · ')||'차량정보 없음';sel.appendChild(o);
+ });
+}
+function selectInventoryCar(){
+ const id=$('inventoryCar').value,r=inventoryRecords().find(x=>String(x.id)===String(id));
+ if(!r){$('selectedCarName').value='';$('selectedCarYear').value='';$('insurance').value='0';calc();return}
+ $('selectedCarName').value=r.carName||'';
+ $('selectedCarYear').value=r.carYear?String(r.carYear).replace(/[^0-9]/g,'')+'연식':'';
+ $('insurance').value=(+r.insurance||0).toLocaleString();
+ calc();
+}
 function calc(){
  const sale=num('salePrice')*10000, contract=num('contractPrice')*10000, base=mode==='down'?contract:sale, ins=num('insurance'), light=$('light').value==='Y',truck=$('truck').value==='Y',deal=mode==='broker'?'broker':'direct';
  const acq=light?0:base*(truck?.06:.07), bond=light?0:base*.005, stamp=4000,mail=5000,saleFee=440000,broker=deal==='broker'?200000:0,diff=mode==='down'?Math.max(0,sale-contract):0;
@@ -33,5 +53,7 @@ function calc(){
 }
 function setMode(m){mode=m;document.body.classList.toggle('down',m==='down');$('directTab').classList.toggle('on',m==='direct');$('brokerTab').classList.toggle('on',m==='broker');$('downTab').classList.toggle('on',m==='down');calc()}
 $('directTab').onclick=()=>setMode('direct');$('brokerTab').onclick=()=>setMode('broker');$('downTab').onclick=()=>setMode('down');
-document.querySelectorAll('input,select').forEach(e=>e.addEventListener('input',calc));calc();
+document.querySelectorAll('input,select').forEach(e=>e.addEventListener('input',calc));
+$('inventoryCar').addEventListener('change',selectInventoryCar);
+loadInventoryCars();calc();
 </script></body></html>
