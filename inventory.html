@@ -63,11 +63,33 @@ header{display:flex;align-items:center;gap:11px;margin-bottom:12px}.home{width:3
 <div class="main" style="grid-column:1/3"><span>예상수익</span><b id="rProfit">0원</b></div></div></div>
 <button id="transferBtn" class="btn transferBtn" style="display:none" onclick="transferToAuction()">경매로 옮기기</button><button id="transferRetailBtn" class="btn transferBtn" style="display:none" onclick="transferToRetail()">소매로 옮기기</button><div class="actions"><button id="deleteBtn" class="btn danger" style="display:none" onclick="removeRecord()">삭제</button><button class="btn primary" onclick="saveRecord()">저장</button></div>
 </div></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+const SUPABASE_URL='https://crmeeegayzezeqhgkagx.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY='sb_publishable_6wpAz2ELkD2Eh2ircwzVGw_78QKns9C';
+const CLOUD_TABLE='inventory_records';
+let supabaseClient=null,currentCloudUser=null,cloudReady=false;
 const KEY='dealerInventory_v1';let currentType='소매',filter='전체',editing=null;
 const ids=['type','status','carNo','origin','carName','buyDate','sellDate','buyPrice','sellPrice','note','inspectionMode','inspection','insurance','paintPanels','paintMode','paint','polishMode','polish','wheel','prepExtra','encarMode','encar','heyd','intro','acqTax','transport','auctionCount','automartStatus'];
 const moneyIds=['buyPrice','sellPrice','inspection','insurance','paint','polish','wheel','prepExtra','encar','heyd','intro','acqTax','transport'];
-function all(){try{return JSON.parse(localStorage.getItem(KEY)||'[]').map(r=>{if(r.type==='경매(오토마트)')r.type='경매';return r})}catch{return[]}} function put(a){localStorage.setItem(KEY,JSON.stringify(a))}
+function all(){try{return JSON.parse(localStorage.getItem(KEY)||'[]').map(r=>{if(r.type==='경매(오토마트)')r.type='경매';return r})}catch{return[]}}
+function put(a){localStorage.setItem(KEY,JSON.stringify(a))}
+function initCloud(){if(!window.supabase)return null;if(!supabaseClient)supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});return supabaseClient}
+async function cloudUpsert(r){if(!cloudReady||!currentCloudUser)return;const {error}=await supabaseClient.from(CLOUD_TABLE).upsert({id:String(r.id),user_id:currentCloudUser.id,record:r,updated_at:new Date(r.updatedAt||Date.now()).toISOString()},{onConflict:'user_id,id'});if(error)console.warn('매입관리 클라우드 저장 실패',error)}
+async function cloudDelete(id){if(!cloudReady||!currentCloudUser)return;const {error}=await supabaseClient.from(CLOUD_TABLE).delete().eq('user_id',currentCloudUser.id).eq('id',String(id));if(error)console.warn('매입관리 클라우드 삭제 실패',error)}
+async function loadCloud(){
+ const c=initCloud();if(!c)return;
+ const {data:{session}}=await c.auth.getSession();currentCloudUser=session?.user||null;
+ if(!currentCloudUser){console.warn('매입관리: 로그인 세션 없음');return}
+ const local=all();const {data,error}=await c.from(CLOUD_TABLE).select('id,record,updated_at').eq('user_id',currentCloudUser.id);
+ if(error){console.warn('매입관리 클라우드 불러오기 실패',error);return}
+ cloudReady=true;
+ if(!data.length&&local.length){for(const r of local)await cloudUpsert(r);render();return}
+ const map=new Map(local.map(r=>[String(r.id),r]));
+ for(const row of data){const rr=row.record||{};const old=map.get(String(row.id));if(!old||(+rr.updatedAt||0)>=(+old.updatedAt||0))map.set(String(row.id),rr);else await cloudUpsert(old)}
+ put([...map.values()]);render();
+}
+
 function n(id){return Number(String(document.getElementById(id).value||'').replace(/[^0-9.-]/g,''))||0}function won(v){return Math.round(v).toLocaleString()+'원'}function short(v){return v?Math.round(v/10000).toLocaleString()+'만':'0'}
 function liveMoneyFormat(el){
   const raw=String(el.value||'').replace(/[^0-9]/g,'');
@@ -148,15 +170,15 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&overlay.classList.c
 function formData(){let r={id:editing||('r'+Date.now()),updatedAt:Date.now()};ids.forEach(k=>r[k]=moneyIds.includes(k)||['paintPanels','auctionCount'].includes(k)?n(k):document.getElementById(k).value);r.repairs=repairData();r.prepExtra=r.repairs.reduce((a,x)=>a+x.amount,0);r.introItems=costRowsData('intro');r.transportItems=costRowsData('transport');r.intro=r.introItems.reduce((a,x)=>a+x.amount,0);r.transport=r.transportItems.reduce((a,x)=>a+x.amount,0);return r}
 function syncSellPrice(v){document.getElementById('sellPrice').value=String(v||'').replace(/[^0-9.-]/g,'');calc()}
 function calc(){let r=formData(),c=computed(r);/* 매입원가 = 매입금액 + 재고이자 + 매입비 + 상품화/기타/경매 등 전체비용 */let cost=(+r.buyPrice||0)+c.expense;document.getElementById('purchaseCost').value=cost?Math.round(cost).toLocaleString()+'원':'';document.getElementById('auctionCost').value=c.auction?Math.round(c.auction).toLocaleString()+'원':'0원';document.getElementById('automartCost').value=c.automart?Math.round(c.automart).toLocaleString()+'원':'0원';if(document.activeElement!==document.getElementById('sellPriceBottom'))document.getElementById('sellPriceBottom').value=(+r.sellPrice||0)?(+r.sellPrice).toLocaleString()+'원':'';document.getElementById('expectedProfit').value=(c.profit>=0?'+':'')+Math.round(c.profit).toLocaleString()+'원';document.getElementById('expectedProfit').classList.toggle('profitPlus',c.profit>=0);document.getElementById('expectedProfit').classList.toggle('profitMinus',c.profit<0);rDays.textContent=c.d+'일';rInterest.textContent=won(c.interest);rPurchaseFee.textContent=won(c.purchaseFee);rAuction.textContent=won(c.auction);rExpense.textContent=won(c.expense);rMarginTax.textContent=won(c.marginTax);rProfit.textContent=(c.profit>=0?'+':'')+won(c.profit)}
-function saveRecord(){let r=formData();if(!r.carNo&&!r.carName){alert('차량번호 또는 차량명을 입력해주세요.');return}let a=all(),i=a.findIndex(x=>x.id===r.id);if(i>=0)a[i]=r;else a.push(r);put(a);currentType=r.type==='소매'?'소매':'경매';closeForm();setType(currentType)}
+function saveRecord(){let r=formData();if(!r.carNo&&!r.carName){alert('차량번호 또는 차량명을 입력해주세요.');return}let a=all(),i=a.findIndex(x=>x.id===r.id);if(i>=0)a[i]=r;else a.push(r);put(a);cloudUpsert(r);currentType=r.type==='소매'?'소매':'경매';closeForm();setType(currentType)}
 function transferToAuction(){
  if(!editing)return;let a=all(),idx=a.findIndex(x=>x.id===editing);if(idx<0)return;
- let r=formData();r.type='경매';r.status='판매중';r.sellDate='';r.sellPrice=0;r.auctionCount=(+r.auctionCount||1);r.updatedAt=Date.now();a[idx]=r;put(a);closeForm();currentType='경매';document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.type==='경매'));render();
+ let r=formData();r.type='경매';r.status='판매중';r.sellDate='';r.sellPrice=0;r.auctionCount=(+r.auctionCount||1);r.updatedAt=Date.now();a[idx]=r;put(a);cloudUpsert(r);closeForm();currentType='경매';document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.type==='경매'));render();
 }
 function transferToRetail(){
  if(!editing)return;let a=all(),idx=a.findIndex(x=>x.id===editing);if(idx<0)return;
- let r=formData();r.type='소매';r.status='판매중';r.sellDate='';r.sellPrice=0;r.updatedAt=Date.now();a[idx]=r;put(a);closeForm();currentType='소매';document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.type==='소매'));render();
+ let r=formData();r.type='소매';r.status='판매중';r.sellDate='';r.sellPrice=0;r.updatedAt=Date.now();a[idx]=r;put(a);cloudUpsert(r);closeForm();currentType='소매';document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.type==='소매'));render();
 }
-function removeRecord(){if(!editing||!confirm('이 차량 기록을 삭제할까요?'))return;put(all().filter(x=>x.id!==editing));closeForm();render()}
-render();
+function removeRecord(){if(!editing||!confirm('이 차량 기록을 삭제할까요?'))return;const id=editing;put(all().filter(x=>x.id!==id));cloudDelete(id);closeForm();render()}
+render();loadCloud();
 </script></body></html>
