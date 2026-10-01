@@ -29,11 +29,12 @@ body.transfer-exporting{background:#fff!important}body.transfer-exporting .top,b
 
 <div class="field"><label>화물차</label><select id="truck"><option value="N">N</option><option value="Y">Y</option></select></div>
 <div class="field"><label>경차</label><select id="light"><option value="N">N</option><option value="Y">Y</option></select></div>
-<div class="field accountField directAccount"><label>차량대금 계좌 · 신한</label><input id="shinhanAccount" value="신한 140-011-917361 (주) 롱탄" readonly></div>
-<div class="field accountField directAccount"><label>이전비 계좌 · 농협</label><input id="nhAccount" value="농협 302-1224-1439-81 안준환" readonly></div>
-<div class="field accountField brokerAccount" style="display:none;grid-column:1/-1"><label>입금 계좌</label><input id="brokerAccount" placeholder="계좌번호 직접 입력"></div>
-<div class="field accountField downAccount" style="display:none"><label>차량대금 계좌 · 신한</label><input id="downShinhanAccount" placeholder="신한 계좌번호 입력"></div>
-<div class="field accountField downAccount" style="display:none"><label>이전비 계좌 · 농협</label><input id="downNhAccount" placeholder="농협 계좌번호 입력"></div>
+<div class="field accountField directAccount"><label>차량대금 계좌</label><input id="shinhanAccount" value="신한 140-011-917361 (주) 롱탄" readonly></div>
+<div class="field accountField directAccount"><label>이전비 계좌</label><input id="nhAccount" value="농협 302-1224-1439-81 안준환" readonly></div>
+<div class="field accountField brokerAccount" style="display:none"><label>차량대금 계좌</label><input id="brokerCarAccount" placeholder="계좌번호 직접 입력"></div>
+<div class="field accountField brokerAccount" style="display:none"><label>이전비 계좌</label><input id="brokerTransferAccount" placeholder="계좌번호 직접 입력"></div>
+<div class="field accountField downAccount" style="display:none"><label>차량대금 계좌</label><input id="downShinhanAccount" placeholder="신한 계좌번호 입력"></div>
+<div class="field accountField downAccount" style="display:none"><label>이전비 계좌</label><input id="downNhAccount" placeholder="농협 계좌번호 입력"></div>
 <div class="field accountField downAccount" style="display:none;grid-column:1/-1"><label>추가 입금 계좌</label><input id="downCustomAccount" placeholder="계좌번호 직접 입력"></div>
 </div></section>
 <section class="card" id="costCard"><h2>🧾 이전비 내역</h2>
@@ -48,7 +49,8 @@ body.transfer-exporting{background:#fff!important}body.transfer-exporting .top,b
   <table class="accountTable" id="previewAccountTable">
    <tr class="pAccount pShinhan"><th>차량대금 계좌</th><td id="pShinhan"></td></tr>
    <tr class="pAccount pNh"><th>이전비 계좌</th><td id="pNh"></td></tr>
-   <tr class="pAccount pBroker"><th>입금 계좌</th><td id="pBrokerAccount"></td></tr>
+   <tr class="pAccount pBrokerCar"><th>차량대금 계좌</th><td id="pBrokerCarAccount"></td></tr>
+   <tr class="pAccount pBrokerTransfer"><th>이전비 계좌</th><td id="pBrokerTransferAccount"></td></tr>
    <tr class="pAccount pCustom"><th>추가 입금 계좌</th><td id="pCustomAccount"></td></tr>
   </table>
   <div class="depositGuide">차량대금 및 이전비 입금 시 보내는 사람 이름을 <strong id="pDepositCarNo">차량번호</strong>로 변경하여 입금 부탁드립니다.</div>
@@ -130,10 +132,11 @@ function renderTransferPreview(v){
  const isBroker=mode==='broker',isDown=mode==='down';
  $('pShinhan').textContent=isDown?$('downShinhanAccount').value:$('shinhanAccount').value;
  $('pNh').textContent=isDown?$('downNhAccount').value:$('nhAccount').value;
- $('pBrokerAccount').textContent=$('brokerAccount').value;
+ $('pBrokerCarAccount').textContent=$('brokerCarAccount').value;
+ $('pBrokerTransferAccount').textContent=$('brokerTransferAccount').value;
  $('pCustomAccount').textContent=$('downCustomAccount').value;
  document.querySelectorAll('.pShinhan,.pNh').forEach(el=>el.style.display=(!isBroker)?'table-row':'none');
- document.querySelectorAll('.pBroker').forEach(el=>el.style.display=isBroker?'table-row':'none');
+ document.querySelectorAll('.pBrokerCar,.pBrokerTransfer').forEach(el=>el.style.display=isBroker?'table-row':'none');
  document.querySelectorAll('.pCustom').forEach(el=>el.style.display=isDown&&$('downCustomAccount').value.trim()?'table-row':'none');
  document.querySelectorAll('.pDomestic').forEach(el=>el.style.display=v.isExport?'none':'');
  document.querySelectorAll('.pDown').forEach(el=>el.style.display=mode==='down'&&!v.isExport?'table-row':'none');
