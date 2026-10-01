@@ -4872,7 +4872,7 @@ async function captureInspectionResult(){
 
     ctx.fillStyle='#9aa4b2';
     ctx.font=SMALL_FONT;
-    ctx.fillText('감가계산기 검차기록',PAD,canvas.height-42);
+    ctx.fillText('현장검차 검차기록',PAD,canvas.height-42);
 
     const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png',1));
     if(!blob) throw new Error('이미지를 만들지 못했습니다.');
