@@ -27,7 +27,7 @@ let mode='direct',market='domestic';const $=id=>document.getElementById(id),won=
 const INVENTORY_KEY='dealerInventory_v1';
 function inventoryRecords(){try{return JSON.parse(localStorage.getItem(INVENTORY_KEY)||'[]')}catch(e){return[]}}
 function loadInventoryCars(){
- const sel=$('inventoryCar'),source=inventoryRecords().filter(r=>r&&r.id&&r.type==='소매');
+ const sel=$('inventoryCar'),source=inventoryRecords().filter(r=>r&&r.id&&r.type==='소매'&&r.status==='판매중');
  const unique=new Map();
  source.sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0)).forEach(r=>{
   const no=String(r.carNo||'').replace(/\s/g,'').toUpperCase();
