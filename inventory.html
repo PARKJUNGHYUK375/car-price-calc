@@ -27,7 +27,7 @@ header{display:flex;align-items:center;gap:11px;margin-bottom:12px}.home{width:3
 <div id="overlay" class="overlay"><div class="sheet">
 <div class="sheetHead"><h2 id="formTitle">차량 등록</h2><button class="close" onclick="closeForm()">취소</button></div>
 <div class="section"><h3>기본정보</h3><div class="grid">
-<div class="field"><label>구분</label><select id="type"><option>소매</option><option>경매</option></select></div>
+<div class="field"><label>구분</label><select id="type" onchange="applyAutoCosts();toggleOtherCost('encar')"><option>소매</option><option>경매</option></select></div>
 <div class="field"><label>상태</label><select id="status"><option>판매중</option><option>완료</option></select></div>
 <div class="field"><label>차량번호</label><input id="carNo"></div><div class="field"><label>국산 / 수입</label><select id="origin" onchange="applyAutoCosts()"><option>국산</option><option>수입</option></select></div>
 <div class="field full"><label>차량</label><input id="carName" placeholder="예: 르노코리아(삼성) 마스터 2.3 밴 S"></div>
@@ -117,11 +117,12 @@ function toggleCostInput(kind){
  calc();
 }
 function applyAutoCosts(){
- if(inspectionMode.value!=='manual')inspection.value=(35000).toLocaleString()+'원';
+ const isAuction=type.value==='경매';
+ if(inspectionMode.value!=='manual')inspection.value=isAuction?'':(35000).toLocaleString()+'원';
  const panels=Number(paintPanels.value)||0,unit=origin.value==='수입'?165000:130000,paintAuto=panels*unit;
  if(paintMode.value!=='manual')paint.value=paintAuto?paintAuto.toLocaleString()+'원':'';
- if(polishMode.value!=='manual')polish.value=(143000).toLocaleString()+'원';
- setAutoLabel('inspectionMode',35000);setAutoLabel('paintMode',paintAuto);setAutoLabel('polishMode',143000);
+ if(polishMode.value!=='manual')polish.value=isAuction?'':(143000).toLocaleString()+'원';
+ setAutoLabel('inspectionMode',isAuction?0:35000);setAutoLabel('paintMode',paintAuto);setAutoLabel('polishMode',isAuction?0:143000);
  inspection.style.display=inspectionMode.value==='manual'?'block':'none';
  paint.style.display=paintMode.value==='manual'?'block':'none';
  polish.style.display=polishMode.value==='manual'?'block':'none';
@@ -140,7 +141,7 @@ function addRepairRow(data={}){
 function loadRepairs(items){repairRows.innerHTML='';(items&&items.length?items:[{}]).forEach(addRepairRow);syncRepairs()}
 function toggleOtherCost(kind){
  const mode=document.getElementById(kind+'Mode'),input=document.getElementById(kind);
- if(kind==='encar'&&mode.value!=='manual')input.value=(241950).toLocaleString();
+ if(kind==='encar'&&mode.value!=='manual')input.value=type.value==='경매'?'':(241950).toLocaleString();
  input.style.display=mode.value==='manual'?'block':'none';
  if(mode.value==='manual')input.focus();calc();
 }
@@ -180,7 +181,7 @@ function render(){
  }).join(''):'<div class="empty">등록된 차량이 없습니다.<br><b>＋ 등록</b>으로 첫 차량을 추가해보세요.</div>'
 }
 function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
-function openForm(id){editing=id||null;let r=id?all().find(x=>x.id===id):null;ids.forEach(k=>document.getElementById(k).value=r?.[k]??'');if(!r){type.value=currentType;status.value='판매중';origin.value='국산';buyDate.value=new Date().toISOString().slice(0,10);inspectionMode.value='auto';paintMode.value='auto';polishMode.value='auto';encarMode.value='auto';paintPanels.value='0';encar.value=(241950).toLocaleString()+'원';auctionCount.value=currentType==='경매'?1:0;automartStatus.value='미출품'}else{inspectionMode.value=r.inspectionMode||'auto';paintMode.value=r.paintMode||'auto';polishMode.value=r.polishMode||'auto';encarMode.value=r.encarMode||'auto';automartStatus.value=r.automartStatus||'미출품'}moneyIds.forEach(k=>{let v=n(k);document.getElementById(k).value=v?v.toLocaleString()+'원':''});loadRepairs(r?.repairs||((+r?.prepExtra||0)?[{memo:'기존 상품화추가',amount:+r.prepExtra}]:[{}]));loadCostRows('intro',r?.introItems,+r?.intro||0);loadCostRows('transport',r?.transportItems,+r?.transport||0);formTitle.textContent=r?'차량 수정':'차량 등록';deleteBtn.style.display=r?'block':'none';transferBtn.style.display=r&&r.type==='소매'?'block':'none';transferRetailBtn.style.display=r&&r.type!=='소매'?'block':'none';overlay.classList.add('show');applyAutoCosts();toggleOtherCost('encar');updateEncarCompareUI()}
+function openForm(id){editing=id||null;let r=id?all().find(x=>x.id===id):null;ids.forEach(k=>document.getElementById(k).value=r?.[k]??'');if(!r){type.value=currentType;status.value='판매중';origin.value='국산';buyDate.value=new Date().toISOString().slice(0,10);inspectionMode.value='auto';paintMode.value='auto';polishMode.value='auto';encarMode.value='auto';paintPanels.value='0';encar.value=currentType==='경매'?'':(241950).toLocaleString()+'원';auctionCount.value=currentType==='경매'?1:0;automartStatus.value='미출품'}else{inspectionMode.value=r.inspectionMode||'auto';paintMode.value=r.paintMode||'auto';polishMode.value=r.polishMode||'auto';encarMode.value=r.encarMode||'auto';automartStatus.value=r.automartStatus||'미출품'}moneyIds.forEach(k=>{let v=n(k);document.getElementById(k).value=v?v.toLocaleString()+'원':''});loadRepairs(r?.repairs||((+r?.prepExtra||0)?[{memo:'기존 상품화추가',amount:+r.prepExtra}]:[{}]));loadCostRows('intro',r?.introItems,+r?.intro||0);loadCostRows('transport',r?.transportItems,+r?.transport||0);formTitle.textContent=r?'차량 수정':'차량 등록';deleteBtn.style.display=r?'block':'none';transferBtn.style.display=r&&r.type==='소매'?'block':'none';transferRetailBtn.style.display=r&&r.type!=='소매'?'block':'none';overlay.classList.add('show');applyAutoCosts();toggleOtherCost('encar');updateEncarCompareUI()}
 function closeForm(){overlay.classList.remove('show')}
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&overlay.classList.contains('show')){e.preventDefault();e.stopPropagation()}});
 function isAndroidApp(){return !!(window.AndroidFile||window.AndroidPurchase||window.AndroidRegistrationOCR||window.AndroidExternal)}
