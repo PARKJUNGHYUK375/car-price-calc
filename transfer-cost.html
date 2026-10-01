@@ -19,8 +19,8 @@
 <div class="field"><label>경차</label><select id="light"><option value="N">N</option><option value="Y">Y</option></select></div>
 </div></section>
 <section class="card"><h2>🧾 이전비 내역</h2>
-<div class="row"><span>취득세</span><b id="acq">0원</b></div><div class="row"><span>지역개발공채 (0.5%)</span><b id="bond">0원</b></div><div class="row"><span>인 / 증지대</span><b id="stamp">4,000원</b></div><div class="row"><span>우편 등기료</span><b id="mail">5,000원</b></div><div class="row"><span>매도비</span><b id="saleFee">440,000원</b></div><div class="row"><span>성능보험료</span><b id="insuranceOut">0원</b></div><div class="row"><span>알선수수료</span><b id="brokerFee">0원</b></div><div class="row downOnly"><span>다운계약 차액</span><b id="downDiff">0원</b></div><div class="row"><span>정산 여유금</span><b>100,000원</b></div><div class="row total"><span>이전비용 정산액</span><b id="transferTotal2">0원</b></div>
-<div class="note">엑셀 ‘이전비산출’ 시트 기준: 화물차 취득세 6%, 일반 7%, 경차 취득세·공채 면제, 공채 0.5%, 인/증지 4천원, 우편 5천원, 매도비 44만원, 매매알선 수수료 20만원. 이전비 합계에 10만원을 더한 뒤 만원 단위로 절사합니다.</div>
+<div class="row"><span>취득세</span><b id="acq">0원</b></div><div class="row"><span>지역개발공채 (0.5%)</span><b id="bond">0원</b></div><div class="row"><span>인 / 증지대</span><b id="stamp">4,000원</b></div><div class="row"><span>우편 등기료</span><b id="mail">5,000원</b></div><div class="row"><span>매도비</span><b id="saleFee">440,000원</b></div><div class="row"><span>성능보험료</span><b id="insuranceOut">0원</b></div><div class="row"><span>알선수수료</span><b id="brokerFee">0원</b></div><div class="row downOnly"><span>다운계약 차액</span><b id="downDiff">0원</b></div><div class="row total"><span>이전비용 정산액</span><b id="transferTotal2">0원</b></div>
+<div class="note">엑셀 ‘이전비산출’ 시트 기준: 화물차 취득세 6%, 일반 7%, 경차 취득세·공채 면제, 공채 0.5%, 인/증지 4천원, 우편 5천원, 매도비 44만원, 매매알선 수수료 20만원. 취득세 항목에 10만원을 더해 계산한 뒤 만원 단위로 절사합니다.</div>
 </section></main>
 <script>
 let mode='direct',market='domestic';const $=id=>document.getElementById(id),won=n=>Math.round(n).toLocaleString()+'원',num=id=>Number(String($(id).value||'').replace(/[^0-9.]/g,''))||0;
@@ -44,9 +44,9 @@ function selectInventoryCar(){
 function calc(){
  const sale=num('salePrice')*10000, contract=num('contractPrice')*10000, base=mode==='down'?contract:sale, ins=num('insurance'), light=$('light').value==='Y',truck=$('truck').value==='Y',deal=mode==='broker'?'broker':'direct';
  const acq=light?0:base*(truck?.06:.07), bond=light?0:base*.005, stamp=4000,mail=5000,saleFee=440000,broker=deal==='broker'?200000:0,diff=mode==='down'?Math.max(0,sale-contract):0;
- const raw=acq+bond+stamp+mail+saleFee+ins+broker+diff+100000;
+ const acqWithExtra=acq+100000;\n const raw=acqWithExtra+bond+stamp+mail+saleFee+ins+broker+diff;
  const transfer=Math.floor(raw/10000)*10000,grand=base+transfer;
- $('acq').textContent=light?'면제':won(acq);$('acq').className=light?'free':'';
+ $('acq').textContent=won(acqWithExtra);$('acq').className='';
  $('bond').textContent=light?'면제':won(bond);$('bond').className=light?'free':'';
  $('insuranceOut').textContent=won(ins);$('brokerFee').textContent=won(broker);$('downDiff').textContent=won(diff);
  $('transferTotal').textContent=$('transferTotal2').textContent=won(transfer);$('grandTotal').textContent=won(grand);$('taxBaseOut').textContent=won(base);
