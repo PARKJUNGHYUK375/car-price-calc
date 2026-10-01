@@ -44,7 +44,8 @@ function selectInventoryCar(){
 function calc(){
  const sale=num('salePrice')*10000, contract=num('contractPrice')*10000, base=mode==='down'?contract:sale, ins=num('insurance'), light=$('light').value==='Y',truck=$('truck').value==='Y',deal=mode==='broker'?'broker':'direct';
  const acq=light?0:base*(truck?.06:.07), bond=light?0:base*.005, stamp=4000,mail=5000,saleFee=440000,broker=deal==='broker'?200000:0,diff=mode==='down'?Math.max(0,sale-contract):0;
- const acqWithExtra=acq+100000;\n const raw=acqWithExtra+bond+stamp+mail+saleFee+ins+broker+diff;
+ const acqWithExtra=acq+100000;
+ const raw=acqWithExtra+bond+stamp+mail+saleFee+ins+broker+diff;
  const transfer=Math.floor(raw/10000)*10000,grand=base+transfer;
  $('acq').textContent=won(acqWithExtra);$('acq').className='';
  $('bond').textContent=light?'면제':won(bond);$('bond').className=light?'free':'';
