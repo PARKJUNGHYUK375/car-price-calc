@@ -27,7 +27,7 @@ let mode='direct',market='domestic';const $=id=>document.getElementById(id),won=
 const INVENTORY_KEY='dealerInventory_v1';
 function inventoryRecords(){try{return JSON.parse(localStorage.getItem(INVENTORY_KEY)||'[]')}catch(e){return[]}}
 function loadInventoryCars(){
- const sel=$('inventoryCar'),rows=inventoryRecords().filter(r=>r&&r.id);
+ const sel=$('inventoryCar'),rows=inventoryRecords().filter(r=>r&&r.id&&r.type==='소매');
  sel.innerHTML='<option value="">차량을 선택하세요</option>';
  rows.sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0)).forEach(r=>{
   const o=document.createElement('option');o.value=String(r.id);o.textContent=[r.carNo,r.carName,r.carYear].filter(Boolean).join(' · ')||'차량정보 없음';sel.appendChild(o);
