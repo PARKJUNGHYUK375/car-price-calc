@@ -2,9 +2,18 @@
 <html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>이전비산출</title>
 <style>
 :root{--bg:#f5f7fa;--card:#fff;--text:#172033;--muted:#7b8494;--line:#e3e8ef;--blue:#4777ad;--orange:#d98218;--green:#25855a}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",sans-serif}.wrap{max-width:760px;margin:auto;padding:18px 14px 40px}.top{display:flex;align-items:center;gap:10px;margin-bottom:14px}.home{width:42px;height:42px;border:1px solid var(--line);border-radius:13px;background:#fff;display:grid;place-items:center;text-decoration:none;color:var(--text);font-size:20px}.top h1{font-size:22px;margin:0}.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}.tab{border:1px solid var(--line);background:#fff;border-radius:13px;padding:12px;font-weight:900;font-size:14px}.tab.on{background:var(--orange);color:#fff;border-color:var(--orange)}.result{background:#172033;color:#fff;border-radius:20px;padding:18px;margin-bottom:14px}.label{font-size:11px;color:var(--muted)}.result .label{color:#b9c2d0}.big{font-size:31px;font-weight:950;letter-spacing:-1px;margin:4px 0}.summary{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:13px}.summary>div{background:#ffffff12;border-radius:12px;padding:10px}.summary b{display:block;font-size:16px;margin-top:3px}.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:15px;margin-bottom:12px}.card h2{font-size:15px;margin:0 0 12px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field label{display:block;font-size:11px;font-weight:850;color:var(--muted);margin:0 0 5px}.field input,.field select{width:100%;height:44px;border:1px solid var(--line);border-radius:11px;background:#fff;padding:0 11px;font-size:16px;color:var(--text)}.unit{position:relative}.unit input{padding-right:48px;text-align:right;font-weight:800}.unit span{position:absolute;right:11px;bottom:13px;font-size:11px;color:var(--muted)}.row{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid #edf0f4;font-size:13px}.row:last-child{border:0}.row.total{font-weight:950;font-size:15px}.row .free{color:var(--green);font-weight:900}.downOnly{display:none}body.down .downOnly{display:block}.note{font-size:10px;color:var(--muted);line-height:1.55;margin-top:9px}@media(max-width:520px){.grid{grid-template-columns:1fr}.big{font-size:27px}}</style></head>
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",sans-serif}.wrap{max-width:760px;margin:auto;padding:18px 14px 40px}.top{display:flex;align-items:center;gap:10px;margin-bottom:14px}.home{width:42px;height:42px;border:1px solid var(--line);border-radius:13px;background:#fff;display:grid;place-items:center;text-decoration:none;color:var(--text);font-size:20px}.top h1{font-size:22px;margin:0}.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}.tab{border:1px solid var(--line);background:#fff;border-radius:13px;padding:12px;font-weight:900;font-size:14px}.tab.on{background:var(--orange);color:#fff;border-color:var(--orange)}.result{background:#172033;color:#fff;border-radius:20px;padding:18px;margin-bottom:14px}.label{font-size:11px;color:var(--muted)}.result .label{color:#b9c2d0}.big{font-size:31px;font-weight:950;letter-spacing:-1px;margin:4px 0}.summary{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:13px}.summary>div{background:#ffffff12;border-radius:12px;padding:10px}.summary b{display:block;font-size:16px;margin-top:3px}.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:15px;margin-bottom:12px}.card h2{font-size:15px;margin:0 0 12px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field label{display:block;font-size:11px;font-weight:850;color:var(--muted);margin:0 0 5px}.field input,.field select{width:100%;height:44px;border:1px solid var(--line);border-radius:11px;background:#fff;padding:0 11px;font-size:16px;color:var(--text)}.unit{position:relative}.unit input{padding-right:48px;text-align:right;font-weight:800}.unit span{position:absolute;right:11px;bottom:13px;font-size:11px;color:var(--muted)}.row{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid #edf0f4;font-size:13px}.row:last-child{border:0}.row.total{font-weight:950;font-size:15px}.row .free{color:var(--green);font-weight:900}.downOnly{display:none}body.down .downOnly{display:block}.note{font-size:10px;color:var(--muted);line-height:1.55;margin-top:9px}@media(max-width:520px){.grid{grid-template-columns:1fr}.big{font-size:27px}}
+.previewTabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+#previewView{display:none}.previewbar{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}.actionBtn{border:1px solid var(--line);background:#fff;border-radius:11px;padding:10px 12px;font-weight:850}
+.paperScroll{overflow:auto}.paper{width:680px;min-height:920px;margin:0 auto;background:#fff;padding:42px 48px;color:#111;box-shadow:0 3px 18px #0002}.paperTitle{text-align:center;font-size:26px;font-weight:950;margin:5px 0 30px}.paperMeta{display:flex;justify-content:space-between;border-bottom:2px solid #222;padding-bottom:10px;margin-bottom:18px;font-size:13px}.paper table{width:100%;border-collapse:collapse;font-size:14px}.paper th,.paper td{border:1px solid #555;padding:11px 10px}.paper th{width:32%;background:#f4f4f4;text-align:left}.paper td{text-align:right;font-weight:800}.paper .paperTotal th,.paper .paperTotal td{font-size:18px;border-top:2px solid #111}.paperNote{font-size:11px;color:#555;line-height:1.6;margin-top:18px}
+body.transfer-exporting{background:#fff!important}body.transfer-exporting .top,body.transfer-exporting .previewTabs,body.transfer-exporting #formView,body.transfer-exporting .previewbar{display:none!important}body.transfer-exporting #previewView{display:block!important}body.transfer-exporting .wrap{max-width:none;padding:0}body.transfer-exporting .paperScroll{overflow:visible}body.transfer-exporting .paper{box-shadow:none;margin:0;width:680px}
+@media(max-width:720px){.paper{transform-origin:top left}}
+@media print{body *{visibility:hidden!important}#previewView,#previewView *{visibility:visible!important}#previewView{display:block!important;position:absolute;left:0;top:0;width:100%}.previewbar{display:none!important}.paperScroll{overflow:visible!important}.paper{width:100%!important;min-height:0!important;box-shadow:none!important;margin:0!important;padding:12mm!important;transform:none!important}@page{size:A4 portrait;margin:0}}
+</style><script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script></head>
 <body><main class="wrap">
 <div class="top"><a class="home" href="index.html">⌂</a><h1>이전비산출</h1></div>
+<div class="previewTabs"><button id="inputTab" class="tab on" type="button" onclick="showTransferView('form')">입력</button><button id="previewTab" class="tab" type="button" onclick="showTransferView('preview')">미리보기</button></div>
+<div id="formView">
 <div class="tabs"><button id="directTab" class="tab on">직접매도</button><button id="brokerTab" class="tab">알선매매</button><button id="downTab" class="tab">다운계약용</button></div>
 <section class="result"><div class="label">이전비용 정산액</div><div class="big" id="transferTotal">0원</div><div class="summary"><div><span class="label">차량 구매시 총금액</span><b id="grandTotal">0원</b></div><div><span class="label">적용 차량금액</span><b id="taxBaseOut">0원</b></div></div></section>
 <section class="card"><div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px"><h2 style="margin:0">🚗 차량 정보</h2><div style="display:flex;gap:5px"><button id="domesticBtn" type="button" class="tab on" style="padding:7px 13px">내수</button><button id="exportBtn" type="button" class="tab" style="padding:7px 13px">수출</button></div></div><div class="grid">
@@ -21,7 +30,29 @@
 <section class="card" id="costCard"><h2>🧾 이전비 내역</h2>
 <div class="row domesticCost"><span>취득세 <small id="acqExplain" style="font-weight:400;color:#7b8494;margin-left:6px"></small></span><b id="acq">0원</b></div><div class="row domesticCost"><span>지역개발공채 (0.5%)</span><b id="bond">0원</b></div><div class="row domesticCost"><span>인 / 증지대</span><b id="stamp">4,000원</b></div><div class="row domesticCost"><span>우편 등기료</span><b id="mail">5,000원</b></div><div class="row"><span>매도비</span><b id="saleFee">440,000원</b></div><div class="row domesticCost"><span>성능보험료</span><b id="insuranceOut">0원</b></div><div class="row domesticCost"><span>알선수수료</span><b id="brokerFee">0원</b></div><div class="row downOnly domesticCost"><span>다운계약 차액</span><b id="downDiff">0원</b></div><div class="row total"><span>이전비용 정산액</span><b id="transferTotal2">0원</b></div>
 <div class="note">엑셀 ‘이전비산출’ 시트 기준: 화물차 취득세 6%, 일반 7%, 경차 취득세·공채 면제, 공채 0.5%, 인/증지 4천원, 우편 5천원, 매도비 44만원, 매매알선 수수료 20만원. 취득세 항목에 10만원을 더해 계산한 뒤 만원 단위로 절사합니다.</div>
-</section></main>
+</section></div>
+<div id="previewView">
+ <div class="previewbar"><button class="actionBtn" type="button" onclick="showTransferView('form')">← 수정</button><button class="actionBtn" type="button" onclick="exportTransfer('image')">이미지 저장</button><button class="actionBtn" type="button" onclick="exportTransfer('share')">다른 앱으로 공유</button><button class="actionBtn" type="button" onclick="exportTransfer('print')">프린터 출력</button></div>
+ <div class="paperScroll"><div class="paper" id="transferPaper">
+  <div class="paperTitle">이전비 산출서</div>
+  <div class="paperMeta"><b id="pCar">차량 미선택</b><span id="pType"></span></div>
+  <table>
+   <tr><th>차량 판매금액</th><td id="pSale">0원</td></tr>
+   <tr class="pDown"><th>다운계약 차량금액</th><td id="pContract">0원</td></tr>
+   <tr class="pDomestic"><th>취득세</th><td id="pAcq">0원</td></tr>
+   <tr class="pDomestic"><th>지역개발공채</th><td id="pBond">0원</td></tr>
+   <tr class="pDomestic"><th>인 / 증지대</th><td>4,000원</td></tr>
+   <tr class="pDomestic"><th>우편 등기료</th><td>5,000원</td></tr>
+   <tr><th>매도비</th><td>440,000원</td></tr>
+   <tr class="pDomestic"><th>성능보험료</th><td id="pInsurance">0원</td></tr>
+   <tr class="pDomestic"><th>알선수수료</th><td id="pBroker">0원</td></tr>
+   <tr class="pDown pDomestic"><th>다운계약 차액</th><td id="pDiff">0원</td></tr>
+   <tr class="paperTotal"><th>이전비용 정산액</th><td id="pTransfer">0원</td></tr>
+   <tr class="paperTotal"><th>차량 구매시 총금액</th><td id="pGrand">0원</td></tr>
+  </table>
+  <div class="paperNote" id="pNote"></div>
+ </div></div>
+</div></main>
 <script>
 let mode='direct',market='domestic';const $=id=>document.getElementById(id),won=n=>Math.round(n).toLocaleString()+'원',num=id=>Number(String($(id).value||'').replace(/[^0-9.]/g,''))||0;
 const INVENTORY_KEY='dealerInventory_v1';
@@ -61,9 +92,56 @@ function calc(){
  $('bond').textContent=light?'면제':won(bond);$('bond').className=light?'free':'';
  $('insuranceOut').textContent=won(ins);$('brokerFee').textContent=won(broker);$('downDiff').textContent=won(diff);
  $('transferTotal').textContent=$('transferTotal2').textContent=won(transfer);$('grandTotal').textContent=won(grand);$('taxBaseOut').textContent=won(base);
+ renderTransferPreview({sale,contract,base,ins,light,truck,broker,diff,acqWithExtra,bond,transfer,grand,isExport});
 }
 function setMarket(m){market=m;$('domesticBtn').classList.toggle('on',m==='domestic');$('exportBtn').classList.toggle('on',m==='export');calc()}
 function setMode(m){mode=m;document.body.classList.toggle('down',m==='down');$('directTab').classList.toggle('on',m==='direct');$('brokerTab').classList.toggle('on',m==='broker');$('downTab').classList.toggle('on',m==='down');calc()}
+function renderTransferPreview(v){
+ const selected=$('inventoryCar').options[$('inventoryCar').selectedIndex];
+ $('pCar').textContent=selected&&$('inventoryCar').value?selected.textContent:'차량 미선택';
+ const modeName=mode==='direct'?'직접매도':mode==='broker'?'알선매매':'다운계약용';
+ $('pType').textContent=(market==='export'?'수출':'내수')+' · '+modeName;
+ $('pSale').textContent=won(v.sale);$('pContract').textContent=won(v.contract);$('pAcq').textContent=won(v.acqWithExtra);
+ $('pBond').textContent=v.light?'면제':won(v.bond);$('pInsurance').textContent=won(v.ins);$('pBroker').textContent=won(v.broker);$('pDiff').textContent=won(v.diff);
+ $('pTransfer').textContent=won(v.transfer);$('pGrand').textContent=won(v.grand);
+ document.querySelectorAll('.pDomestic').forEach(el=>el.style.display=v.isExport?'none':'');
+ document.querySelectorAll('.pDown').forEach(el=>el.style.display=mode==='down'&&!v.isExport?'table-row':'none');
+ $('pNote').textContent=v.isExport?'수출 이전비는 매도비 440,000원만 적용됩니다.':(v.light?'경차 취득세는 판매금액 × 7%에서 75만원을 공제하며 취득세 추가 10만원은 적용하지 않습니다.':'취득세에는 정산용 100,000원이 포함되어 있습니다.');
+}
+function showTransferView(view){
+ const preview=view==='preview';$('formView').style.display=preview?'none':'block';$('previewView').style.display=preview?'block':'none';
+ $('inputTab').classList.toggle('on',!preview);$('previewTab').classList.toggle('on',preview);
+ if(preview){calc();fitTransferPaper()}window.scrollTo(0,0);
+}
+function fitTransferPaper(){
+ const paper=$('transferPaper'),scroll=paper.parentElement;paper.style.transform='';scroll.style.height='';
+ if(window.innerWidth>720)return;
+ requestAnimationFrame(()=>{const scale=Math.min(1,(window.innerWidth-28)/paper.offsetWidth);paper.style.transform='scale('+scale+')';scroll.style.height=(paper.offsetHeight*scale)+'px'});
+}
+async function exportTransfer(type){
+ calc();showTransferView('preview');
+ if(type==='print'){window.print();return}
+ try{
+  document.body.classList.add('transfer-exporting');
+  await new Promise(res=>requestAnimationFrame(()=>requestAnimationFrame(res)));
+  if(typeof html2canvas==='undefined')throw new Error('html2canvas not loaded');
+  const paper=$('transferPaper'),canvas=await html2canvas(paper,{scale:3,backgroundColor:'#fff',useCORS:true,logging:false});
+  const dataUrl=canvas.toDataURL('image/png',1),stamp=transferStamp(),name='이전비산출_'+stamp+'.png';
+  if(window.AndroidPurchase){
+   if(type==='image'&&typeof AndroidPurchase.savePurchaseBase64Image==='function'){AndroidPurchase.savePurchaseBase64Image(dataUrl);return}
+   if(type==='share'&&typeof AndroidPurchase.sharePurchaseBase64Image==='function'){AndroidPurchase.sharePurchaseBase64Image(dataUrl);return}
+  }
+  const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png',1));
+  if(type==='image'){downloadTransferBlob(blob,name);return}
+  const file=new File([blob],name,{type:'image/png'});
+  if(navigator.share&&(!navigator.canShare||navigator.canShare({files:[file]})))await navigator.share({title:'이전비 산출서',files:[file]});
+  else{downloadTransferBlob(blob,name);alert('공유 기능을 지원하지 않아 이미지로 저장했습니다.')}
+ }catch(e){console.error(e);alert('저장/공유 기능을 실행하지 못했습니다.')}
+ finally{document.body.classList.remove('transfer-exporting');fitTransferPaper()}
+}
+function downloadTransferBlob(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500)}
+function transferStamp(){const d=new Date(),p=n=>String(n).padStart(2,'0');return ''+d.getFullYear()+p(d.getMonth()+1)+p(d.getDate())+'_'+p(d.getHours())+p(d.getMinutes())+p(d.getSeconds())}
+window.addEventListener('resize',()=>{if($('previewView').style.display==='block')fitTransferPaper()});
 $('domesticBtn').onclick=()=>setMarket('domestic');$('exportBtn').onclick=()=>setMarket('export');
 $('directTab').onclick=()=>setMode('direct');$('brokerTab').onclick=()=>setMode('broker');$('downTab').onclick=()=>setMode('down');
 document.querySelectorAll('input,select').forEach(e=>e.addEventListener('input',calc));
