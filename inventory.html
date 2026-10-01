@@ -27,7 +27,7 @@ header{display:flex;align-items:center;gap:11px;margin-bottom:12px}.home{width:3
 <div id="overlay" class="overlay"><div class="sheet">
 <div class="sheetHead"><h2 id="formTitle">차량 등록</h2><button class="close" onclick="closeForm()">취소</button></div>
 <div class="section"><h3>기본정보</h3><div class="grid">
-<div class="field"><label>구분</label><select id="type" onchange="applyAutoCosts();toggleOtherCost('encar')"><option>소매</option><option>경매</option></select></div>
+<div class="field"><label>구분</label><select id="type" onchange="applyTypeDefaults()"><option>소매</option><option>경매</option></select></div>
 <div class="field"><label>상태</label><select id="status"><option>판매중</option><option>완료</option></select></div>
 <div class="field"><label>차량번호</label><input id="carNo"></div><div class="field"><label>국산 / 수입</label><select id="origin" onchange="applyAutoCosts()"><option>국산</option><option>수입</option></select></div>
 <div class="field full"><label>차량</label><input id="carName" placeholder="예: 르노코리아(삼성) 마스터 2.3 밴 S"></div>
@@ -42,17 +42,17 @@ header{display:flex;align-items:center;gap:11px;margin-bottom:12px}.home{width:3
 <div class="encarHint" style="margin-top:6px">PC에서 검색결과 URL을 한 번 저장하면 앱에서는 가격비교 버튼만 사용합니다.</div>
 </div></div>
 <div class="section"><h3>상품화 비용</h3><div class="grid">
-<div class="field"><label>성능비</label><select id="inspectionMode" onchange="toggleCostInput('inspection')"><option value="auto">35,000원</option><option value="manual">직접입력</option></select><input id="inspection" inputmode="numeric" oninput="liveMoneyFormat(this);calc()" style="display:none;margin-top:5px"></div>
+<div class="field"><label>성능비</label><select id="inspectionMode" onchange="toggleCostInput('inspection')"><option value="none">선택안함</option><option value="auto">35,000원</option><option value="manual">직접입력</option></select><input id="inspection" inputmode="numeric" oninput="liveMoneyFormat(this);calc()" style="display:none;margin-top:5px"></div>
 <div class="field"><label>성능보험비</label><input id="insurance" inputmode="numeric" oninput="liveMoneyFormat(this);calc()"></div>
 <div class="field"><label>도색 판수</label><select id="paintPanels" onchange="applyAutoCosts()"><option value="0">없음</option><option value="1">1판</option><option value="2">2판</option><option value="3">3판</option><option value="4">4판</option><option value="5">5판</option><option value="6">6판</option><option value="7">7판</option><option value="8">8판</option><option value="9">9판</option><option value="10">10판</option><option value="11">11판</option><option value="12">12판</option><option value="13">13판</option><option value="14">14판</option><option value="15">15판</option></select></div>
 <div class="field"><label>도색비</label><select id="paintMode" onchange="toggleCostInput('paint')"><option value="auto">0원</option><option value="manual">직접입력</option></select><input id="paint" inputmode="numeric" oninput="liveMoneyFormat(this);calc()" style="display:none;margin-top:5px"></div>
-<div class="field"><label>광택비</label><select id="polishMode" onchange="toggleCostInput('polish')"><option value="auto">143,000원</option><option value="manual">직접입력</option></select><input id="polish" inputmode="numeric" oninput="liveMoneyFormat(this);calc()" style="display:none;margin-top:5px"></div>
+<div class="field"><label>광택비</label><select id="polishMode" onchange="toggleCostInput('polish')"><option value="none">선택안함</option><option value="auto">143,000원</option><option value="manual">직접입력</option></select><input id="polish" inputmode="numeric" oninput="liveMoneyFormat(this);calc()" style="display:none;margin-top:5px"></div>
 <div class="field"><label>휠복원</label><input id="wheel" inputmode="numeric" oninput="liveMoneyFormat(this);calc()"></div>
 <div class="field"><label>매입취득세</label><input id="acqTax" inputmode="numeric" oninput="liveMoneyFormat(this);calc()"></div>
 <div class="field full"><label class="labelAdd"><span>상품화추가(수리비용)</span><button type="button" class="miniAdd" onclick="addRepairRow()" aria-label="수리비용 추가">＋</button></label><div id="repairRows"></div><div class="repairTotal"><span>상품화추가 합계</span><b id="repairTotal">0원</b></div><input id="prepExtra" type="hidden"></div>
 </div></div>
 <div class="section"><h3>기타 비용</h3><div class="grid">
-<div class="field"><label>엔카광고</label><select id="encarMode" onchange="toggleOtherCost('encar')"><option value="auto">241,950원</option><option value="manual">직접입력</option></select><input id="encar" inputmode="numeric" oninput="liveMoneyFormat(this);calc()" style="display:none;margin-top:5px"></div>
+<div class="field"><label>엔카광고</label><select id="encarMode" onchange="toggleOtherCost('encar')"><option value="none">선택안함</option><option value="auto">241,950원</option><option value="manual">직접입력</option></select><input id="encar" inputmode="numeric" oninput="liveMoneyFormat(this);calc()" style="display:none;margin-top:5px"></div>
 <div class="field"><label>헤딜수수료</label><input id="heyd" inputmode="numeric" oninput="liveMoneyFormat(this);calc()"></div>
 <div class="field full"><label class="labelAdd"><span>소개수수료</span><button type="button" class="miniAdd" onclick="addCostRow('intro')" aria-label="소개수수료 추가">＋</button></label><div id="introRows"></div><input id="intro" type="hidden"></div>
 
@@ -116,12 +116,13 @@ function toggleCostInput(kind){
  if(mode.value==='manual'){input.focus();}else applyAutoCosts();
  calc();
 }
+function applyTypeDefaults(){const a=type.value==='경매';inspectionMode.value=a?'none':'auto';polishMode.value=a?'none':'auto';encarMode.value=a?'none':'auto';applyAutoCosts();toggleOtherCost('encar')}
 function applyAutoCosts(){
  const isAuction=type.value==='경매';
- if(inspectionMode.value!=='manual')inspection.value=isAuction?'':(35000).toLocaleString()+'원';
+ if(inspectionMode.value==='none')inspection.value='';else if(inspectionMode.value==='auto')inspection.value=isAuction?'':(35000).toLocaleString()+'원';
  const panels=Number(paintPanels.value)||0,unit=origin.value==='수입'?165000:130000,paintAuto=panels*unit;
  if(paintMode.value!=='manual')paint.value=paintAuto?paintAuto.toLocaleString()+'원':'';
- if(polishMode.value!=='manual')polish.value=isAuction?'':(143000).toLocaleString()+'원';
+ if(polishMode.value==='none')polish.value='';else if(polishMode.value==='auto')polish.value=isAuction?'':(143000).toLocaleString()+'원';
  setAutoLabel('inspectionMode',isAuction?0:35000);setAutoLabel('paintMode',paintAuto);setAutoLabel('polishMode',isAuction?0:143000);
  inspection.style.display=inspectionMode.value==='manual'?'block':'none';
  paint.style.display=paintMode.value==='manual'?'block':'none';
@@ -141,7 +142,7 @@ function addRepairRow(data={}){
 function loadRepairs(items){repairRows.innerHTML='';(items&&items.length?items:[{}]).forEach(addRepairRow);syncRepairs()}
 function toggleOtherCost(kind){
  const mode=document.getElementById(kind+'Mode'),input=document.getElementById(kind);
- if(kind==='encar'&&mode.value!=='manual')input.value=type.value==='경매'?'':(241950).toLocaleString();
+ if(kind==='encar'){if(mode.value==='none')input.value='';else if(mode.value==='auto')input.value=type.value==='경매'?'':(241950).toLocaleString();}
  input.style.display=mode.value==='manual'?'block':'none';
  if(mode.value==='manual')input.focus();calc();
 }
@@ -181,7 +182,7 @@ function render(){
  }).join(''):'<div class="empty">등록된 차량이 없습니다.<br><b>＋ 등록</b>으로 첫 차량을 추가해보세요.</div>'
 }
 function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
-function openForm(id){editing=id||null;let r=id?all().find(x=>x.id===id):null;ids.forEach(k=>document.getElementById(k).value=r?.[k]??'');if(!r){type.value=currentType;status.value='판매중';origin.value='국산';buyDate.value=new Date().toISOString().slice(0,10);inspectionMode.value='auto';paintMode.value='auto';polishMode.value='auto';encarMode.value='auto';paintPanels.value='0';encar.value=currentType==='경매'?'':(241950).toLocaleString()+'원';auctionCount.value=currentType==='경매'?1:0;automartStatus.value='미출품'}else{inspectionMode.value=r.inspectionMode||'auto';paintMode.value=r.paintMode||'auto';polishMode.value=r.polishMode||'auto';encarMode.value=r.encarMode||'auto';automartStatus.value=r.automartStatus||'미출품'}moneyIds.forEach(k=>{let v=n(k);document.getElementById(k).value=v?v.toLocaleString()+'원':''});loadRepairs(r?.repairs||((+r?.prepExtra||0)?[{memo:'기존 상품화추가',amount:+r.prepExtra}]:[{}]));loadCostRows('intro',r?.introItems,+r?.intro||0);loadCostRows('transport',r?.transportItems,+r?.transport||0);formTitle.textContent=r?'차량 수정':'차량 등록';deleteBtn.style.display=r?'block':'none';transferBtn.style.display=r&&r.type==='소매'?'block':'none';transferRetailBtn.style.display=r&&r.type!=='소매'?'block':'none';overlay.classList.add('show');applyAutoCosts();toggleOtherCost('encar');updateEncarCompareUI()}
+function openForm(id){editing=id||null;let r=id?all().find(x=>x.id===id):null;ids.forEach(k=>document.getElementById(k).value=r?.[k]??'');if(!r){type.value=currentType;status.value='판매중';origin.value='국산';buyDate.value=new Date().toISOString().slice(0,10);inspectionMode.value=currentType==='경매'?'none':'auto';paintMode.value='auto';polishMode.value=currentType==='경매'?'none':'auto';encarMode.value=currentType==='경매'?'none':'auto';paintPanels.value='0';encar.value=currentType==='경매'?'':(241950).toLocaleString()+'원';auctionCount.value=currentType==='경매'?1:0;automartStatus.value='미출품'}else{inspectionMode.value=r.inspectionMode||'auto';paintMode.value=r.paintMode||'auto';polishMode.value=r.polishMode||'auto';encarMode.value=r.encarMode||'auto';automartStatus.value=r.automartStatus||'미출품'}moneyIds.forEach(k=>{let v=n(k);document.getElementById(k).value=v?v.toLocaleString()+'원':''});loadRepairs(r?.repairs||((+r?.prepExtra||0)?[{memo:'기존 상품화추가',amount:+r.prepExtra}]:[{}]));loadCostRows('intro',r?.introItems,+r?.intro||0);loadCostRows('transport',r?.transportItems,+r?.transport||0);formTitle.textContent=r?'차량 수정':'차량 등록';deleteBtn.style.display=r?'block':'none';transferBtn.style.display=r&&r.type==='소매'?'block':'none';transferRetailBtn.style.display=r&&r.type!=='소매'?'block':'none';overlay.classList.add('show');applyAutoCosts();toggleOtherCost('encar');updateEncarCompareUI()}
 function closeForm(){overlay.classList.remove('show')}
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&overlay.classList.contains('show')){e.preventDefault();e.stopPropagation()}});
 function isAndroidApp(){return !!(window.AndroidFile||window.AndroidPurchase||window.AndroidRegistrationOCR||window.AndroidExternal)}
