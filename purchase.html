@@ -310,6 +310,14 @@ body.purchase-exporting .sheet td{border-width:1px!important}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 
+function openCamodooWonbu(){
+  const url='https://www.carmodoo.com/app/tool/search_reg_02.html';
+  try{
+    if(window.AndroidExternal&&typeof AndroidExternal.openUrl==='function'){AndroidExternal.openUrl(url);return;}
+  }catch(e){console.warn(e)}
+  window.open(url,'_blank','noopener,noreferrer');
+}
+
 function openBusinessStatus(){
   const url='https://mob.tbht.hometax.go.kr/jsonAction.do?actionId=UTBABAAA25F001';
   try{
@@ -390,7 +398,7 @@ window.onRegistrationOcrResult=function(json){
   <div id="regOcrStatus" style="margin-top:7px;font-size:12px;color:#666">인식 후 자동으로 입력되며, 최종 내용은 꼭 확인해주세요.</div>
 </div></div></section>
 <section class="section"><h2>자동차 내역</h2><div class="grid">
-<div class="field"><label>차량번호</label><input data-k="carNo"/></div><div class="field"><label>등급</label><input data-k="grade"/></div>
+<div class="field"><label>차량번호</label><input data-k="carNo"/><button type="button" class="smallbtn" style="width:100%;margin-top:7px;padding:10px" onclick="openCamodooWonbu()">원부조회</button></div><div class="field"><label>등급</label><input data-k="grade"/></div>
 <div class="field"><label>차명</label><input data-k="carName"/></div><div class="field"><label>차량경력</label><input data-k="history"/></div>
 <div class="field"><label>연식</label><input data-k="year" inputmode="numeric"/></div><div class="field"><label>주행거리</label><input data-k="mileage" inputmode="numeric"/></div>
 <div class="field"><label>승차정원</label><input data-k="capacity"/></div><div class="field"><label>검사만료일</label><input data-k="inspectionDate" type="date"/></div>
