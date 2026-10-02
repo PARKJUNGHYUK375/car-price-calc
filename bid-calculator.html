@@ -5,11 +5,11 @@
 <body><main class="wrap">
 <div class="top"><a class="home" href="index.html">⌂</a><div><h1>소매·경매 매입계산기</h1></div></div>
 <div class="tabs"><button class="tab on" id="retailTab" type="button">소매</button><button class="tab" id="auctionTab" type="button">경매</button></div>
-<section class="result"><div class="label" id="resultLabel">최종입찰가</div><div class="big" id="finalBid">0원</div><div class="summary"><div><span class="label" id="baseLabel">예상소매가</span><b id="basePriceOut">0원</b></div><div><span class="label" id="marginLabel">예상마진</span><b id="marginOut">0원</b></div><div><span class="label">부대비용 합계</span><b id="costOut">0원</b></div></div></section>
+<section class="result"><div class="label" id="resultLabel">최종입찰가</div><div class="big" id="finalBid">0원</div><div class="summary"><div><span class="label" id="baseLabel">예상소매가</span><b id="basePriceOut">0원</b></div><div><span class="label" id="marginLabel">목표마진</span><b id="marginOut">0원</b></div><div><span class="label">부대비용 합계</span><b id="costOut">0원</b></div></div></section>
 <section class="card"><h2 id="mainInputTitle">💰 입찰가 산정</h2><div class="grid">
 <div class="field"><label id="baseInputLabel">예상소매가</label><div class="unit"><input id="basePrice" inputmode="decimal" value="1350"><span>만원</span></div></div>
-<div class="field retailOnly"><label>원하는 마진</label><div class="unit"><input id="desiredMargin" inputmode="decimal" value="150"><span>만원</span></div></div>
-<div class="field auctionOnly"><label>마진 +</label><div class="unit"><input id="auctionMargin" inputmode="decimal" value="50"><span>만원</span></div></div>
+<div class="field retailOnly"><label>목표마진</label><div class="unit"><input id="desiredMargin" inputmode="decimal" value="150"><span>만원</span></div></div>
+<div class="field auctionOnly"><label>목표마진</label><div class="unit"><input id="auctionMargin" inputmode="decimal" value="50"><span>만원</span></div></div>
 <div class="field"><label>매입방식</label><select id="mode"><option value="general">일반</option><option value="heyd">헤이딜러</option></select></div>
 <div class="field"><label>제로 차량</label><select id="zero"><option value="N">N</option><option value="Y">Y</option></select></div>
 </div></section>
@@ -55,6 +55,6 @@ function calculate(){
  const rows=[['외판(국산)',c.repair.dom],['외판(수입)',c.repair.imp],['휠 복원',c.repair.wheel],['타이어',c.repair.tire],['보조키',c.repair.key],['추가수리',c.repair.extra],['추가탁송비',c.extraTransport],['추가재고이자',c.extraStock],['매입비',c.fixed.purchase],['헤이딜러수수료',c.hd],[type==='auction'?'출품수수료':'성능점검비',c.fixed.inspect],['광택비',c.fixed.polish],['탁송료',c.fixed.tow],['누유세척',c.fixed.wash],['엔카광고비',c.fixed.ad],['매입취득세',c.acq],['재고이자(1개월)',c.stock],['마진세금',c.marginTax]];
  $('breakdown').innerHTML=rows.filter(x=>x[1]).map(x=>'<div class="row"><span>'+x[0]+'</span><b>'+won(x[1])+'</b></div>').join('')+'<div class="row total"><span>총합계</span><b>'+won(c.total)+'</b></div>';
 }
-function setType(t){type=t;document.body.classList.toggle('auction',t==='auction');$('retailTab').classList.toggle('on',t==='retail');$('auctionTab').classList.toggle('on',t==='auction');$('baseInputLabel').textContent=t==='retail'?'예상소매가':'예상낙찰가';$('baseLabel').textContent=t==='retail'?'예상소매가':'예상낙찰가';$('marginLabel').textContent=t==='retail'?'예상마진':'마진 추가';$('basePrice').value=t==='retail'?1350:700;calculate()}
+function setType(t){type=t;document.body.classList.toggle('auction',t==='auction');$('retailTab').classList.toggle('on',t==='retail');$('auctionTab').classList.toggle('on',t==='auction');$('baseInputLabel').textContent=t==='retail'?'예상소매가':'예상낙찰가';$('baseLabel').textContent=t==='retail'?'예상소매가':'예상낙찰가';$('marginLabel').textContent='목표마진';$('basePrice').value=t==='retail'?1350:700;calculate()}
 document.querySelectorAll('input,select').forEach(e=>e.addEventListener('input',calculate));$('retailTab').addEventListener('click',()=>setType('retail'));$('auctionTab').addEventListener('click',()=>setType('auction'));calculate();
 </script></body></html>
