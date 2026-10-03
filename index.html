@@ -49,7 +49,7 @@ function client(){if(!sb&&window.supabase)sb=window.supabase.createClient(SUPABA
 function openAuth(){document.getElementById('authOverlay').hidden=false}
 function closeAuth(){if(currentUser)document.getElementById('authOverlay').hidden=true}
 function msg(t,ok=false){const e=document.getElementById('authMessage');e.textContent=t||'';e.classList.toggle('success',ok)}
-function updateUser(u){currentUser=u||null;document.getElementById("homeMenu").hidden=!currentUser;document.getElementById("authOverlay").hidden=!!currentUser;if(currentUser)document.getElementById("authPassword").value="";document.getElementById('cloudTitle').textContent=u?'연결됨':'로그인';document.getElementById('cloudSub').textContent=u?(u.email||'로그인 완료'):'로그인하면 PC와 앱에서 저장기록을 함께 사용할 수 있습니다.';const b=document.getElementById('cloudButton');b.textContent=u?'로그아웃':'로그인';b.classList.toggle('connected',!!u)}
+function updateUser(u){currentUser=u||null;if(currentUser)setTimeout(openWidgetDestination,0);document.getElementById("homeMenu").hidden=!currentUser;document.getElementById("authOverlay").hidden=!!currentUser;if(currentUser)document.getElementById("authPassword").value="";document.getElementById('cloudTitle').textContent=u?'연결됨':'로그인';document.getElementById('cloudSub').textContent=u?(u.email||'로그인 완료'):'로그인하면 PC와 앱에서 저장기록을 함께 사용할 수 있습니다.';const b=document.getElementById('cloudButton');b.textContent=u?'로그아웃':'로그인';b.classList.toggle('connected',!!u)}
 async function handleCloudButton(){if(currentUser){if(confirm('로그아웃할까요?'))await client().auth.signOut()}else openAuth()}
 async function signInCloud(){const email=document.getElementById('authEmail').value.trim(),password=document.getElementById('authPassword').value;if(!email||!password){msg('이메일과 비밀번호를 입력해주세요.');return}try{msg('로그인 중…');const {data,error}=await client().auth.signInWithPassword({email,password});if(error)throw error;updateUser(data.user||data.session?.user);msg('로그인되었습니다.',true);setTimeout(closeAuth,300)}catch(e){msg(e.message||'로그인에 실패했습니다.')}}
 async function signUpCloud(){const email=document.getElementById('authEmail').value.trim(),password=document.getElementById('authPassword').value;if(!email||password.length<6){msg('이메일과 6자 이상의 비밀번호를 입력해주세요.');return}try{const {data,error}=await client().auth.signUp({email,password});if(error)throw error;if(data.session){updateUser(data.user);msg('가입 및 로그인 완료',true);setTimeout(closeAuth,300)}else msg('가입 완료! 이메일 인증 후 로그인해주세요.',true)}catch(e){msg(e.message||'회원가입에 실패했습니다.')}}
@@ -80,6 +80,17 @@ function openDealerApp(appId){
   }
   window.open('https://play.google.com/store/apps/details?id='+packages[appId],'_blank','noopener,noreferrer');
  }catch(e){alert('앱을 열지 못했습니다. 최신 앱 설치 상태를 확인해주세요.')}
+}
+
+
+function openWidgetDestination(){
+ if(!currentUser)return;
+ const url=new URL(window.location.href),page=url.searchParams.get('widgetPage');
+ const allowed=['depreciation.html','bid-calculator.html','purchase.html','inventory.html','transfer-cost.html'];
+ if(!allowed.includes(page))return;
+ url.searchParams.delete('widgetPage');
+ window.history.replaceState(null,'',url.toString());
+ window.location.replace(new URL(page,url).toString());
 }
 
 let authBusy=false;
