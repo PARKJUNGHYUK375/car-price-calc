@@ -4776,150 +4776,58 @@ function printInspection(){
 ========================================================= */
 async function captureInspectionResult(){
   updateAll();
-
   const resultArea=document.getElementById('resultArea');
-  if(!resultArea || resultArea.style.display==='none'){
-    alert('저장할 검차결과가 없습니다.');
-    return;
-  }
-
+  if(!resultArea || resultArea.style.display==='none'){alert('저장할 검차결과가 없습니다.');return}
   try{
     const carNumber=(document.getElementById('carNumber')?.value||'-').trim();
-    const carName=(document.getElementById('carName')?.value||'').trim();
-    const carGrade=(document.getElementById('carGrade')?.value||'').trim();
-    const mileage=(document.getElementById('mileage')?.value||'').trim();
-    const bid=(document.getElementById('bidPriceInput')?.value||'0').trim();
-    const finalPrice=(document.getElementById('finalPrice')?.textContent||'0').trim();
-
-    const rawLines=(resultArea.innerText||'')
-      .split('\n')
-      .map(v=>v.trim())
-      .filter(Boolean);
-
-    const canvas=document.createElement('canvas');
-    const ctx=canvas.getContext('2d');
-
-    const W=1200;
-    const PAD=72;
-    const CONTENT=W-(PAD*2);
-    const LINE=42;
-    const BODY_FONT='30px sans-serif';
-    const SMALL_FONT='25px sans-serif';
-
-    ctx.font=BODY_FONT;
-
-    function wrapText(text,maxWidth){
-      const chars=Array.from(String(text||''));
-      const lines=[];
-      let line='';
-
-      chars.forEach(ch=>{
-        const test=line+ch;
-        if(ctx.measureText(test).width>maxWidth && line){
-          lines.push(line);
-          line=ch;
-        }else{
-          line=test;
-        }
-      });
-
-      if(line) lines.push(line);
-      return lines.length?lines:[''];
+    const canvas=document.createElement('canvas'),ctx=canvas.getContext('2d');
+    const W=1200,PAD=64,INNER=34,CONTENT=W-PAD*2-INNER*2,LINE=43;
+    const clean=text=>String(text||'').replace(/\s+/g,' ').trim();
+    function wrapText(text){
+      ctx.font='30px sans-serif';
+      const out=[];let line='';
+      for(const c of Array.from(text)){
+        if(line && ctx.measureText(line+c).width>CONTENT){out.push(line);line=c}else line+=c;
+      }
+      if(line)out.push(line);return out.length?out:[''];
     }
-
-    const wrapped=[];
-    rawLines.forEach(line=>{
-      wrapText(line,CONTENT).forEach(x=>wrapped.push(x));
+    const cards=[...resultArea.querySelectorAll('.result-meta > .result-card,.result-grid > .result-summary')].map((card,index)=>{
+      const title=clean(card.querySelector('h3')?.textContent)||'검차 내역';
+      const lines=[...card.querySelectorAll('li,.subgroup-title,.result-empty,.result-notice,.kv,.sum-final')]
+        .map(el=>({text:clean(el.innerText||el.textContent),sub:el.classList.contains('subgroup-title'),strong:el.classList.contains('sum-final')||el.classList.contains('kv')}))
+        .filter(row=>row.text);
+      if(index===0)lines.push({text:'입찰가: '+(document.getElementById('bidPriceInput')?.value||'0')+'원'});
+      const rows=lines.flatMap(row=>wrapText(row.text).map((text,i)=>({...row,text,gap:row.sub&&i===0?14:0})));
+      return {title,rows,summary:card.classList.contains('result-summary'),height:80+rows.reduce((h,row)=>h+LINE+row.gap,0)+30};
     });
-
-    const infoLines=[
-      `차량번호  ${carNumber}`,
-      `차량정보  ${[carName,carGrade].filter(Boolean).join(' / ')||'-'}`,
-      `주행거리  ${mileage||'-'}`,
-      `입찰가    ${bid}원`,
-      `최종금액  ${finalPrice}원`
-    ];
-
-    const height=
-      120 +            // 헤더
-      infoLines.length*46 +
-      44 +             // 구분선/간격
-      Math.max(wrapped.length,1)*LINE +
-      100;
-
-    canvas.width=W;
-    canvas.height=Math.max(height,650);
-
-    // background
-    ctx.fillStyle='#ffffff';
-    ctx.fillRect(0,0,canvas.width,canvas.height);
-
-    // header
-    ctx.fillStyle='#152238';
-    ctx.fillRect(0,0,W,112);
-
-    ctx.fillStyle='#ffffff';
-    ctx.font='bold 42px sans-serif';
-    ctx.fillText('차량 검차결과',PAD,70);
-
-    ctx.fillStyle='#8793a5';
-    ctx.font='23px sans-serif';
-    const now=new Date().toLocaleString('ko-KR');
-    ctx.textAlign='right';
-    ctx.fillText(now,W-PAD,68);
-    ctx.textAlign='left';
-
-    // vehicle info
-    let y=160;
-    ctx.font='28px sans-serif';
-    infoLines.forEach((line,index)=>{
-      ctx.fillStyle=index===4?'#d54444':'#344054';
-      if(index===4) ctx.font='bold 30px sans-serif';
-      else ctx.font='28px sans-serif';
-      ctx.fillText(line,PAD,y);
-      y+=46;
+    if(!cards.length)throw new Error('검차결과 영역을 찾지 못했습니다.');
+    canvas.width=W;canvas.height=156+cards.reduce((h,card)=>h+card.height+26,0)+72;
+    ctx.fillStyle='#f4f6fa';ctx.fillRect(0,0,W,canvas.height);
+    ctx.fillStyle='#101b30';ctx.fillRect(0,0,W,124);
+    ctx.fillStyle='#fff';ctx.font='bold 40px sans-serif';ctx.fillText('딜러메이트 · 현장검차',PAD,61);
+    ctx.fillStyle='#a9bad5';ctx.font='24px sans-serif';ctx.fillText('차량 검차결과',PAD,100);
+    ctx.textAlign='right';ctx.font='22px sans-serif';ctx.fillText(new Date().toLocaleString('ko-KR'),W-PAD,98);ctx.textAlign='left';
+    let y=156;
+    cards.forEach((card,index)=>{
+      ctx.fillStyle=card.summary?'#101b30':'#fff';ctx.fillRect(PAD,y,W-PAD*2,card.height);
+      ctx.strokeStyle=card.summary?'#101b30':'#dfe6f1';ctx.lineWidth=2;ctx.strokeRect(PAD,y,W-PAD*2,card.height);
+      ctx.fillStyle=card.summary?'#20365a':'#eaf0fc';ctx.fillRect(PAD,y,W-PAD*2,66);
+      ctx.fillStyle=card.summary?'#fff':'#295fe8';ctx.font='bold 30px sans-serif';ctx.fillText(String(index+1).padStart(2,'0')+'  '+card.title,PAD+INNER,y+43);
+      let lineY=y+106;
+      card.rows.forEach(row=>{
+        lineY+=row.gap;
+        ctx.font=(row.sub||row.strong?'bold ':'')+'30px sans-serif';
+        ctx.fillStyle=card.summary?(row.strong?'#a8c2ff':'#c3cfe2'):(row.sub?'#295fe8':'#34445d');
+        ctx.fillText(row.text,PAD+INNER,lineY);lineY+=LINE;
+      });
+      y+=card.height+26;
     });
-
-    // divider
-    y+=12;
-    ctx.strokeStyle='#dfe5ec';
-    ctx.lineWidth=2;
-    ctx.beginPath();
-    ctx.moveTo(PAD,y);
-    ctx.lineTo(W-PAD,y);
-    ctx.stroke();
-
-    y+=54;
-    ctx.fillStyle='#1f5fae';
-    ctx.font='bold 31px sans-serif';
-    ctx.fillText('검차 내역',PAD,y);
-    y+=54;
-
-    // result text
-    ctx.font=BODY_FONT;
-    wrapped.forEach(line=>{
-      const isTotal=line.includes('감가 합계') || line.includes('최종');
-      ctx.fillStyle=isTotal?'#d54444':'#26364d';
-      ctx.font=isTotal?'bold 30px sans-serif':BODY_FONT;
-      ctx.fillText(line,PAD,y);
-      y+=LINE;
-    });
-
-    ctx.fillStyle='#9aa4b2';
-    ctx.font=SMALL_FONT;
-    ctx.fillText('현장검차 검차기록',PAD,canvas.height-42);
-
+    ctx.fillStyle='#8593a8';ctx.font='23px sans-serif';ctx.fillText('DEALER MATE · 차량 검차기록',PAD,canvas.height-34);
     const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png',1));
-    if(!blob) throw new Error('이미지를 만들지 못했습니다.');
-
+    if(!blob)throw new Error('이미지를 만들지 못했습니다.');
     const safeCar=String(carNumber||'vehicle').replace(/[\\/:*?"<>|\s]+/g,'_');
-    const filename=`검차결과_${safeCar}_${new Date().toISOString().slice(0,10)}.png`;
-
-    await saveBlobToDevice(blob,filename);
-  }catch(error){
-    console.error(error);
-    alert('검차결과 이미지 저장 중 오류가 발생했습니다.\n'+(error?.message||''));
-  }
+    await saveBlobToDevice(blob,`검차결과_${safeCar}_${new Date().toISOString().slice(0,10)}.png`);
+  }catch(error){console.error(error);alert('검차결과 이미지 저장 중 오류가 발생했습니다.\n'+(error?.message||''))}
 }
 
 
