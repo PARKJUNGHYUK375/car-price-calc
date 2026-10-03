@@ -9,7 +9,7 @@
 
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
-<title>감가 계산기</title>
+<title>현장검차 · 딜러메이트</title>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
 <style>
     :root{
@@ -2344,6 +2344,66 @@ body.dark-mode .saved-download-btn{
   }
 }
 
+
+/* Dealer Mate inspection workspace */
+:root{--accent:#295fe8;--accent-2:#4877ed;--bg:#f4f6fa;--card:#fff;--card-2:#f8faff;--text:#17243a;--muted:#748197;--line:#e4e9f1;--shadow:0 5px 22px #17243a04;--shadow-soft:0 3px 12px #17243a05;--focus:0 0 0 3px #295fe81a}
+body{background:var(--bg);padding:24px 20px calc(120px + env(safe-area-inset-bottom));font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans-serif}
+.app-header,.section,.page-tabs,.page-nav,.bottom-bar{max-width:960px}
+.app-header{background:#101b30;border:1px solid #101b30;border-radius:20px;padding:26px;margin-bottom:20px;box-shadow:none}
+.app-title{align-items:center;flex-wrap:wrap}
+.inspection-brand{display:flex;align-items:center;gap:15px;min-width:0}.inspection-brand img{width:58px;height:58px;border-radius:13px;flex-shrink:0}.inspection-eyebrow{display:block;color:#8da9e7;font-size:9px;letter-spacing:1.8px;font-weight:650}
+.app-title h1{color:white;font-size:27px;letter-spacing:-.8px;margin:5px 0 3px;line-height:1.3}
+.inspection-brand p{margin:0;color:#a8b7cf;font-size:12px;line-height:1.6}
+.header-actions{flex-wrap:wrap;justify-content:flex-end;gap:7px}
+.app-header .theme-toggle,.app-header .cloud-auth-button{background:#ffffff0d;border-color:#ffffff20;color:#cbd8ed;box-shadow:none}
+.app-header .cloud-auth-button.connected{background:#143b35;border-color:#286556;color:#adf0d0}
+.app-header .car-type-toggle{background:#ffffff09;border-color:#ffffff17;padding:4px;border-radius:10px}
+.app-header .car-type-toggle button{background:transparent;border:0;color:#aabbd6;box-shadow:none;border-radius:7px;font-weight:650}
+.app-header .car-type-toggle button.active{background:#295fe8;color:#fff;box-shadow:none}
+.page-tabs{background:#fff;border:1px solid var(--line);padding:6px;gap:5px;border-radius:13px;box-shadow:0 4px 16px #17243a06;top:calc(8px + env(safe-area-inset-top))}
+.page-tab{border:0;background:transparent;color:var(--muted);font-size:12px;font-weight:650;border-radius:9px;min-height:42px;box-shadow:none}
+.page-tab.active{background:#295fe8;border:0;color:#fff;box-shadow:0 3px 8px #295fe819}
+.section{padding:24px;border:1px solid var(--line);background:var(--card);border-radius:17px;box-shadow:none;margin:16px auto}
+.section h2{font-size:18px;font-weight:750;letter-spacing:-.5px;color:var(--text);margin-bottom:21px}
+.section h2 i{width:36px;height:36px;border-radius:10px;background:#eef3ff;color:#295fe8;border:0;font-size:15px}
+.field{gap:8px;margin-bottom:17px}.field label{font-size:12px;font-weight:650;color:#67768d}.field label i{color:#8da3c8}
+input[type="text"],textarea,select,.function-item input[type="text"]{background:#fafbfd;border:1px solid #dce3ef;border-radius:10px;color:var(--text);font-size:14px;padding:13px;box-shadow:none}
+input[type="text"]:focus,textarea:focus,select:focus{background:#fff;border-color:#7295ef;box-shadow:var(--focus)}
+input[type="text"]::placeholder,textarea::placeholder{color:#a0abbb}
+select{padding-right:36px}.hint{font-size:12px;line-height:1.7}
+#bidPriceInput{font-size:25px;font-weight:750;letter-spacing:-.5px;padding:17px;color:#295fe8;background:#f6f8ff;border-color:#dbe4fa}
+.function-category{background:var(--card-2);border-color:var(--line);border-radius:14px;padding:16px}.function-category h3{font-size:13px;color:#5474a7;font-weight:750;margin-bottom:16px}
+.function-item{background:var(--card);border-color:var(--line);box-shadow:none;padding:12px;gap:10px}.function-item:has(input[type="checkbox"]:checked){background:#f1f5ff;border-color:#b7cafa;box-shadow:none}.function-item input[type="checkbox"]{accent-color:#295fe8}
+.container{border:1px solid var(--line);box-shadow:none;background:#fff}
+.btn-soft{background:#eef3ff;color:#295fe8;border-color:#d6e2ff;border-radius:9px;font-weight:650}
+.result-area{border:1px solid var(--line);background:var(--card-2);border-radius:15px;padding:16px}
+.result-card{border-color:var(--line);background:var(--card);box-shadow:none;border-radius:13px;padding:16px}.result-title,.result-total{color:#295fe8}.result-list li{color:var(--text)}
+.result-summary{background:#101b30;border-color:#101b30;color:#fff}.result-summary h3,.result-summary .sum-final,.result-summary .sum-final b{color:#fff}.result-summary .kv{background:#ffffff08;border-color:#ffffff13;color:#fff}.result-summary .kv span{color:#a8b7cf}.result-summary .kv b{color:#fff}.result-summary .sum-big{color:#90b0ff;font-size:23px;line-height:1.5}.result-summary .sum-final{border-color:#ffffff25}
+.chip{background:var(--card);border-color:var(--line);box-shadow:none}
+.chip.exchange{background:#fff0f0;border-color:#f5cccc;color:#ca464b}.chip.repair{background:#fff7e9;border-color:#f5dfb6;color:#a36a13}.chip.disclosed{background:#effaf4;border-color:#c8e9d7;color:#278354}
+.vehicle-photo-title{font-size:14px}.vehicle-photo-sub{font-size:12px;line-height:1.6}.vehicle-photo-add,.photo-add-button{color:#295fe8;background:#eef3ff;border-color:#dbe6ff;font-size:12px;border-radius:10px}
+.record-action-panel,.saved-record-card{background:var(--card-2);border-color:var(--line);box-shadow:none;border-radius:14px}.saved-car-number{font-size:17px}.saved-car-name{font-size:12px}.saved-date{font-size:11px}.saved-price-label{font-size:10px}.saved-price-value{font-size:13px}
+.record-btn.primary,.saved-load-btn,.page-nav button.next,.btn-primary{background:#295fe8;border:0;color:#fff;box-shadow:none;font-weight:700}
+.page-nav button{background:var(--card);border-color:var(--line);box-shadow:none;font-weight:650;border-radius:10px}
+.bottom-bar{background:#ffffffef;border-color:var(--line);border-radius:15px;box-shadow:0 -4px 22px #17243a08;padding:13px 16px}.bottom-left .label{font-size:11px;color:var(--muted);font-weight:600}.bottom-left .value{font-size:22px;color:#295fe8;font-weight:800}.btn-ghost{background:#f4f6fa;color:#68788f;border-color:var(--line);font-weight:600}.btn-primary{border-radius:10px}
+body.dark-mode{--accent:#86a8ff;--accent-2:#99b7ff;--bg:#0c1525;--card:#142036;--card-2:#101b2e;--text:#e7edf8;--muted:#98a9c2;--line:#263650;--focus:0 0 0 3px #7295ef25;background:var(--bg)}
+body.dark-mode .app-header{background:#101b30;border-color:var(--line);box-shadow:none}
+body.dark-mode .section,body.dark-mode .page-tabs,body.dark-mode .result-card{background:var(--card);border-color:var(--line);box-shadow:none}
+body.dark-mode .page-tab.active,body.dark-mode .page-nav button.next,body.dark-mode .btn-primary{background:#295fe8;color:#fff;box-shadow:none}
+body.dark-mode .section h2 i{background:#203358;color:#98b6ff;border:0}
+body.dark-mode input[type="text"],body.dark-mode textarea,body.dark-mode select,body.dark-mode .function-item input[type="text"]{background:#101b2e;border-color:var(--line);color:var(--text)}
+body.dark-mode input[type="text"]:focus,body.dark-mode textarea:focus,body.dark-mode select:focus{background:#101b2e;border-color:#7295ef;box-shadow:var(--focus)}
+body.dark-mode #bidPriceInput{color:#98b6ff;background:#101b2e;border-color:#344d7a}
+body.dark-mode .function-category,body.dark-mode .result-area{background:var(--card-2);border-color:var(--line)}body.dark-mode .function-category h3{color:#98b6ff}
+body.dark-mode .function-item{background:var(--card);border-color:var(--line)}body.dark-mode .function-item:has(input[type="checkbox"]:checked){background:#1a2d50;border-color:#4568a5}
+body.dark-mode .result-title,body.dark-mode .result-total{color:#98b6ff}
+body.dark-mode .result-summary{background:#101b30;border-color:#344d7a}.result-summary .result-list li{color:#e7edf8}
+body.dark-mode .bottom-bar{background:#142036f5;border-color:var(--line)}body.dark-mode .bottom-left .value{color:#98b6ff}
+body.dark-mode .btn-soft{background:#203358;color:#98b6ff;border-color:#344d7a}
+body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#70414c}body.dark-mode .chip.repair{background:#3a3020;color:#f1ce86;border-color:#655235}body.dark-mode .chip.disclosed{background:#18372d;color:#9cdfb9;border-color:#325c4b}
+@media(min-width:721px){.inspection-info-grid.active{display:grid;grid-template-columns:1fr 1fr;column-gap:24px}.inspection-info-grid>h2{grid-column:1/-1}.inspection-info-grid .field:last-child:nth-child(even){grid-column:1/-1}.result-grid{grid-template-columns:minmax(0,1fr) 270px}}
+@media(max-width:720px){body{padding:14px 14px calc(120px + env(safe-area-inset-bottom))}.app-header{padding:20px 17px;border-radius:17px;margin-bottom:14px}.app-title{gap:18px}.inspection-brand{gap:11px}.inspection-brand img{width:45px;height:45px;border-radius:11px}.app-title h1{font-size:23px}.inspection-eyebrow{font-size:8px;letter-spacing:1.3px}.inspection-brand p{font-size:11px}.header-actions{width:100%;justify-content:flex-start}.header-actions .car-type-toggle{margin-left:auto}.section{padding:18px 16px;border-radius:15px;margin:13px auto}.section h2{font-size:17px;margin-bottom:18px}.page-tabs{gap:2px;padding:5px;border-radius:11px}.page-tab{padding:8px 2px;font-size:10.5px;min-height:38px;border-radius:7px}.bottom-bar{padding:11px 12px}.bottom-left .value{font-size:19px}.bottom-actions{gap:5px}.btn-primary,.btn-ghost{padding:10px 9px;font-size:11px}.function-category{padding:12px}.saved-price-value{font-size:12px}}
+
 </style>
 </head>
 <body>
@@ -2387,7 +2447,7 @@ body.dark-mode .saved-download-btn{
 
 <div class="app-header">
 <div class="app-title">
-<h1><i class="fa-solid fa-car"></i> 감가 계산기</h1>
+<div class="inspection-brand"><img src="assets/dealer-mate-logo.webp" alt="딜러메이트"><div><span class="inspection-eyebrow">DEALER MATE · INSPECTION</span><h1>현장검차</h1><p>차량 상태부터 감가 결과까지, 한곳에서.</p></div></div>
 
 <div class="header-actions">
 <a href="index.html" class="theme-toggle" aria-label="첫화면으로" title="첫화면으로" style="text-decoration:none;display:grid;place-items:center"><i class="fa-solid fa-house"></i></a>
@@ -2425,7 +2485,7 @@ body.dark-mode .saved-download-btn{
     </div>
 </div>
 <!-- 차량정보 -->
-<div class="section page-panel active" data-page-panel="0">
+<div class="section page-panel active inspection-info-grid" data-page-panel="0">
 <h2><i class="fas fa-car-side"></i> 차량정보</h2>
 <div class="field">
 <label for="carNumber"><i class="fas fa-car"></i> 차량번호</label>
@@ -2452,7 +2512,7 @@ body.dark-mode .saved-download-btn{
 </div>
 </div>
 <!-- 고객기재 -->
-<div class="section page-panel active" data-page-panel="0">
+<div class="section page-panel active inspection-info-grid" data-page-panel="0">
 <h2><i class="fas fa-user-edit"></i> 고객기재</h2>
 <div class="field">
 <label for="exteriorCount"><i class="fas fa-tools"></i> 외판</label>
