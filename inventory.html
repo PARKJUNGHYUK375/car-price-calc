@@ -86,14 +86,14 @@ const moneyIds=['buyPrice','sellPrice','inspection','insurance','paint','polish'
 function all(){try{return JSON.parse(localStorage.getItem(KEY)||'[]').map(r=>{if(r.type==='경매(오토마트)')r.type='경매';return r})}catch{return[]}}
 function put(a){localStorage.setItem(KEY,JSON.stringify(a))}
 function initCloud(){if(!window.supabase)return null;if(!supabaseClient)supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});return supabaseClient}
-async function cloudUpsert(r){if(!cloudReady||!currentCloudUser)return;const {error}=await supabaseClient.from(CLOUD_TABLE).upsert({id:String(r.id),user_id:currentCloudUser.id,record:r,updated_at:new Date(r.updatedAt||Date.now()).toISOString()},{onConflict:'user_id,id'});if(error)console.warn('매입관리 클라우드 저장 실패',error)}
-async function cloudDelete(id){if(!cloudReady||!currentCloudUser)return;const {error}=await supabaseClient.from(CLOUD_TABLE).delete().eq('user_id',currentCloudUser.id).eq('id',String(id));if(error)console.warn('매입관리 클라우드 삭제 실패',error)}
+async function cloudUpsert(r){if(!cloudReady||!currentCloudUser)return;const {error}=await supabaseClient.from(CLOUD_TABLE).upsert({id:String(r.id),user_id:currentCloudUser.id,record:r,updated_at:new Date(r.updatedAt||Date.now()).toISOString()},{onConflict:'user_id,id'});if(error)console.warn('매입관리 저장 실패',error)}
+async function cloudDelete(id){if(!cloudReady||!currentCloudUser)return;const {error}=await supabaseClient.from(CLOUD_TABLE).delete().eq('user_id',currentCloudUser.id).eq('id',String(id));if(error)console.warn('매입관리 삭제 실패',error)}
 async function loadCloud(){
  const c=initCloud();if(!c)return;
  const {data:{session}}=await c.auth.getSession();currentCloudUser=session?.user||null;
  if(!currentCloudUser){console.warn('매입관리: 로그인 세션 없음');return}
  const local=all();const {data,error}=await c.from(CLOUD_TABLE).select('id,record,updated_at').eq('user_id',currentCloudUser.id);
- if(error){console.warn('매입관리 클라우드 불러오기 실패',error);return}
+ if(error){console.warn('매입관리 불러오기 실패',error);return}
  cloudReady=true;
  if(!data.length&&local.length){for(const r of local)await cloudUpsert(r);render();return}
  const map=new Map(local.map(r=>[String(r.id),r]));

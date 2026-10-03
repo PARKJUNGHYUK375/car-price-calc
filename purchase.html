@@ -537,7 +537,7 @@ async function savePurchaseRecord(){
   currentPurchaseRecordId=data.id;
   purchaseCloudStatus('저장 완료 · '+(o.carNo||o.carName||'매입품의서'));
   alert('매입품의서를 저장했습니다.');
- }catch(error){console.error(error);purchaseCloudStatus('클라우드 저장 실패 · 로컬에는 저장됨');alert('저장 중 오류가 발생했습니다.\n'+(error?.message||''))}
+ }catch(error){console.error(error);purchaseCloudStatus('저장 동기화 실패 · 이 기기에는 저장됨');alert('저장 중 오류가 발생했습니다.\n'+(error?.message||''))}
 }
 async function fetchPurchaseRecords(){
  const user=await getPurchaseCloudUser(); if(!user)return [];
@@ -583,8 +583,8 @@ async function deletePurchaseRecord(id){
 }
 async function initializePurchaseCloud(){
  const c=initPurchaseSupabase();if(!c){purchaseCloudStatus('공용 저장을 시작하지 못했습니다.');return}
- try{const u=await getPurchaseCloudUser();purchaseCloudStatus(u?'클라우드 저장 연결됨':'감가계산기에서 로그인하면 PC·앱 저장목록을 공유합니다.')}catch(e){purchaseCloudStatus('클라우드 연결 확인 실패')}
- c.auth.onAuthStateChange((_e,session)=>{purchaseCloudUser=session?.user||null;purchaseCloudStatus(purchaseCloudUser?'클라우드 저장 연결됨':'감가계산기에서 로그인하면 PC·앱 저장목록을 공유합니다.')});
+ try{const u=await getPurchaseCloudUser();purchaseCloudStatus(u?'저장 연결됨':'감가계산기에서 로그인하면 PC·앱 저장목록을 공유합니다.')}catch(e){purchaseCloudStatus('저장 연결 확인 실패')}
+ c.auth.onAuthStateChange((_e,session)=>{purchaseCloudUser=session?.user||null;purchaseCloudStatus(purchaseCloudUser?'저장 연결됨':'감가계산기에서 로그인하면 PC·앱 저장목록을 공유합니다.')});
 }
 
 const fields=()=>[...document.querySelectorAll('[data-k]')];

@@ -3991,7 +3991,7 @@ function requireCloudUser(){
     return null;
   }
   if(!currentCloudUser){
-    alert('클라우드 저장을 사용하려면 로그인해주세요.');
+    alert('저장하려면 로그인해주세요.');
     openAuthOverlay();
     return null;
   }
@@ -4331,7 +4331,7 @@ async function renderSavedRecords(){
   if(!list) return;
 
   if(!isSupabaseConfigured()){
-    if(count) count.textContent='클라우드 미설정';
+    if(count) count.textContent='저장 서비스 연결 필요';
     list.innerHTML=`
       <div class="saved-empty">
         <i class="fa-solid fa-cloud"></i>
