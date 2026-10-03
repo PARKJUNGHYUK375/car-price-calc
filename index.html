@@ -84,6 +84,7 @@ function openDealerApp(appId){
  if(!Object.prototype.hasOwnProperty.call(packages,appId))return;
  try{
   if(isDesktopShortcut()){
+   if(appId==='carmodoo'){window.location.href='dealermate-carmodoo://launch';return}
    window.open(websites[appId],'_blank','noopener,noreferrer');return;
   }
   if(window.AndroidExternal){
