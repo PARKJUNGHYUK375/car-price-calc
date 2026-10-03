@@ -75,18 +75,28 @@ let authReady=false;
 
 
 
+function isDesktopShortcut(){
+ return !window.AndroidExternal && !/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) && !(navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
+}
 function openDealerApp(appId){
  const packages={heydealer:'kr.perfectree.heydealerfordealer',encar:'com.encar.encarMobileApp',carmodoo:'kr.co.ggkucar.app',carmanager:'kr.co.autocafe.carmanager'};
+ const websites={heydealer:'https://dealer.heydealer.com/',encar:'https://www.encar.com/',carmodoo:'https://www.carmodoo.com/',carmanager:'https://www.carmanager.co.kr/'};
  if(!Object.prototype.hasOwnProperty.call(packages,appId))return;
  try{
+  if(isDesktopShortcut()){
+   window.open(websites[appId],'_blank','noopener,noreferrer');return;
+  }
   if(window.AndroidExternal){
    if(typeof AndroidExternal.openDealerApp==='function'){AndroidExternal.openDealerApp(appId);return}
    alert('앱 바로가기를 사용하려면 최신 딜러메이트 APK를 설치해주세요.');return;
   }
   window.open('https://play.google.com/store/apps/details?id='+packages[appId],'_blank','noopener,noreferrer');
- }catch(e){alert('앱을 열지 못했습니다. 최신 앱 설치 상태를 확인해주세요.')}
+ }catch(e){alert(isDesktopShortcut()?'사이트를 열지 못했습니다. 다시 시도해주세요.':'앱을 열지 못했습니다. 최신 앱 설치 상태를 확인해주세요.')}
 }
-
+if(isDesktopShortcut()){
+ document.querySelector('.shortcut-label').textContent='사이트 바로가기';
+ document.querySelector('.app-shortcuts').setAttribute('aria-label','외부 사이트 바로가기');
+}
 
 function openWidgetDestination(){
  if(!currentUser)return;
