@@ -3340,26 +3340,6 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
         <ul class="result-list">${customerLines.join('')}</ul>
       `;
 
-      const paintChips = selectedPaint.length
-
-        ? `<div class="chips">${selectedPaint.map(n=>`<span class="chip"><i class="fa-solid fa-paint-roller"></i>${n}</span>`).join('')}</div>`
-        : `<div class="result-empty">선택 없음</div>`;
-
-      const accidentChips = selectedAccidents.length
-        ? `<div class="chips">${
-            selectedAccidents.map(a=>{
-              const disclosed = a.state === 'disclosed-exchange' || a.state === 'disclosed-repair';
-              const exchange = a.state === 'exchange' || a.state === 'disclosed-exchange';
-              const cls = disclosed ? 'disclosed' : (exchange ? 'exchange' : 'repair');
-              const label = exchange ? '교환' : '판금';
-              const mark = disclosed ? (exchange ? 'XX' : 'WW') : (exchange ? 'X' : 'W');
-              const icon = disclosed ? 'fa-solid fa-circle-check' : (exchange ? 'fa-solid fa-arrows-rotate' : 'fa-solid fa-screwdriver-wrench');
-              const suffix = disclosed ? ' · 고객고지 · 감가제외' : '';
-              return `<span class="chip ${cls}"><i class="${icon}"></i>${a.name} · ${label}(${mark})${suffix}</span>`;
-            }).join('')
-          }</div>`
-        : `<div class="result-empty">선택 없음</div>`;
-
       const hasAnyLines = (paintLines.length || accidentLines.length || detailLines.length);
 
       const groupBlock = (title, icon, lines) => {
@@ -3396,16 +3376,6 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
             <div class="result-card">
               <h3><i class="fa-solid fa-user-pen"></i> 고객 기재</h3>
               <ul class="result-list">${customerLines.join('')}</ul>
-            </div>
-
-            <div class="result-card">
-              <h3><i class="fa-solid fa-paint-roller"></i> 도색 / 휠 / 타이어 (${selectedPaint.length})</h3>
-              ${paintChips}
-            </div>
-
-            <div class="result-card">
-              <h3><i class="fa-solid fa-car-burst"></i> 사고 (교환/판금) (${selectedAccidents.length})</h3>
-              ${accidentChips}
             </div>
 
             <div class="result-card">
