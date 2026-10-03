@@ -312,7 +312,12 @@ body.purchase-exporting .sheet td{border-width:1px!important}
 
 function openCamodooWonbu(){
   const url='https://www.carmodoo.com/app/tool/search_reg_02.html';
+  const carNo=(document.querySelector('[data-k="carNo"]')?.value||'').trim();
   try{
+    if(window.AndroidExternal&&typeof AndroidExternal.openCamodooWonbu==='function'){
+      AndroidExternal.openCamodooWonbu(url,carNo);
+      return;
+    }
     if(window.AndroidExternal&&typeof AndroidExternal.openUrl==='function'){AndroidExternal.openUrl(url);return;}
   }catch(e){console.warn(e)}
   window.open(url,'_blank','noopener,noreferrer');
