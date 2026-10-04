@@ -2497,6 +2497,62 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
  #accidentSection .acc-slide{aspect-ratio:1055 / 799}
  #accidentSection .acc-crop{width:100%;margin-left:0}
 }
+
+/* Field inspection cards */
+[data-page-panel="3"] [hidden]{display:none!important}
+.detail-checklist-top{text-align:left;scroll-margin-top:90px;padding:14px;background:var(--card-2);border:1px solid var(--line);border-radius:16px;margin-bottom:18px}
+.detail-progress-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13px}
+.detail-progress-heading span{color:var(--muted);font-size:12px}
+#detailProgressBar{width:100%;height:8px;margin:12px 0;appearance:none;border:0;border-radius:6px;overflow:hidden;background:var(--line)}
+#detailProgressBar::-webkit-progress-bar{background:var(--line)}
+#detailProgressBar::-webkit-progress-value{background:#295fe8;border-radius:6px}
+#detailProgressBar::-moz-progress-bar{background:#295fe8}
+.detail-group-nav{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}
+.detail-group-nav button{padding:10px 3px;min-height:56px;background:var(--card);border:1px solid var(--line);border-radius:10px;color:var(--text);font-weight:700;font-size:12px}
+.detail-group-nav small{display:block;font-size:11px;color:var(--muted);margin-top:5px}
+.detail-group-nav button[aria-pressed="true"]{background:#295fe8;border-color:#295fe8;color:white}
+.detail-group-nav button[aria-pressed="true"] small{color:#e1e9ff}
+.detail-review-filters{display:flex;gap:7px;margin:12px 0}
+.detail-review-filters button{min-height:40px;flex:1;border-radius:9px;border:1px solid var(--line);background:var(--card);color:var(--text);font-size:12px;font-weight:700}
+.detail-review-filters button[aria-pressed="true"]{border-color:#295fe8;color:#295fe8;background:#295fe815}
+#detailStepTitle{font-size:18px;margin:18px 0 7px}#detailStepHint{font-size:12px;color:var(--muted);line-height:1.6;margin:0}
+.detail-groups .function-category{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:0;border:0;background:transparent}
+.detail-groups .function-category>h3,.detail-groups .function-category>.btn-soft{grid-column:1/-1}
+.detail-groups .function-category>h3{font-size:15px;margin:0 0 2px}
+.detail-groups #exterior-items,.detail-groups #interior-items,.detail-groups #engine-items,.detail-groups #mission-items,.detail-groups #under-items{display:contents}
+.detail-groups .function-item{display:block!important;position:relative;text-align:left;margin:0;min-width:0;padding:16px;border:1px solid var(--line);border-radius:14px;background:var(--card);box-shadow:0 3px 12px #17243a06}
+.detail-groups .function-item[hidden]{display:none!important}
+.detail-groups .function-item>input[type="checkbox"]{display:none}
+.detail-card-heading{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.detail-card-title{font-size:18px!important;font-weight:800;line-height:1.35;min-width:0}
+.detail-status-badge{flex-shrink:0;color:var(--muted);border-radius:6px;padding:4px 7px;background:var(--card-2);font-size:11px}
+.detail-card-hint{font-size:12px;color:var(--muted);margin:7px 0 14px;line-height:1.5}
+.detail-choices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.detail-choices button{min-height:49px;padding:8px 3px;border:1px solid var(--line);border-radius:10px;background:var(--card-2);color:var(--text);font-size:13px;font-weight:700}
+.detail-choices [data-detail-state="normal"][aria-pressed="true"]{background:#16865e14;border-color:#16865e;color:#16865e}
+.detail-choices [data-detail-state="issue"][aria-pressed="true"]{background:#dc474714;border-color:#dc4747;color:#dc4747}
+.detail-choices [data-detail-state="unavailable"][aria-pressed="true"]{background:#ad772014;border-color:#ad7720;color:#ad7720}
+.detail-groups .function-item[data-review-state="normal"]{border-color:#16865e50}
+.detail-groups .function-item[data-review-state="issue"]{border-color:#dc474780}
+.detail-groups .function-item[data-review-state="unavailable"]{border-color:#ad772050}
+.detail-issue-fields{display:grid;grid-template-columns:1fr;gap:10px;padding-top:14px}
+.detail-issue-fields label{display:block;color:var(--muted);font-size:12px}
+.detail-issue-fields input.function-desc,.detail-issue-fields input.function-price{display:block;width:100%;margin-top:5px;min-height:46px;font-size:15px}
+.detail-photo-btn{min-height:40px;background:var(--card-2);color:var(--text);border:1px solid var(--line);border-radius:9px}
+.detail-issue-fields small{font-size:10px;color:var(--muted)}
+.detail-groups .function-item .btn-del{position:static;margin-top:10px}
+.detail-navigation{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:18px 0}
+.detail-navigation button{min-height:45px;padding:8px 13px;background:var(--card);border:1px solid var(--line);border-radius:10px;color:var(--text);font-weight:700}
+.detail-navigation button:disabled{opacity:.35}
+#detailBatchText{font-size:12px;color:var(--muted)}
+.detail-review-hint,.detail-empty{font-size:12px;color:var(--muted);padding:12px;border-radius:10px;background:var(--card-2);line-height:1.6}
+@media(max-width:720px){
+ .detail-groups .function-category{grid-template-columns:1fr;gap:10px}
+ .detail-card-title{font-size:19px!important}
+ .detail-choices button{min-height:52px}
+ .detail-checklist-top{padding:12px}
+ .detail-group-nav button{font-size:11px}
+}
 </style>
 </head>
 <body>
@@ -2718,7 +2774,13 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 </div>
 <!-- 세부 상태 -->
 <div class="section page-panel" data-page-panel="3">
-<h2><i class="fas fa-tools"></i> 세부 상태</h2>
+<h2><i class="fas fa-tools"></i> 세부 상태</h2><div id="detailChecklistTop" class="detail-checklist-top">
+<div class="detail-progress-heading"><strong>하나씩 확인하는 현장 체크</strong><span id="detailProgressText" role="status" aria-live="polite"></span></div>
+<progress id="detailProgressBar" value="0" max="29" aria-label="세부상태 확인 진행률"></progress>
+<div class="detail-group-nav"><button type="button" data-detail-group="0" onclick="setDetailGroup(0)">🚘 외관<small>0/0</small></button><button type="button" data-detail-group="1" onclick="setDetailGroup(1)">💺 실내<small>0/0</small></button><button type="button" data-detail-group="2" onclick="setDetailGroup(2)">⚙️ 엔진<small>0/0</small></button><button type="button" data-detail-group="3" onclick="setDetailGroup(3)">🕹️ 변속<small>0/0</small></button><button type="button" data-detail-group="4" onclick="setDetailGroup(4)">🔧 하체<small>0/0</small></button></div>
+<div class="detail-review-filters"><button type="button" data-detail-filter="pending" onclick="setDetailFilter('pending')">미확인 0</button><button type="button" data-detail-filter="issue" onclick="setDetailFilter('issue')">이상 0</button><button type="button" data-detail-filter="unavailable" onclick="setDetailFilter('unavailable')">확인불가 0</button></div>
+<h3 id="detailStepTitle"></h3><p id="detailStepHint"></p>
+</div>
 <div class="function-category">
 <h3><i class="fa-solid fa-list-check"></i> 익스테리어&amp;기타 Part📝</h3>
 <div class="function-item">
@@ -2918,7 +2980,7 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 <div id="interior-items"></div>
 <button class="btn-soft" onclick="addExtraItem('인테리어')">+ 기타 항목 추가</button>
 </div>
-</div>
+<div class="detail-navigation"><button type="button" id="detailPrev" onclick="moveDetailBatch(-1)">← 이전</button><span id="detailBatchText" aria-live="polite"></span><button type="button" id="detailNext" onclick="moveDetailBatch(1)">다음 항목 →</button></div><div id="detailEmpty" class="detail-empty" hidden>해당 항목이 없어요.</div><p id="detailReviewHint" class="detail-review-hint"></p></div>
 <!-- 검차결과 -->
 <div class="section page-panel" data-page-panel="4">
 <h2><i class="fa-solid fa-clipboard-check"></i> 검차결과</h2>
@@ -3179,6 +3241,144 @@ document.addEventListener('DOMContentLoaded',()=>{
  ['partSection','accidentExteriorOverlay','accidentFrameOverlay'].forEach(id=>bindNearestDiagramPin(document.getElementById(id)));
 });
 
+
+/* Guided detail inspection: existing checkboxes remain the deduction source. */
+let detailReady=false,detailGroupIndex=0,detailBatch=0,detailFilter='all';
+const DETAIL_GROUPS=[
+ {id:'exterior-items',title:'외관',icon:'🚘',hint:'차량을 한 바퀴 돌며 조명·유리·외관을 확인하세요.'},
+ {id:'interior-items',title:'실내',icon:'💺',hint:'시트에 앉아 실내 상태와 버튼·편의장치를 확인하세요.'},
+ {id:'engine-items',title:'엔진',icon:'⚙️',hint:'시동을 걸고 공회전·누유·냉각수를 확인하세요.'},
+ {id:'mission-items',title:'변속',icon:'🕹️',hint:'변속 상태와 미션 누유·소모품을 확인하세요.'},
+ {id:'under-items',title:'하체',icon:'🔧',hint:'확인할 수 없는 부위는 확인불가로 남겨 재점검하세요.'}
+];
+const DETAIL_PROMPTS={
+ '라이트크랙':['헤드라이트','균열 · 파손 · 습기'],
+ '안개등크랙':['안개등','균열 · 파손 · 점등'],
+ '데루등크랙':['테일램프','균열 · 파손 · 점등'],
+ '자동차검사(기타)':['자동차검사','검사 유효기간 · 검사 이력'],
+ '구변여부(기타)':['구조변경','변경 내용 · 등록 여부'],
+ '공회전상태':['공회전 상태','진동 · 소음 · 회전수'],
+ '오일누유':['엔진 오일 누유','엔진 주변 · 바닥 흔적'],
+ '냉각수누수':['냉각수 누수','수위 · 누수 흔적'],
+ '소모품(엔진)':['엔진 소모품','벨트 · 필터 · 교체 필요'],
+ '오일누유(미션)':['미션 오일 누유','미션 주변 · 누유 흔적'],
+ '소모품(미션)':['미션 상태·소모품','변속 충격 · 작동 · 교체 필요'],
+ '쇼버':['쇼크업소버','누유 · 충격 · 소음'],
+ '서스펜션':['서스펜션','암 · 링크 · 유격'],
+ '등속조인트':['등속조인트','부트 손상 · 누유 · 소음'],
+ '웜기어':['조향 장치','유격 · 작동 소음'],
+ '디스크':['브레이크','디스크 · 패드 · 마모'],
+ '머플러':['머플러','부식 · 손상 · 소음'],
+ '소모품(하체)':['하체 소모품','마모 · 교체 필요'],
+ '시트':['시트 상태','찢김 · 오염 · 작동'],
+ '실내컨디션':['실내 상태','오염 · 냄새 · 내장재'],
+ '계기판':['계기판','경고등 · 표시 상태'],
+ '등화류':['등화류','전조등 · 방향지시등 · 제동등'],
+ '에어컨히터':['냉난방','냉방 · 난방 · 풍량'],
+ '오디오':['오디오','음향 · 화면 · 연결'],
+ '미러창문':['미러·창문','접힘 · 조절 · 창문 작동'],
+ '버튼류':['버튼 작동','각 버튼 · 편의 기능'],
+ '썬팅':['썬팅 상태','들뜸 · 변색 · 시야'],
+ '유리크랙':['유리 상태','금 · 찍힘 · 파손'],
+ '트렁크상태':['트렁크','개폐 · 내부 · 누수 흔적']
+};
+function detailCards(){return Array.from(document.querySelectorAll('[data-page-panel="3"] .function-item'))}
+function detailStatus(card){return card.querySelector('input[type="checkbox"]').checked?'issue':(card.dataset.reviewState||'pending')}
+function decorateDetailItem(card,saved={}){
+ if(card.dataset.detailCard)return;
+ const cb=card.querySelector('input[type="checkbox"]');if(!cb)return;
+ card.dataset.detailCard='1';card.dataset.reviewState=cb.checked?'issue':(['normal','unavailable'].includes(saved[cb.dataset.name])?saved[cb.dataset.name]:'pending');
+ const title=card.querySelector('div'),prompt=DETAIL_PROMPTS[cb.dataset.name];
+ title.className='detail-card-title';if(prompt)title.textContent=prompt[0];
+ const heading=document.createElement('div');heading.className='detail-card-heading';title.before(heading);heading.appendChild(title);
+ const badge=document.createElement('span');badge.className='detail-status-badge';heading.appendChild(badge);
+ const hint=document.createElement('div');hint.className='detail-card-hint';hint.textContent=prompt?prompt[1]:'현장에서 확인할 내용을 기록하세요.';heading.after(hint);
+ const choices=document.createElement('div');choices.className='detail-choices';choices.setAttribute('aria-label',cb.dataset.name+' 확인 상태');
+ [['normal','✓ 정상'],['issue','! 이상'],['unavailable','— 확인불가']].forEach(([state,label])=>{
+  const button=document.createElement('button');button.type='button';button.dataset.detailState=state;button.textContent=label;
+  button.addEventListener('click',()=>setDetailStatus(card,detailStatus(card)===state?'pending':state));choices.appendChild(button);
+ });hint.after(choices);
+ const fields=document.createElement('div');fields.className='detail-issue-fields';
+ const desc=card.querySelector('.function-desc'),price=card.querySelector('.function-price');
+ if(desc){desc.placeholder='증상·확인 내용';const label=document.createElement('label');label.textContent='증상 메모';label.appendChild(desc);fields.appendChild(label)}
+ if(price){price.placeholder='감가 금액(원)';const label=document.createElement('label');label.textContent='감가 금액';label.appendChild(price);fields.appendChild(label)}
+ const photo=document.createElement('button');photo.type='button';photo.className='detail-photo-btn';photo.textContent='📷 검차 사진 추가';photo.addEventListener('click',openPhotoSourceSheet);fields.appendChild(photo);
+ const photoHint=document.createElement('small');photoHint.textContent='사진은 차량 검차 사진에 함께 저장됩니다.';fields.appendChild(photoHint);
+ card.appendChild(fields);
+}
+function setDetailStatus(card,state){
+ card.dataset.reviewState=state;
+ card.querySelector('input[type="checkbox"]').checked=state==='issue';
+ updateAll();refreshDetailChecklist();
+}
+function setDetailGroup(index){
+ detailGroupIndex=Math.max(0,Math.min(DETAIL_GROUPS.length-1,index));detailBatch=0;detailFilter='all';refreshDetailChecklist();
+}
+function setDetailFilter(filter){detailFilter=detailFilter===filter?'all':filter;detailBatch=0;refreshDetailChecklist()}
+function detailSelection(){
+ return detailCards().filter(card=>detailFilter==='all'?card.closest('.function-category').dataset.detailGroup===String(detailGroupIndex):detailStatus(card)===detailFilter);
+}
+function detailBatchSize(){return window.matchMedia('(max-width:720px)').matches?4:1000}
+function moveDetailBatch(delta){
+ const size=detailBatchSize(),pages=Math.max(1,Math.ceil(detailSelection().length/size));
+ if(detailFilter==='all'&&delta>0&&detailBatch===pages-1&&detailGroupIndex<4){setDetailGroup(detailGroupIndex+1);return}
+ if(detailFilter==='all'&&delta<0&&detailBatch===0&&detailGroupIndex>0){setDetailGroup(detailGroupIndex-1);detailBatch=Math.max(0,Math.ceil(detailSelection().length/size)-1)}
+ else detailBatch=Math.max(0,Math.min(pages-1,detailBatch+delta));
+ refreshDetailChecklist();
+ document.getElementById('detailChecklistTop').scrollIntoView({block:'start',behavior:'smooth'});
+}
+function refreshDetailChecklist(){
+ if(!detailReady)return;
+ const cards=detailCards(),counts={normal:0,issue:0,unavailable:0,pending:0};
+ cards.forEach(card=>{
+  const state=detailStatus(card);counts[state]++;card.dataset.reviewState=state;
+  card.querySelector('.detail-status-badge').textContent={normal:'정상',issue:'이상',unavailable:'확인불가',pending:'미확인'}[state];
+  card.querySelectorAll('[data-detail-state]').forEach(btn=>btn.setAttribute('aria-pressed',String(btn.dataset.detailState===state)));
+  card.querySelector('.detail-issue-fields').hidden=state!=='issue';
+ });
+ const confirmed=cards.length-counts.pending;
+ document.getElementById('detailProgressText').textContent=confirmed+' / '+cards.length+' 항목 확인';
+ document.getElementById('detailProgressBar').value=confirmed;document.getElementById('detailProgressBar').max=Math.max(1,cards.length);
+ document.querySelectorAll('[data-detail-filter]').forEach(btn=>{
+  const f=btn.dataset.detailFilter;btn.textContent={pending:'미확인',issue:'이상',unavailable:'확인불가'}[f]+' '+counts[f];
+  btn.setAttribute('aria-pressed',String(detailFilter===f));
+ });
+ const selection=detailSelection(),size=detailBatchSize();detailBatch=Math.min(detailBatch,Math.max(0,Math.ceil(selection.length/size)-1));
+ const visible=new Set(selection.slice(detailBatch*size,(detailBatch+1)*size));
+ cards.forEach(card=>card.hidden=!visible.has(card));
+ DETAIL_GROUPS.forEach((group,i)=>{
+  const category=document.getElementById(group.id).closest('.function-category'),items=Array.from(category.querySelectorAll('.function-item'));
+  category.hidden=detailFilter==='all'?i!==detailGroupIndex:!items.some(card=>visible.has(card));
+  const nav=document.querySelector('[data-detail-group="'+i+'"]');nav.setAttribute('aria-pressed',String(detailFilter==='all'&&i===detailGroupIndex));
+  nav.querySelector('small').textContent=items.filter(c=>detailStatus(c)!=='pending').length+'/'+items.length;
+  category.querySelector('.btn-soft').hidden=detailFilter!=='all';
+ });
+ document.getElementById('detailStepTitle').textContent=detailFilter==='all'?DETAIL_GROUPS[detailGroupIndex].icon+' '+DETAIL_GROUPS[detailGroupIndex].title+' 확인':{pending:'아직 확인하지 않은 항목',issue:'이상이 있는 항목',unavailable:'다시 확인할 항목'}[detailFilter];
+ document.getElementById('detailStepHint').textContent=detailFilter==='all'?DETAIL_GROUPS[detailGroupIndex].hint:'항목을 확인한 뒤 위의 영역 버튼으로 돌아갈 수 있어요.';
+ const first=selection.length?detailBatch*size+1:0,last=Math.min(selection.length,(detailBatch+1)*size);
+ document.getElementById('detailBatchText').textContent=first+'–'+last+' / '+selection.length+' 항목';
+ document.getElementById('detailEmpty').hidden=selection.length>0;
+ document.getElementById('detailPrev').disabled=detailBatch===0&&(detailFilter!=='all'||detailGroupIndex===0);
+ const atEnd=(detailBatch+1)*size>=selection.length;
+ document.getElementById('detailNext').disabled=atEnd&&(detailFilter!=='all'||detailGroupIndex===4);
+ document.getElementById('detailNext').textContent=atEnd&&detailFilter==='all'&&detailGroupIndex<4?'다음 영역 →':'다음 항목 →';
+ document.getElementById('detailReviewHint').textContent=counts.pending?'미확인 '+counts.pending+'개가 남았어요. 위의 미확인 버튼으로 모아 보세요.':counts.unavailable?'확인 완료 · 확인불가 '+counts.unavailable+'개는 재점검이 필요해요.':'모든 항목을 확인했어요.';
+}
+function initDetailChecklist(){
+ const panel=document.querySelector('[data-page-panel="3"]');
+ let saved={};try{saved=JSON.parse(localStorage.getItem('checkboxStates')||'{}').detailReview||{}}catch{}
+ const groups=document.createElement('div');groups.className='detail-groups';
+ DETAIL_GROUPS.forEach((group,i)=>{const category=document.getElementById(group.id).closest('.function-category');category.dataset.detailGroup=String(i);category.querySelector('h3').textContent=group.icon+' '+group.title;groups.appendChild(category)});
+ panel.querySelector('#detailChecklistTop').after(groups);
+ detailCards().forEach(card=>decorateDetailItem(card,saved));detailReady=true;refreshDetailChecklist();
+ window.matchMedia('(max-width:720px)').addEventListener('change',()=>{detailBatch=0;refreshDetailChecklist()});
+}
+function resetDetailChecklist(){
+ if(!detailReady)return;
+ detailCards().forEach(card=>card.dataset.reviewState='pending');
+ detailGroupIndex=0;detailBatch=0;detailFilter='all';refreshDetailChecklist();
+}
+
     // ✅ 동적 기타 항목
     const extraCounters = { '익스테리어':0,'엔진':0,'미션':0,'하체':0,'인테리어':0 };
 
@@ -3202,6 +3402,12 @@ document.addEventListener('DOMContentLoaded',()=>{
         <button class="btn-del" type="button" aria-label="${name} 삭제" title="${name} 삭제" onclick="this.parentElement.remove(); localStorage.removeItem('${name}-desc'); localStorage.removeItem('${name}-price'); updateAll(); saveExtraItems();">삭제</button>
       `;
       container.appendChild(item);
+      if(detailReady){
+       decorateDetailItem(item);detailFilter='all';
+       detailGroupIndex=Number(container.closest('.function-category').dataset.detailGroup);
+       detailBatch=Math.max(0,Math.ceil(detailSelection().length/detailBatchSize())-1);
+       refreshDetailChecklist();
+      }
       saveExtraItems();
     }
 
@@ -3423,7 +3629,8 @@ document.addEventListener('DOMContentLoaded',()=>{
 
     // ✅ 체크 상태 저장/로드(도색/사고/세부체크)
     function saveCheckboxState(){
-      const states={ paint:{}, accidents:{}, functions:{} };
+      const states={ paint:{}, accidents:{}, functions:{}, detailReview:{} };
+      if(!detailReady){try{states.detailReview=JSON.parse(localStorage.getItem('checkboxStates')||'{}').detailReview||{}}catch{}}
 
       document.querySelectorAll('.part-item').forEach(el=>{
         states.paint[el.dataset.key] = el.classList.contains('selected');
@@ -3435,6 +3642,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
       document.querySelectorAll(".function-item input[type='checkbox']").forEach(cb=>{
         states.functions[cb.dataset.name]=cb.checked;
+        if(detailReady)states.detailReview[cb.dataset.name]=detailStatus(cb.closest('.function-item'));
       });
 
       localStorage.setItem('checkboxStates', JSON.stringify(states));
@@ -3702,6 +3910,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
       renderResultBox({selectedPaint, selectedAccidents, deductionLines, paintLines, accidentLines, detailLines, totalDiscount, finalPrice, paintSetoff});
       saveCheckboxState();
+      refreshDetailChecklist();
     }
 
     // 국산/수입
@@ -3843,6 +4052,7 @@ document.addEventListener('DOMContentLoaded',()=>{
       // 6. 기타항목 제거
       // -----------------------------------------------------
       resetExtraItems();
+      resetDetailChecklist();
 
       // -----------------------------------------------------
       // 7. 사진도 새 검차용으로 비움
@@ -5202,6 +5412,7 @@ function initTheme(){
       loadExtraItems();
       loadInputs();
       loadCheckboxState();
+      initDetailChecklist();
 
       const savedType = localStorage.getItem('carType') || 'imported';
       setCarType(savedType);
