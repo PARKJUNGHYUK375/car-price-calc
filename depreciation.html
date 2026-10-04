@@ -2448,6 +2448,14 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 /* Hide neighboring pins completely, including their text and touch targets. */
 #partSection .checkbox-item[aria-hidden="true"],#accidentSection .checkbox-item[aria-hidden="true"]{visibility:hidden;pointer-events:none}
 .third-viewport .container.paint-canvas,#accidentSection .acc-crop{transition:none}
+
+/* The original skeleton labels extend into the left slice at x=31–33.4%.
+   Mask only these two label fragments on the left page, below the pin layer. */
+#accidentSection[data-third-index="0"] .frame-plane::after{
+ content:"";position:absolute;left:31%;top:53.2%;width:2.4%;height:9%;
+ background:#fff;pointer-events:none;z-index:1;
+}
+#accidentSection .frame-plane .checkbox-overlay{z-index:2}
 </style>
 </head>
 <body>
@@ -3055,6 +3063,7 @@ let accidentSheetIndex=0;
 function showDiagramThird(type,index){
  diagramThirds[type]=Math.max(0,Math.min(2,index));
  const track=document.getElementById(type==='paint'?'paintViewport':'accidentSection');
+ track.dataset.thirdIndex=String(diagramThirds[type]);
  const planes=type==='paint'?[document.getElementById('paintCanvas')]:Array.from(track.querySelectorAll('.acc-crop'));
  planes.forEach(plane=>{
  const third=diagramThirds[type],left=third*100/3,right=(2-third)*100/3;
