@@ -2456,6 +2456,33 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
  background:#fff;pointer-events:none;z-index:1;
 }
 #accidentSection .frame-plane .checkbox-overlay{z-index:2}
+
+/* Complete the center labels instead of cutting them at an arbitrary third. 
+   Mask only text tails from the center diagram on the right skeleton page. */
+#accidentSection[data-third-index="2"] .frame-plane::after{
+ content:"";position:absolute;left:66.6%;top:53.2%;width:2.8%;height:9%;
+ background:#fff;pointer-events:none;z-index:1;
+}
+#accidentSection[data-third-index="2"] .frame-plane::before{
+ content:"";position:absolute;left:66.6%;top:79.6%;width:2.8%;height:3.2%;
+ background:#fff;pointer-events:none;z-index:1;
+}
+/* Transparent fills keep the original part names visible under touch pins. */
+#partSection .checkbox-item,.acc-plane .checkbox-item{
+ background:rgba(255,255,255,.06);border-color:rgba(81,109,154,.35);
+ box-shadow:none;
+}
+#partSection .checkbox-item::after,.acc-plane .checkbox-item::after{color:rgba(81,109,154,.55)}
+#partSection .checkbox-item.selected,.acc-plane .checkbox-item.exchange{
+ background:rgba(229,72,77,.12);border-color:rgba(229,72,77,.55);box-shadow:none;
+}
+.acc-plane .checkbox-item.repair{background:rgba(54,123,195,.12);border-color:rgba(54,123,195,.55);box-shadow:none}
+.acc-plane .checkbox-item.disclosed-exchange{background:rgba(34,166,94,.12);border-color:rgba(34,166,94,.55);box-shadow:none}
+.acc-plane .checkbox-item.disclosed-repair{background:rgba(20,151,140,.12);border-color:rgba(20,151,140,.55);box-shadow:none}
+#partSection .part-item.selected::after,.acc-plane .acc-item.exchange::after{color:rgba(195,38,44,.8)}
+.acc-plane .acc-item.repair::after{color:rgba(28,86,160,.8)}
+.acc-plane .acc-item.disclosed-exchange::after{color:rgba(15,119,61,.8)}
+.acc-plane .acc-item.disclosed-repair::after{color:rgba(10,116,106,.8)}
 </style>
 </head>
 <body>
@@ -3066,7 +3093,8 @@ function showDiagramThird(type,index){
  track.dataset.thirdIndex=String(diagramThirds[type]);
  const planes=type==='paint'?[document.getElementById('paintCanvas')]:Array.from(track.querySelectorAll('.acc-crop'));
  planes.forEach(plane=>{
- const third=diagramThirds[type],left=third*100/3,right=(2-third)*100/3;
+ const third=diagramThirds[type];
+ const left=third===1?30.8:third*100/3,right=third===1?30.8:(2-third)*100/3;
  plane.style.transform='translateX('+((1-third)*100/3)+'%)';
  plane.style.clipPath='inset(0 '+right+'% 0 '+left+'%)';
  // Use the full region without extra trimming of its labels.
