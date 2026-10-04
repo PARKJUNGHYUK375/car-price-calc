@@ -2430,18 +2430,18 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 
 .acc-zoom-scroll{width:100%;height:100%;overflow:auto;overscroll-behavior:contain}.acc-crop{position:relative;width:100%;aspect-ratio:1055 / 799;overflow:hidden}.acc-carousel.zoomed .acc-crop{width:140%}
 
-/* One enlarged vertical third per screen; retain the original pin coordinates. */
+/* Show each third centered at the original full-diagram scale. */
 .diagram-third-tabs{display:flex;gap:6px;margin:10px 0}
 .diagram-third-tabs button{flex:1;min-height:44px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--text);font-weight:700;font-size:12px}
 .diagram-third-tabs button.active{background:#295fe8;color:white;border-color:#295fe8}
 .diagram-third-tabs small{display:block;font-size:10px;opacity:.7}
 .paint-viewport.third-viewport{overflow:hidden;max-height:none;touch-action:pan-y}
-.third-viewport .container.paint-canvas{width:300%;max-width:none;transition:transform .22s ease}
+.third-viewport .container.paint-canvas{width:100%;max-width:none;transition:transform .22s ease}
 #accidentSection{display:block;overflow:hidden;touch-action:pan-y}
-#accidentSection .acc-slide{display:none;width:100%;aspect-ratio:1055 / 2397}
+#accidentSection .acc-slide{display:none;width:100%;aspect-ratio:1055 / 799}
 #accidentSection .acc-slide.active{display:block}
 #accidentSection .acc-zoom-scroll{overflow:hidden}
-#accidentSection .acc-crop{width:300%;transition:transform .22s ease}
+#accidentSection .acc-crop{width:100%;transition:transform .22s ease}
 @media(prefers-reduced-motion:reduce){.third-viewport .paint-canvas,#accidentSection .acc-crop{transition:none}}
 
 </style>
@@ -3052,7 +3052,11 @@ function showDiagramThird(type,index){
  diagramThirds[type]=Math.max(0,Math.min(2,index));
  const track=document.getElementById(type==='paint'?'paintViewport':'accidentSection');
  const planes=type==='paint'?[document.getElementById('paintCanvas')]:Array.from(track.querySelectorAll('.acc-crop'));
- planes.forEach(plane=>plane.style.transform='translateX(-'+(diagramThirds[type]*100/3)+'%)');
+ planes.forEach(plane=>{
+ const third=diagramThirds[type],left=third*100/3,right=(2-third)*100/3;
+ plane.style.transform='translateX('+((1-third)*100/3)+'%)';
+ plane.style.clipPath='inset(0 '+right+'% 0 '+left+'%)';
+ });
  document.querySelectorAll('[data-third]').forEach(button=>{
   const [kind,n]=button.dataset.third.split(':');if(kind!==type)return;
   const active=Number(n)===diagramThirds[type];button.classList.toggle('active',active);button.setAttribute('aria-pressed',String(active));
@@ -3094,6 +3098,7 @@ function bindNearestDiagramPin(overlay){
   if(!event.isTrusted)return;
   let closest=null,best=26*26;
   overlay.querySelectorAll('.checkbox-item').forEach(pin=>{
+   if(pin.getAttribute('aria-hidden')==='true')return;
    const r=pin.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;
    const clip=pin.closest('.third-viewport,.acc-slide')?.getBoundingClientRect();
    if(clip && (cx<clip.left||cx>clip.right||cy<clip.top||cy>clip.bottom))return;
