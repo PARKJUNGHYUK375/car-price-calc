@@ -2483,6 +2483,11 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 .acc-plane .acc-item.repair::after{color:rgba(28,86,160,.8)}
 .acc-plane .acc-item.disclosed-exchange::after{color:rgba(15,119,61,.8)}
 .acc-plane .acc-item.disclosed-repair::after{color:rgba(10,116,106,.8)}
+
+/* Preserve complete boundary labels; no text-fragment masks. */
+#accidentSection .frame-plane::before,#accidentSection .frame-plane::after{
+ display:none!important;
+}
 </style>
 </head>
 <body>
@@ -3098,13 +3103,14 @@ function showDiagramThird(type,index){
  const planes=type==='paint'?[document.getElementById('paintCanvas')]:Array.from(track.querySelectorAll('.acc-crop'));
  planes.forEach(plane=>{
  const third=diagramThirds[type];
- const left=third*100/3,right=(2-third)*100/3;
+ // Overlap the image edges so labels and side outlines stay intact.
+ const left=[0,30,63][third],right=[63,30,0][third];
  plane.style.transform='translateX('+((1-third)*100/3)+'%)';
  plane.style.clipPath='inset(0 '+right+'% 0 '+left+'%)';
  // Use the full region without extra trimming of its labels.
  const image=plane.querySelector('.car-image');
  if(image){
-  const imageLeft=type==='accident'&&third===1?35.5:left,imageRight=type==='accident'&&third===1?35.5:right;
+  const imageLeft=left,imageRight=right;
   image.style.clipPath='inset(0 '+imageRight+'% 0 '+imageLeft+'%)';
  }
  });
