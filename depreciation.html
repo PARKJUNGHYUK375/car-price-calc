@@ -2444,6 +2444,10 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 #accidentSection .acc-crop{width:120%;margin-left:-10%;transition:transform .22s ease}
 @media(prefers-reduced-motion:reduce){.third-viewport .paint-canvas,#accidentSection .acc-crop{transition:none}}
 
+
+/* Hide neighboring pins completely, including their text and touch targets. */
+#partSection .checkbox-item[aria-hidden="true"],#accidentSection .checkbox-item[aria-hidden="true"]{visibility:hidden;pointer-events:none}
+.third-viewport .container.paint-canvas,#accidentSection .acc-crop{transition:none}
 </style>
 </head>
 <body>
@@ -3056,6 +3060,12 @@ function showDiagramThird(type,index){
  const third=diagramThirds[type],left=third*100/3,right=(2-third)*100/3;
  plane.style.transform='translateX('+((1-third)*100/3)+'%)';
  plane.style.clipPath='inset(0 '+right+'% 0 '+left+'%)';
+ // Trim only the image at inner boundaries; keep selected-region pins intact.
+ const image=plane.querySelector('.car-image');
+ if(image){
+  const imageLeft=left+(third>0?2.5:0),imageRight=right+(third<2?2.5:0);
+  image.style.clipPath='inset(0 '+imageRight+'% 0 '+imageLeft+'%)';
+ }
  });
  document.querySelectorAll('[data-third]').forEach(button=>{
   const [kind,n]=button.dataset.third.split(':');if(kind!==type)return;
