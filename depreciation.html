@@ -2488,6 +2488,15 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 #accidentSection .frame-plane::before,#accidentSection .frame-plane::after{
  display:none!important;
 }
+
+/* Desktop uses the original 540px diagram scale; mobile keeps its approved size. */
+@media(min-width:721px){
+ .paint-viewport.third-viewport{width:100%;max-width:540px;margin-inline:auto}
+ .third-viewport .container.paint-canvas{width:100%;margin-left:0}
+ #accidentSection{width:100%;max-width:540px;margin-inline:auto}
+ #accidentSection .acc-slide{aspect-ratio:1055 / 799}
+ #accidentSection .acc-crop{width:100%;margin-left:0}
+}
 </style>
 </head>
 <body>
