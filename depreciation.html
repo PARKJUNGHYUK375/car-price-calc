@@ -3064,6 +3064,10 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
         { key:"acc_wheelhouse_r_1", name:"휠하우스(우)", rate:6, top:'61%', left:'61%' },
         { key:"acc_pillar_l", name:"필러(좌)", rate:4, top:'73%', left:'31%' },
         { key:"acc_pillar_r", name:"필러(우)", rate:4, top:'73%', left:'68%' },
+        { key:"acc_a_pillar_l", name:"A필러(좌)", rate:4, top:'66%', left:'28%' },
+        { key:"acc_a_pillar_r", name:"A필러(우)", rate:4, top:'66%', left:'72%' },
+        { key:"acc_c_pillar_l", name:"C필러(좌)", rate:4, top:'81.5%', left:'27%' },
+        { key:"acc_c_pillar_r", name:"C필러(우)", rate:4, top:'81.5%', left:'73%' },
         { key:"acc_sill_l", name:"사이드실(좌)", rate:3, top:'25%', left:'8%' },
         { key:"acc_sill_r", name:"사이드실(우)", rate:3, top:'25%', left:'90%' },
         { key:"acc_crossmember", name:"크로스멤버", rate:3, top:'64.5%', left:'50%' },
@@ -3094,13 +3098,13 @@ function showDiagramThird(type,index){
  const planes=type==='paint'?[document.getElementById('paintCanvas')]:Array.from(track.querySelectorAll('.acc-crop'));
  planes.forEach(plane=>{
  const third=diagramThirds[type];
- const left=third===1?30.8:third*100/3,right=third===1?30.8:(2-third)*100/3;
+ const left=third*100/3,right=(2-third)*100/3;
  plane.style.transform='translateX('+((1-third)*100/3)+'%)';
  plane.style.clipPath='inset(0 '+right+'% 0 '+left+'%)';
  // Use the full region without extra trimming of its labels.
  const image=plane.querySelector('.car-image');
  if(image){
-  const imageLeft=left,imageRight=right;
+  const imageLeft=type==='accident'&&third===1?35.5:left,imageRight=type==='accident'&&third===1?35.5:right;
   image.style.clipPath='inset(0 '+imageRight+'% 0 '+imageLeft+'%)';
  }
  });
