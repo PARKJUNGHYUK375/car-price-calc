@@ -2444,7 +2444,6 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 #accidentSection .acc-crop{width:100%;transition:transform .22s ease}
 @media(prefers-reduced-motion:reduce){.third-viewport .paint-canvas,#accidentSection .acc-crop{transition:none}}
 
-#accidentSection .frame-plane{transform:none;aspect-ratio:1055 / 799}
 </style>
 </head>
 <body>
@@ -2660,7 +2659,7 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 <div class="accident-sheet-tabs" aria-label="사고 도면 선택"><button type="button" class="active" data-acc-sheet="0" aria-pressed="true" onclick="showAccidentSheet(0)">외판 <small>1 / 2</small></button><button type="button" data-acc-sheet="1" aria-pressed="false" onclick="showAccidentSheet(1)">골격 <small>2 / 2</small></button></div>
 <div class="acc-carousel diagram-fullbleed" id="accidentSection" aria-label="외판과 골격 도면, 좌우로 넘기세요">
 <div class="acc-slide" aria-label="외판 도면"><div class="acc-zoom-scroll"><div class="acc-crop"><div class="acc-plane"><img alt="사고 외판 도면" class="car-image" src="https://imgur.com/agbd7Z8.png" draggable="false"/><div class="checkbox-overlay" id="accidentExteriorOverlay"></div></div></div></div></div>
-<div class="acc-slide" aria-label="골격 도면"><div class="acc-zoom-scroll"><div class="acc-crop"><div class="acc-plane frame-plane"><img alt="딜러메이트 골격 부위 도면" class="car-image" src="assets/dealer-mate-frame.svg?v=1" draggable="false"/><div class="checkbox-overlay" id="accidentFrameOverlay"></div></div></div></div></div></div>
+<div class="acc-slide" aria-label="골격 도면"><div class="acc-zoom-scroll"><div class="acc-crop"><div class="acc-plane frame-plane"><img alt="사고 골격 도면" class="car-image" src="https://imgur.com/agbd7Z8.png" draggable="false"/><div class="checkbox-overlay" id="accidentFrameOverlay"></div></div></div></div></div></div>
 <div class="diagram-third-tabs" aria-label="도면 영역 선택"><button type="button" data-third="accident:0" onclick="showDiagramThird('accident',0)">왼쪽 측면 <small>1/3</small></button><button type="button" data-third="accident:1" onclick="showDiagramThird('accident',1)">중앙 <small>2/3</small></button><button type="button" data-third="accident:2" onclick="showDiagramThird('accident',2)">오른쪽 측면 <small>3/3</small></button></div><div id="accidentPinStatus" class="pin-status" role="status" aria-live="polite">좌우로 넘겨 왼쪽 측면·중앙·오른쪽 측면을 선택하세요.</div>
 <div class="acc-legend"><span>● 교환 X</span><span>● 판금 W</span><span>● 고객고지 XX / WW · 감가 제외</span></div>
 </div>
@@ -3017,28 +3016,28 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
         { key:"acc_f_door_r", name:"앞문(우)", rate:4, top:'21%', left:'83%' },
         { key:"acc_r_door_l", name:"뒷문(좌)", rate:4, top:'29%', left:'17%' },
         { key:"acc_r_door_r", name:"뒷문(우)", rate:4, top:'29%', left:'83%' },
-        { key:"acc_f_panel", name:"F.패널", rate:4, top:'50.220%', left:'50%' },
-        { key:"acc_in_sa_l", name:"인사(좌)", rate:2, top:'54.870%', left:'22%' },
-        { key:"acc_side_l_1", name:"사이드(좌)", rate:3, top:'59.520%', left:'22%' },
-        { key:"acc_wheelhouse_l_1", name:"휠하우스(좌)", rate:6, top:'64.635%', left:'22%' },
-        { key:"acc_in_sa_r", name:"인사(우)", rate:2, top:'54.870%', left:'78%' },
-        { key:"acc_side_r_1", name:"사이드(우)", rate:3, top:'59.520%', left:'78%' },
-        { key:"acc_wheelhouse_r_1", name:"휠하우스(우)", rate:6, top:'64.635%', left:'78%' },
-        { key:"acc_pillar_l", name:"필러(좌)", rate:4, top:'73.935%', left:'22%' },
-        { key:"acc_pillar_r", name:"필러(우)", rate:4, top:'73.935%', left:'78%' },
+        { key:"acc_f_panel", name:"F.패널", rate:4, top:'51%', left:'50%' },
+        { key:"acc_in_sa_l", name:"인사(좌)", rate:2, top:'55%', left:'38%' },
+        { key:"acc_side_l_1", name:"사이드(좌)", rate:3, top:'57%', left:'45%' },
+        { key:"acc_wheelhouse_l_1", name:"휠하우스(좌)", rate:6, top:'61%', left:'38%' },
+        { key:"acc_in_sa_r", name:"인사(우)", rate:2, top:'55%', left:'62%' },
+        { key:"acc_side_r_1", name:"사이드(우)", rate:3, top:'57%', left:'53%' },
+        { key:"acc_wheelhouse_r_1", name:"휠하우스(우)", rate:6, top:'61%', left:'61%' },
+        { key:"acc_pillar_l", name:"필러(좌)", rate:4, top:'73%', left:'31%' },
+        { key:"acc_pillar_r", name:"필러(우)", rate:4, top:'73%', left:'68%' },
         { key:"acc_sill_l", name:"사이드실(좌)", rate:3, top:'25%', left:'8%' },
         { key:"acc_sill_r", name:"사이드실(우)", rate:3, top:'25%', left:'90%' },
-        { key:"acc_crossmember", name:"크로스멤버", rate:3, top:'63.705%', left:'50%' },
-        { key:"acc_dashpanel", name:"대쉬패널", rate:3, top:'68.820%', left:'50%' },
-        { key:"acc_floorpanel", name:"플로어패널", rate:4, top:'74.400%', left:'50%' },
-        { key:"acc_wheelhouse_l_2", name:"휠하우스(좌)", rate:5, top:'80.445%', left:'22%' },
-        { key:"acc_side_l_2", name:"사이드(좌)", rate:3, top:'86.025%', left:'22%' },
-        { key:"acc_traypkg", name:"트레이패키지", rate:3, top:'80.445%', left:'50%' },
-        { key:"acc_side_r_2", name:"사이드(우)", rate:3, top:'86.025%', left:'78%' },
-        { key:"acc_wheelhouse_r_2", name:"휠하우스(우)", rate:5, top:'80.445%', left:'78%' },
+        { key:"acc_crossmember", name:"크로스멤버", rate:3, top:'64.5%', left:'50%' },
+        { key:"acc_dashpanel", name:"대쉬패널", rate:3, top:'68.8%', left:'50%' },
+        { key:"acc_floorpanel", name:"플로어패널", rate:4, top:'74%', left:'50%' },
+        { key:"acc_wheelhouse_l_2", name:"휠하우스(좌)", rate:5, top:'81%', left:'38%' },
+        { key:"acc_side_l_2", name:"사이드(좌)", rate:3, top:'86%', left:'39%' },
+        { key:"acc_traypkg", name:"트레이패키지", rate:3, top:'78%', left:'50%' },
+        { key:"acc_side_r_2", name:"사이드(우)", rate:3, top:'86%', left:'61%' },
+        { key:"acc_wheelhouse_r_2", name:"휠하우스(우)", rate:5, top:'81%', left:'61%' },
         { key:"acc_roofpanel", name:"루프패널", rate:8, top:'27%', left:'50%' },
-        { key:"acc_trunkfloor", name:"트렁크플로어", rate:4, top:'86.025%', left:'50%' },
-        { key:"acc_r_panel", name:"R.패널", rate:3, top:'91.140%', left:'50%' },
+        { key:"acc_trunkfloor", name:"트렁크플로어", rate:4, top:'86%', left:'50%' },
+        { key:"acc_r_panel", name:"R.패널", rate:3, top:'91%', left:'50%' },
         { key:"acc_trunk", name:"트렁크", rate:4, top:'40%', left:'50%' },
         { key:"acc_quarter_l", name:"쿼터(좌)", rate:4, top:'39%', left:'17%' },
         { key:"acc_quarter_r", name:"쿼터(우)", rate:4, top:'39%', left:'83%' }
@@ -3311,7 +3310,7 @@ document.addEventListener('DOMContentLoaded',()=>{
       DATA.accidentParts.forEach(({key,name,rate,top,left})=>{
         const el=document.createElement('div');
         el.className='checkbox-item acc-item';
-        el.style.top=parseFloat(top)<46.5?top:((parseFloat(top)-46.5)/46.5)+'%';
+        el.style.top=top;
         el.style.left=left;
         el.dataset.key=key || name;
         el.dataset.name=name;
