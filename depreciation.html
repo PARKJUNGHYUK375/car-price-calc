@@ -2404,6 +2404,31 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 @media(min-width:721px){.inspection-info-grid.active{display:grid;grid-template-columns:1fr 1fr;column-gap:24px}.inspection-info-grid>h2{grid-column:1/-1}.inspection-info-grid .field:last-child:nth-child(even){grid-column:1/-1}.result-grid{grid-template-columns:minmax(0,1fr) 270px}}
 @media(max-width:720px){body{padding:14px 14px calc(120px + env(safe-area-inset-bottom))}.app-header{padding:20px 17px;border-radius:17px;margin-bottom:14px}.app-title{gap:18px}.inspection-brand{gap:11px}.inspection-brand img{width:45px;height:45px;border-radius:11px}.app-title h1{font-size:23px}.inspection-eyebrow{font-size:8px;letter-spacing:1.3px}.inspection-brand p{font-size:11px}.header-actions{width:100%;justify-content:flex-start}.header-actions .car-type-toggle{margin-left:auto}.section{padding:18px 16px;border-radius:15px;margin:13px auto}.section h2{font-size:17px;margin-bottom:18px}.page-tabs{gap:2px;padding:5px;border-radius:11px}.page-tab{padding:8px 2px;font-size:10.5px;min-height:38px;border-radius:7px}.bottom-bar{padding:11px 12px}.bottom-left .value{font-size:19px}.bottom-actions{gap:5px}.btn-primary,.btn-ghost{padding:10px 9px;font-size:11px}.function-category{padding:12px}.saved-price-value{font-size:12px}}
 
+
+/* Large diagrams with stable original pin coordinates. */
+.diagram-tools{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 12px;font-size:11px;color:var(--muted)}.diagram-tools div{display:flex;gap:5px;align-items:center}
+.diagram-tools button{border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--text);min-height:36px;padding:6px 11px;font:inherit;font-weight:650}.diagram-tools button:disabled{opacity:.35}
+.paint-viewport{overflow:auto;max-height:75vh;background:white;border:1px solid var(--line);border-radius:12px;overscroll-behavior:contain}
+.container.paint-canvas{max-width:none;width:100%;border:0;border-radius:0;box-shadow:none;margin:0;overflow:visible}
+.accident-sheet-tabs{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px}.accident-sheet-tabs button{min-height:43px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--muted);font-size:13px;font-weight:700}.accident-sheet-tabs button.active{background:#295fe8;border-color:#295fe8;color:white}.accident-sheet-tabs small{font-weight:500;opacity:.7;margin-left:8px}
+.acc-carousel{display:flex;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scrollbar-width:none;border:1px solid var(--line);border-radius:12px;background:#fff;overscroll-behavior-x:contain;max-width:840px;margin-inline:auto}
+.acc-carousel::-webkit-scrollbar{display:none}.acc-slide{position:relative;flex:0 0 100%;min-width:0;aspect-ratio:1055 / 799;overflow:hidden;scroll-snap-align:start;scroll-snap-stop:always;background:#fff}
+.acc-plane{position:relative;width:100%;aspect-ratio:1055 / 1718}.acc-plane .car-image{width:100%;height:100%;object-fit:fill}.frame-plane{transform:translateY(-46.5%)}
+.acc-controls{margin:12px 0 0}.pin-status{margin-top:12px;border-radius:9px;background:var(--card-2);border:1px solid var(--line);padding:10px 12px;font-size:12px;color:var(--text);line-height:1.6}
+.acc-legend{display:flex;gap:10px;flex-wrap:wrap;font-size:10px;margin-top:8px;color:var(--muted)}.acc-legend span:first-child{color:#df4850}.acc-legend span:nth-child(2){color:#367bc3}.acc-legend span:nth-child(3){color:#278354}
+#partSection .checkbox-item,.acc-plane .checkbox-item{width:28px;height:28px;transform:translate(-50%,-50%);border:2px solid #6b84b4;background:#ffffffeb;box-shadow:0 2px 6px #17243a25;touch-action:manipulation}
+#partSection .checkbox-item::before,.acc-plane .checkbox-item::before{display:none}
+#partSection .checkbox-item::after,.acc-plane .checkbox-item::after{content:'+';font-size:15px;color:#516d9a;text-shadow:none}
+#partSection .checkbox-item.selected,.acc-plane .checkbox-item.exchange{background:#e5484d;border-color:white;transform:translate(-50%,-50%)}
+.acc-plane .checkbox-item.repair{background:#367bc3;border-color:white;transform:translate(-50%,-50%)}
+.acc-plane .checkbox-item.disclosed-exchange{background:#22a65e;border-color:white;transform:translate(-50%,-50%)}
+.acc-plane .checkbox-item.disclosed-repair{background:#14978c;border-color:white;transform:translate(-50%,-50%)}
+#partSection .part-item.selected::after{content:'R';font-size:12px;color:white}.acc-plane .acc-item.exchange::after{content:'X';font-size:12px;color:white}.acc-plane .acc-item.repair::after{content:'W';font-size:12px;color:white}.acc-plane .acc-item.disclosed-exchange::after{content:'XX';font-size:9px;color:white}.acc-plane .acc-item.disclosed-repair::after{content:'WW';font-size:9px;color:white}
+.checkbox-item:focus-visible{outline:3px solid #295fe8;outline-offset:3px}
+@media(max-width:720px){.diagram-fullbleed{width:calc(100% + 24px);margin-left:-12px;margin-right:-12px;border-radius:9px}.diagram-tools{flex-wrap:wrap}.acc-slide{aspect-ratio:1055 / 799}}
+@media(prefers-reduced-motion:reduce){.acc-carousel{scroll-behavior:auto}}
+
+.acc-zoom-scroll{width:100%;height:100%;overflow:auto;overscroll-behavior:contain}.acc-crop{position:relative;width:100%;aspect-ratio:1055 / 799;overflow:hidden}.acc-carousel.zoomed .acc-crop{width:140%}
 </style>
 </head>
 <body>
@@ -2607,19 +2632,24 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 
 <div class="section page-panel" data-page-panel="1">
 <h2><i class="fas fa-paint-roller"></i> 도색</h2>
-<div class="container">
-<img alt="자동차 외관" class="car-image" src="https://imgur.com/1OGXwOu.png"/>
-<div class="checkbox-overlay" id="partSection"></div>
-</div>
+<div class="diagram-tools"><span>도색 부위를 눌러 선택하세요</span><div><button type="button" onclick="changePaintZoom(-1)" aria-label="도색 도면 축소">−</button><button type="button" onclick="resetPaintZoom()" id="paintZoomLabel">화면 맞춤</button><button type="button" onclick="changePaintZoom(1)" aria-label="도색 도면 확대">＋</button></div></div>
+<div class="paint-viewport diagram-fullbleed" id="paintViewport"><div class="container paint-canvas" id="paintCanvas">
+<img alt="자동차 외관" class="car-image" src="https://imgur.com/1OGXwOu.png" draggable="false"/>
+<div class="checkbox-overlay" id="partSection"></div></div></div>
+<div id="paintPinStatus" class="pin-status" role="status" aria-live="polite">도색 부위를 선택하면 여기에 표시됩니다.</div>
 <div class="hint">부위를 터치하면 선택/해제됩니다. (휠/타이어는 별도 감가 단가 적용)</div>
 </div>
 <!-- 사고 -->
 <div class="section page-panel" data-page-panel="2">
 <h2 style="display:flex;align-items:center;justify-content:space-between;gap:10px"><span><i class="fas fa-car-burst"></i> 사고 이력</span><span style="display:flex;align-items:center;gap:7px;font-size:12px"><button type="button" onclick="changeAccidentRateOffset(-1)" aria-label="사고 감가율 1% 내리기" style="width:32px;height:32px;border-radius:9px;border:1px solid rgba(255,255,255,.14);background:var(--card);color:var(--text);font-size:18px;font-weight:900">−</button><b id="accidentRateOffset" style="min-width:38px;text-align:center">±0%</b><button type="button" onclick="changeAccidentRateOffset(1)" aria-label="사고 감가율 1% 올리기" style="width:32px;height:32px;border-radius:9px;border:1px solid rgba(255,255,255,.14);background:var(--card);color:var(--text);font-size:18px;font-weight:900">+</button></span></h2>
-<div class="container">
-<img alt="사고부위 자동차" class="car-image" src="https://imgur.com/agbd7Z8.png"/>
-<div class="checkbox-overlay" id="accidentSection"></div>
-</div>
+<div class="accident-sheet-tabs" aria-label="사고 도면 선택"><button type="button" class="active" data-acc-sheet="0" aria-pressed="true" onclick="showAccidentSheet(0)">외판 <small>1 / 2</small></button><button type="button" data-acc-sheet="1" aria-pressed="false" onclick="showAccidentSheet(1)">골격 <small>2 / 2</small></button></div>
+<div class="acc-carousel diagram-fullbleed" id="accidentSection" aria-label="외판과 골격 도면, 좌우로 넘기세요">
+<div class="acc-slide" aria-label="외판 도면"><div class="acc-zoom-scroll"><div class="acc-crop"><div class="acc-plane"><img alt="사고 외판 도면" class="car-image" src="https://imgur.com/agbd7Z8.png" draggable="false"/><div class="checkbox-overlay" id="accidentExteriorOverlay"></div></div></div></div></div>
+<div class="acc-slide" aria-label="골격 도면"><div class="acc-zoom-scroll"><div class="acc-crop"><div class="acc-plane frame-plane"><img alt="사고 골격 도면" class="car-image" src="https://imgur.com/agbd7Z8.png" draggable="false"/><div class="checkbox-overlay" id="accidentFrameOverlay"></div></div></div></div></div></div>
+<div class="diagram-tools acc-controls"><button type="button" id="accPrev" onclick="showAccidentSheet(0)" aria-label="외판 도면 보기">← 외판</button><span id="accSheetLabel" aria-live="polite">외판 · 1 / 2</span><button type="button" id="accNext" onclick="showAccidentSheet(1)" aria-label="골격 도면 보기">골격 →</button></div>
+<div class="diagram-tools"><span>확대하면 도면을 끌어서 이동할 수 있어요.</span><button type="button" id="accZoomButton" onclick="toggleAccidentZoom()">확대 140%</button></div>
+<div id="accidentPinStatus" class="pin-status" role="status" aria-live="polite">좌우로 넘겨 도면을 바꾸고, 핀을 눌러 사고 상태를 선택하세요.</div>
+<div class="acc-legend"><span>● 교환 X</span><span>● 판금 W</span><span>● 고객고지 XX / WW · 감가 제외</span></div>
 </div>
 <!-- 세부 상태 -->
 <div class="section page-panel" data-page-panel="3">
@@ -3002,6 +3032,55 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
       ]
     };
 
+
+const paintZoomLevels=[100,115,140,170];
+let paintZoomIndex=window.matchMedia('(max-width:720px)').matches?1:0;
+function applyPaintZoom(){
+ const canvas=document.getElementById('paintCanvas'),label=document.getElementById('paintZoomLabel');
+ if(canvas)canvas.style.width=paintZoomLevels[paintZoomIndex]+'%';
+ if(label)label.textContent=paintZoomLevels[paintZoomIndex]===100?'화면 맞춤':paintZoomLevels[paintZoomIndex]+'%';
+}
+function changePaintZoom(delta){paintZoomIndex=Math.max(0,Math.min(paintZoomLevels.length-1,paintZoomIndex+delta));applyPaintZoom()}
+function resetPaintZoom(){paintZoomIndex=0;applyPaintZoom();document.getElementById('paintViewport').scrollTo({left:0,top:0})}
+function bindDiagramPinKeyboard(el){
+ el.tabIndex=0;el.title=el.getAttribute('aria-label');
+ el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();el.click()}});
+}
+function toggleAccidentZoom(){
+ const track=document.getElementById('accidentSection'),zoomed=track.classList.toggle('zoomed');
+ document.getElementById('accZoomButton').textContent=zoomed?'화면 맞춤':'확대 140%';
+ if(!zoomed)track.querySelectorAll('.acc-zoom-scroll').forEach(view=>view.scrollTo({left:0,top:0}));
+}
+function showAccidentSheet(index){
+ const track=document.getElementById('accidentSection');
+ track.scrollTo({left:track.clientWidth*Math.max(0,Math.min(1,index)),behavior:window.matchMedia('(prefers-reduced-motion:reduce)').matches?'auto':'smooth'});
+}
+function updateAccidentSheetControls(){
+ const track=document.getElementById('accidentSection'),index=track.clientWidth?Math.round(track.scrollLeft/track.clientWidth):0;
+ document.querySelectorAll('[data-acc-sheet]').forEach(button=>{const active=Number(button.dataset.accSheet)===index;button.classList.toggle('active',active);button.setAttribute('aria-pressed',String(active))});
+ document.getElementById('accSheetLabel').textContent=index?'골격 · 2 / 2':'외판 · 1 / 2';
+ document.getElementById('accPrev').disabled=index===0;document.getElementById('accNext').disabled=index===1;
+}
+function bindNearestDiagramPin(overlay){
+ overlay.addEventListener('click',event=>{
+  if(!event.isTrusted)return;
+  let closest=null,best=26*26;
+  overlay.querySelectorAll('.checkbox-item').forEach(pin=>{
+   const r=pin.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;
+   const clip=pin.closest('.acc-slide')?.getBoundingClientRect();
+   if(clip && (cx<clip.left||cx>clip.right||cy<clip.top||cy>clip.bottom))return;
+   const d=(event.clientX-cx)**2+(event.clientY-cy)**2;if(d<best){best=d;closest=pin}
+  });
+  if(closest && event.target.closest('.checkbox-item')!==closest){event.preventDefault();event.stopPropagation();closest.click()}
+ },true);
+}
+document.addEventListener('DOMContentLoaded',()=>{
+ applyPaintZoom();
+ document.getElementById('accidentSection').addEventListener('scroll',updateAccidentSheetControls,{passive:true});
+ updateAccidentSheetControls();
+ ['partSection','accidentExteriorOverlay','accidentFrameOverlay'].forEach(id=>bindNearestDiagramPin(document.getElementById(id)));
+});
+
     // ✅ 동적 기타 항목
     const extraCounters = { '익스테리어':0,'엔진':0,'미션':0,'하체':0,'인테리어':0 };
 
@@ -3179,10 +3258,12 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
         el.addEventListener('click', ()=>{
           el.classList.toggle('selected');
           el.setAttribute('aria-pressed', el.classList.contains('selected') ? 'true' : 'false');
+          document.getElementById('paintPinStatus').textContent=name+' · '+(el.classList.contains('selected')?'도색 선택':'선택 해제');
           updateAll();
           saveCheckboxState();
         });
 
+        bindDiagramPinKeyboard(el);
         partSection.appendChild(el);
       });
     }
@@ -3190,7 +3271,9 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
     // ✅ (3) 사고: 핀 터치로 없음→교환→판금→없음
     function renderAccidentItems(){
       const accidentSection=document.getElementById('accidentSection');
-      accidentSection.innerHTML='';
+      const exteriorOverlay=document.getElementById('accidentExteriorOverlay');
+      const frameOverlay=document.getElementById('accidentFrameOverlay');
+      exteriorOverlay.innerHTML='';frameOverlay.innerHTML='';
 
       DATA.accidentParts.forEach(({key,name,rate,top,left})=>{
         const el=document.createElement('div');
@@ -3223,11 +3306,14 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
             : 0;
 
           setAccidentState(el, stateOrder[nextIndex]);
+          const labels=['선택 해제','교환 X','판금 W','고객고지 교환 XX · 감가 제외','고객고지 판금 WW · 감가 제외'];
+          document.getElementById('accidentPinStatus').textContent=name+' · '+labels[nextIndex];
           updateAll();
           saveCheckboxState();
         });
 
-        accidentSection.appendChild(el);
+        bindDiagramPinKeyboard(el);
+        (parseFloat(top)<46.5?exteriorOverlay:frameOverlay).appendChild(el);
       });
     }
 
