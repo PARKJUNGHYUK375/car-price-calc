@@ -2436,12 +2436,12 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 .diagram-third-tabs button.active{background:#295fe8;color:white;border-color:#295fe8}
 .diagram-third-tabs small{display:block;font-size:10px;opacity:.7}
 .paint-viewport.third-viewport{overflow:hidden;max-height:none;touch-action:pan-y}
-.third-viewport .container.paint-canvas{width:120%;max-width:none;margin-left:-10%;transition:transform .22s ease}
+.third-viewport .container.paint-canvas{width:150%;max-width:none;margin-left:-25%;transition:transform .22s ease}
 #accidentSection{display:block;overflow:hidden;touch-action:pan-y}
-#accidentSection .acc-slide{display:none;width:100%;aspect-ratio:1055 / 958.8}
+#accidentSection .acc-slide{display:none;width:100%;aspect-ratio:1055 / 1198.5}
 #accidentSection .acc-slide.active{display:block}
 #accidentSection .acc-zoom-scroll{overflow:hidden}
-#accidentSection .acc-crop{width:120%;margin-left:-10%;transition:transform .22s ease}
+#accidentSection .acc-crop{width:150%;margin-left:-25%;transition:transform .22s ease}
 @media(prefers-reduced-motion:reduce){.third-viewport .paint-canvas,#accidentSection .acc-crop{transition:none}}
 
 
@@ -3060,10 +3060,10 @@ function showDiagramThird(type,index){
  const third=diagramThirds[type],left=third*100/3,right=(2-third)*100/3;
  plane.style.transform='translateX('+((1-third)*100/3)+'%)';
  plane.style.clipPath='inset(0 '+right+'% 0 '+left+'%)';
- // Trim only the image at inner boundaries; keep selected-region pins intact.
+ // Use the full region without extra trimming of its labels.
  const image=plane.querySelector('.car-image');
  if(image){
-  const imageLeft=left+(third>0?2.5:0),imageRight=right+(third<2?2.5:0);
+  const imageLeft=left,imageRight=right;
   image.style.clipPath='inset(0 '+imageRight+'% 0 '+imageLeft+'%)';
  }
  });
