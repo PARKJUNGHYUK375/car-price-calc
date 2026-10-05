@@ -2553,6 +2553,47 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
  .detail-checklist-top{padding:12px}
  .detail-group-nav button{font-size:11px}
 }
+
+/* Compact plain cards, with clear category borders and state labels. */
+.detail-checklist-top{padding:12px;margin-bottom:14px;border-radius:12px}
+.detail-progress-heading{font-size:12px}
+.detail-group-nav button{min-height:46px;padding:7px 3px;font-size:12px;border-radius:7px}
+.detail-group-nav small{margin-top:3px;font-size:10px}
+.detail-review-filters{margin:9px 0;gap:6px}
+.detail-review-filters button{min-height:34px;font-size:11px;border-radius:7px}
+#detailStepTitle{font-size:16px;margin:13px 0 5px}
+#detailStepHint{font-size:11px}
+.detail-groups .function-category{gap:9px}
+.detail-groups .function-category>h3{border-bottom:2px solid var(--line);padding-bottom:9px;font-size:14px;margin-bottom:3px}
+.detail-groups .function-item{padding:12px;border-radius:10px;box-shadow:none}
+.detail-card-title{font-size:16px!important}
+.detail-card-hint{font-size:11px;margin:5px 0 10px}
+.detail-status-badge{font-size:10px;padding:3px 6px;border:1px solid var(--line)}
+.detail-groups .function-item[data-review-state="normal"] .detail-status-badge{color:#16865e;border-color:#16865e55;background:#16865e10}
+.detail-groups .function-item[data-review-state="issue"] .detail-status-badge{color:#dc4747;border-color:#dc474755;background:#dc474710}
+.detail-groups .function-item[data-review-state="unavailable"] .detail-status-badge{color:#ad7720;border-color:#ad772055;background:#ad772010}
+.detail-choices{gap:5px}
+.detail-choices button{min-height:44px;font-size:12px;padding:6px 2px;border-radius:7px}
+.detail-issue-fields{gap:8px;padding-top:11px}
+.detail-issue-fields input.function-desc,.detail-issue-fields input.function-price{min-height:42px;font-size:14px}
+.detail-photo-btn{min-height:36px;font-size:12px}
+.detail-navigation{margin:14px 0}
+.detail-navigation button{min-height:42px;font-size:12px;border-radius:8px}
+.detail-add-dialog{width:calc(100% - 32px);max-width:380px;padding:20px;border:1px solid var(--line);border-radius:14px;background:var(--bg);color:var(--text);text-align:left;box-shadow:0 15px 60px #0003}
+.detail-add-dialog::backdrop{background:#0b122080}
+.detail-add-dialog h3{margin:0;font-size:18px}
+#detailAddContext{font-size:12px;color:var(--muted);margin:9px 0 18px}
+.detail-add-dialog label{display:block;font-size:12px;margin-bottom:7px}
+#detailAddName{width:100%;min-height:46px;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--text);font-size:15px}
+#detailAddError{min-height:18px;font-size:12px;color:#dc4747;margin:6px 0 10px}
+.detail-add-actions{display:flex;gap:8px}
+.detail-add-actions button{flex:1;min-height:44px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--text);font-weight:700}
+.detail-add-actions button[type="submit"]{background:#295fe8;border-color:#295fe8;color:white}
+@media(max-width:720px){
+ .detail-groups .function-category{gap:9px}
+ .detail-card-title{font-size:16px!important}
+ .detail-choices button{min-height:44px}
+}
 </style>
 </head>
 <body>
@@ -2777,12 +2818,12 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 <h2><i class="fas fa-tools"></i> 세부 상태</h2><div id="detailChecklistTop" class="detail-checklist-top">
 <div class="detail-progress-heading"><strong>하나씩 확인하는 현장 체크</strong><span id="detailProgressText" role="status" aria-live="polite"></span></div>
 <progress id="detailProgressBar" value="0" max="29" aria-label="세부상태 확인 진행률"></progress>
-<div class="detail-group-nav"><button type="button" data-detail-group="0" onclick="setDetailGroup(0)">🚘 외관<small>0/0</small></button><button type="button" data-detail-group="1" onclick="setDetailGroup(1)">💺 실내<small>0/0</small></button><button type="button" data-detail-group="2" onclick="setDetailGroup(2)">⚙️ 엔진<small>0/0</small></button><button type="button" data-detail-group="3" onclick="setDetailGroup(3)">🕹️ 변속<small>0/0</small></button><button type="button" data-detail-group="4" onclick="setDetailGroup(4)">🔧 하체<small>0/0</small></button></div>
+<div class="detail-group-nav"><button type="button" data-detail-group="0" onclick="setDetailGroup(0)">외관<small>0/0</small></button><button type="button" data-detail-group="1" onclick="setDetailGroup(1)">실내<small>0/0</small></button><button type="button" data-detail-group="2" onclick="setDetailGroup(2)">엔진<small>0/0</small></button><button type="button" data-detail-group="3" onclick="setDetailGroup(3)">변속<small>0/0</small></button><button type="button" data-detail-group="4" onclick="setDetailGroup(4)">하체<small>0/0</small></button></div>
 <div class="detail-review-filters"><button type="button" data-detail-filter="pending" onclick="setDetailFilter('pending')">미확인 0</button><button type="button" data-detail-filter="issue" onclick="setDetailFilter('issue')">이상 0</button><button type="button" data-detail-filter="unavailable" onclick="setDetailFilter('unavailable')">확인불가 0</button></div>
 <h3 id="detailStepTitle"></h3><p id="detailStepHint"></p>
 </div>
 <div class="function-category">
-<h3><i class="fa-solid fa-list-check"></i> 익스테리어&amp;기타 Part📝</h3>
+<h3><i class="fa-solid fa-list-check"></i> 익스테리어&amp;기타 Part</h3>
 <div class="function-item">
 <input aria-label="라이트크랙 선택" data-name="라이트크랙" onchange="updateAll()" title="라이트크랙 선택" type="checkbox"/>
 <div style="font-weight:900;">라이트크랙</div>
@@ -2814,10 +2855,10 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 <input aria-label="구변여부(기타) 감가 금액" class="function-price" data-key="구변여부(기타)-price" oninput="formatInput(this); saveInput('구변여부(기타)-price'); updateAll()" placeholder="금액(원)" title="구변여부(기타) 감가 금액" type="text"/>
 </div>
 <div id="exterior-items"></div>
-<button class="btn-soft" onclick="addExtraItem('익스테리어')">+ 기타 항목 추가</button>
+<button class="btn-soft" onclick="addExtraItem('익스테리어')">+ 항목 추가</button>
 </div>
 <div class="function-category">
-<h3><i class="fa-solid fa-list-check"></i> 엔진 Part📝</h3>
+<h3><i class="fa-solid fa-list-check"></i> 엔진 Part</h3>
 <div class="function-item">
 <input aria-label="공회전상태 선택" data-name="공회전상태" onchange="updateAll()" title="공회전상태 선택" type="checkbox"/>
 <div style="font-weight:900;">공회전상태</div>
@@ -2843,10 +2884,10 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 <input aria-label="소모품(엔진) 감가 금액" class="function-price" data-key="소모품(엔진)-price" oninput="formatInput(this); saveInput('소모품(엔진)-price'); updateAll()" placeholder="금액(원)" title="소모품(엔진) 감가 금액" type="text"/>
 </div>
 <div id="engine-items"></div>
-<button class="btn-soft" onclick="addExtraItem('엔진')">+ 기타 항목 추가</button>
+<button class="btn-soft" onclick="addExtraItem('엔진')">+ 항목 추가</button>
 </div>
 <div class="function-category">
-<h3><i class="fa-solid fa-list-check"></i> 미션 Part📝</h3>
+<h3><i class="fa-solid fa-list-check"></i> 미션 Part</h3>
 <div class="function-item">
 <input aria-label="오일누유(미션) 선택" data-name="오일누유(미션)" onchange="updateAll()" title="오일누유(미션) 선택" type="checkbox"/>
 <div style="font-weight:900;">오일누유</div>
@@ -2860,10 +2901,10 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 <input aria-label="소모품(미션) 감가 금액" class="function-price" data-key="소모품(미션)-price" oninput="formatInput(this); saveInput('소모품(미션)-price'); updateAll()" placeholder="금액(원)" title="소모품(미션) 감가 금액" type="text"/>
 </div>
 <div id="mission-items"></div>
-<button class="btn-soft" onclick="addExtraItem('미션')">+ 기타 항목 추가</button>
+<button class="btn-soft" onclick="addExtraItem('미션')">+ 항목 추가</button>
 </div>
 <div class="function-category">
-<h3><i class="fa-solid fa-list-check"></i> 하체 Part📝</h3>
+<h3><i class="fa-solid fa-list-check"></i> 하체 Part</h3>
 <div class="function-item">
 <input aria-label="쇼버 선택" data-name="쇼버" onchange="updateAll()" title="쇼버 선택" type="checkbox"/>
 <div style="font-weight:900;">쇼버</div>
@@ -2907,10 +2948,10 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 <input aria-label="소모품(하체) 감가 금액" class="function-price" data-key="소모품(하체)-price" oninput="formatInput(this); saveInput('소모품(하체)-price'); updateAll()" placeholder="금액(원)" title="소모품(하체) 감가 금액" type="text"/>
 </div>
 <div id="under-items"></div>
-<button class="btn-soft" onclick="addExtraItem('하체')">+ 기타 항목 추가</button>
+<button class="btn-soft" onclick="addExtraItem('하체')">+ 항목 추가</button>
 </div>
 <div class="function-category">
-<h3><i class="fa-solid fa-list-check"></i> 인테리어 Part📝</h3>
+<h3><i class="fa-solid fa-list-check"></i> 인테리어 Part</h3>
 <div class="function-item">
 <input aria-label="시트 선택" data-name="시트" onchange="updateAll()" title="시트 선택" type="checkbox"/>
 <div style="font-weight:900;">시트상태</div>
@@ -2978,7 +3019,7 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 <input aria-label="트렁크상태 감가 금액" class="function-price" data-key="트렁크상태-price" oninput="formatInput(this); saveInput('트렁크상태-price'); updateAll()" placeholder="금액(원)" title="트렁크상태 감가 금액" type="text"/>
 </div>
 <div id="interior-items"></div>
-<button class="btn-soft" onclick="addExtraItem('인테리어')">+ 기타 항목 추가</button>
+<button class="btn-soft" onclick="addExtraItem('인테리어')">+ 항목 추가</button>
 </div>
 <div class="detail-navigation"><button type="button" id="detailPrev" onclick="moveDetailBatch(-1)">← 이전</button><span id="detailBatchText" aria-live="polite"></span><button type="button" id="detailNext" onclick="moveDetailBatch(1)">다음 항목 →</button></div><div id="detailEmpty" class="detail-empty" hidden>해당 항목이 없어요.</div><p id="detailReviewHint" class="detail-review-hint"></p></div>
 <!-- 검차결과 -->
@@ -3245,11 +3286,11 @@ document.addEventListener('DOMContentLoaded',()=>{
 /* Guided detail inspection: existing checkboxes remain the deduction source. */
 let detailReady=false,detailGroupIndex=0,detailBatch=0,detailFilter='all';
 const DETAIL_GROUPS=[
- {id:'exterior-items',title:'외관',icon:'🚘',hint:'차량을 한 바퀴 돌며 조명·유리·외관을 확인하세요.'},
- {id:'interior-items',title:'실내',icon:'💺',hint:'시트에 앉아 실내 상태와 버튼·편의장치를 확인하세요.'},
- {id:'engine-items',title:'엔진',icon:'⚙️',hint:'시동을 걸고 공회전·누유·냉각수를 확인하세요.'},
- {id:'mission-items',title:'변속',icon:'🕹️',hint:'변속 상태와 미션 누유·소모품을 확인하세요.'},
- {id:'under-items',title:'하체',icon:'🔧',hint:'확인할 수 없는 부위는 확인불가로 남겨 재점검하세요.'}
+ {id:'exterior-items',title:'외관',icon:'',hint:'차량을 한 바퀴 돌며 조명·유리·외관을 확인하세요.'},
+ {id:'interior-items',title:'실내',icon:'',hint:'시트에 앉아 실내 상태와 버튼·편의장치를 확인하세요.'},
+ {id:'engine-items',title:'엔진',icon:'',hint:'시동을 걸고 공회전·누유·냉각수를 확인하세요.'},
+ {id:'mission-items',title:'변속',icon:'',hint:'변속 상태와 미션 누유·소모품을 확인하세요.'},
+ {id:'under-items',title:'하체',icon:'',hint:'확인할 수 없는 부위는 확인불가로 남겨 재점검하세요.'}
 ];
 const DETAIL_PROMPTS={
  '라이트크랙':['헤드라이트','균열 · 파손 · 습기'],
@@ -3294,7 +3335,7 @@ function decorateDetailItem(card,saved={}){
  const badge=document.createElement('span');badge.className='detail-status-badge';heading.appendChild(badge);
  const hint=document.createElement('div');hint.className='detail-card-hint';hint.textContent=prompt?prompt[1]:'현장에서 확인할 내용을 기록하세요.';heading.after(hint);
  const choices=document.createElement('div');choices.className='detail-choices';choices.setAttribute('aria-label',cb.dataset.name+' 확인 상태');
- [['normal','✓ 정상'],['issue','! 이상'],['unavailable','— 확인불가']].forEach(([state,label])=>{
+ [['normal','정상'],['issue','이상'],['unavailable','확인불가']].forEach(([state,label])=>{
   const button=document.createElement('button');button.type='button';button.dataset.detailState=state;button.textContent=label;
   button.addEventListener('click',()=>setDetailStatus(card,detailStatus(card)===state?'pending':state));choices.appendChild(button);
  });hint.after(choices);
@@ -3302,7 +3343,7 @@ function decorateDetailItem(card,saved={}){
  const desc=card.querySelector('.function-desc'),price=card.querySelector('.function-price');
  if(desc){desc.placeholder='증상·확인 내용';const label=document.createElement('label');label.textContent='증상 메모';label.appendChild(desc);fields.appendChild(label)}
  if(price){price.placeholder='감가 금액(원)';const label=document.createElement('label');label.textContent='감가 금액';label.appendChild(price);fields.appendChild(label)}
- const photo=document.createElement('button');photo.type='button';photo.className='detail-photo-btn';photo.textContent='📷 검차 사진 추가';photo.addEventListener('click',openPhotoSourceSheet);fields.appendChild(photo);
+ const photo=document.createElement('button');photo.type='button';photo.className='detail-photo-btn';photo.textContent='검차 사진 추가';photo.addEventListener('click',openPhotoSourceSheet);fields.appendChild(photo);
  const photoHint=document.createElement('small');photoHint.textContent='사진은 차량 검차 사진에 함께 저장됩니다.';fields.appendChild(photoHint);
  card.appendChild(fields);
 }
@@ -3353,7 +3394,7 @@ function refreshDetailChecklist(){
   nav.querySelector('small').textContent=items.filter(c=>detailStatus(c)!=='pending').length+'/'+items.length;
   category.querySelector('.btn-soft').hidden=detailFilter!=='all';
  });
- document.getElementById('detailStepTitle').textContent=detailFilter==='all'?DETAIL_GROUPS[detailGroupIndex].icon+' '+DETAIL_GROUPS[detailGroupIndex].title+' 확인':{pending:'아직 확인하지 않은 항목',issue:'이상이 있는 항목',unavailable:'다시 확인할 항목'}[detailFilter];
+ document.getElementById('detailStepTitle').textContent=detailFilter==='all'?DETAIL_GROUPS[detailGroupIndex].title+' 확인':{pending:'아직 확인하지 않은 항목',issue:'이상이 있는 항목',unavailable:'다시 확인할 항목'}[detailFilter];
  document.getElementById('detailStepHint').textContent=detailFilter==='all'?DETAIL_GROUPS[detailGroupIndex].hint:'항목을 확인한 뒤 위의 영역 버튼으로 돌아갈 수 있어요.';
  const first=selection.length?detailBatch*size+1:0,last=Math.min(selection.length,(detailBatch+1)*size);
  document.getElementById('detailBatchText').textContent=first+'–'+last+' / '+selection.length+' 항목';
@@ -3368,7 +3409,7 @@ function initDetailChecklist(){
  const panel=document.querySelector('[data-page-panel="3"]');
  let saved={};try{saved=JSON.parse(localStorage.getItem('checkboxStates')||'{}').detailReview||{}}catch{}
  const groups=document.createElement('div');groups.className='detail-groups';
- DETAIL_GROUPS.forEach((group,i)=>{const category=document.getElementById(group.id).closest('.function-category');category.dataset.detailGroup=String(i);category.querySelector('h3').textContent=group.icon+' '+group.title;groups.appendChild(category)});
+ DETAIL_GROUPS.forEach((group,i)=>{const category=document.getElementById(group.id).closest('.function-category');category.dataset.detailGroup=String(i);category.querySelector('h3').textContent=group.title;groups.appendChild(category)});
  panel.querySelector('#detailChecklistTop').after(groups);
  detailCards().forEach(card=>decorateDetailItem(card,saved));detailReady=true;refreshDetailChecklist();
  window.matchMedia('(max-width:720px)').addEventListener('change',()=>{detailBatch=0;refreshDetailChecklist()});
@@ -3382,25 +3423,46 @@ function resetDetailChecklist(){
     // ✅ 동적 기타 항목
     const extraCounters = { '익스테리어':0,'엔진':0,'미션':0,'하체':0,'인테리어':0 };
 
+
+    function openDetailAddDialog(category){
+      const dialog=document.getElementById('detailAddDialog');
+      dialog.dataset.category=category;
+      document.getElementById('detailAddName').value='';
+      document.getElementById('detailAddError').textContent='';
+      const label={'익스테리어':'외관','인테리어':'실내','엔진':'엔진','미션':'변속','하체':'하체'}[category];
+      document.getElementById('detailAddContext').textContent=label+'에 새 확인 항목을 추가합니다.';
+      dialog.showModal();document.getElementById('detailAddName').focus();
+    }
+    function submitDetailAdd(event){
+      event.preventDefault();
+      const name=document.getElementById('detailAddName').value.trim().replace(/\s+/g,' ');
+      const error=document.getElementById('detailAddError');
+      if(!name){error.textContent='항목 이름을 입력해주세요.';return}
+      if(name.length>60){error.textContent='항목 이름은 60자 이내로 입력해주세요.';return}
+      const duplicate=Array.from(document.querySelectorAll('.function-item input[type="checkbox"]')).some(cb=>cb.dataset.name===name||cb.closest('.function-item').querySelector('.detail-card-title')?.textContent===name);
+      if(duplicate){error.textContent='이미 있는 항목 이름입니다. 다른 이름을 입력해주세요.';return}
+      const dialog=document.getElementById('detailAddDialog');
+      addExtraItem(dialog.dataset.category,name);
+      saveCheckboxState();dialog.close();
+    }
     function addExtraItem(category, savedName=null){
-      const containerId = {
-        '익스테리어':'exterior-items','엔진':'engine-items','미션':'mission-items','하체':'under-items','인테리어':'interior-items'
-      }[category];
-      const container = document.getElementById(containerId);
-      if(!container) return;
-
-      const index = ++extraCounters[category];
-      const name = savedName || `기타${index}(${category})`;
-
-      const item = document.createElement('div');
-      item.className='function-item has-delete';
-      item.innerHTML = `
-        <input type="checkbox" data-name="${name}" aria-label="${name} 선택" title="${name} 선택" onchange="updateAll()">
-        <div style="font-weight:900;">${name}</div>
-        <input type="text" class="function-desc" data-key="${name}-desc" aria-label="${name} 내용" title="${name} 내용" placeholder="내용" oninput="saveInput('${name}-desc'); updateAll()">
-        <input type="text" class="function-price" data-key="${name}-price" aria-label="${name} 감가 금액" title="${name} 감가 금액" placeholder="금액(원)" oninput="formatInput(this); saveInput('${name}-price'); updateAll()">
-        <button class="btn-del" type="button" aria-label="${name} 삭제" title="${name} 삭제" onclick="this.parentElement.remove(); localStorage.removeItem('${name}-desc'); localStorage.removeItem('${name}-price'); updateAll(); saveExtraItems();">삭제</button>
-      `;
+      const containerId={'익스테리어':'exterior-items','엔진':'engine-items','미션':'mission-items','하체':'under-items','인테리어':'interior-items'}[category];
+      const container=document.getElementById(containerId);if(!container)return;
+      if(savedName===null){openDetailAddDialog(category);return}
+      ++extraCounters[category];
+      const name=String(savedName);
+      const item=document.createElement('div');item.className='function-item has-delete';
+      const cb=document.createElement('input');cb.type='checkbox';cb.dataset.name=name;cb.setAttribute('aria-label',name+' 선택');cb.title=name+' 선택';cb.addEventListener('change',updateAll);item.appendChild(cb);
+      const title=document.createElement('div');title.style.fontWeight='900';title.textContent=name;item.appendChild(title);
+      for(const kind of ['desc','price']){
+       const input=document.createElement('input');input.type='text';input.className='function-'+kind;
+       input.dataset.key=name+'-'+kind;input.placeholder=kind==='desc'?'내용':'금액(원)';
+       input.setAttribute('aria-label',name+(kind==='desc'?' 내용':' 감가 금액'));input.title=input.getAttribute('aria-label');
+       input.addEventListener('input',()=>{if(kind==='price')formatInput(input);saveInput(input.dataset.key);updateAll()});
+       item.appendChild(input);
+      }
+      const del=document.createElement('button');del.type='button';del.className='btn-del';del.textContent='삭제';del.setAttribute('aria-label',name+' 삭제');
+      del.addEventListener('click',()=>{item.remove();localStorage.removeItem(name+'-desc');localStorage.removeItem(name+'-price');updateAll();saveExtraItems()});item.appendChild(del);
       container.appendChild(item);
       if(detailReady){
        decorateDetailItem(item);detailFilter='all';
@@ -5427,5 +5489,14 @@ function initTheme(){
 
     window.addEventListener('beforeunload', saveExtraItems);
   </script>
+<dialog id="detailAddDialog" class="detail-add-dialog" aria-labelledby="detailAddTitle">
+<form onsubmit="submitDetailAdd(event)">
+<h3 id="detailAddTitle">확인 항목 추가</h3>
+<p id="detailAddContext"></p>
+<label for="detailAddName">항목 이름</label>
+<input id="detailAddName" type="text" maxlength="60" placeholder="예: 전동 트렁크 작동" autocomplete="off" required>
+<p id="detailAddError" role="alert"></p>
+<div class="detail-add-actions"><button type="button" onclick="document.getElementById('detailAddDialog').close()">취소</button><button type="submit">추가</button></div>
+</form></dialog>
 </body>
 </html>
