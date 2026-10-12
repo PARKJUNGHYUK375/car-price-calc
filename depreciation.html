@@ -2627,6 +2627,14 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 .coating-current{display:flex;align-items:center;justify-content:space-between;gap:8px;border-top:1px solid var(--line);padding-top:6px;margin-top:5px;font-size:11px}
 .coating-current span{color:#295fe8;font-weight:700}
 #coatingPart[hidden]{display:none!important}
+
+/* Emphasize measurement values and accident marks while retaining transparent pins. */
+.coating-pin-value{color:#d71920;font-size:13px;font-weight:900;line-height:1.5;padding:1px 4px}
+.coating-current span{color:#c51c24;font-weight:800}
+.acc-plane .acc-item.exchange{background:rgba(229,72,77,.24);border-color:#d43139}
+.acc-plane .acc-item.repair{background:rgba(54,123,195,.24);border-color:#2467b7}
+.acc-plane .acc-item.exchange::after{color:#bf1620;font-size:14px;font-weight:900}
+.acc-plane .acc-item.repair::after{color:#1556a5;font-size:14px;font-weight:900}
 </style>
 </head>
 <body>
