@@ -2635,6 +2635,7 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 .acc-plane .acc-item.repair{background:rgba(54,123,195,.24);border-color:#2467b7}
 .acc-plane .acc-item.exchange::after{color:#bf1620;font-size:14px;font-weight:900}
 .acc-plane .acc-item.repair::after{color:#1556a5;font-size:14px;font-weight:900}
+.coating-auto-hint{font-size:10px;color:var(--muted);margin:6px 0;line-height:1.5}
 </style>
 </head>
 <body>
@@ -2852,6 +2853,7 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 <div id="coatingConnectionStatus" class="coating-status" role="status" aria-live="polite"></div>
 <div id="coatingDevices" class="coating-devices"></div>
 <div class="coating-current"><span id="coatingTargetLabel" aria-live="polite">도막 측정 시 부위 핀을 선택해주세요.</span><button type="button" id="coatingClear" onclick="clearCoatingTarget()" disabled>선택 부위 초기화</button></div>
+<p class="coating-auto-hint">최고 도막수치 400 μm 이상이면 판금 W 자동 체크 · 교환·고객고지 선택은 유지</p>
 <select id="coatingPart" hidden aria-label="도막 측정 부위"><option value="">측정 부위 선택</option></select>
 </div>
 <div class="accident-sheet-tabs" aria-label="사고 도면 선택"><button type="button" class="active" data-acc-sheet="0" aria-pressed="true" onclick="showAccidentSheet(0)">외판 <small>1 / 2</small></button><button type="button" data-acc-sheet="1" aria-pressed="false" onclick="showAccidentSheet(1)">골격 <small>2 / 2</small></button></div>
@@ -3555,6 +3557,15 @@ function renderCoating(){
  });
  syncCoatingTarget();
 }
+function applyCoatingAutoRepair(key){
+ const peak=coatingData[key]?.peak;
+ if(!peak||typeof peak.value!=='number'||peak.value<400)return false;
+ const pin=Array.from(document.querySelectorAll('.acc-item')).find(item=>item.dataset.key===key);
+ if(!pin||pin.dataset.state)return false;
+ setAccidentState(pin,'repair');
+ document.getElementById('accidentPinStatus').textContent=coatingName(key)+' · 도막 '+formatCoatingValue(peak)+' · 판금 W 자동 체크';
+ return true;
+}
 window.onLs236Event=function(event){
  if(!event||typeof event!=='object')return;
  if(event.kind==='state'){
@@ -3573,6 +3584,7 @@ window.onLs236Event=function(event){
  if(!valid)return;
  coatingSeen.add(event.id);if(coatingSeen.size>500)coatingSeen.delete(coatingSeen.values().next().value);
  coatingData[coatingTarget]=addCoatingReading(coatingData[coatingTarget],valid);
+ applyCoatingAutoRepair(coatingTarget);
  saveCoating();renderCoating();updateAll();
  document.getElementById('coatingConnectionStatus').textContent='LS236 연결됨';
 };
