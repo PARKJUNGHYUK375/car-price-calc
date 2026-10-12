@@ -2594,6 +2594,27 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
  .detail-card-title{font-size:16px!important}
  .detail-choices button{min-height:44px}
 }
+
+.coating-panel{margin:12px 0 16px;padding:12px;text-align:left;border:1px solid var(--line);border-radius:12px;background:var(--card-2)}
+.coating-header{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:14px}
+.coating-header button,.coating-devices button,.coating-reading-row button{min-height:38px;border:1px solid var(--line);border-radius:7px;padding:7px 10px;background:var(--card);color:var(--text);font-size:12px}
+#coatingConnect{background:#295fe8;border-color:#295fe8;color:white}
+.coating-panel button:disabled{opacity:.45}
+.coating-status{margin:10px 0;font-size:12px;color:var(--muted);line-height:1.5}
+.coating-devices{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.coating-mode{display:flex;gap:8px;align-items:center;font-size:13px;font-weight:700}
+.coating-mode input{width:20px;height:20px;accent-color:#295fe8}
+.coating-hint,.coating-empty{font-size:11px;color:var(--muted);line-height:1.6}
+#coatingPart{width:100%;margin:6px 0;min-height:42px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--text);padding:8px}
+.coating-target-label{font-size:12px;color:#295fe8;margin:7px 0;font-weight:700}
+.coating-reading-row{display:flex;justify-content:space-between;align-items:center;gap:8px;border-top:1px solid var(--line);padding:10px 0;font-size:12px}
+.coating-reading-row>div{min-width:0;overflow-wrap:anywhere}
+.coating-reading-row strong{display:block;margin-bottom:4px}
+.coating-reading-row small{display:block;color:var(--muted);margin-top:4px;font-size:10px}
+.coating-reading-row button{flex-shrink:0;font-size:10px;padding:6px}
+.acc-plane .acc-item.coating-target{outline:3px solid #295fe8;outline-offset:3px}
+.coating-pin-value{position:absolute;top:27px;left:50%;transform:translateX(-50%);white-space:nowrap;font-size:10px;line-height:1.4;color:#244779;background:#ffffffd9;border-radius:3px;padding:1px 3px;pointer-events:none}
+.coating-pin-value[hidden]{display:none}
 </style>
 </head>
 <body>
@@ -2806,6 +2827,16 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 <!-- 사고 -->
 <div class="section page-panel" data-page-panel="2">
 <h2 style="display:flex;align-items:center;justify-content:space-between;gap:10px"><span><i class="fas fa-car-burst"></i> 사고 이력</span><span style="display:flex;align-items:center;gap:7px;font-size:12px"><button type="button" onclick="changeAccidentRateOffset(-1)" aria-label="사고 감가율 1% 내리기" style="width:32px;height:32px;border-radius:9px;border:1px solid rgba(255,255,255,.14);background:var(--card);color:var(--text);font-size:18px;font-weight:900">−</button><b id="accidentRateOffset" style="min-width:38px;text-align:center">±0%</b><button type="button" onclick="changeAccidentRateOffset(1)" aria-label="사고 감가율 1% 올리기" style="width:32px;height:32px;border-radius:9px;border:1px solid rgba(255,255,255,.14);background:var(--card);color:var(--text);font-size:18px;font-weight:900">+</button></span></h2>
+<div class="coating-panel">
+<div class="coating-header"><strong>도막 측정 · LS236</strong><div><button type="button" id="coatingConnect" onclick="connectCoating()">도막기 연결</button><button type="button" id="coatingDisconnect" onclick="disconnectCoating()" disabled>연결 해제</button></div></div>
+<div id="coatingConnectionStatus" class="coating-status" role="status" aria-live="polite">도막기를 연결해주세요.</div>
+<div id="coatingDevices" class="coating-devices"></div>
+<label class="coating-mode"><input type="checkbox" id="coatingMode" onchange="toggleCoatingMode()"> 도막 측정 모드</label>
+<p class="coating-hint">측정 모드에서 핀을 누르면 측정 부위만 선택됩니다. 교환·판금 판정은 기존 방식으로 직접 선택하세요.</p>
+<select id="coatingPart" aria-label="도막 측정 부위" onchange="selectCoatingTarget(this.value)"><option value="">측정 부위 선택</option></select>
+<div id="coatingTargetLabel" class="coating-target-label">측정할 부위를 선택해주세요.</div>
+<div id="coatingReadings"></div><p class="coating-hint">부위별 최근 6회 기록 · 검차 저장과 이미지 저장에 포함됩니다.</p>
+</div>
 <div class="accident-sheet-tabs" aria-label="사고 도면 선택"><button type="button" class="active" data-acc-sheet="0" aria-pressed="true" onclick="showAccidentSheet(0)">외판 <small>1 / 2</small></button><button type="button" data-acc-sheet="1" aria-pressed="false" onclick="showAccidentSheet(1)">골격 <small>2 / 2</small></button></div>
 <div class="acc-carousel diagram-fullbleed" id="accidentSection" aria-label="외판과 골격 도면, 좌우로 넘기세요">
 <div class="acc-slide" aria-label="외판 도면"><div class="acc-zoom-scroll"><div class="acc-crop"><div class="acc-plane"><img alt="사고 외판 도면" class="car-image" src="https://imgur.com/agbd7Z8.png" draggable="false"/><div class="checkbox-overlay" id="accidentExteriorOverlay"></div></div></div></div></div>
@@ -3420,6 +3451,119 @@ function resetDetailChecklist(){
  detailGroupIndex=0;detailBatch=0;detailFilter='all';refreshDetailChecklist();
 }
 
+/* LS236 readings are separate from accident decisions and deduction rates. */
+const COATING_KEY='dealerMateCoating_v1';
+let coatingData={},coatingTarget='',coatingToken='',coatingSeen=new Set();
+const COATING_MATERIALS={1:'철',2:'알루미늄',3:'아연도금 철',4:'플라스틱',5:'철분 퍼티'};
+function coatingName(key){
+ const part=DATA.accidentParts.find(p=>p.key===key);
+ return key==='acc_pillar_l'?'B필러(좌)':key==='acc_pillar_r'?'B필러(우)':part?.name||key;
+}
+function sanitizeCoating(data){
+ const clean={};
+ if(!data||typeof data!=='object')return clean;
+ DATA.accidentParts.forEach(part=>{
+  if(!Array.isArray(data[part.key]))return;
+  const rows=data[part.key].filter(row=>row&&typeof row==='object'&&
+   ((typeof row.value==='number'&&Number.isFinite(row.value)&&row.value>=-50&&row.value<=5000)||
+    (row.value===null&&row.material===4))&&Number.isFinite(row.at)).slice(-6)
+   .map(row=>({value:row.value,material:Number(row.material)||0,at:row.at,id:String(row.id||'').slice(0,100)}));
+  if(rows.length)clean[part.key]=rows;
+ });return clean;
+}
+function saveCoating(){localStorage.setItem(COATING_KEY,JSON.stringify(coatingData))}
+function coatingBridge(){return window.AndroidCoating&&typeof window.AndroidCoating.scan==='function'?window.AndroidCoating:null}
+function syncCoatingTarget(){
+ const enabled=document.getElementById('coatingMode')?.checked;
+ const bridge=coatingBridge();
+ if(bridge)bridge.setTarget(enabled?coatingTarget:'',coatingToken);
+ document.querySelectorAll('.acc-item').forEach(pin=>pin.classList.toggle('coating-target',!!enabled&&pin.dataset.key===coatingTarget));
+}
+function selectCoatingTarget(key){
+ coatingTarget=DATA.accidentParts.some(p=>p.key===key)?key:'';
+ document.getElementById('coatingPart').value=coatingTarget;
+ document.getElementById('coatingTargetLabel').textContent=coatingTarget?'측정 부위: '+coatingName(coatingTarget):'측정할 부위를 선택해주세요.';
+ syncCoatingTarget();
+}
+function toggleCoatingMode(){syncCoatingTarget()}
+function connectCoating(){
+ const bridge=coatingBridge();if(!bridge)return;
+ document.getElementById('coatingMode').checked=true;syncCoatingTarget();bridge.scan();
+}
+function disconnectCoating(){
+ const bridge=coatingBridge();if(bridge)bridge.disconnect();
+ document.getElementById('coatingMode').checked=false;syncCoatingTarget();
+}
+function formatCoatingValue(row){
+ return row.value===null?'플라스틱':row.value.toLocaleString('ko-KR',{maximumFractionDigits:1})+' μm';
+}
+function coatingLines(){
+ return DATA.accidentParts.filter(p=>coatingData[p.key]?.length).map(part=>{
+  const rows=coatingData[part.key],values=rows.filter(r=>r.value!==null).map(r=>r.value);
+  const avg=values.length?(values.reduce((a,b)=>a+b,0)/values.length).toLocaleString('ko-KR',{maximumFractionDigits:1})+' μm':'—';
+  return {key:part.key,title:coatingName(part.key),text:rows.map(formatCoatingValue).join(' / '),
+   summary:'평균 '+avg+' · '+rows.length+'회',last:rows[rows.length-1]};
+ });
+}
+function renderCoating(){
+ const list=document.getElementById('coatingReadings');if(!list)return;
+ list.replaceChildren();
+ const lines=coatingLines();
+ if(!lines.length){const empty=document.createElement('p');empty.className='coating-empty';empty.textContent='측정값이 아직 없어요. 측정 모드를 켜고 부위를 선택한 뒤 도막기로 측정해주세요.';list.appendChild(empty)}
+ lines.forEach(line=>{
+  const row=document.createElement('div');row.className='coating-reading-row';
+  const content=document.createElement('div'),title=document.createElement('strong'),values=document.createElement('div'),summary=document.createElement('small');
+  title.textContent=line.title;values.textContent=line.text;summary.textContent=line.summary+' · '+(COATING_MATERIALS[line.last.material]||'재질 미확인');
+  content.append(title,values,summary);row.appendChild(content);
+  const remove=document.createElement('button');remove.type='button';remove.textContent='최근값 삭제';remove.setAttribute('aria-label',line.title+' 최근 측정값 삭제');
+  remove.addEventListener('click',()=>{coatingData[line.key].pop();if(!coatingData[line.key].length)delete coatingData[line.key];saveCoating();renderCoating();updateAll()});row.appendChild(remove);list.appendChild(row);
+ });
+ document.querySelectorAll('.acc-item').forEach(pin=>{
+  let badge=pin.querySelector('.coating-pin-value');
+  if(!badge){badge=document.createElement('span');badge.className='coating-pin-value';badge.setAttribute('aria-hidden','true');pin.appendChild(badge)}
+  const rows=coatingData[pin.dataset.key]||[],last=rows[rows.length-1];
+  badge.hidden=!last;badge.textContent=last?formatCoatingValue(last):'';
+ });
+ syncCoatingTarget();
+}
+window.onLs236Event=function(event){
+ if(!event||typeof event!=='object')return;
+ if(event.kind==='state'){
+  document.getElementById('coatingConnectionStatus').textContent=String(event.message||'');
+  const list=document.getElementById('coatingDevices');list.replaceChildren();
+  (Array.isArray(event.devices)?event.devices:[]).forEach(device=>{
+   const button=document.createElement('button');button.type='button';button.textContent=String(device.name||'LS236');
+   button.addEventListener('click',()=>{const bridge=coatingBridge();if(bridge)bridge.connect(String(device.address))});list.appendChild(button);
+  });
+  document.getElementById('coatingDisconnect').disabled=event.state!=='connected'&&event.state!=='connecting';
+  return;
+ }
+ if(event.kind!=='measurement'||document.hidden||!document.getElementById('coatingMode').checked||
+    event.token!==coatingToken||event.target!==coatingTarget||!coatingTarget||coatingSeen.has(event.id))return;
+ const valid=sanitizeCoating({[coatingTarget]:[event]})[coatingTarget];
+ if(!valid?.length)return;
+ coatingSeen.add(event.id);if(coatingSeen.size>500)coatingSeen.delete(coatingSeen.values().next().value);
+ coatingData[coatingTarget]=[...(coatingData[coatingTarget]||[]),valid[0]].slice(-6);
+ saveCoating();renderCoating();updateAll();
+ document.getElementById('coatingConnectionStatus').textContent=coatingName(coatingTarget)+' · '+formatCoatingValue(valid[0])+' 기록됨';
+};
+function resetCoating(){
+ coatingData={};coatingTarget='';coatingToken=Date.now()+':'+Math.random().toString(36).slice(2);coatingSeen.clear();
+ document.getElementById('coatingMode').checked=false;selectCoatingTarget('');saveCoating();renderCoating();
+}
+function initCoating(){
+ try{coatingData=sanitizeCoating(JSON.parse(localStorage.getItem(COATING_KEY)||'{}'))}catch{coatingData={}}
+ coatingToken=Date.now()+':'+Math.random().toString(36).slice(2);
+ const select=document.getElementById('coatingPart');
+ DATA.accidentParts.forEach(part=>{const option=document.createElement('option');option.value=part.key;option.textContent=coatingName(part.key);select.appendChild(option)});
+ const bridge=coatingBridge();
+ document.getElementById('coatingConnect').disabled=!bridge;document.getElementById('coatingMode').disabled=!bridge;
+ if(bridge){try{window.onLs236Event(JSON.parse(bridge.getState()))}catch{}}
+ else document.getElementById('coatingConnectionStatus').textContent='자동 수신은 블루투스 기능이 포함된 딜러메이트 APK에서 사용할 수 있어요.';
+ renderCoating();
+ document.addEventListener('visibilitychange',()=>{if(document.hidden){document.getElementById('coatingMode').checked=false;syncCoatingTarget()}});
+}
+
     // ✅ 동적 기타 항목
     const extraCounters = { '익스테리어':0,'엔진':0,'미션':0,'하체':0,'인테리어':0 };
 
@@ -3655,6 +3799,7 @@ function resetDetailChecklist(){
         el.setAttribute('aria-pressed','false');
 
         el.addEventListener('click', ()=>{
+          if(document.getElementById('coatingMode').checked){selectCoatingTarget(el.dataset.key);return;}
           const cur = el.dataset.state || '';
 
           // 없음 → X(교환) → W(판금) → XX(고객고지 교환) → WW(고객고지 판금) → 없음
@@ -3736,6 +3881,7 @@ function resetDetailChecklist(){
     function renderResultBox({selectedPaint, selectedAccidents, deductionLines, paintLines=[], accidentLines=[], detailLines=[], totalDiscount, finalPrice, paintSetoff}){
       const box = document.getElementById('resultArea');
       const hasAny = (
+        coatingLines().length ||
         selectedPaint.length ||
         selectedAccidents.length ||
         deductionLines.length ||
@@ -3837,6 +3983,8 @@ function resetDetailChecklist(){
               <h3><i class="fa-solid fa-list"></i> 감가 내역</h3>
               ${detailList}
             </div>
+            ${coatingLines().length ? `<div class="result-card"><h3>도막 측정</h3><ul class="result-list">${coatingLines().map(line=>`<li><b>${escapeHtml(line.title)}</b>: ${escapeHtml(line.text)} · ${escapeHtml(line.summary)} · ${escapeHtml(COATING_MATERIALS[line.last.material]||'재질 미확인')}</li>`).join('')}</ul></div>` : ''}
+
 
           </div>
 
@@ -4114,6 +4262,7 @@ function resetDetailChecklist(){
       // 6. 기타항목 제거
       // -----------------------------------------------------
       resetExtraItems();
+      resetCoating();
       resetDetailChecklist();
 
       // -----------------------------------------------------
@@ -4167,6 +4316,9 @@ function resetDetailChecklist(){
     const PAGE_COUNT = 6;
     function showPage(page, scrollTop=true){
       currentPage = Math.max(0, Math.min(PAGE_COUNT-1, Number(page)||0));
+      if(currentPage!==2 && document.getElementById('coatingMode')){
+        document.getElementById('coatingMode').checked=false;syncCoatingTarget();
+      }
       document.body.dataset.currentPage = String(currentPage);
       document.querySelectorAll('[data-page-panel]').forEach(el=>{
         el.classList.toggle('active', Number(el.dataset.pagePanel)===currentPage);
@@ -4523,6 +4675,7 @@ function captureInspectionWorkspace(){
   return {
     base,
     functionValues,
+    coatingMeasurements:sanitizeCoating(coatingData),
     checkboxStates,
     dynamicExtraItems,
     carType:localStorage.getItem('carType')||'imported'
@@ -4541,6 +4694,7 @@ function restoreInspectionWorkspace(workspace){
     localStorage.setItem(key,String(value??''));
   });
 
+  localStorage.setItem(COATING_KEY,JSON.stringify(sanitizeCoating(workspace?.coatingMeasurements||{})));
   localStorage.setItem('checkboxStates',JSON.stringify(workspace?.checkboxStates||{}));
   localStorage.setItem('dynamicExtraItems',JSON.stringify(workspace?.dynamicExtraItems||{}));
   localStorage.setItem('carType',workspace?.carType||'imported');
@@ -5474,6 +5628,7 @@ function initTheme(){
       loadExtraItems();
       loadInputs();
       loadCheckboxState();
+      initCoating();
       initDetailChecklist();
 
       const savedType = localStorage.getItem('carType') || 'imported';
