@@ -2638,6 +2638,9 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 .coating-auto-hint{font-size:10px;color:var(--muted);margin:6px 0;line-height:1.5}
 .acc-plane .acc-item{touch-action:pan-y;-webkit-touch-callout:none}
 .acc-plane .acc-item.coating-holding{outline:2px solid #d71920;outline-offset:4px}
+
+.coating-pin-value,.coating-current span{color:#1556a5}
+.coating-pin-value.coating-high,.coating-current span.coating-high{color:#d71920}
 </style>
 </head>
 <body>
@@ -3610,12 +3613,14 @@ function renderCoating(){
  const label=document.getElementById('coatingTargetLabel');if(!label)return;
  const stats=coatingData[coatingTarget];
  label.textContent=coatingTarget?coatingName(coatingTarget)+(stats?' · 최고 '+formatCoatingValue(stats.peak)+' · '+stats.count.toLocaleString('ko-KR')+'회':' · 측정 대기'):'도막 측정 시 부위 핀을 선택해주세요.';
+ label.classList.toggle('coating-high',!!stats&&typeof stats.peak.value==='number'&&stats.peak.value>=400);
  document.getElementById('coatingClear').disabled=!stats;
  document.querySelectorAll('.acc-item').forEach(pin=>{
   let badge=pin.querySelector('.coating-pin-value');
   if(!badge){badge=document.createElement('span');badge.className='coating-pin-value';badge.setAttribute('aria-hidden','true');pin.appendChild(badge)}
   const saved=coatingData[pin.dataset.key];
   badge.hidden=!saved;badge.textContent=saved?formatCoatingValue(saved.peak):'';
+  badge.classList.toggle('coating-high',!!saved&&typeof saved.peak.value==='number'&&saved.peak.value>=400);
  });
  syncCoatingTarget();
 }
