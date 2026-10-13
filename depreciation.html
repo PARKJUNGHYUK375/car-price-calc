@@ -2688,9 +2688,7 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 
 <div class="header-actions">
 <a href="index.html" class="theme-toggle" aria-label="첫화면으로" title="첫화면으로" style="text-decoration:none;display:grid;place-items:center"><i class="fa-solid fa-house"></i></a>
-<button type="button" id="themeToggle" class="theme-toggle" aria-label="다크모드로 변경" title="화면 모드 변경">
-<i class="fa-solid fa-moon"></i>
-</button>
+
 
 
 <div class="car-type-toggle">
@@ -5732,41 +5730,10 @@ async function downloadRecordPhotos(recordId){
 /* =========================================================
    THEME MODE
 ========================================================= */
-function applyTheme(theme){
-  const isDark = theme === "dark";
-  document.body.classList.toggle("dark-mode", isDark);
-
-  const button = document.getElementById("themeToggle");
-  if(!button) return;
-
-  const icon = button.querySelector("i");
-  if(icon){
-    icon.className = isDark ? "fa-solid fa-sun" : "fa-solid fa-moon";
-  }
-
-  button.setAttribute(
-    "aria-label",
-    isDark ? "화이트모드로 변경" : "다크모드로 변경"
-  );
-  button.title = isDark ? "화이트모드로 변경" : "다크모드로 변경";
-}
-
-function toggleTheme(){
-  const nextTheme = document.body.classList.contains("dark-mode") ? "light" : "dark";
-  localStorage.setItem("calculatorTheme", nextTheme);
-  applyTheme(nextTheme);
-}
-
-function initTheme(){
-  const savedTheme = localStorage.getItem("calculatorTheme") || "light";
-  applyTheme(savedTheme);
-
-  const button = document.getElementById("themeToggle");
-  if(button && !button.dataset.themeBound){
-    button.addEventListener("click", toggleTheme);
-    button.dataset.themeBound = "1";
-  }
-}
+function applyTheme(theme){document.body.classList.toggle('dark-mode',theme==='dark')}
+function initTheme(){let theme='light';try{theme=localStorage.getItem('calculatorTheme')||'light'}catch{}applyTheme(theme)}
+window.addEventListener('pageshow',initTheme);
+window.addEventListener('storage',event=>{if(event.key==='calculatorTheme'||event.key===null)initTheme()});
 
     window.addEventListener('DOMContentLoaded', async ()=>{
       initTheme();
