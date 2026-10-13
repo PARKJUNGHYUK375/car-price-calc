@@ -2636,6 +2636,8 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 .acc-plane .acc-item.exchange::after{color:#bf1620;font-size:14px;font-weight:900}
 .acc-plane .acc-item.repair::after{color:#1556a5;font-size:14px;font-weight:900}
 .coating-auto-hint{font-size:10px;color:var(--muted);margin:6px 0;line-height:1.5}
+.acc-plane .acc-item{touch-action:pan-y;-webkit-touch-callout:none}
+.acc-plane .acc-item.coating-holding{outline:2px solid #d71920;outline-offset:4px}
 </style>
 </head>
 <body>
@@ -2853,7 +2855,7 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 <div id="coatingConnectionStatus" class="coating-status" role="status" aria-live="polite"></div>
 <div id="coatingDevices" class="coating-devices"></div>
 <div class="coating-current"><span id="coatingTargetLabel" aria-live="polite">도막 측정 시 부위 핀을 선택해주세요.</span><button type="button" id="coatingClear" onclick="clearCoatingTarget()" disabled>선택 부위 초기화</button></div>
-<p class="coating-auto-hint">최고 도막수치 400 μm 이상이면 판금 W 자동 체크 · 교환·고객고지 선택은 유지</p>
+<p class="coating-auto-hint">핀을 2초 누르면 도막수치 초기화 · 400 μm 이상 판금 W 자동 체크</p>
 <select id="coatingPart" hidden aria-label="도막 측정 부위"><option value="">측정 부위 선택</option></select>
 </div>
 <div class="accident-sheet-tabs" aria-label="사고 도면 선택"><button type="button" class="active" data-acc-sheet="0" aria-pressed="true" onclick="showAccidentSheet(0)">외판 <small>1 / 2</small></button><button type="button" data-acc-sheet="1" aria-pressed="false" onclick="showAccidentSheet(1)">골격 <small>2 / 2</small></button></div>
@@ -3259,6 +3261,7 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 const diagramThirds={paint:0,accident:0};
 let accidentSheetIndex=0;
 function showDiagramThird(type,index){
+ cancelCoatingHold();
  diagramThirds[type]=Math.max(0,Math.min(2,index));
  const track=document.getElementById(type==='paint'?'paintViewport':'accidentSection');
  track.dataset.thirdIndex=String(diagramThirds[type]);
@@ -3287,6 +3290,7 @@ function showDiagramThird(type,index){
  });
 }
 function showAccidentSheet(index){
+ cancelCoatingHold();
  accidentSheetIndex=Math.max(0,Math.min(1,index));
  const track=document.getElementById('accidentSection');
  track.querySelectorAll('.acc-slide').forEach((slide,i)=>slide.classList.toggle('active',i===accidentSheetIndex));
@@ -3511,6 +3515,7 @@ function syncCoatingTarget(){
  document.querySelectorAll('.acc-item').forEach(pin=>pin.classList.toggle('coating-target',!!enabled&&pin.dataset.key===coatingTarget));
 }
 function selectCoatingTarget(key){
+ cancelCoatingHold();
  const next=DATA.accidentParts.some(p=>p.key===key)?key:'';
  if(next!==coatingTarget)coatingToken=Date.now()+':'+Math.random().toString(36).slice(2);
  coatingTarget=next;
@@ -3538,12 +3543,69 @@ function coatingLines(){
    summary:stats.count.toLocaleString('ko-KR')+'회 측정',last:stats.peak};
  });
 }
-function clearCoatingTarget(){
- if(!coatingTarget)return;
- delete coatingData[coatingTarget];
- coatingToken=Date.now()+':'+Math.random().toString(36).slice(2);
+function clearCoatingPart(key){
+ if(!DATA.accidentParts.some(part=>part.key===key))return;
+ delete coatingData[key];
+ if(key===coatingTarget)coatingToken=Date.now()+':'+Math.random().toString(36).slice(2);
  saveCoating();renderCoating();updateAll();
+ document.getElementById('coatingConnectionStatus').textContent=coatingName(key)+' · 도막수치 초기화됨';
 }
+function clearCoatingTarget(){if(coatingTarget)clearCoatingPart(coatingTarget)}
+let activeCoatingHold=null,coatingHoldSuppressedPin=null,coatingHoldSuppressUntil=0;
+function cancelCoatingHold(){if(activeCoatingHold)activeCoatingHold.finish()}
+function bindCoatingHold(pin){
+ let hold=null;
+ function finish(){
+  if(!hold)return;
+  clearTimeout(hold.timer);pin.classList.remove('coating-holding');
+  if(hold.fired)coatingHoldSuppressUntil=Date.now()+900;
+  if(activeCoatingHold===hold)activeCoatingHold=null;
+  hold=null;
+ }
+ function start(event){
+  if(event.button!==undefined&&event.button!==0)return;
+  if(event.isPrimary===false)return;
+  const touch=event.touches?event.touches[0]:event;
+  if(event.touches&&event.touches.length!==1){cancelCoatingHold();return}
+  cancelCoatingHold();
+  hold={x:touch.clientX,y:touch.clientY,id:event.pointerId,fired:false,finish};
+  const current=hold;activeCoatingHold=current;pin.classList.add('coating-holding');
+  current.timer=setTimeout(()=>{
+   if(hold!==current||document.hidden||pin.getAttribute('aria-hidden')==='true')return finish();
+   current.fired=true;coatingHoldSuppressedPin=pin;coatingHoldSuppressUntil=Infinity;
+   pin.classList.remove('coating-holding');clearCoatingPart(pin.dataset.key);
+  },2000);
+ }
+ function move(event){
+  if(!hold)return;
+  const touch=event.touches?event.touches[0]:event;
+  if((event.touches&&event.touches.length!==1)||(touch.clientX-hold.x)**2+(touch.clientY-hold.y)**2>100)finish();
+ }
+ if(window.PointerEvent){
+  pin.addEventListener('pointerdown',start);pin.addEventListener('pointermove',move);
+  ['pointerup','pointercancel','pointerleave'].forEach(type=>pin.addEventListener(type,finish));
+ }else{
+  pin.addEventListener('touchstart',start,{passive:true});pin.addEventListener('touchmove',move,{passive:true});
+  ['touchend','touchcancel'].forEach(type=>pin.addEventListener(type,finish));
+  pin.addEventListener('mousedown',start);pin.addEventListener('mousemove',move);
+  ['mouseup','mouseleave'].forEach(type=>pin.addEventListener(type,finish));
+ }
+ pin.addEventListener('contextmenu',event=>{event.preventDefault()});
+}
+function bindCoatingHoldGuard(){
+ const section=document.getElementById('accidentSection');
+ section.addEventListener('pointerdown',event=>{if(event.isPrimary===false)cancelCoatingHold()},{passive:true});
+ section.addEventListener('touchstart',event=>{if(event.touches.length>1)cancelCoatingHold()},{passive:true});
+ section.addEventListener('click',event=>{
+  if(Date.now()<coatingHoldSuppressUntil&&event.target.closest('.acc-item')===coatingHoldSuppressedPin){
+   event.preventDefault();event.stopImmediatePropagation();
+   coatingHoldSuppressedPin=null;coatingHoldSuppressUntil=0;
+  }
+ },true);
+ window.addEventListener('blur',cancelCoatingHold);
+ document.addEventListener('visibilitychange',()=>{if(document.hidden)cancelCoatingHold()});
+}
+
 function renderCoating(){
  const label=document.getElementById('coatingTargetLabel');if(!label)return;
  const stats=coatingData[coatingTarget];
@@ -3589,10 +3651,12 @@ window.onLs236Event=function(event){
  document.getElementById('coatingConnectionStatus').textContent='LS236 연결됨';
 };
 function resetCoating(){
+ cancelCoatingHold();
  coatingData={};coatingTarget='';coatingToken=Date.now()+':'+Math.random().toString(36).slice(2);coatingSeen.clear();
  document.getElementById('coatingMode').checked=false;selectCoatingTarget('');saveCoating();renderCoating();
 }
 function initCoating(){
+ bindCoatingHoldGuard();
  try{coatingData=sanitizeCoating(JSON.parse(localStorage.getItem(COATING_KEY)||'{}'))}catch{coatingData={}}
  coatingToken=Date.now()+':'+Math.random().toString(36).slice(2);
  const select=document.getElementById('coatingPart');
@@ -3865,6 +3929,7 @@ function initCoating(){
         });
 
         bindDiagramPinKeyboard(el);
+        bindCoatingHold(el);
         (parseFloat(top)<46.5?exteriorOverlay:frameOverlay).appendChild(el);
       });
     }
@@ -4356,6 +4421,7 @@ function initCoating(){
     let currentPage = 0;
     const PAGE_COUNT = 6;
     function showPage(page, scrollTop=true){
+      cancelCoatingHold();
       currentPage = Math.max(0, Math.min(PAGE_COUNT-1, Number(page)||0));
       if(currentPage!==2 && document.getElementById('coatingMode')){
         document.getElementById('coatingMode').checked=false;syncCoatingTarget();
