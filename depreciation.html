@@ -2915,6 +2915,12 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 <input class="function-desc" data-key="도어개폐-desc" oninput="saveInput('도어개폐-desc'); updateAll()">
 <input class="function-price" data-key="도어개폐-price" oninput="formatInput(this); saveInput('도어개폐-price'); updateAll()">
 </div>
+<div class="function-item">
+<input aria-label="등화류 선택" data-name="등화류" onchange="updateAll()" title="등화류 선택" type="checkbox"/>
+<div style="font-weight:900;">등화류</div>
+<input aria-label="등화류 내용" class="function-desc" data-key="등화류-desc" oninput="saveInput('등화류-desc'); updateAll()" placeholder="내용" title="등화류 내용" type="text"/>
+<input aria-label="등화류 감가 금액" class="function-price" data-key="등화류-price" oninput="formatInput(this); saveInput('등화류-price'); updateAll()" placeholder="금액(원)" title="등화류 감가 금액" type="text"/>
+</div>
 <div id="exterior-items"></div>
 <button class="btn-soft" onclick="addExtraItem('익스테리어')">+ 항목 추가</button>
 </div>
@@ -3061,12 +3067,7 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 <input aria-label="계기판 내용" class="function-desc" data-key="계기판-desc" oninput="saveInput('계기판-desc'); updateAll()" placeholder="내용" title="계기판 내용" type="text"/>
 <input aria-label="계기판 감가 금액" class="function-price" data-key="계기판-price" oninput="formatInput(this); saveInput('계기판-price'); updateAll()" placeholder="금액(원)" title="계기판 감가 금액" type="text"/>
 </div>
-<div class="function-item">
-<input aria-label="등화류 선택" data-name="등화류" onchange="updateAll()" title="등화류 선택" type="checkbox"/>
-<div style="font-weight:900;">등화류</div>
-<input aria-label="등화류 내용" class="function-desc" data-key="등화류-desc" oninput="saveInput('등화류-desc'); updateAll()" placeholder="내용" title="등화류 내용" type="text"/>
-<input aria-label="등화류 감가 금액" class="function-price" data-key="등화류-price" oninput="formatInput(this); saveInput('등화류-price'); updateAll()" placeholder="금액(원)" title="등화류 감가 금액" type="text"/>
-</div>
+
 <div class="function-item">
 <input aria-label="에어컨히터 선택" data-name="에어컨히터" onchange="updateAll()" title="에어컨히터 선택" type="checkbox"/>
 <div style="font-weight:900;">냉난방류</div>
