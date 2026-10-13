@@ -2909,6 +2909,12 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 <input aria-label="구변여부(기타) 내용" class="function-desc" data-key="구변여부(기타)-desc" oninput="saveInput('구변여부(기타)-desc'); updateAll()" placeholder="내용" title="구변여부(기타) 내용" type="text"/>
 <input aria-label="구변여부(기타) 감가 금액" class="function-price" data-key="구변여부(기타)-price" oninput="formatInput(this); saveInput('구변여부(기타)-price'); updateAll()" placeholder="금액(원)" title="구변여부(기타) 감가 금액" type="text"/>
 </div>
+<div class="function-item">
+<input type="checkbox" data-name="도어개폐" onchange="updateAll()">
+<div style="font-weight:900;">도어·잠금장치</div>
+<input class="function-desc" data-key="도어개폐-desc" oninput="saveInput('도어개폐-desc'); updateAll()">
+<input class="function-price" data-key="도어개폐-price" oninput="formatInput(this); saveInput('도어개폐-price'); updateAll()">
+</div>
 <div id="exterior-items"></div>
 <button class="btn-soft" onclick="addExtraItem('익스테리어')">+ 항목 추가</button>
 </div>
@@ -2938,6 +2944,18 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 <input aria-label="소모품(엔진) 내용" class="function-desc" data-key="소모품(엔진)-desc" oninput="saveInput('소모품(엔진)-desc'); updateAll()" placeholder="내용" title="소모품(엔진) 내용" type="text"/>
 <input aria-label="소모품(엔진) 감가 금액" class="function-price" data-key="소모품(엔진)-price" oninput="formatInput(this); saveInput('소모품(엔진)-price'); updateAll()" placeholder="금액(원)" title="소모품(엔진) 감가 금액" type="text"/>
 </div>
+<div class="function-item">
+<input type="checkbox" data-name="시동상태" onchange="updateAll()">
+<div style="font-weight:900;">시동·재시동</div>
+<input class="function-desc" data-key="시동상태-desc" oninput="saveInput('시동상태-desc'); updateAll()">
+<input class="function-price" data-key="시동상태-price" oninput="formatInput(this); saveInput('시동상태-price'); updateAll()">
+</div>
+<div class="function-item">
+<input type="checkbox" data-name="배기가스상태" onchange="updateAll()">
+<div style="font-weight:900;">배기가스·엔진 소음</div>
+<input class="function-desc" data-key="배기가스상태-desc" oninput="saveInput('배기가스상태-desc'); updateAll()">
+<input class="function-price" data-key="배기가스상태-price" oninput="formatInput(this); saveInput('배기가스상태-price'); updateAll()">
+</div>
 <div id="engine-items"></div>
 <button class="btn-soft" onclick="addExtraItem('엔진')">+ 항목 추가</button>
 </div>
@@ -2954,6 +2972,12 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 <div style="font-weight:900;">소모품</div>
 <input aria-label="소모품(미션) 내용" class="function-desc" data-key="소모품(미션)-desc" oninput="saveInput('소모품(미션)-desc'); updateAll()" placeholder="내용" title="소모품(미션) 내용" type="text"/>
 <input aria-label="소모품(미션) 감가 금액" class="function-price" data-key="소모품(미션)-price" oninput="formatInput(this); saveInput('소모품(미션)-price'); updateAll()" placeholder="금액(원)" title="소모품(미션) 감가 금액" type="text"/>
+</div>
+<div class="function-item">
+<input type="checkbox" data-name="변속레버작동" onchange="updateAll()">
+<div style="font-weight:900;">D/R 체결·변속 레버</div>
+<input class="function-desc" data-key="변속레버작동-desc" oninput="saveInput('변속레버작동-desc'); updateAll()">
+<input class="function-price" data-key="변속레버작동-price" oninput="formatInput(this); saveInput('변속레버작동-price'); updateAll()">
 </div>
 <div id="mission-items"></div>
 <button class="btn-soft" onclick="addExtraItem('미션')">+ 항목 추가</button>
@@ -3001,6 +3025,18 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 <div style="font-weight:900;">소모품</div>
 <input aria-label="소모품(하체) 내용" class="function-desc" data-key="소모품(하체)-desc" oninput="saveInput('소모품(하체)-desc'); updateAll()" placeholder="내용" title="소모품(하체) 내용" type="text"/>
 <input aria-label="소모품(하체) 감가 금액" class="function-price" data-key="소모품(하체)-price" oninput="formatInput(this); saveInput('소모품(하체)-price'); updateAll()" placeholder="금액(원)" title="소모품(하체) 감가 금액" type="text"/>
+</div>
+<div class="function-item">
+<input type="checkbox" data-name="타이어상태" onchange="updateAll()">
+<div style="font-weight:900;">타이어</div>
+<input class="function-desc" data-key="타이어상태-desc" oninput="saveInput('타이어상태-desc'); updateAll()">
+<input class="function-price" data-key="타이어상태-price" oninput="formatInput(this); saveInput('타이어상태-price'); updateAll()">
+</div>
+<div class="function-item">
+<input type="checkbox" data-name="하부부식손상" onchange="updateAll()">
+<div style="font-weight:900;">하부 부식·손상</div>
+<input class="function-desc" data-key="하부부식손상-desc" oninput="saveInput('하부부식손상-desc'); updateAll()">
+<input class="function-price" data-key="하부부식손상-price" oninput="formatInput(this); saveInput('하부부식손상-price'); updateAll()">
 </div>
 <div id="under-items"></div>
 <button class="btn-soft" onclick="addExtraItem('하체')">+ 항목 추가</button>
@@ -3072,6 +3108,24 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 <div style="font-weight:900;">트렁크상태</div>
 <input aria-label="트렁크상태 내용" class="function-desc" data-key="트렁크상태-desc" oninput="saveInput('트렁크상태-desc'); updateAll()" placeholder="내용" title="트렁크상태 내용" type="text"/>
 <input aria-label="트렁크상태 감가 금액" class="function-price" data-key="트렁크상태-price" oninput="formatInput(this); saveInput('트렁크상태-price'); updateAll()" placeholder="금액(원)" title="트렁크상태 감가 금액" type="text"/>
+</div>
+<div class="function-item">
+<input type="checkbox" data-name="스마트키" onchange="updateAll()">
+<div style="font-weight:900;">스마트키·보조키</div>
+<input class="function-desc" data-key="스마트키-desc" oninput="saveInput('스마트키-desc'); updateAll()">
+<input class="function-price" data-key="스마트키-price" oninput="formatInput(this); saveInput('스마트키-price'); updateAll()">
+</div>
+<div class="function-item">
+<input type="checkbox" data-name="주차보조장치" onchange="updateAll()">
+<div style="font-weight:900;">후방카메라·주차센서</div>
+<input class="function-desc" data-key="주차보조장치-desc" oninput="saveInput('주차보조장치-desc'); updateAll()">
+<input class="function-price" data-key="주차보조장치-price" oninput="formatInput(this); saveInput('주차보조장치-price'); updateAll()">
+</div>
+<div class="function-item">
+<input type="checkbox" data-name="선루프작동" onchange="updateAll()">
+<div style="font-weight:900;">선루프</div>
+<input class="function-desc" data-key="선루프작동-desc" oninput="saveInput('선루프작동-desc'); updateAll()">
+<input class="function-price" data-key="선루프작동-price" oninput="formatInput(this); saveInput('선루프작동-price'); updateAll()">
 </div>
 <div id="interior-items"></div>
 <button class="btn-soft" onclick="addExtraItem('인테리어')">+ 항목 추가</button>
@@ -3350,35 +3404,44 @@ const DETAIL_GROUPS=[
  {id:'under-items',title:'하체',icon:'',hint:'확인할 수 없는 부위는 확인불가로 남겨 재점검하세요.'}
 ];
 const DETAIL_PROMPTS={
+"도어개폐":["도어·잠금장치","문 개폐 · 손잡이 · 도어 잠금"],
+"스마트키":["스마트키·보조키","키 개수 · 리모컨 · 스마트키 인식"],
+"주차보조장치":["후방카메라·주차센서","화면 · 센서 경고 · 장착 옵션 작동"],
+"선루프작동":["선루프","장착 차량만 확인 · 개폐 · 소음 · 누수 흔적"],
+"시동상태":["시동·재시동","시동 지연 · 냉간 시동 확인 여부 · 재시동"],
+"배기가스상태":["배기가스·엔진 소음","시동 후 연기 · 지속되는 이상 소음"],
+"변속레버작동":["D/R 체결·변속 레버","브레이크 밟고 D/R 전환 · 체결 지연·충격"],
+"타이어상태":["타이어","마모 · 편마모 · 균열 · 제조 시기"],
+"하부부식손상":["하부 부식·손상","보이는 범위 확인 · 리프트 필요 시 확인불가"],
  '라이트크랙':['헤드라이트','균열 · 파손 · 습기'],
  '안개등크랙':['안개등','균열 · 파손 · 점등'],
  '데루등크랙':['테일램프','균열 · 파손 · 점등'],
- '자동차검사(기타)':['자동차검사','검사 유효기간 · 검사 이력'],
- '구변여부(기타)':['구조변경','변경 내용 · 등록 여부'],
+ '자동차검사(기타)':["검사 유효기간","검사 만료일 · 검사 결과지 확인"],
+ '구변여부(기타)':["튜닝·구조변경","튜닝 부품 · 구조변경 등록 내용 대조"],
  '공회전상태':['공회전 상태','진동 · 소음 · 회전수'],
  '오일누유':['엔진 오일 누유','엔진 주변 · 바닥 흔적'],
  '냉각수누수':['냉각수 누수','수위 · 누수 흔적'],
- '소모품(엔진)':['엔진 소모품','벨트 · 필터 · 교체 필요'],
+ '소모품(엔진)':["벨트·배터리·소모품","보이는 벨트 손상 · 배터리 상태 · 정비 이력"],
  '오일누유(미션)':['미션 오일 누유','미션 주변 · 누유 흔적'],
- '소모품(미션)':['미션 상태·소모품','변속 충격 · 작동 · 교체 필요'],
+ '소모품(미션)':["주행 중 변속 상태","시운전 시 변속 충격 · 지연 · 미끄러짐"],
  '쇼버':['쇼크업소버','누유 · 충격 · 소음'],
  '서스펜션':['서스펜션','암 · 링크 · 유격'],
  '등속조인트':['등속조인트','부트 손상 · 누유 · 소음'],
  '웜기어':['조향 장치','유격 · 작동 소음'],
- '디스크':['브레이크','디스크 · 패드 · 마모'],
+ '디스크':["브레이크·주차브레이크","마모 · 제동 시 소음·떨림 · 주차브레이크 작동"],
  '머플러':['머플러','부식 · 손상 · 소음'],
- '소모품(하체)':['하체 소모품','마모 · 교체 필요'],
- '시트':['시트 상태','찢김 · 오염 · 작동'],
+ '소모품(하체)':["하체 정비 이력","부싱 등 교환 이력 · 추가 점검 필요 부위"],
+ '시트':["시트·전동 기능","찢김 · 꺼짐 · 전동 조절 · 열선·통풍"],
  '실내컨디션':['실내 상태','오염 · 냄새 · 내장재'],
- '계기판':['계기판','경고등 · 표시 상태'],
+ '계기판':["계기판·경고등","시동 후 경고등 · 주행거리 표시"],
  '등화류':['등화류','전조등 · 방향지시등 · 제동등'],
- '에어컨히터':['냉난방','냉방 · 난방 · 풍량'],
- '오디오':['오디오','음향 · 화면 · 연결'],
+ '에어컨히터':["에어컨·히터","냉방 · 난방 · 풍량 · 냄새"],
+ '오디오':["오디오·내비게이션","화면 · 터치 · 음향 · 연결"],
  '미러창문':['미러·창문','접힘 · 조절 · 창문 작동'],
- '버튼류':['버튼 작동','각 버튼 · 편의 기능'],
+ '버튼류':["실내 버튼·편의 기능","와이퍼 · 경적 · 실내등 · 옵션 버튼"],
  '썬팅':['썬팅 상태','들뜸 · 변색 · 시야'],
  '유리크랙':['유리 상태','금 · 찍힘 · 파손'],
- '트렁크상태':['트렁크','개폐 · 내부 · 누수 흔적']
+ '트렁크상태':["트렁크·적재함","개폐 · 바닥 습기 · 스페어타이어·공구"]
 };
 function detailCards(){return Array.from(document.querySelectorAll('[data-page-panel="3"] .function-item'))}
 function detailStatus(card){return card.querySelector('input[type="checkbox"]').checked?'issue':(card.dataset.reviewState||'pending')}
@@ -4210,7 +4273,7 @@ function initCoating(){
         const checkbox = item.querySelector('input[type="checkbox"]');
         if(!checkbox) return;
 
-        const name = checkbox.dataset.name;
+        const name = DETAIL_PROMPTS[checkbox.dataset.name]?.[0] || checkbox.dataset.name;
         const priceInput = item.querySelector('.function-price');
         const descInput  = item.querySelector('.function-desc');
 
