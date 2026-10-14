@@ -2662,6 +2662,7 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 .broker-top-savebar{position:sticky;top:8px;z-index:90;max-width:760px;margin:12px auto;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border:1px solid #dce5f3;border-radius:12px;background:#fff;box-shadow:0 4px 16px #101b3010}.broker-top-savebar strong{display:block;font-size:13px;color:#243e64}.broker-top-savebar span{display:block;font-size:11px;color:#77869c}.broker-top-savebar button{padding:10px 18px;border:0;border-radius:8px;background:#295fe8;color:#fff;font:inherit;font-weight:700;font-size:13px}.page-tabs{top:86px}.broker-leave-dialog{width:min(430px,calc(100% - 28px));border:1px solid #dce4f1;border-radius:17px;background:#fff;color:#1b2b42;padding:24px}.broker-leave-dialog::backdrop{background:#101b3090}.broker-leave-dialog h2{font-size:19px;margin-top:0}.broker-leave-dialog p{font-size:14px;line-height:1.7}.broker-leave-dialog>div{display:flex;flex-direction:column;gap:9px}.broker-leave-dialog button{padding:12px;border:1px solid #dce4ef;border-radius:9px;background:#f5f7fb;color:#314965;font:inherit;font-size:13px}.broker-leave-dialog #brokerLeaveSave{background:#295fe8;color:#fff;border-color:#295fe8}body.dark-mode .broker-top-savebar{background:#18283f;border-color:#365174}body.dark-mode .broker-top-savebar strong{color:#dce8fa}@media print{.broker-top-savebar,.broker-leave-dialog{display:none!important}}
 #brokerTireFields[hidden],#brokerPartStatus[hidden],#brokerPartStatusLabel[hidden]{display:none!important}#brokerTireYear{width:100%;padding:12px;border:1px solid #dce4f1;border-radius:9px;background:#f5f7fc;color:#17243a;margin:7px 0}#brokerTireFields small{display:block;color:#6d7c90;font-size:12px;margin-bottom:16px}
 .report-accident-diagram{position:relative;width:100%;max-width:640px;margin:0 auto;background:#fff;line-height:0}.report-accident-diagram>img{display:block;width:100%;height:auto}.report-accident-pin{position:absolute;transform:translate(-50%,-50%);width:clamp(16px,4vw,28px);height:clamp(16px,4vw,28px);display:grid;place-items:center;line-height:1;border-radius:50%;font-size:clamp(10px,2.5vw,15px);font-weight:900;border:2px solid;background:#fff9}.report-accident-pin.exchange{color:#d32128;border-color:#d32128;background:#ffe6e699}.report-accident-pin.repair{color:#1558c0;border-color:#1558c0;background:#e4eeff99}.report-accident-legend{font-size:12px;color:#63748b;margin-top:12px;line-height:1.6}
+.glass-pin-label{position:absolute;bottom:calc(100% + 5px);left:50%;transform:translateX(-50%);font-size:14px;font-weight:800;line-height:1.2;white-space:nowrap;color:#17243a;pointer-events:none;text-shadow:0 1px 2px #fff,0 -1px 2px #fff,1px 0 2px #fff,-1px 0 2px #fff}
 </style>
 </head>
 <body>
@@ -3201,6 +3202,7 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
       partNames: [
         { key:"front_bumper", name:"앞범퍼", top:"10%", left:"50%" },
         { key:"hood", name:"후드", top:"22%", left:"50%" },
+        { key:"front_glass", name:"앞유리", top:"40%", left:"50%" },
         { key:"f_fender_l", name:"휀다(좌)", top:"25%", left:"20%" },
         { key:"f_fender_r", name:"휀다(우)", top:"25%", left:"80%" },
         { key:"mirror_l", name:"사이드미러(좌)", top:"35%", left:"37%" },
@@ -3212,6 +3214,7 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
         { key:"r_fender_l", name:"휀다(좌)", top:"85%", left:"19%" },
         { key:"r_fender_r", name:"휀다(우)", top:"85%", left:"81%" },
         { key:"roof", name:"루프", top:"58%", left:"50%" },
+        { key:"rear_glass", name:"뒷유리", top:"78%", left:"50%" },
         { key:"trunk", name:"트렁크", top:"86%", left:"50%" },
         { key:"rear_bumper", name:"뒷범퍼", top:"96%", left:"50%" },
         { key:"side_sill_l", name:"사이드실(좌)", top:"55%", left:"8%" },
@@ -3896,6 +3899,7 @@ function initCoating(){
         el.dataset.name=name;
         el.setAttribute('role','button');
         el.setAttribute('aria-label', `외관: ${name}`);
+        if(key==='front_glass'||key==='rear_glass'){const label=document.createElement('span');label.className='glass-pin-label';label.textContent=name;el.appendChild(label);}
         el.setAttribute('aria-pressed','false');
 
         el.addEventListener('click',()=>openBrokerExterior(key));
@@ -5655,6 +5659,7 @@ function brokerPartName(key){
  return part.name;
 }
 function brokerExteriorChoices(key){
+ if(key==='front_glass'||key==='rear_glass')return [['normal','양호'],['stonechip','스톤칩 있음'],['broken','깨짐 있음']];
  if(key.startsWith('wheel_'))return [['issue','휠스크래치 있음'],['normal','양호']];
  if(key.startsWith('mirror_'))return [['normal','양호'],['broken','파손 있음'],['scratch','스크래치 있음']];
  return [['normal','양호'],['scratch','스크래치 있음'],['dent','문콕 있음']];
