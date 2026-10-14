@@ -5656,12 +5656,16 @@ function openBrokerExterior(key){
  brokerEditingPart=key;brokerCurrentPhotoTarget=key;
  const note=brokerExteriorNotes[key]||{state:'pending',memo:''};
  document.getElementById('brokerPartTitle').textContent=brokerPartName(key);
- document.getElementById('brokerPartStatus').value=note.state;
+ const select=document.getElementById('brokerPartStatus');select.replaceChildren();
+ const choices=key.startsWith('wheel_')?[['issue','휠스크래치 있음'],['normal','양호']]:[['pending','미확인'],['normal','정상'],['issue','이상 있음'],['unavailable','확인불가']];
+ choices.forEach(([value,label])=>{const option=document.createElement('option');option.value=value;option.textContent=label;select.appendChild(option)});
+ if(choices.some(([value])=>value===note.state))select.value=note.state;else select.selectedIndex=-1;
  document.getElementById('brokerPartMemo').value=note.memo||'';
  renderBrokerPartPhotos();document.getElementById('brokerPartDialog').showModal();
 }
 function saveBrokerExterior(){
  if(!brokerEditingPart)return;
+ if(brokerEditingPart.startsWith('wheel_')&&!['issue','normal'].includes(document.getElementById('brokerPartStatus').value)){alert('휠 상태를 선택해주세요.');return}
  brokerExteriorNotes[brokerEditingPart]={state:document.getElementById('brokerPartStatus').value,memo:document.getElementById('brokerPartMemo').value.trim()};
  brokerStorage.setItem('exteriorNotes',JSON.stringify(brokerExteriorNotes));
  const pin=[...document.querySelectorAll('.part-item')].find(p=>p.dataset.key===brokerEditingPart);
@@ -5678,7 +5682,7 @@ function renderBrokerPartPhotos(){
 }
 function brokerReportSections(){
  const fields=BROKER_FIELDS.filter(([id])=>id!=='brokerOptions'||document.getElementById(id)?.value.trim()).map(([id,label])=>({label,value:document.getElementById(id)?.value.trim()||'미입력'}));
- const exterior=DATA.partNames.map(p=>{const n=brokerExteriorNotes[p.key]||{state:'pending',memo:''};return {key:p.key,title:brokerPartName(p.key),state:BROKER_STATE[n.state]?n.state:'pending',memo:n.memo||''}});
+ const exterior=DATA.partNames.map(p=>{const n=brokerExteriorNotes[p.key]||{state:'pending',memo:''};return {key:p.key,title:brokerPartName(p.key),state:BROKER_STATE[n.state]?n.state:'pending',stateLabel:p.key.startsWith('wheel_')?(n.state==='issue'?'휠스크래치 있음':n.state==='normal'?'양호':BROKER_STATE[n.state]||'미확인'):BROKER_STATE[n.state]||'미확인',memo:n.memo||''}});
  const detail=detailCards().map(card=>{const cb=card.querySelector('input[type=checkbox]');return {key:'detail:'+cb.dataset.name,title:DETAIL_PROMPTS[cb.dataset.name]?.[0]||cb.dataset.name,state:detailStatus(card),memo:card.querySelector('.function-desc')?.value.trim()||''}});
  const accidents=[...document.querySelectorAll('.acc-item')].filter(p=>p.dataset.state).map(p=>({title:coatingName(p.dataset.key),value:({exchange:'교환 X',repair:'판금 W','disclosed-exchange':'고지된 교환 XX','disclosed-repair':'고지된 판금 WW'})[p.dataset.state]||'기록 있음'}));
  return {fields,exterior,detail,accidents,note:document.getElementById('brokerNote')?.value.trim()||'',photos:currentInspectionPhotos};
@@ -5690,7 +5694,7 @@ function renderBrokerReport(){
  const row=r=>{
   const photos=data.photos.filter(photo=>photo.partKey===r.key);
   const attached=photos.length?`<div class="buyer-inline-photos">${photos.map(p=>`<img src="${e(p.dataUrl||p.url||'')}" alt="${e(r.title)} 확인 사진" data-broker-photo="${data.photos.indexOf(p)}" role="button" tabindex="0">`).join('')}</div>`:'';
-  return `<div class="buyer-report-row"><span class="buyer-status ${e(r.state)}">${BROKER_STATE[r.state]||'미확인'}</span><strong>${e(r.title)}</strong>${r.memo?`<small>${e(r.memo)}</small>`:''}${attached}</div>`;
+  return `<div class="buyer-report-row"><span class="buyer-status ${e(r.state)}">${r.stateLabel||BROKER_STATE[r.state]||'미확인'}</span><strong>${e(r.title)}</strong>${r.memo?`<small>${e(r.memo)}</small>`:''}${attached}</div>`;
  };
  const section=(title,html)=>`<section class="buyer-report-section"><h3>${title}</h3>${html}</section>`;
  const counts=data.detail.reduce((a,r)=>(a[r.state]=(a[r.state]||0)+1,a),{});
@@ -5714,7 +5718,7 @@ captureInspectionResult=async function(){
   function page(){canvas=document.createElement('canvas');canvas.width=W;canvas.height=H;ctx=canvas.getContext('2d');ctx.fillStyle='#f4f6fa';ctx.fillRect(0,0,W,H);ctx.fillStyle='#101b30';ctx.fillRect(0,0,W,135);ctx.fillStyle='#fff';ctx.font='bold 38px sans-serif';ctx.fillText('딜러메이트 · 알선검차 리포트',P,65);ctx.font='24px sans-serif';ctx.fillStyle='#b9cbe5';ctx.fillText(data.fields[0].value+' · '+data.fields[1].value,P,108);y=182;pages.push(canvas)}
   function text(value,color='#34445d',bold=false){const chars=Array.from(String(value)),lines=[];let line='';ctx.font=(bold?'bold ':'')+'27px sans-serif';for(const c of chars){if(c==='\n'||(line&&ctx.measureText(line+c).width>W-P*2-30)){lines.push(line);line=c==='\n'?'':c}else line+=c}if(line)lines.push(line);for(const l of lines){if(y>H-100)page();ctx.font=(bold?'bold ':'')+'27px sans-serif';ctx.fillStyle=color;ctx.fillText(l,P+15,y);y+=42}}
   function title(label){if(y>H-180)page();y+=20;ctx.fillStyle='#e5edfb';ctx.fillRect(P,y-28,W-P*2,57);text(label,'#295fe8',true);y+=22}
-  page();title('01 차량 기본정보');data.fields.forEach(f=>text(f.label+': '+f.value));title('02 외관 상태');data.exterior.forEach(r=>{text('['+BROKER_STATE[r.state]+'] '+r.title,r.state==='issue'?'#b12f2f':'#34445d');if(r.memo)text('  '+r.memo)});
+  page();title('01 차량 기본정보');data.fields.forEach(f=>text(f.label+': '+f.value));title('02 외관 상태');data.exterior.forEach(r=>{text('['+(r.stateLabel||BROKER_STATE[r.state])+'] '+r.title,r.state==='issue'?'#b12f2f':'#34445d');if(r.memo)text('  '+r.memo)});
   title('03 교환·판금 확인');if(data.accidents.length)data.accidents.forEach(r=>text(r.title+' · '+r.value));else text('기록한 부위 없음 · 미선택 부위는 무사고 확정이 아닙니다.');
   title('04 세부상태');data.detail.forEach(r=>{text('['+BROKER_STATE[r.state]+'] '+r.title,r.state==='issue'?'#b12f2f':'#34445d');if(r.memo)text('  '+r.memo)});title('05 종합 의견');text(data.note||'별도 의견 없음');
   if(data.photos.length){page();title('06 확인 사진');for(let i=0;i<data.photos.length;i++){const photo=data.photos[i];let src=photo.dataUrl;if(!src){const blob=await fetchPhotoBlobFromUrl(photo.url||await createPhotoSignedUrl(photo.path));src=await blobToDataUrl(blob)}const img=await new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>resolve(im);im.onerror=()=>reject(new Error((i+1)+'번 사진을 불러오지 못했습니다.'));im.src=src});if(y+525>H-100){page();title('06 확인 사진 · 계속')}text((i+1)+'. '+brokerPartName(photo.partKey),'#295fe8',true);const scale=Math.min((W-P*2)/img.width,430/img.height),width=img.width*scale,height=img.height*scale;ctx.fillStyle='#fff';ctx.fillRect(P,y-12,W-P*2,445);ctx.drawImage(img,(W-width)/2,y,width,height);y+=475}}
