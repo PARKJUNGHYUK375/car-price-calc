@@ -5727,12 +5727,12 @@ function brokerReportSections(){
 
 function brokerCoatingDescription(value){
  if(typeof value!=='number'||!Number.isFinite(value))return '수치 없음';
- if(value>=80&&value<=130)return '정상';
- if(value>=140&&value<=300)return '단순도장';
- if(value>=400)return '판금도장';
+ if(value>=400)return '판금도장 가능성 있음';
+ if(value>=80&&value<=150)return '정상 예상';
+ if(value>=151&&value<400)return '단순도색 예상';
  return '추가 확인';
 }
-function brokerCoatingGuide(){return '<div class="report-coating-guide"><strong>도막수치 참고 기준</strong><p>80~130 μm 정상 · 140~300 μm 단순도장 · 400 μm 이상 판금도장</p><small>범위 외 수치는 추가 확인으로 표시합니다. 부위별 최고 측정값입니다.</small></div>'}
+function brokerCoatingGuide(){return '<div class="report-coating-guide"><strong>도막수치 참고 기준</strong><p>80~150 μm 정상 예상 · 151~400 μm 단순도색 예상 · 400 μm 이상 판금도장 가능성 있음</p><small>400 μm는 판금도장 가능성으로 표시합니다. 범위 외 수치는 추가 확인입니다. 부위별 최고 측정값입니다.</small></div>'}
 function brokerAccidentDiagram(items){
  const e=escapeHtml;
  return '<div class="report-accident-diagram"><img src="https://i.imgur.com/agbd7Z8.png" alt="차량 외판과 골격 전체 도면">'+items.map(p=>{
@@ -5787,7 +5787,7 @@ captureInspectionResult=async function(){
   const diagramHeight=Math.min(1200,H-y-160),diagramWidth=diagramHeight*diagramImage.width/diagramImage.height,diagramX=(W-diagramWidth)/2,diagramY=y;
   ctx.drawImage(diagramImage,diagramX,diagramY,diagramWidth,diagramHeight);
   data.accidents.forEach(p=>{const top=parseFloat(p.top),left=parseFloat(p.left);if(!Number.isFinite(top)||!Number.isFinite(left))return;const x=diagramX+diagramWidth*left/100,py=diagramY+diagramHeight*top/100;ctx.fillStyle=p.mark.includes('X')?'#ffeded':'#e5efff';ctx.strokeStyle=p.mark.includes('X')?'#c82028':'#1558c0';ctx.lineWidth=2;ctx.textAlign='center';ctx.textBaseline='middle';if(p.mark){ctx.beginPath();ctx.arc(x,py,15,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.fillStyle=ctx.strokeStyle;ctx.font='bold 17px sans-serif';ctx.fillText(p.mark,x,py)}if(typeof p.measurement?.value==='number'){ctx.fillStyle=p.measurement.value>=400?'#c82028':'#1558c0';ctx.font='bold 18px sans-serif';ctx.fillText(p.measurement.value+' μm',x,py+27)}});
-  ctx.textAlign='left';ctx.textBaseline='alphabetic';y=diagramY+diagramHeight+35;text('X 교환 · W 판금');text('미표시 부위는 무사고 확정이 아닙니다.','#6c7a8f');text('도막: 80~130 μm 정상 / 140~300 μm 단순도장 / 400 μm 이상 판금도장');data.accidents.filter(p=>p.measurement).forEach(p=>text(p.title+': '+(typeof p.measurement.value==='number'?p.measurement.value+' μm · '+brokerCoatingDescription(p.measurement.value):'수치 없음')));
+  ctx.textAlign='left';ctx.textBaseline='alphabetic';y=diagramY+diagramHeight+35;text('X 교환 · W 판금');text('미표시 부위는 무사고 확정이 아닙니다.','#6c7a8f');text('도막: 80~150 μm 정상 예상 / 151~400 μm 단순도색 예상 / 400 μm 이상 판금도장 가능성 있음');data.accidents.filter(p=>p.measurement).forEach(p=>text(p.title+': '+(typeof p.measurement.value==='number'?p.measurement.value+' μm · '+brokerCoatingDescription(p.measurement.value):'수치 없음')));
   title('04 세부상태');data.detail.forEach(r=>{text('['+BROKER_STATE[r.state]+'] '+r.title,r.state==='issue'?'#b12f2f':'#34445d');if(r.memo)text('  '+r.memo)});title('05 종합 의견');text(data.note||'별도 의견 없음');
   if(data.photos.length){page();title('06 확인 사진');for(let i=0;i<data.photos.length;i++){const photo=data.photos[i];let src=photo.dataUrl;if(!src){const blob=await fetchPhotoBlobFromUrl(photo.url||await createPhotoSignedUrl(photo.path));src=await blobToDataUrl(blob)}const img=await new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>resolve(im);im.onerror=()=>reject(new Error((i+1)+'번 사진을 불러오지 못했습니다.'));im.src=src});if(y+525>H-100){page();title('06 확인 사진 · 계속')}text((i+1)+'. '+brokerPartName(photo.partKey),'#295fe8',true);const scale=Math.min((W-P*2)/img.width,430/img.height),width=img.width*scale,height=img.height*scale;ctx.fillStyle='#fff';ctx.fillRect(P,y-12,W-P*2,445);ctx.drawImage(img,(W-width)/2,y,width,height);y+=475}}
   text('미확인·확인불가 항목은 추가 확인이 필요합니다.','#6c7a8f');
