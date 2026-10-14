@@ -9,7 +9,7 @@
 
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
-<title>현장검차 · 딜러메이트</title>
+<title>매입검차 · 딜러메이트</title>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
 <style>
     :root{
@@ -2684,7 +2684,7 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 
 <div class="app-header">
 <div class="app-title">
-<div class="inspection-brand"><img src="assets/dealer-mate-logo.webp" alt="딜러메이트"><div><span class="inspection-eyebrow">DEALER MATE · INSPECTION</span><h1>현장검차</h1><p>차량 상태부터 감가 결과까지, 한곳에서.</p></div></div>
+<div class="inspection-brand"><img src="assets/dealer-mate-logo.webp" alt="딜러메이트"><div><span class="inspection-eyebrow">DEALER MATE · INSPECTION</span><h1>매입검차</h1><p>차량 상태부터 감가 결과까지, 한곳에서.</p></div></div>
 
 <div class="header-actions">
 <a href="index.html" class="theme-toggle" aria-label="첫화면으로" title="첫화면으로" style="text-decoration:none;display:grid;place-items:center"><i class="fa-solid fa-house"></i></a>
@@ -5589,7 +5589,7 @@ async function captureInspectionResult(){
     canvas.width=W;canvas.height=156+cards.reduce((h,card)=>h+card.height+26,0)+72;
     ctx.fillStyle='#f4f6fa';ctx.fillRect(0,0,W,canvas.height);
     ctx.fillStyle='#101b30';ctx.fillRect(0,0,W,124);
-    ctx.fillStyle='#fff';ctx.font='bold 40px sans-serif';ctx.fillText('딜러메이트 · 현장검차',PAD,61);
+    ctx.fillStyle='#fff';ctx.font='bold 40px sans-serif';ctx.fillText('딜러메이트 · 매입검차',PAD,61);
     ctx.fillStyle='#a9bad5';ctx.font='24px sans-serif';ctx.fillText('차량 검차결과',PAD,100);
     ctx.textAlign='right';ctx.font='22px sans-serif';ctx.fillText(new Date().toLocaleString('ko-KR'),W-PAD,98);ctx.textAlign='left';
     let y=156;
