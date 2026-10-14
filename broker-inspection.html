@@ -2659,6 +2659,7 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 .buyer-report-grid>div{white-space:pre-wrap}
 .buyer-inline-photos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}.buyer-inline-photos img{display:block;width:100%;max-height:260px;object-fit:contain;border-radius:8px;background:#f2f5fa}
 .photo-fullscreen{width:100vw;height:100dvh;max-width:none;max-height:none;margin:0;padding:0;border:0;border-radius:0;background:#091321;color:white}.photo-fullscreen::backdrop{background:#091321}.photo-fullscreen header{height:64px;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:#142237}.photo-fullscreen header span{font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.photo-fullscreen header div{display:flex;gap:7px;flex-shrink:0}.photo-fullscreen button{float:none;margin:0;padding:7px 11px;background:#243b58;border:1px solid #48617f;border-radius:7px;color:white;font:inherit;font-size:12px}.photo-fullscreen .photo-surface{height:calc(100dvh - 64px);overflow:auto}.photo-fullscreen .photo-surface img{display:block;width:100%;height:100%;max-width:none;max-height:none;padding:12px;object-fit:contain;cursor:zoom-in}.photo-fullscreen.zoomed .photo-surface img{width:200%;height:auto;object-fit:initial;cursor:zoom-out}[data-broker-photo]{cursor:zoom-in}@media print{.photo-fullscreen{display:none!important}}
+.broker-top-savebar{position:sticky;top:8px;z-index:90;max-width:760px;margin:12px auto;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border:1px solid #dce5f3;border-radius:12px;background:#fff;box-shadow:0 4px 16px #101b3010}.broker-top-savebar strong{display:block;font-size:13px;color:#243e64}.broker-top-savebar span{display:block;font-size:11px;color:#77869c}.broker-top-savebar button{padding:10px 18px;border:0;border-radius:8px;background:#295fe8;color:#fff;font:inherit;font-weight:700;font-size:13px}.page-tabs{top:86px}.broker-leave-dialog{width:min(430px,calc(100% - 28px));border:1px solid #dce4f1;border-radius:17px;background:#fff;color:#1b2b42;padding:24px}.broker-leave-dialog::backdrop{background:#101b3090}.broker-leave-dialog h2{font-size:19px;margin-top:0}.broker-leave-dialog p{font-size:14px;line-height:1.7}.broker-leave-dialog>div{display:flex;flex-direction:column;gap:9px}.broker-leave-dialog button{padding:12px;border:1px solid #dce4ef;border-radius:9px;background:#f5f7fb;color:#314965;font:inherit;font-size:13px}.broker-leave-dialog #brokerLeaveSave{background:#295fe8;color:#fff;border-color:#295fe8}body.dark-mode .broker-top-savebar{background:#18283f;border-color:#365174}body.dark-mode .broker-top-savebar strong{color:#dce8fa}@media print{.broker-top-savebar,.broker-leave-dialog{display:none!important}}
 </style>
 </head>
 <body>
@@ -2716,6 +2717,7 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 </div>
 </div>
 </div>
+<div class="broker-top-savebar"><div><strong>알선검차 저장</strong><span id="brokerTopSaveStatus" role="status" aria-live="polite"></span></div><button id="brokerTopSave" type="button" onclick="saveInspectionRecord()">검차 저장</button></div>
 <div aria-label="검차 페이지" class="page-tabs">
 <button class="page-tab active" data-page="0" onclick="showPage(0)">기본정보</button>
 <button class="page-tab" data-page="1" onclick="showPage(1)">외관</button>
@@ -3420,7 +3422,7 @@ function decorateDetailItem(card,saved={}){
 function setDetailStatus(card,state){
  card.dataset.reviewState=state;
  card.querySelector('input[type="checkbox"]').checked=state==='issue';
- updateAll();refreshDetailChecklist();
+ updateAll();refreshDetailChecklist();if(typeof brokerGuardReady!=='undefined'&&brokerGuardReady)updateBrokerSaveIndicator();
 }
 function setDetailGroup(index){
  detailGroupIndex=Math.max(0,Math.min(DETAIL_GROUPS.length-1,index));detailBatch=0;detailFilter='all';refreshDetailChecklist();
@@ -5134,6 +5136,7 @@ function choosePhotoSource(source){
    PHOTO HANDLING
 ========================================================= */
 function renderInspectionPhotos(){
+  if(typeof brokerGuardReady!=='undefined'&&brokerGuardReady)updateBrokerSaveIndicator();
   if(typeof renderBrokerReport==='function' && typeof detailReady!=='undefined' && detailReady)renderBrokerReport();
   const previews=[
     document.getElementById('photoPreview'),
@@ -5334,6 +5337,7 @@ async function loadActiveInspectionRecord(){
     const loadedPhotos=await hydratePhotoMetadata(record?.photos||[]);
     if(currentInspectionPhotos.some(photo=>photo.dataUrl&&!photo.path))return;
     currentInspectionPhotos=loadedPhotos;
+    markBrokerSavedRecord(record);
     renderInspectionPhotos();
     await refreshBrokerShare();
 
@@ -5628,7 +5632,8 @@ window.addEventListener('storage',event=>{if(event.key==='calculatorTheme'||even
     updateAll();
       const savedPage = parseInt(brokerStorage.getItem('currentPage') || '0', 10);
       showPage(Number.isFinite(savedPage) ? savedPage : 0, false);
-      loadActiveInspectionRecord();
+      await loadActiveInspectionRecord();
+      initializeBrokerSaveGuard();
       renderSavedRecords();
     });
 
@@ -5661,7 +5666,7 @@ function saveBrokerExterior(){
  brokerStorage.setItem('exteriorNotes',JSON.stringify(brokerExteriorNotes));
  const pin=[...document.querySelectorAll('.part-item')].find(p=>p.dataset.key===brokerEditingPart);
  if(pin){pin.classList.toggle('selected',brokerExteriorNotes[brokerEditingPart].state==='issue');pin.setAttribute('aria-pressed',String(brokerExteriorNotes[brokerEditingPart].state==='issue'));}
- saveCheckboxState();updateAll();document.getElementById('brokerPartDialog').close();
+ saveCheckboxState();updateAll();if(brokerGuardReady)updateBrokerSaveIndicator();document.getElementById('brokerPartDialog').close();
 }
 function chooseBrokerPartPhoto(source){brokerCurrentPhotoTarget=brokerEditingPart;choosePhotoSource(source)}
 function openBrokerDetailPhoto(key){openPhotoSourceSheet();brokerCurrentPhotoTarget='detail:'+key}
@@ -5698,7 +5703,7 @@ function renderBrokerReport(){
  section('05 종합 의견',`<div style="white-space:pre-wrap">${e(data.note||'별도 의견 없음')}</div>`)+
  section('06 확인 사진',data.photos.length?`<div class="buyer-report-photos">${data.photos.map((p,i)=>`<figure><img src="${e(p.dataUrl||p.url||'')}" alt="${e(brokerPartName(p.partKey))}" data-broker-photo="${i}" role="button" tabindex="0"><figcaption>${i+1}. ${e(brokerPartName(p.partKey))}</figcaption></figure>`).join('')}</div>`:'<p>첨부된 사진이 없습니다.</p>')+
  '<footer class="buyer-report-foot">검차 시점에 확인한 내용을 기록한 리포트입니다. 미확인·확인불가 항목은 추가 확인이 필요합니다.</footer></article>';
- renderBrokerPartPhotos();
+ renderBrokerPartPhotos();if(typeof brokerGuardReady!=='undefined'&&brokerGuardReady)updateBrokerSaveIndicator();
 }
 /* Export images in readable pages instead of an excessively tall screenshot. */
 captureInspectionResult=async function(){
@@ -5799,6 +5804,54 @@ async function openBrokerPhoto(index){
 }
 document.addEventListener('click',event=>{const img=event.target.closest('[data-broker-photo]');if(img)openBrokerPhoto(Number(img.dataset.brokerPhoto))});
 document.addEventListener('keydown',event=>{const img=event.target.closest('[data-broker-photo]');if(img&&(event.key==='Enter'||event.key===' ')){event.preventDefault();openBrokerPhoto(Number(img.dataset.brokerPhoto))}});
+let brokerSavedFingerprint=null,brokerGuardReady=false,brokerAllowLeave=false,brokerSaveInFlight=null,brokerPendingLeave=null;
+const brokerPhotoDraftIds=new WeakMap();let brokerPhotoDraftSequence=0;
+function brokerGuardPhotoRows(photos){return (photos||[]).map(photo=>{let draft='';if(photo.dataUrl&&!photo.path){if(!brokerPhotoDraftIds.has(photo))brokerPhotoDraftIds.set(photo,++brokerPhotoDraftSequence);draft=String(brokerPhotoDraftIds.get(photo))}return {name:photo.name||'photo.jpg',partKey:photo.partKey||'',path:photo.path||'',draft}})}
+function brokerCurrentFingerprint(){return brokerWorkspaceFingerprint({workspace:captureInspectionWorkspace(),photos:brokerGuardPhotoRows(currentInspectionPhotos)})}
+function brokerHasContent(){return ['carNumber','carName','carGrade','mileage','brokerYear','brokerFuel','brokerColor','brokerOptions','brokerFactoryOptions','brokerAftermarketOptions','brokerNote'].some(id=>document.getElementById(id)?.value.trim())||currentInspectionPhotos.length>0||Object.keys(brokerExteriorNotes).length>0||detailCards().some(card=>detailStatus(card)!=='pending')||[...document.querySelectorAll('.acc-item')].some(pin=>pin.dataset.state)}
+function brokerIsDirty(){if(brokerSavedFingerprint===null)return !!brokerHasContent();return brokerCurrentFingerprint()!==brokerSavedFingerprint}
+function markBrokerSavedRecord(record){if(!record)return;brokerSavedFingerprint=brokerWorkspaceFingerprint({workspace:record.workspace,photos:brokerGuardPhotoRows(record.photos)});updateBrokerSaveIndicator()}
+function updateBrokerSaveIndicator(){const status=document.getElementById('brokerTopSaveStatus');if(status)status.textContent=brokerSaveInFlight?'저장 중…':brokerIsDirty()?'변경사항 있음':'저장됨';const button=document.getElementById('brokerTopSave');if(button)button.disabled=!!brokerSaveInFlight}
+const brokerOriginalSave=saveInspectionRecord;
+saveInspectionRecord=function(){
+ if(brokerSaveInFlight)return brokerSaveInFlight;
+ brokerSaveInFlight=(async()=>{try{const record=await brokerOriginalSave();if(record)markBrokerSavedRecord(record);return record}finally{brokerSaveInFlight=null;updateBrokerSaveIndicator()}})();updateBrokerSaveIndicator();return brokerSaveInFlight;
+};
+function requestBrokerLeave(action){
+ if(brokerPendingLeave)return;
+ if(!brokerIsDirty()&&!brokerSaveInFlight){brokerAllowLeave=true;action();return}
+ brokerPendingLeave=action;document.getElementById('brokerLeaveMessage').textContent='변경된 검차내용이 있습니다. 나가기 전에 저장하시겠습니까?';document.getElementById('brokerLeaveDialog').showModal();
+}
+function cancelBrokerLeave(){brokerPendingLeave=null;document.getElementById('brokerLeaveDialog').close()}
+async function decideBrokerLeave(save){
+ const action=brokerPendingLeave;if(!action)return;
+ const button=document.getElementById('brokerLeaveSave');button.disabled=true;
+ try{if(save){const record=await saveInspectionRecord();if(!record||brokerIsDirty()){document.getElementById('brokerLeaveMessage').textContent='저장이 완료되지 않았거나 저장 중 내용이 변경되었습니다. 이 화면에서 확인 후 다시 저장해주세요.';return}}else if(brokerSaveInFlight){document.getElementById('brokerLeaveMessage').textContent='저장이 진행 중입니다. 완료 후 다시 선택해주세요.';return}
+  brokerPendingLeave=null;brokerAllowLeave=true;document.getElementById('brokerLeaveDialog').close();action();
+ }finally{button.disabled=false}
+}
+function initializeBrokerSaveGuard(){brokerGuardReady=true;if(brokerSavedFingerprint===null&&!brokerHasContent())brokerSavedFingerprint=brokerCurrentFingerprint();updateBrokerSaveIndicator()}
+document.addEventListener('input',()=>{if(brokerGuardReady)updateBrokerSaveIndicator()});
+document.addEventListener('change',()=>{if(brokerGuardReady)updateBrokerSaveIndicator()});
+document.addEventListener('click',event=>{
+ const link=event.target.closest('a[href]');if(!link||link.hasAttribute('download')||link.target==='_blank'||event.ctrlKey||event.metaKey||event.shiftKey||event.altKey||event.button>0)return;
+ const href=link.getAttribute('href');if(!href||href.startsWith('#'))return;
+ if(brokerIsDirty()||brokerSaveInFlight){event.preventDefault();event.stopImmediatePropagation();requestBrokerLeave(()=>location.assign(link.href))}
+},true);
+window.addEventListener('beforeunload',event=>{if(!brokerAllowLeave&&(brokerIsDirty()||brokerSaveInFlight)){event.preventDefault();event.returnValue=''}});
+document.addEventListener('DOMContentLoaded',()=>{
+ const prior=history.state?.dealerMateBrokerGuard;
+ const hasPrevious=prior?history.state.hasPrevious:history.length>1;
+ if(!prior)history.pushState({dealerMateBrokerGuard:true,hasPrevious},'',location.href);
+ window.addEventListener('popstate',()=>{
+  if(brokerAllowLeave)return;
+  history.pushState({dealerMateBrokerGuard:true,hasPrevious},'',location.href);
+  const openDialog=document.querySelector('dialog[open]:not(#brokerLeaveDialog)');if(openDialog){openDialog.close();return}
+  requestBrokerLeave(()=>{if(hasPrevious)history.go(-2);else location.assign('index.html')});
+ });
+});
+window.addEventListener('pageshow',event=>{if(event.persisted){brokerAllowLeave=false;brokerPendingLeave=null;const dialog=document.getElementById('brokerLeaveDialog');if(dialog.open)dialog.close();updateBrokerSaveIndicator()}});
+
 </script>
 <dialog id="detailAddDialog" class="detail-add-dialog" aria-labelledby="detailAddTitle">
 <form onsubmit="submitDetailAdd(event)">
@@ -5812,6 +5865,7 @@ document.addEventListener('keydown',event=>{const img=event.target.closest('[dat
 <dialog id="brokerPartDialog" class="broker-dialog"><h2 id="brokerPartTitle">외관 상태</h2><label for="brokerPartStatus">확인 상태</label><select id="brokerPartStatus"><option value="pending">미확인</option><option value="normal">정상</option><option value="issue">이상 있음</option><option value="unavailable">확인불가</option></select><label for="brokerPartMemo">상태 메모</label><textarea id="brokerPartMemo" rows="3" placeholder="예) 오른쪽 하단 긁힘, 찌그러짐, 도장 손상"></textarea><div class="broker-dialog-actions"><button type="button" onclick="chooseBrokerPartPhoto('camera')">사진 촬영</button><button type="button" onclick="chooseBrokerPartPhoto('album')">앨범에서 추가</button></div><div id="brokerPartPhotos" class="broker-part-photos"></div><div class="broker-dialog-actions"><button type="button" onclick="saveBrokerExterior()">상태 저장</button><button type="button" onclick="document.getElementById('brokerPartDialog').close()">닫기</button></div></dialog>
 
 <dialog id="brokerPhotoViewer" class="photo-fullscreen"><header><span id="brokerExpandedPhotoTitle">확인 사진</span><div><button type="button" onclick="document.getElementById('brokerPhotoViewer').classList.toggle('zoomed')">확대 / 맞춤</button><button type="button" onclick="document.getElementById('brokerPhotoViewer').close()">닫기</button></div></header><div class="photo-surface"><img id="brokerExpandedPhoto" alt="확인 사진" onclick="document.getElementById('brokerPhotoViewer').classList.toggle('zoomed')"></div></dialog>
+<dialog id="brokerLeaveDialog" class="broker-leave-dialog"><h2>검차를 저장하시겠습니까?</h2><p id="brokerLeaveMessage"></p><div><button id="brokerLeaveSave" type="button" onclick="decideBrokerLeave(true)">저장하고 나가기</button><button type="button" onclick="cancelBrokerLeave()">계속 작성</button><button type="button" onclick="decideBrokerLeave(false)">저장 없이 나가기</button></div></dialog>
 </body>
 </html>
 
