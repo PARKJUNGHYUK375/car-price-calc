@@ -5174,7 +5174,7 @@ async function renderSavedRecords(){
 
     if(error) throw error;
 
-    const records=data||[];
+    const records=(data||[]).filter(record=>record.workspace?.kind!=='broker');
     const keyword=(document.getElementById('savedRecordSearch')?.value||'').trim().toLowerCase();
     const filtered=records.filter(record=>{
       if(!keyword) return true;
