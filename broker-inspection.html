@@ -2657,6 +2657,7 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 .broker-share-panel{border:1px solid #dbe4f4;background:#f4f7fd;padding:20px;border-radius:13px;margin:17px 0}.broker-share-panel h3{margin:0 0 9px;color:#295fe8;font-size:17px}.broker-share-panel p{font-size:13px;line-height:1.7;color:#65748b}.broker-share-buttons{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}.broker-share-label{display:block;font-size:12px;font-weight:700;margin-bottom:6px}#brokerShareLink{width:100%;padding:12px;border:1px solid #d9e2f1;border-radius:8px;font-size:12px;background:white;color:#243754}#brokerShareStatus{font-size:12px;color:#567093;overflow-wrap:anywhere;margin-top:10px}body.dark-mode .broker-share-panel{background:#18283f;border-color:#365174}body.dark-mode .broker-share-panel p,body.dark-mode #brokerShareStatus{color:#b3c2d9}body.dark-mode .broker-share-panel h3{color:#9ebdff}@media print{.broker-share-panel{display:none!important}}
 .broker-options-table-wrap{grid-column:1/-1;min-width:0;margin:8px 0 14px}.broker-options-table{width:100%;border-collapse:separate;border-spacing:0;border:1px solid #dbe3ef;border-radius:11px;overflow:hidden;table-layout:fixed}.broker-options-table caption{text-align:left;font-weight:700;font-size:14px;margin-bottom:9px}.broker-options-table th,.broker-options-table td{padding:13px;border-bottom:1px solid #dbe3ef;vertical-align:top;text-align:left}.broker-options-table th{width:135px;background:#edf2fb;color:#345077;font-size:13px}.broker-options-table thead th{font-weight:700}.broker-options-table td{background:#fff}.broker-options-table tbody tr:last-child>*{border-bottom:0}.broker-options-table textarea{width:100%;min-height:88px;resize:vertical;box-sizing:border-box;margin:0;font-size:14px}.broker-options-table small{display:block;color:#738198;font-size:11px;margin-top:7px}body.dark-mode .broker-options-table{border-color:#354a66}body.dark-mode .broker-options-table th{background:#243854;color:#bfd0e9}body.dark-mode .broker-options-table td{background:#16263b}body.dark-mode .broker-options-table th,body.dark-mode .broker-options-table td{border-color:#354a66}@media(max-width:720px){.broker-options-table th{width:100px;font-size:12px}.broker-options-table th,.broker-options-table td{padding:10px}.broker-options-table textarea{font-size:13px}}
 .buyer-report-grid>div{white-space:pre-wrap}
+.buyer-inline-photos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}.buyer-inline-photos img{display:block;width:100%;max-height:260px;object-fit:contain;border-radius:8px;background:#f2f5fa}
 </style>
 </head>
 <body>
@@ -4449,12 +4450,13 @@ async function initializeCloudAuth(){
     updateCloudAuthUI(currentCloudUser);
 
     client.auth.onAuthStateChange((_event,session)=>{
+      const previousUserId=currentCloudUser?.id;
       currentCloudUser=session?.user||null;
       updateCloudAuthUI(currentCloudUser);
 
       if(currentCloudUser){
         closeAuthOverlay();
-        loadActiveInspectionRecord();
+        if(previousUserId!==currentCloudUser.id)loadActiveInspectionRecord();
         renderSavedRecords();
       }else{
         currentInspectionPhotos=[];
@@ -5317,6 +5319,7 @@ async function handleInspectionPhotos(files){
 }
 
 async function loadActiveInspectionRecord(){
+  if(currentInspectionPhotos.some(photo=>photo.dataUrl&&!photo.path))return;
   const id=brokerStorage.getItem('activeInspectionRecordId');
 
   if(!id || !currentCloudUser || !supabaseClient){
@@ -5327,7 +5330,9 @@ async function loadActiveInspectionRecord(){
 
   try{
     const record=await fetchCloudRecord(id);
-    currentInspectionPhotos=await hydratePhotoMetadata(record?.photos||[]);
+    const loadedPhotos=await hydratePhotoMetadata(record?.photos||[]);
+    if(currentInspectionPhotos.some(photo=>photo.dataUrl&&!photo.path))return;
+    currentInspectionPhotos=loadedPhotos;
     renderInspectionPhotos();
     await refreshBrokerShare();
 
@@ -5336,6 +5341,7 @@ async function loadActiveInspectionRecord(){
       status.textContent='저장된 기록 · 마지막 저장 '+formatRecordDate(record.updated_at||record.created_at);
     }
   }catch(error){
+    if(currentInspectionPhotos.some(photo=>photo.dataUrl&&!photo.path))return;
     console.error(error);
     brokerStorage.removeItem('activeInspectionRecordId');
     if(typeof renderBrokerShare==='function')renderBrokerShare(null);
@@ -5675,7 +5681,11 @@ function renderBrokerReport(){
  const box=document.getElementById('resultArea');if(!box)return;
  const legacy=document.getElementById('brokerLegacyOptionRow');if(legacy)legacy.hidden=!document.getElementById('brokerOptions')?.value.trim();
  const data=brokerReportSections(),e=escapeHtml;
- const row=r=>`<div class="buyer-report-row"><span class="buyer-status ${e(r.state)}">${BROKER_STATE[r.state]||'미확인'}</span><strong>${e(r.title)}</strong>${r.memo?`<small>${e(r.memo)}</small>`:''}</div>`;
+ const row=r=>{
+  const photos=data.photos.filter(photo=>photo.partKey===r.key);
+  const attached=photos.length?`<div class="buyer-inline-photos">${photos.map(p=>`<img src="${e(p.dataUrl||p.url||'')}" alt="${e(r.title)} 확인 사진">`).join('')}</div>`:'';
+  return `<div class="buyer-report-row"><span class="buyer-status ${e(r.state)}">${BROKER_STATE[r.state]||'미확인'}</span><strong>${e(r.title)}</strong>${r.memo?`<small>${e(r.memo)}</small>`:''}${attached}</div>`;
+ };
  const section=(title,html)=>`<section class="buyer-report-section"><h3>${title}</h3>${html}</section>`;
  const counts=data.detail.reduce((a,r)=>(a[r.state]=(a[r.state]||0)+1,a),{});
  box.style.display='block';
@@ -5754,7 +5764,7 @@ async function createBrokerShare(){
   const signed=await Promise.all((saved.photos||[]).map(async photo=>{
    const {data,error}=await supabaseClient.storage.from(CLOUD_PHOTO_BUCKET).createSignedUrl(photo.path,7*24*60*60);
    if(error||!data?.signedUrl)throw error||new Error('공유 사진 주소 생성 실패');
-   return {url:data.signedUrl,label:brokerPartName(photo.partKey)};
+   return {url:data.signedUrl,label:brokerPartName(photo.partKey),partKey:photo.partKey||''};
   }));
   const snapshot={fields:before.fields,exterior:before.exterior,detail:before.detail,accidents:before.accidents,note:before.note,photos:signed};
   const {data,error}=await supabaseClient.rpc('publish_broker_report',{p_record_id:String(saved.id),p_snapshot:snapshot});if(error)throw error;
