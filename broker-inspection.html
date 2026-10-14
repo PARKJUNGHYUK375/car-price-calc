@@ -5718,16 +5718,24 @@ async function refreshBrokerShare(){
  const id=brokerStorage.getItem('activeInspectionRecordId');if(!id||!currentCloudUser||!supabaseClient){renderBrokerShare(null);return}
  try{const {data,error}=await supabaseClient.rpc('get_broker_report_share',{p_record_id:id});if(error)throw error;renderBrokerShare(data)}catch(error){renderBrokerShare(null);brokerShareError(error)}
 }
+function brokerWorkspaceFingerprint(value){
+ const normalize=item=>{
+  if(Array.isArray(item))return item.map(normalize);
+  if(item&&typeof item==='object')return Object.fromEntries(Object.keys(item).sort().map(key=>[key,normalize(item[key])]));
+  return item;
+ };
+ return JSON.stringify(normalize(value));
+}
 async function createBrokerShare(){
  if(brokerShareBusy||!requireCloudUser())return;
- const before=brokerReportSections();const beforeWorkspace=captureInspectionWorkspace();
+ const before=brokerReportSections();const beforeWorkspace=brokerWorkspaceFingerprint(captureInspectionWorkspace());
  if(!document.getElementById('carNumber').value.trim()){alert('차량번호를 입력해주세요.');showPage(0);return}
  if(document.getElementById('brokerShareLink').value&&!confirm('새 링크를 만들면 기존 링크는 종료됩니다. 현재 내용으로 새로 공유할까요?'))return;
  brokerShareBusy=true;document.getElementById('brokerShareCreate').disabled=true;
  document.getElementById('brokerShareStatus').textContent='검차 기록과 사진을 저장하고 공유 링크를 준비합니다.';
  try{
   const saved=await saveInspectionRecord();if(!saved){throw new Error('검차 저장을 완료한 후 다시 시도해주세요.')}
-  if(JSON.stringify(saved.workspace)!==JSON.stringify(beforeWorkspace)||JSON.stringify(saved.workspace)!==JSON.stringify(captureInspectionWorkspace()))throw new Error('저장 중 검차내용이 변경되었습니다. 링크 만들기를 다시 눌러주세요.');
+  if(brokerWorkspaceFingerprint(saved.workspace)!==beforeWorkspace||brokerWorkspaceFingerprint(saved.workspace)!==brokerWorkspaceFingerprint(captureInspectionWorkspace()))throw new Error('저장 중 검차내용이 변경되었습니다. 링크 만들기를 다시 눌러주세요.');
   const signed=await Promise.all((saved.photos||[]).map(async photo=>{
    const {data,error}=await supabaseClient.storage.from(CLOUD_PHOTO_BUCKET).createSignedUrl(photo.path,7*24*60*60);
    if(error||!data?.signedUrl)throw error||new Error('공유 사진 주소 생성 실패');
