@@ -2664,6 +2664,7 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 .report-accident-diagram{position:relative;width:100%;max-width:640px;margin:0 auto;background:#fff;line-height:0}.report-accident-diagram>img{display:block;width:100%;height:auto}.report-accident-pin{position:absolute;transform:translate(-50%,-50%);width:clamp(16px,4vw,28px);height:clamp(16px,4vw,28px);display:grid;place-items:center;line-height:1;border-radius:50%;font-size:clamp(10px,2.5vw,15px);font-weight:900;border:2px solid;background:#fff9}.report-accident-pin.exchange{color:#d32128;border-color:#d32128;background:#ffe6e699}.report-accident-pin.repair{color:#1558c0;border-color:#1558c0;background:#e4eeff99}.report-accident-legend{font-size:12px;color:#63748b;margin-top:12px;line-height:1.6}
 .glass-pin-label{position:absolute;bottom:calc(100% + 5px);left:50%;transform:translateX(-50%);font-size:14px;font-weight:800;line-height:1.2;white-space:nowrap;color:#17243a;pointer-events:none;text-shadow:0 1px 2px #fff,0 -1px 2px #fff,1px 0 2px #fff,-1px 0 2px #fff}
 .report-coating-value{position:absolute;transform:translate(-50%,12px);font-size:clamp(10px,2.5vw,13px);line-height:1.2;font-weight:900;color:#1556a5;background:#ffffffe6;padding:2px 3px;border-radius:3px;white-space:nowrap}.report-coating-value.high{color:#d71920}.report-coating-guide{margin:14px 0;padding:13px;background:#edf2fb;border-radius:9px;color:#345077;font-size:13px;line-height:1.7}.report-coating-guide p{margin:5px 0}.report-coating-guide small{font-size:11px}
+.broker-sale-table{grid-column:1/-1;width:100%;border-collapse:separate;border-spacing:0;border:1px solid #dce5f2;border-radius:11px;overflow:hidden;table-layout:fixed;margin:0 0 14px}.broker-sale-table th{width:115px;text-align:left;background:#edf2fb;padding:14px;font-size:14px;color:#345077}.broker-sale-table td{padding:9px 14px;background:white}.broker-sale-input{display:flex;align-items:center;gap:10px}.broker-sale-input input{width:100%;min-width:0;margin:0;font-size:20px;font-weight:700;color:#295fe8}.broker-sale-input>span{font-size:14px;color:#65748b}.bottom-left{display:none!important}body.dark-mode .broker-sale-table{border-color:#354a66}body.dark-mode .broker-sale-table th{background:#243854;color:#bfd0e9}body.dark-mode .broker-sale-table td{background:#16263b}@media(max-width:720px){.broker-sale-table th{width:85px;padding:12px;font-size:13px}.broker-sale-table td{padding:9px}.broker-sale-input input{font-size:18px}}
 </style>
 </head>
 <body>
@@ -2735,6 +2736,7 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 <!-- 차량정보 -->
 <div class="section page-panel active inspection-info-grid" data-page-panel="0">
 <h2><i class="fas fa-car-side"></i> 차량정보</h2>
+<table class="broker-sale-table"><tbody><tr><th scope="row"><label for="brokerSalePrice">판매가</label></th><td><div class="broker-sale-input"><input id="brokerSalePrice" type="text" inputmode="numeric" placeholder="예) 23,500,000" oninput="formatInput(this); saveInput('brokerSalePrice'); updateAll()"><span>원</span></div></td></tr></tbody></table>
 <div class="field">
 <label for="carNumber"><i class="fas fa-car"></i> 차량번호</label>
 <input id="carNumber" oninput="saveInput('carNumber')" placeholder="예) 12가3456" type="text"/>
@@ -3172,10 +3174,7 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 </div>
 <!-- Bottom bar -->
 <div class="bottom-bar">
-<div class="bottom-left" hidden>
-<div class="label">최종금액</div>
-<div class="value"><span id="finalPrice">0</span>원</div>
-</div>
+<span id="finalPrice" hidden style="display:none!important">0</span>
 <div class="bottom-actions">
 <button class="btn-ghost" onclick="window.scrollTo({top:0, behavior:'smooth'})">맨위로</button>
 <button class="btn-primary" onclick="startNewInspection()"><i class="fa-solid fa-file-circle-plus"></i> 신규검차등록</button>
@@ -3789,7 +3788,7 @@ function initCoating(){
     }
 
     function loadInputs(){
-      const baseKeys=['bidPriceInput','carNumber','mileage','carName','carGrade','brokerYear','brokerFuel','brokerColor','brokerDate','brokerInspector','brokerOptions','brokerFactoryOptions','brokerAftermarketOptions','brokerNote','exteriorCount','wheelScratchCount','spareKey','tireCount','repair','carAdvantage','Memo'];
+      const baseKeys=['bidPriceInput','carNumber','mileage','carName','carGrade','brokerSalePrice','brokerYear','brokerFuel','brokerColor','brokerDate','brokerInspector','brokerOptions','brokerFactoryOptions','brokerAftermarketOptions','brokerNote','exteriorCount','wheelScratchCount','spareKey','tireCount','repair','carAdvantage','Memo'];
       baseKeys.forEach(id=>{
         const el=document.getElementById(id);
         if(el && brokerStorage.getItem(id)){
@@ -4157,7 +4156,7 @@ function initCoating(){
     function startNewInspection(){
 
       const hasCurrentData = [
-        'carNumber','mileage','carName','carGrade','brokerYear','brokerFuel','brokerColor','brokerDate','brokerInspector','brokerOptions','brokerFactoryOptions','brokerAftermarketOptions','brokerNote','bidPriceInput'
+        'carNumber','mileage','carName','carGrade','brokerSalePrice','brokerYear','brokerFuel','brokerColor','brokerDate','brokerInspector','brokerOptions','brokerFactoryOptions','brokerAftermarketOptions','brokerNote','bidPriceInput'
       ].some(id => (document.getElementById(id)?.value || '').trim());
 
       if(hasCurrentData){
@@ -4184,7 +4183,7 @@ function initCoating(){
         'carNumber',
         'mileage',
         'carName',
-        'carGrade','brokerYear','brokerFuel','brokerColor','brokerDate','brokerInspector','brokerOptions','brokerFactoryOptions','brokerAftermarketOptions','brokerNote',
+        'carGrade','brokerSalePrice','brokerYear','brokerFuel','brokerColor','brokerDate','brokerInspector','brokerOptions','brokerFactoryOptions','brokerAftermarketOptions','brokerNote',
         'exteriorCount',
         'wheelScratchCount',
         'spareKey',
@@ -4662,7 +4661,7 @@ function captureInspectionWorkspace(){
   saveCheckboxState();
 
   const baseKeys=[
-    'bidPriceInput','carNumber','mileage','carName','carGrade','brokerYear','brokerFuel','brokerColor','brokerDate','brokerInspector','brokerOptions','brokerFactoryOptions','brokerAftermarketOptions','brokerNote',
+    'bidPriceInput','carNumber','mileage','carName','carGrade','brokerSalePrice','brokerYear','brokerFuel','brokerColor','brokerDate','brokerInspector','brokerOptions','brokerFactoryOptions','brokerAftermarketOptions','brokerNote',
     'exteriorCount','wheelScratchCount','spareKey','tireCount',
     'repair','carAdvantage','Memo'
   ];
@@ -5650,7 +5649,7 @@ let brokerExteriorNotes={};
 try{brokerExteriorNotes=JSON.parse(brokerStorage.getItem('exteriorNotes')||'{}')}catch{}
 let brokerCurrentPhotoTarget='',brokerEditingPart='';
 const BROKER_STATE={pending:'미확인',normal:'정상',issue:'이상',unavailable:'확인불가'};
-const BROKER_FIELDS=[['carNumber','차량번호'],['carName','차량명'],['carGrade','등급'],['mileage','주행거리'],['brokerYear','연식·최초등록'],['brokerFuel','연료'],['brokerColor','색상'],['brokerDate','검차일'],['brokerInspector','검차 담당자'],['brokerFactoryOptions','순정 추가옵션'],['brokerAftermarketOptions','출고 후 추가옵션'],['brokerOptions','기존 옵션 기록']];
+const BROKER_FIELDS=[['carNumber','차량번호'],['carName','차량명'],['carGrade','등급'],['brokerSalePrice','판매가'],['mileage','주행거리'],['brokerYear','연식·최초등록'],['brokerFuel','연료'],['brokerColor','색상'],['brokerDate','검차일'],['brokerInspector','검차 담당자'],['brokerFactoryOptions','순정 추가옵션'],['brokerAftermarketOptions','출고 후 추가옵션'],['brokerOptions','기존 옵션 기록']];
 function brokerPartName(key){
  if(!key)return '차량 전체 사진';
  if(key.startsWith('detail:'))return DETAIL_PROMPTS[key.slice(7)]?.[0]||key.slice(7);
@@ -5712,7 +5711,7 @@ function brokerExteriorStatusLabel(key,n){
  return BROKER_STATE[n.state]||'미확인';
 }
 function brokerReportSections(){
- const fields=BROKER_FIELDS.filter(([id])=>id!=='brokerOptions'||document.getElementById(id)?.value.trim()).map(([id,label])=>({label,value:document.getElementById(id)?.value.trim()||'미입력'}));
+ const fields=BROKER_FIELDS.filter(([id])=>id!=='brokerOptions'||document.getElementById(id)?.value.trim()).map(([id,label])=>({label,value:(id==='brokerSalePrice'&&document.getElementById(id)?.value.trim()?document.getElementById(id).value.trim()+'원':document.getElementById(id)?.value.trim())||'미입력'}));
  const exterior=DATA.partNames.map(p=>{const n=brokerExteriorNotes[p.key]||{state:'pending',memo:''};return {key:p.key,title:brokerPartName(p.key),state:BROKER_STATE[n.state]?n.state:'pending',stateLabel:brokerExteriorStatusLabel(p.key,n),memo:n.memo||''}});
  const detail=detailCards().map(card=>{const cb=card.querySelector('input[type=checkbox]');return {key:'detail:'+cb.dataset.name,title:DETAIL_PROMPTS[cb.dataset.name]?.[0]||cb.dataset.name,state:detailStatus(card),memo:card.querySelector('.function-desc')?.value.trim()||''}});
  const accidents=[...document.querySelectorAll('.acc-item')].filter(p=>p.dataset.state||coatingData[p.dataset.key]).map(p=>{const part=DATA.accidentParts.find(item=>item.key===p.dataset.key);return {key:p.dataset.key,top:part?.top,left:part?.left,measurement:coatingData[p.dataset.key]?.peak?{value:coatingData[p.dataset.key].peak.value,material:coatingData[p.dataset.key].peak.material}:null,state:p.dataset.state,mark:({exchange:'X',repair:'W','disclosed-exchange':'XX','disclosed-repair':'WW'})[p.dataset.state]||'',title:coatingName(p.dataset.key),value:({exchange:'교환 X',repair:'판금 W','disclosed-exchange':'고지된 교환 XX','disclosed-repair':'고지된 판금 WW'})[p.dataset.state]||'기록 있음'}});
@@ -5870,7 +5869,7 @@ let brokerSavedFingerprint=null,brokerGuardReady=false,brokerAllowLeave=false,br
 const brokerPhotoDraftIds=new WeakMap();let brokerPhotoDraftSequence=0;
 function brokerGuardPhotoRows(photos){return (photos||[]).map(photo=>{let draft='';if(photo.dataUrl&&!photo.path){if(!brokerPhotoDraftIds.has(photo))brokerPhotoDraftIds.set(photo,++brokerPhotoDraftSequence);draft=String(brokerPhotoDraftIds.get(photo))}return {name:photo.name||'photo.jpg',partKey:photo.partKey||'',path:photo.path||'',draft}})}
 function brokerCurrentFingerprint(){return brokerWorkspaceFingerprint({workspace:captureInspectionWorkspace(),photos:brokerGuardPhotoRows(currentInspectionPhotos)})}
-function brokerHasContent(){return ['carNumber','carName','carGrade','mileage','brokerYear','brokerFuel','brokerColor','brokerOptions','brokerFactoryOptions','brokerAftermarketOptions','brokerNote'].some(id=>document.getElementById(id)?.value.trim())||currentInspectionPhotos.length>0||Object.keys(brokerExteriorNotes).length>0||detailCards().some(card=>detailStatus(card)!=='pending')||[...document.querySelectorAll('.acc-item')].some(pin=>pin.dataset.state)}
+function brokerHasContent(){return ['carNumber','carName','carGrade','brokerSalePrice','mileage','brokerYear','brokerFuel','brokerColor','brokerOptions','brokerFactoryOptions','brokerAftermarketOptions','brokerNote'].some(id=>document.getElementById(id)?.value.trim())||currentInspectionPhotos.length>0||Object.keys(brokerExteriorNotes).length>0||detailCards().some(card=>detailStatus(card)!=='pending')||[...document.querySelectorAll('.acc-item')].some(pin=>pin.dataset.state)}
 function brokerIsDirty(){if(brokerSavedFingerprint===null)return !!brokerHasContent();return brokerCurrentFingerprint()!==brokerSavedFingerprint}
 function markBrokerSavedRecord(record){if(!record)return;brokerSavedFingerprint=brokerWorkspaceFingerprint({workspace:record.workspace,photos:brokerGuardPhotoRows(record.photos)});updateBrokerSaveIndicator()}
 function updateBrokerSaveIndicator(){const status=document.getElementById('brokerTopSaveStatus');if(status)status.textContent=brokerSaveInFlight?'저장 중…':brokerIsDirty()?'변경사항 있음':'저장됨';const button=document.getElementById('brokerTopSave');if(button)button.disabled=!!brokerSaveInFlight}
