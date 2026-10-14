@@ -5653,14 +5653,20 @@ function brokerPartName(key){
  if(key.startsWith('r_fender'))return part.name.replace('휀다','뒤휀다');
  return part.name;
 }
+function brokerExteriorChoices(key){
+ if(key.startsWith('wheel_'))return [['issue','휠스크래치 있음'],['normal','양호']];
+ if(key.startsWith('mirror_'))return [['normal','양호'],['broken','파손 있음'],['scratch','스크래치 있음']];
+ return [['normal','양호'],['scratch','스크래치 있음'],['dent','문콕 있음']];
+}
 function openBrokerExterior(key){
  brokerEditingPart=key;brokerCurrentPhotoTarget=key;
  const note=brokerExteriorNotes[key]||{state:'pending',memo:''};
  document.getElementById('brokerPartTitle').textContent=brokerPartName(key);
  const select=document.getElementById('brokerPartStatus');select.replaceChildren();
- const choices=key.startsWith('wheel_')?[['issue','휠스크래치 있음'],['normal','양호']]:[['pending','미확인'],['normal','정상'],['issue','이상 있음'],['unavailable','확인불가']];
+ const choices=brokerExteriorChoices(key);
  choices.forEach(([value,label])=>{const option=document.createElement('option');option.value=value;option.textContent=label;select.appendChild(option)});
- if(choices.some(([value])=>value===note.state))select.value=note.state;else select.selectedIndex=-1;
+ const selection=note.condition||note.state;
+ if(choices.some(([value])=>value===selection))select.value=selection;else select.selectedIndex=-1;
  const isTire=key.startsWith('tire_');
  document.getElementById('brokerPartStatusLabel').hidden=isTire;select.hidden=isTire;
  document.getElementById('brokerTireFields').hidden=!isTire;
@@ -5671,12 +5677,13 @@ function openBrokerExterior(key){
 }
 function saveBrokerExterior(){
  if(!brokerEditingPart)return;
- if(brokerEditingPart.startsWith('wheel_')&&!['issue','normal'].includes(document.getElementById('brokerPartStatus').value)){alert('휠 상태를 선택해주세요.');return}
  const isTire=brokerEditingPart.startsWith('tire_');
+ const selection=document.getElementById('brokerPartStatus').value;
+ if(!isTire&&!brokerExteriorChoices(brokerEditingPart).some(([value])=>value===selection)){alert('확인 상태를 선택해주세요.');return}
  const tread=document.getElementById('brokerTireTread').value,year=document.getElementById('brokerTireYear').value.trim();
  if(isTire&&!Array.from({length:11},(_,i)=>String(100-i*10)).includes(tread)){alert('타이어 트레드를 선택해주세요.');return}
  if(isTire&&year&&!/^[0-9]{4}$/.test(year)){alert('타이어 연식은 2025처럼 4자리로 입력해주세요.');return}
- brokerExteriorNotes[brokerEditingPart]={state:isTire?'normal':document.getElementById('brokerPartStatus').value,memo:document.getElementById('brokerPartMemo').value.trim(),...(isTire?{tireTread:Number(tread),tireYear:year}:{})};
+ brokerExteriorNotes[brokerEditingPart]={state:isTire||selection==='normal'?'normal':'issue',...(isTire?{}:{condition:selection}),memo:document.getElementById('brokerPartMemo').value.trim(),...(isTire?{tireTread:Number(tread),tireYear:year}:{})};
  brokerStorage.setItem('exteriorNotes',JSON.stringify(brokerExteriorNotes));
  const pin=[...document.querySelectorAll('.part-item')].find(p=>p.dataset.key===brokerEditingPart);
  if(pin){pin.classList.toggle('selected',brokerExteriorNotes[brokerEditingPart].state==='issue');pin.setAttribute('aria-pressed',String(brokerExteriorNotes[brokerEditingPart].state==='issue'));}
@@ -5693,6 +5700,8 @@ function renderBrokerPartPhotos(){
 function brokerExteriorStatusLabel(key,n){
  if(key.startsWith('tire_')&&Number.isInteger(n.tireTread)&&n.tireTread>=0&&n.tireTread<=100)return (n.tireYear?n.tireYear+'년':'연식 미입력')+' 트레드'+n.tireTread+'%';
  if(key.startsWith('wheel_'))return n.state==='issue'?'휠스크래치 있음':n.state==='normal'?'양호':BROKER_STATE[n.state]||'미확인';
+ if(n.state==='normal')return '양호';
+ const choice=brokerExteriorChoices(key).find(([value])=>value===n.condition);if(choice)return choice[1];
  return BROKER_STATE[n.state]||'미확인';
 }
 function brokerReportSections(){
