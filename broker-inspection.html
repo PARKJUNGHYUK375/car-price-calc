@@ -2663,6 +2663,7 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 #brokerTireFields[hidden],#brokerPartStatus[hidden],#brokerPartStatusLabel[hidden]{display:none!important}#brokerTireYear{width:100%;padding:12px;border:1px solid #dce4f1;border-radius:9px;background:#f5f7fc;color:#17243a;margin:7px 0}#brokerTireFields small{display:block;color:#6d7c90;font-size:12px;margin-bottom:16px}
 .report-accident-diagram{position:relative;width:100%;max-width:640px;margin:0 auto;background:#fff;line-height:0}.report-accident-diagram>img{display:block;width:100%;height:auto}.report-accident-pin{position:absolute;transform:translate(-50%,-50%);width:clamp(16px,4vw,28px);height:clamp(16px,4vw,28px);display:grid;place-items:center;line-height:1;border-radius:50%;font-size:clamp(10px,2.5vw,15px);font-weight:900;border:2px solid;background:#fff9}.report-accident-pin.exchange{color:#d32128;border-color:#d32128;background:#ffe6e699}.report-accident-pin.repair{color:#1558c0;border-color:#1558c0;background:#e4eeff99}.report-accident-legend{font-size:12px;color:#63748b;margin-top:12px;line-height:1.6}
 .glass-pin-label{position:absolute;bottom:calc(100% + 5px);left:50%;transform:translateX(-50%);font-size:14px;font-weight:800;line-height:1.2;white-space:nowrap;color:#17243a;pointer-events:none;text-shadow:0 1px 2px #fff,0 -1px 2px #fff,1px 0 2px #fff,-1px 0 2px #fff}
+.report-coating-value{position:absolute;transform:translate(-50%,12px);font-size:clamp(10px,2.5vw,13px);line-height:1.2;font-weight:900;color:#1556a5;background:#ffffffe6;padding:2px 3px;border-radius:3px;white-space:nowrap}.report-coating-value.high{color:#d71920}.report-coating-guide{margin:14px 0;padding:13px;background:#edf2fb;border-radius:9px;color:#345077;font-size:13px;line-height:1.7}.report-coating-guide p{margin:5px 0}.report-coating-guide small{font-size:11px}
 </style>
 </head>
 <body>
@@ -2806,7 +2807,7 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 <!-- 사고 -->
 <div class="section page-panel" data-page-panel="2">
 <h2 style="display:flex;align-items:center;justify-content:space-between;gap:10px"><span><i class="fas fa-car-burst"></i> 사고 이력</span><span hidden style="display:none"><button type="button" onclick="changeAccidentRateOffset(-1)" aria-label="사고 감가율 1% 내리기" style="width:32px;height:32px;border-radius:9px;border:1px solid rgba(255,255,255,.14);background:var(--card);color:var(--text);font-size:18px;font-weight:900">−</button><b id="accidentRateOffset" style="min-width:38px;text-align:center">±0%</b><button type="button" onclick="changeAccidentRateOffset(1)" aria-label="사고 감가율 1% 올리기" style="width:32px;height:32px;border-radius:9px;border:1px solid rgba(255,255,255,.14);background:var(--card);color:var(--text);font-size:18px;font-weight:900">+</button></span></h2>
-<div class="coating-compact" hidden>
+<div class="coating-compact">
 <div class="coating-compact-tools"><button type="button" id="coatingConnect" onclick="connectCoating()">LS236 연결</button><button type="button" id="coatingDisconnect" onclick="disconnectCoating()" disabled>해제</button><label class="coating-mode"><input type="checkbox" id="coatingMode" onchange="toggleCoatingMode()">도막 측정</label></div>
 <div id="coatingConnectionStatus" class="coating-status" role="status" aria-live="polite"></div>
 <div id="coatingDevices" class="coating-devices"></div>
@@ -2819,7 +2820,7 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 <div class="acc-slide" aria-label="외판 도면"><div class="acc-zoom-scroll"><div class="acc-crop"><div class="acc-plane"><img alt="사고 외판 도면" class="car-image" src="https://imgur.com/agbd7Z8.png" draggable="false"/><div class="checkbox-overlay" id="accidentExteriorOverlay"></div></div></div></div></div>
 <div class="acc-slide" aria-label="골격 도면"><div class="acc-zoom-scroll"><div class="acc-crop"><div class="acc-plane frame-plane"><img alt="사고 골격 도면" class="car-image" src="https://imgur.com/agbd7Z8.png" draggable="false"/><div class="checkbox-overlay" id="accidentFrameOverlay"></div></div></div></div></div></div>
 <div class="diagram-third-tabs" aria-label="도면 영역 선택"><button type="button" data-third="accident:0" onclick="showDiagramThird('accident',0)">왼쪽 측면 <small>1/3</small></button><button type="button" data-third="accident:1" onclick="showDiagramThird('accident',1)">중앙 <small>2/3</small></button><button type="button" data-third="accident:2" onclick="showDiagramThird('accident',2)">오른쪽 측면 <small>3/3</small></button></div><div id="accidentPinStatus" class="pin-status" role="status" aria-live="polite">좌우로 넘겨 왼쪽 측면·중앙·오른쪽 측면을 선택하세요.</div>
-<div class="acc-legend"><span>● 교환 X</span><span>● 판금 W</span><span>● 고지된 교환 XX / 판금 WW</span></div>
+<div class="acc-legend"><span>● 교환 X</span><span>● 판금 W</span></div>
 </div>
 <!-- 세부 상태 -->
 <div class="section page-panel" data-page-panel="3">
@@ -5714,16 +5715,28 @@ function brokerReportSections(){
  const fields=BROKER_FIELDS.filter(([id])=>id!=='brokerOptions'||document.getElementById(id)?.value.trim()).map(([id,label])=>({label,value:document.getElementById(id)?.value.trim()||'미입력'}));
  const exterior=DATA.partNames.map(p=>{const n=brokerExteriorNotes[p.key]||{state:'pending',memo:''};return {key:p.key,title:brokerPartName(p.key),state:BROKER_STATE[n.state]?n.state:'pending',stateLabel:brokerExteriorStatusLabel(p.key,n),memo:n.memo||''}});
  const detail=detailCards().map(card=>{const cb=card.querySelector('input[type=checkbox]');return {key:'detail:'+cb.dataset.name,title:DETAIL_PROMPTS[cb.dataset.name]?.[0]||cb.dataset.name,state:detailStatus(card),memo:card.querySelector('.function-desc')?.value.trim()||''}});
- const accidents=[...document.querySelectorAll('.acc-item')].filter(p=>p.dataset.state).map(p=>{const part=DATA.accidentParts.find(item=>item.key===p.dataset.key);return {key:p.dataset.key,top:part?.top,left:part?.left,state:p.dataset.state,mark:({exchange:'X',repair:'W','disclosed-exchange':'XX','disclosed-repair':'WW'})[p.dataset.state]||'',title:coatingName(p.dataset.key),value:({exchange:'교환 X',repair:'판금 W','disclosed-exchange':'고지된 교환 XX','disclosed-repair':'고지된 판금 WW'})[p.dataset.state]||'기록 있음'}});
+ const accidents=[...document.querySelectorAll('.acc-item')].filter(p=>p.dataset.state||coatingData[p.dataset.key]).map(p=>{const part=DATA.accidentParts.find(item=>item.key===p.dataset.key);return {key:p.dataset.key,top:part?.top,left:part?.left,measurement:coatingData[p.dataset.key]?.peak?{value:coatingData[p.dataset.key].peak.value,material:coatingData[p.dataset.key].peak.material}:null,state:p.dataset.state,mark:({exchange:'X',repair:'W','disclosed-exchange':'XX','disclosed-repair':'WW'})[p.dataset.state]||'',title:coatingName(p.dataset.key),value:({exchange:'교환 X',repair:'판금 W','disclosed-exchange':'고지된 교환 XX','disclosed-repair':'고지된 판금 WW'})[p.dataset.state]||'기록 있음'}});
  return {fields,exterior,detail,accidents,note:document.getElementById('brokerNote')?.value.trim()||'',photos:currentInspectionPhotos};
 }
 
+
+function brokerCoatingDescription(value){
+ if(typeof value!=='number'||!Number.isFinite(value))return '수치 없음';
+ if(value>=80&&value<=130)return '정상';
+ if(value>=140&&value<=300)return '단순도장';
+ if(value>=400)return '판금도장';
+ return '추가 확인';
+}
+function brokerCoatingGuide(){return '<div class="report-coating-guide"><strong>도막수치 참고 기준</strong><p>80~130 μm 정상 · 140~300 μm 단순도장 · 400 μm 이상 판금도장</p><small>범위 외 수치는 추가 확인으로 표시합니다. 부위별 최고 측정값입니다.</small></div>'}
 function brokerAccidentDiagram(items){
  const e=escapeHtml;
  return '<div class="report-accident-diagram"><img src="https://i.imgur.com/agbd7Z8.png" alt="차량 외판과 골격 전체 도면">'+items.map(p=>{
   const top=parseFloat(p.top),left=parseFloat(p.left);if(!Number.isFinite(top)||!Number.isFinite(left))return '';
-  return '<span class="report-accident-pin '+(p.state.includes('exchange')?'exchange':'repair')+'" style="top:'+top+'%;left:'+left+'%" title="'+e(p.title+' '+p.value)+'">'+e(p.mark)+'</span>';
- }).join('')+'</div><p class="report-accident-legend">X 교환 · W 판금<br>미표시 부위는 무사고를 확정하는 의미가 아닙니다.</p>';
+  const mark=p.mark?'<span class="report-accident-pin '+(p.state.includes('exchange')?'exchange':'repair')+'" style="top:'+top+'%;left:'+left+'%" title="'+e(p.title+' '+p.value)+'">'+e(p.mark)+'</span>':'';
+  const value=p.measurement?.value;
+  const measured=typeof value==='number'&&Number.isFinite(value)?'<span class="report-coating-value '+(value>=400?'high':'')+'" style="top:'+top+'%;left:'+left+'%">'+e(value+' μm')+'</span>':'';
+  return mark+measured;
+ }).join('')+'</div><p class="report-accident-legend">X 교환 · W 판금<br>미표시 부위는 무사고를 확정하는 의미가 아닙니다.</p>'+brokerCoatingGuide()+items.filter(p=>p.measurement).map(p=>'<div class="buyer-report-row"><strong>'+e(p.title)+'</strong> · '+e(typeof p.measurement.value==='number'?p.measurement.value+' μm · '+brokerCoatingDescription(p.measurement.value):'수치 없음')+'</div>').join('');
 }
 function renderBrokerReport(){
  const box=document.getElementById('resultArea');if(!box)return;
@@ -5763,8 +5776,8 @@ captureInspectionResult=async function(){
   const diagramImage=await new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=()=>reject(new Error('차량 도면을 불러오지 못했습니다.'));img.src=diagramSource});
   const diagramHeight=Math.min(1200,H-y-160),diagramWidth=diagramHeight*diagramImage.width/diagramImage.height,diagramX=(W-diagramWidth)/2,diagramY=y;
   ctx.drawImage(diagramImage,diagramX,diagramY,diagramWidth,diagramHeight);
-  data.accidents.forEach(p=>{const top=parseFloat(p.top),left=parseFloat(p.left);if(!Number.isFinite(top)||!Number.isFinite(left))return;const x=diagramX+diagramWidth*left/100,py=diagramY+diagramHeight*top/100;ctx.fillStyle=p.mark.includes('X')?'#ffeded':'#e5efff';ctx.strokeStyle=p.mark.includes('X')?'#c82028':'#1558c0';ctx.lineWidth=2;ctx.beginPath();ctx.arc(x,py,15,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.fillStyle=ctx.strokeStyle;ctx.font='bold 17px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(p.mark,x,py)});
-  ctx.textAlign='left';ctx.textBaseline='alphabetic';y=diagramY+diagramHeight+35;text('X 교환 · W 판금');text('미표시 부위는 무사고 확정이 아닙니다.','#6c7a8f');
+  data.accidents.forEach(p=>{const top=parseFloat(p.top),left=parseFloat(p.left);if(!Number.isFinite(top)||!Number.isFinite(left))return;const x=diagramX+diagramWidth*left/100,py=diagramY+diagramHeight*top/100;ctx.fillStyle=p.mark.includes('X')?'#ffeded':'#e5efff';ctx.strokeStyle=p.mark.includes('X')?'#c82028':'#1558c0';ctx.lineWidth=2;ctx.textAlign='center';ctx.textBaseline='middle';if(p.mark){ctx.beginPath();ctx.arc(x,py,15,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.fillStyle=ctx.strokeStyle;ctx.font='bold 17px sans-serif';ctx.fillText(p.mark,x,py)}if(typeof p.measurement?.value==='number'){ctx.fillStyle=p.measurement.value>=400?'#c82028':'#1558c0';ctx.font='bold 18px sans-serif';ctx.fillText(p.measurement.value+' μm',x,py+27)}});
+  ctx.textAlign='left';ctx.textBaseline='alphabetic';y=diagramY+diagramHeight+35;text('X 교환 · W 판금');text('미표시 부위는 무사고 확정이 아닙니다.','#6c7a8f');text('도막: 80~130 μm 정상 / 140~300 μm 단순도장 / 400 μm 이상 판금도장');data.accidents.filter(p=>p.measurement).forEach(p=>text(p.title+': '+(typeof p.measurement.value==='number'?p.measurement.value+' μm · '+brokerCoatingDescription(p.measurement.value):'수치 없음')));
   title('04 세부상태');data.detail.forEach(r=>{text('['+BROKER_STATE[r.state]+'] '+r.title,r.state==='issue'?'#b12f2f':'#34445d');if(r.memo)text('  '+r.memo)});title('05 종합 의견');text(data.note||'별도 의견 없음');
   if(data.photos.length){page();title('06 확인 사진');for(let i=0;i<data.photos.length;i++){const photo=data.photos[i];let src=photo.dataUrl;if(!src){const blob=await fetchPhotoBlobFromUrl(photo.url||await createPhotoSignedUrl(photo.path));src=await blobToDataUrl(blob)}const img=await new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>resolve(im);im.onerror=()=>reject(new Error((i+1)+'번 사진을 불러오지 못했습니다.'));im.src=src});if(y+525>H-100){page();title('06 확인 사진 · 계속')}text((i+1)+'. '+brokerPartName(photo.partKey),'#295fe8',true);const scale=Math.min((W-P*2)/img.width,430/img.height),width=img.width*scale,height=img.height*scale;ctx.fillStyle='#fff';ctx.fillRect(P,y-12,W-P*2,445);ctx.drawImage(img,(W-width)/2,y,width,height);y+=475}}
   text('미확인·확인불가 항목은 추가 확인이 필요합니다.','#6c7a8f');
