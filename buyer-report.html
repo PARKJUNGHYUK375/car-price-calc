@@ -26,10 +26,11 @@
 @media print{.report-exterior-toolbar{display:none}.report-exterior-map-viewport.expanded .report-exterior-map-plane{width:100%;min-width:0}}
 
 .report-exterior-map-viewport.expanded{max-height:70dvh}
-/* Keep the diagram readable on narrow screens; pan inside the frame. */
-.report-exterior-map-viewport{max-height:70dvh;overscroll-behavior:contain}
-.report-exterior-map-plane{min-width:620px}
-.report-exterior-pin{width:32px;height:32px;font-size:11px}
+/* Fit the complete exterior diagram to the screen by default. */
+.report-exterior-map-viewport{max-height:none;overscroll-behavior:contain}
+.report-exterior-map-plane{min-width:0}
+.report-exterior-pin{width:clamp(21px,5.8vw,32px);height:clamp(21px,5.8vw,32px);font-size:clamp(8px,2.2vw,11px)}
+@media(max-width:600px){.buyer-report .buyer-report-section:has(.report-exterior-map-viewport){margin-left:4px!important;margin-right:4px!important;padding-left:6px!important;padding-right:6px!important}}
 @media print{.report-exterior-map-plane{min-width:0}.report-exterior-map-viewport{max-height:none;overflow:visible}}
 
 </style></head><body><main class="buyer-report"><header class="head buyer-report-header"><div class="brand"><img src="assets/dealer-mate-logo.webp" alt="">DEALER MATE · BUYER REPORT</div><div class="premium-cover"><div><h2 id="vehicleTitle">차량리포트</h2><p id="premiumVehicleSub">차량 상태와 확인 사진</p></div><div class="premium-price"><small>판매가</small><strong id="premiumSalePrice">미입력</strong></div></div><div id="reportMeta" class="meta"></div></header><div id="reportStatus" class="message" role="status">리포트를 불러오는 중입니다.</div><div id="reportActions" class="actions" hidden><button type="button" onclick="window.print()">인쇄 / PDF</button></div><div id="reportContent" class="content" hidden></div><footer class="foot">검차 시점에 확인한 내용을 기록한 리포트입니다. 미확인·확인불가 항목은 추가 확인이 필요합니다.</footer></main><dialog id="photoViewer" class="photo-fullscreen"><header><span id="expandedPhotoTitle">확인 사진</span><div><button type="button" onclick="document.getElementById('photoViewer').classList.toggle('zoomed')">확대 / 맞춤</button><button type="button" onclick="document.getElementById('photoViewer').close()">닫기</button></div></header><div class="photo-surface"><img id="expandedPhoto" alt="확인 사진" onclick="document.getElementById('photoViewer').classList.toggle('zoomed')"></div></dialog><script>
@@ -189,7 +190,7 @@ function mountVehicleExteriorMap(container,items,photos,options){
  if(!container)return;container.replaceChildren();
  const list=Array.isArray(items)?items:[],allPhotos=Array.isArray(photos)?photos:[];
  const toolbar=document.createElement('div');toolbar.className='report-exterior-toolbar';
- const hint=document.createElement('span');hint.textContent='도면을 좌우로 밀어 확인하고, 부위를 눌러 사진과 기록을 보세요.';
+ const hint=document.createElement('span');hint.textContent='전체 도면에서 부위를 누르면 사진과 기록을 볼 수 있습니다.';
  const zoom=document.createElement('button');zoom.type='button';zoom.textContent='도면 확대';zoom.setAttribute('aria-pressed','false');toolbar.append(hint,zoom);
  const viewport=document.createElement('div');viewport.className='report-exterior-map-viewport';viewport.tabIndex=0;viewport.setAttribute('aria-label','외관 상태 전개도');
  const plane=document.createElement('div');plane.className='report-exterior-map-plane';

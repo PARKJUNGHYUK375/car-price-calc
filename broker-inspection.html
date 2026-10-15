@@ -2685,10 +2685,11 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 @media print{.report-exterior-toolbar{display:none}.report-exterior-map-viewport.expanded .report-exterior-map-plane{width:100%;min-width:0}}
 
 .report-exterior-map-viewport.expanded{max-height:70dvh}
-/* Keep the diagram readable on narrow screens; pan inside the frame. */
-.report-exterior-map-viewport{max-height:70dvh;overscroll-behavior:contain}
-.report-exterior-map-plane{min-width:620px}
-.report-exterior-pin{width:32px;height:32px;font-size:11px}
+/* Fit the complete exterior diagram to the screen by default. */
+.report-exterior-map-viewport{max-height:none;overscroll-behavior:contain}
+.report-exterior-map-plane{min-width:0}
+.report-exterior-pin{width:clamp(21px,5.8vw,32px);height:clamp(21px,5.8vw,32px);font-size:clamp(8px,2.2vw,11px)}
+@media(max-width:600px){.buyer-report .buyer-report-section:has(.report-exterior-map-viewport){margin-left:4px!important;margin-right:4px!important;padding-left:6px!important;padding-right:6px!important}}
 @media print{.report-exterior-map-plane{min-width:0}.report-exterior-map-viewport{max-height:none;overflow:visible}}
 
 </style>
@@ -6061,7 +6062,7 @@ function mountVehicleExteriorMap(container,items,photos,options){
  if(!container)return;container.replaceChildren();
  const list=Array.isArray(items)?items:[],allPhotos=Array.isArray(photos)?photos:[];
  const toolbar=document.createElement('div');toolbar.className='report-exterior-toolbar';
- const hint=document.createElement('span');hint.textContent='도면을 좌우로 밀어 확인하고, 부위를 눌러 사진과 기록을 보세요.';
+ const hint=document.createElement('span');hint.textContent='전체 도면에서 부위를 누르면 사진과 기록을 볼 수 있습니다.';
  const zoom=document.createElement('button');zoom.type='button';zoom.textContent='도면 확대';zoom.setAttribute('aria-pressed','false');toolbar.append(hint,zoom);
  const viewport=document.createElement('div');viewport.className='report-exterior-map-viewport';viewport.tabIndex=0;viewport.setAttribute('aria-label','외관 상태 전개도');
  const plane=document.createElement('div');plane.className='report-exterior-map-plane';
