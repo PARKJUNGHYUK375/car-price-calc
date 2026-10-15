@@ -2681,6 +2681,10 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 .premium-metric.issue[role="button"]{cursor:pointer;transition:box-shadow .15s,background .15s}.premium-metric.issue[role="button"]:hover{background:#ffe4dc}.premium-metric.issue.filter-active{box-shadow:inset 0 0 0 2px #b74635}.premium-metric.issue[role="button"]:focus-visible{outline:3px solid #b74635;outline-offset:3px}.report-issue-filter-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 16px;padding:11px 13px;background:#fff1eb;border-radius:8px;color:#a84533;font-size:12px}.report-issue-filter-bar button{border:1px solid #e6b6a9;border-radius:6px;background:#fff;padding:6px 10px;font:inherit;font-size:11px;color:#a84533;cursor:pointer}.report-issue-filter-empty{padding:26px 16px;text-align:center;background:#f4f7fb;border-radius:9px;color:#6c7c91;font-size:13px}.report-issue-filter-bar[hidden],.report-issue-filter-empty[hidden],.buyer-detail-group[hidden],.buyer-detail-group .buyer-report-row[hidden]{display:none!important}
 @media print{.report-issue-filter-bar,.report-issue-filter-empty{display:none!important}.buyer-detail-group[hidden],.buyer-detail-group .buyer-report-row[hidden]{display:block!important}.premium-metric.issue.filter-active{box-shadow:none}}
 
+.report-exterior-toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:13px}.report-exterior-toolbar>span{font-size:11px;color:#6a7d96}.report-exterior-toolbar>button{flex-shrink:0;padding:7px 10px;border:1px solid #dce4ef;border-radius:7px;background:#f1f5fb;color:#3d5d83;font:inherit;font-size:11px}.report-exterior-map-viewport{width:100%;overflow:auto;background:white;border:1px solid #e1e7f0;border-radius:10px;touch-action:pan-x pan-y}.report-exterior-map-plane{position:relative;width:100%;line-height:0}.report-exterior-map-plane>img{display:block;width:100%;height:auto}.report-exterior-map-viewport.expanded .report-exterior-map-plane{width:200%;min-width:650px}.report-exterior-pin{position:absolute;transform:translate(-50%,-50%);display:grid;place-items:center;width:clamp(21px,4vw,34px);height:clamp(21px,4vw,34px);padding:0;border-radius:50%;border:1.5px solid;font:inherit;font-size:clamp(8px,1.8vw,11px);font-weight:850;line-height:1.05;word-break:keep-all;cursor:pointer;box-shadow:0 1px 4px #152b441c}.report-exterior-pin.normal{color:#1e7545;border-color:#3c9d68;background:#effff3f0}.report-exterior-pin.issue{color:#c12e31;border-color:#ce5050;background:#fff0f0f0}.report-exterior-pin.pending,.report-exterior-pin.measured{color:#65768e;border-color:#91a1b8;background:#f6f8fcf0}.report-exterior-pin[aria-pressed="true"]{outline:3px solid #6e98d3;outline-offset:2px;z-index:2}.report-exterior-pin:focus-visible{outline:3px solid #244b7c;outline-offset:3px}.report-exterior-map-legend{font-size:10px;line-height:1.5;color:#6b7f99;margin:10px 0 16px}.report-exterior-selected{padding:18px;border:1px solid #dce5f3;border-radius:12px;background:#f5f8fd;font-size:13px;color:#536e90;min-height:70px}.report-exterior-selected-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:15px}.report-exterior-selected-heading>strong{font-size:17px;color:#1f3b60}.report-exterior-selected-badge{border-radius:6px;padding:5px 9px;font-size:11px;background:#e9eef6;color:#5b6e88}.report-exterior-selected-badge.normal{color:#237448;background:#e6f5ec}.report-exterior-selected-badge.issue{color:#b33c36;background:#ffebe8}.report-exterior-selected-photos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:0 0 16px}.report-exterior-selected-photos button{padding:0;border:1px solid #dce5f0;border-radius:9px;overflow:hidden;background:white;cursor:zoom-in}.report-exterior-selected-photos img{display:block;width:100%;max-height:280px;object-fit:contain}.report-exterior-selected-memo{border-top:1px solid #dce5f3;padding-top:13px}.report-exterior-selected-memo>b{font-size:11px;color:#7487a1}.report-exterior-selected-memo>p{margin:6px 0 0;white-space:pre-wrap;overflow-wrap:anywhere;font-size:14px;color:#2b4567;line-height:1.8}.report-exterior-no-photo{font-size:12px;color:#7a8ba1;margin:0 0 15px}
+@media print{.report-exterior-toolbar{display:none}.report-exterior-map-viewport.expanded .report-exterior-map-plane{width:100%;min-width:0}}
+
+.report-exterior-map-viewport.expanded{max-height:70dvh}
 </style>
 </head>
 <body>
@@ -5756,7 +5760,7 @@ function updateBrokerSalePrice(input){
 function loadBrokerSalePriceInput(){const raw=document.getElementById('brokerSalePrice')?.value||'';const input=document.getElementById('brokerSalePriceMan');if(input)input.value=raw?formatVehicleReportPrice(raw).replace(/만원$/,''):''}
 function brokerReportSections(){
  const fields=BROKER_FIELDS.filter(([id])=>id!=='brokerOptions'||document.getElementById(id)?.value.trim()).map(([id,label])=>({label,value:(id==='brokerSalePrice'&&document.getElementById(id)?.value.trim()?formatVehicleReportPrice(document.getElementById(id).value.trim()):document.getElementById(id)?.value.trim())||'미입력'}));
- const exterior=DATA.partNames.map(p=>{const n=brokerExteriorNotes[p.key]||{state:'pending',memo:''};return {key:p.key,title:brokerPartName(p.key),state:BROKER_STATE[n.state]?n.state:'pending',stateLabel:brokerExteriorStatusLabel(p.key,n),memo:n.memo||''}});
+ const exterior=DATA.partNames.map(p=>{const n=brokerExteriorNotes[p.key]||{state:'pending',memo:''};return {key:p.key,top:p.top,left:p.left,title:brokerPartName(p.key),state:BROKER_STATE[n.state]?n.state:'pending',stateLabel:brokerExteriorStatusLabel(p.key,n),memo:n.memo||''}});
  const detail=detailCards().map(card=>{const cb=card.querySelector('input[type=checkbox]');return {group:DETAIL_GROUPS[Number(card.closest('.function-category').dataset.detailGroup)]?.title||'세부상태',key:'detail:'+cb.dataset.name,title:DETAIL_PROMPTS[cb.dataset.name]?.[0]||cb.dataset.name,state:detailStatus(card),memo:card.querySelector('.function-desc')?.value.trim()||''}});
  const accidents=[...document.querySelectorAll('.acc-item')].filter(p=>p.dataset.state||coatingData[p.dataset.key]).map(p=>{const part=DATA.accidentParts.find(item=>item.key===p.dataset.key);return {key:p.dataset.key,top:part?.top,left:part?.left,measurement:coatingData[p.dataset.key]?.peak?{value:coatingData[p.dataset.key].peak.value,material:coatingData[p.dataset.key].peak.material}:null,state:p.dataset.state,mark:({exchange:'X',repair:'W','disclosed-exchange':'XX','disclosed-repair':'WW'})[p.dataset.state]||'',title:coatingName(p.dataset.key),value:({exchange:'교환 X',repair:'판금 W','disclosed-exchange':'고지된 교환 XX','disclosed-repair':'고지된 판금 WW'})[p.dataset.state]||'기록 있음'}});
  return {fields,exterior,detail,accidents,note:document.getElementById('brokerNote')?.value.trim()||'',photos:currentInspectionPhotos};
@@ -5803,10 +5807,11 @@ function renderBrokerReport(){
  section('01 차량 기본정보',`<div class="buyer-report-grid">${data.fields.map(f=>`<div><b>${f.label}</b>${e(f.value)}</div>`).join('')}</div>`)+
  section('02 종합 의견',`<div class="premium-summary-copy">${e(data.note||'별도 의견 없음')}</div>`)+
  section('03 차량사진',vehiclePhotos.length?`<div class="buyer-report-photos">${vehiclePhotos.map((p,i)=>`<figure><img src="${e(p.dataUrl||p.url||'')}" alt="${e(brokerPartName(p.partKey))}" data-broker-photo="${data.photos.indexOf(p)}" role="button" tabindex="0"><figcaption>${i+1}. ${e(brokerPartName(p.partKey))}</figcaption></figure>`).join('')}</div>`:'<p>기본정보에서 외관·실내 차량사진을 추가해주세요.</p>')+
- section('04 외관 상태','<div class="buyer-status-grid">'+data.exterior.map(row).join('')+'</div>')+
+ section('04 외관 상태','<div class="report-exterior-map-host"></div>')+
  section('05 교환·판금 확인',brokerAccidentDiagram(data.accidents))+
  section('06 세부상태',overview+details)+
  '<footer class="buyer-report-foot">검차 시점에 확인한 내용을 기록한 리포트입니다. 미확인·확인불가 항목은 추가 확인이 필요합니다.</footer></article>';
+ mountVehicleExteriorMap(box.querySelector('.report-exterior-map-host'),data.exterior,data.photos,{key:'editor',photoUrl:p=>p.dataUrl||p.url||'',openPhoto:(_p,index)=>openBrokerPhoto(index)});
  mountVehicleReportChapters(box.querySelector('.buyer-report'),'editor');
  mountVehicleReportIssueFilter(box.querySelector('.buyer-report'),'editor');
  renderBrokerPartPhotos();if(typeof brokerGuardReady!=='undefined'&&brokerGuardReady)updateBrokerSaveIndicator();
@@ -5825,7 +5830,14 @@ captureInspectionResult=async function(){
   const vehiclePhotos=data.photos.filter(photo=>!photo.partKey);
   if(vehiclePhotos.length){page();title('03 차량사진');for(let i=0;i<vehiclePhotos.length;i++){const photo=vehiclePhotos[i];let src=photo.dataUrl;if(!src){const blob=await fetchPhotoBlobFromUrl(photo.url||await createPhotoSignedUrl(photo.path));src=await blobToDataUrl(blob)}const img=await new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>resolve(im);im.onerror=()=>reject(new Error((i+1)+'번 사진을 불러오지 못했습니다.'));im.src=src});if(y+525>H-100){page();title('03 차량사진 · 계속')}text((i+1)+'. '+brokerPartName(photo.partKey),'#295fe8',true);const scale=Math.min((W-P*2)/img.width,430/img.height),width=img.width*scale,height=img.height*scale;ctx.fillStyle='#fff';ctx.fillRect(P,y-12,W-P*2,445);ctx.drawImage(img,(W-width)/2,y,width,height);y+=475}}else{title('03 차량사진');text('등록된 차량사진이 없습니다.');}
 
-  title('04 외관 상태');data.exterior.forEach(r=>{text('['+(r.stateLabel||BROKER_STATE[r.state])+'] '+r.title,r.state==='issue'?'#b12f2f':'#34445d');if(r.memo)text('  '+r.memo)});
+  page();title('04 외관 상태');
+  const exteriorBlob=await fetchPhotoBlobFromUrl('https://i.imgur.com/1OGXwOu.png'),exteriorSrc=await blobToDataUrl(exteriorBlob);
+  const exteriorImage=await new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=()=>reject(new Error('외관 전개도를 불러오지 못했습니다.'));img.src=exteriorSrc});
+  const exWidth=W-P*2,exHeight=exWidth*exteriorImage.height/exteriorImage.width,exY=y;
+  ctx.drawImage(exteriorImage,P,exY,exWidth,exHeight);
+  data.exterior.forEach(item=>{const pos=VEHICLE_EXTERIOR_POSITIONS[item.key],status=vehicleExteriorPinStatus(item);if(!pos)return;const x=P+exWidth*parseFloat(pos.left)/100,py=exY+exHeight*parseFloat(pos.top)/100;ctx.fillStyle=status.kind==='normal'?'#effff3':status.kind==='issue'?'#fff0f0':'#f6f8fc';ctx.strokeStyle=status.kind==='normal'?'#237448':status.kind==='issue'?'#c12e31':'#65768e';ctx.lineWidth=2;ctx.beginPath();ctx.arc(x,py,18,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.fillStyle=ctx.strokeStyle;ctx.font='bold 13px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(status.label,x,py)});
+  ctx.textAlign='left';ctx.textBaseline='alphabetic';y=exY+exHeight+35;text('초록 양호 · 빨강 이상 · 회색 미확인/수치');
+  data.exterior.filter(r=>r.memo||r.state==='issue').forEach(r=>{text(r.title+' · '+(r.stateLabel||BROKER_STATE[r.state]));if(r.memo)text(r.memo)});
   page();title('05 교환·판금 확인');
   const diagramBlob=await fetchPhotoBlobFromUrl('https://i.imgur.com/agbd7Z8.png');
   const diagramSource=await blobToDataUrl(diagramBlob);
@@ -6000,7 +6012,7 @@ function mountVehicleReportChapters(root,key){
  root.vehicleReportSelectChapter=delta=>select(state.index+delta,true);
  if(!vehicleReportChapterBound.has(root)){
   vehicleReportChapterBound.add(root);let swipe=null;
-  root.addEventListener('touchstart',event=>{if(event.touches.length!==1||event.target.closest('button,a,input,select,textarea,dialog,.report-chapter-tabs')){swipe=null;return}const touch=event.touches[0];swipe={x:touch.clientX,y:touch.clientY,time:Date.now()}},{passive:true});
+  root.addEventListener('touchstart',event=>{if(event.touches.length!==1||event.target.closest('button,a,input,select,textarea,dialog,.report-chapter-tabs,.report-exterior-map-viewport')){swipe=null;return}const touch=event.touches[0];swipe={x:touch.clientX,y:touch.clientY,time:Date.now()}},{passive:true});
   root.addEventListener('touchend',event=>{if(!swipe)return;const touch=event.changedTouches[0],dx=touch.clientX-swipe.x,dy=touch.clientY-swipe.y,elapsed=Date.now()-swipe.time;swipe=null;if(Math.abs(dx)>75&&Math.abs(dx)>Math.abs(dy)*1.6&&elapsed<900){event.preventDefault();root.vehicleReportSelectChapter(dx<0?1:-1)}},{passive:false});
   root.addEventListener('touchcancel',()=>swipe=null,{passive:true});
   root.addEventListener('keydown',event=>{if(event.target.closest('button,a,input,select,textarea,dialog,[role="button"]'))return;if(event.key==='ArrowLeft'||event.key==='ArrowRight'){event.preventDefault();root.vehicleReportSelectChapter(event.key==='ArrowRight'?1:-1)}});
@@ -6028,6 +6040,48 @@ function mountVehicleReportIssueFilter(root,key){
  card.onclick=()=>apply(!vehicleReportIssueFilters.get(key));
  card.onkeydown=event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();apply(!vehicleReportIssueFilters.get(key))}};
  reset.onclick=()=>apply(false);apply(vehicleReportIssueFilters.get(key)||false);
+}
+
+const VEHICLE_EXTERIOR_POSITIONS=Object.fromEntries(DATA.partNames.map(p=>[p.key,{top:p.top,left:p.left}]));
+const vehicleExteriorSelections=new Map();
+function vehicleExteriorPinStatus(item){
+ if(item.state==='pending'||!item.state)return {label:'미확인',kind:'pending'};
+ if(item.state==='unavailable')return {label:'확인불가',kind:'pending'};
+ if(item.stateLabel==='양호'||item.stateLabel==='정상')return {label:'양호',kind:'normal'};
+ if(item.key?.startsWith('tire_')&&item.state==='normal')return {label:'수치',kind:'measured'};
+ return {label:item.state==='normal'?'양호':'이상',kind:item.state==='normal'?'normal':'issue'};
+}
+function mountVehicleExteriorMap(container,items,photos,options){
+ if(!container)return;container.replaceChildren();
+ const list=Array.isArray(items)?items:[],allPhotos=Array.isArray(photos)?photos:[];
+ const toolbar=document.createElement('div');toolbar.className='report-exterior-toolbar';
+ const hint=document.createElement('span');hint.textContent='부위를 누르면 사진과 기록을 볼 수 있습니다.';
+ const zoom=document.createElement('button');zoom.type='button';zoom.textContent='도면 확대';zoom.setAttribute('aria-pressed','false');toolbar.append(hint,zoom);
+ const viewport=document.createElement('div');viewport.className='report-exterior-map-viewport';viewport.tabIndex=0;viewport.setAttribute('aria-label','외관 상태 전개도');
+ const plane=document.createElement('div');plane.className='report-exterior-map-plane';
+ const image=document.createElement('img');image.src='https://i.imgur.com/1OGXwOu.png';image.alt='차량 외관 전체 전개도';plane.append(image);viewport.append(plane);
+ const panel=document.createElement('div');panel.className='report-exterior-selected';panel.setAttribute('aria-live','polite');
+ const buttons=new Map();
+ list.forEach(item=>{
+  const fallback=VEHICLE_EXTERIOR_POSITIONS[item.key],top=parseFloat(item.top??fallback?.top),left=parseFloat(item.left??fallback?.left);
+  if(!Number.isFinite(top)||!Number.isFinite(left)||top<0||top>100||left<0||left>100)return;
+  const status=vehicleExteriorPinStatus(item),button=document.createElement('button');button.type='button';button.className='report-exterior-pin '+status.kind;button.style.top=top+'%';button.style.left=left+'%';button.textContent=status.label;button.title=item.title+' · '+(item.stateLabel||status.label);button.setAttribute('aria-label',button.title+' · 사진 및 메모 보기');button.setAttribute('aria-pressed','false');button.onclick=()=>select(item.key,true);buttons.set(item.key,button);plane.append(button);
+ });
+ function select(key,scroll=false){
+  const item=list.find(row=>row.key===key);if(!item)return;
+  vehicleExteriorSelections.set(options.key,key);buttons.forEach((button,id)=>button.setAttribute('aria-pressed',String(id===key)));panel.replaceChildren();
+  const heading=document.createElement('div');heading.className='report-exterior-selected-heading';const title=document.createElement('strong');title.textContent=item.title;
+  const badge=document.createElement('span'),status=vehicleExteriorPinStatus(item);badge.className='report-exterior-selected-badge '+status.kind;badge.textContent=item.stateLabel||status.label;heading.append(title,badge);panel.append(heading);
+  const matching=allPhotos.map((photo,index)=>({photo,index})).filter(({photo})=>photo.partKey===item.key||(!photo.partKey&&photo.label===item.title));
+  const gallery=document.createElement('div');gallery.className='report-exterior-selected-photos';
+  matching.forEach(({photo,index})=>{const src=options.photoUrl(photo);if(!src)return;const button=document.createElement('button');button.type='button';button.setAttribute('aria-label',item.title+' 사진 크게 보기');const img=document.createElement('img');img.src=src;img.alt=item.title+' 확인 사진';img.loading='lazy';button.append(img);button.onclick=()=>options.openPhoto(photo,index,src);gallery.append(button)});
+  if(gallery.childElementCount)panel.append(gallery);else{const empty=document.createElement('p');empty.className='report-exterior-no-photo';empty.textContent='등록된 사진이 없습니다.';panel.append(empty)}
+  const memo=document.createElement('div');memo.className='report-exterior-selected-memo';const label=document.createElement('b');label.textContent='확인 메모';const text=document.createElement('p');text.textContent=item.memo||'별도 메모 없음';memo.append(label,text);panel.append(memo);if(scroll)panel.scrollIntoView?.({block:'nearest',behavior:'smooth'});
+ }
+ zoom.onclick=()=>{const expanded=viewport.classList.toggle('expanded');zoom.textContent=expanded?'전체 보기':'도면 확대';zoom.setAttribute('aria-pressed',String(expanded))};
+ const legend=document.createElement('div');legend.className='report-exterior-map-legend';legend.textContent='초록 양호 · 빨강 이상 · 회색 미확인/수치';
+ container.append(toolbar,viewport,legend,panel);
+ const selected=vehicleExteriorSelections.get(options.key);if(selected&&list.some(item=>item.key===selected))select(selected);else panel.textContent='전개도에서 확인할 부위를 선택해주세요.';
 }
 
 </script>
