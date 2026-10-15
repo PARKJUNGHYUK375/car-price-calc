@@ -2678,6 +2678,9 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 
 .buyer-report-section>.premium-overview{margin:0 0 18px!important}
 #brokerCustomConditionField[hidden]{display:none!important}#brokerCustomConditionField{margin:10px 0 14px;padding:12px;border:1px solid #dce5f3;border-radius:9px;background:#f5f8fd}#brokerCustomConditionField textarea{margin-bottom:0}
+.premium-metric.issue[role="button"]{cursor:pointer;transition:box-shadow .15s,background .15s}.premium-metric.issue[role="button"]:hover{background:#ffe4dc}.premium-metric.issue.filter-active{box-shadow:inset 0 0 0 2px #b74635}.premium-metric.issue[role="button"]:focus-visible{outline:3px solid #b74635;outline-offset:3px}.report-issue-filter-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 16px;padding:11px 13px;background:#fff1eb;border-radius:8px;color:#a84533;font-size:12px}.report-issue-filter-bar button{border:1px solid #e6b6a9;border-radius:6px;background:#fff;padding:6px 10px;font:inherit;font-size:11px;color:#a84533;cursor:pointer}.report-issue-filter-empty{padding:26px 16px;text-align:center;background:#f4f7fb;border-radius:9px;color:#6c7c91;font-size:13px}.report-issue-filter-bar[hidden],.report-issue-filter-empty[hidden],.buyer-detail-group[hidden],.buyer-detail-group .buyer-report-row[hidden]{display:none!important}
+@media print{.report-issue-filter-bar,.report-issue-filter-empty{display:none!important}.buyer-detail-group[hidden],.buyer-detail-group .buyer-report-row[hidden]{display:block!important}.premium-metric.issue.filter-active{box-shadow:none}}
+
 </style>
 </head>
 <body>
@@ -5785,7 +5788,7 @@ function renderBrokerReport(){
  const row=r=>{
   const photos=data.photos.filter(photo=>photo.partKey===r.key);
   const attached=photos.length?`<div class="buyer-inline-photos">${photos.map(p=>`<img src="${e(p.dataUrl||p.url||'')}" alt="${e(r.title)} 확인 사진" data-broker-photo="${data.photos.indexOf(p)}" role="button" tabindex="0">`).join('')}</div>`:'';
-  return `<div class="buyer-report-row"><span class="buyer-status ${e(r.state)}">${e(r.stateLabel||BROKER_STATE[r.state]||'미확인')}</span><strong>${e(r.title)}</strong>${r.memo?`<small>${e(r.memo)}</small>`:''}${attached}</div>`;
+  return `<div class="buyer-report-row" data-review-state="${e(r.state)}"><span class="buyer-status ${e(r.state)}">${e(r.stateLabel||BROKER_STATE[r.state]||'미확인')}</span><strong>${e(r.title)}</strong>${r.memo?`<small>${e(r.memo)}</small>`:''}${attached}</div>`;
  };
  const section=(title,html)=>`<section class="buyer-report-section"><h3><span class="premium-section-number">${e(title.slice(0,2))}</span>${e(title.slice(3))}</h3>${html}</section>`;
  const vehiclePhotos=data.photos.filter(photo=>!photo.partKey);
@@ -5805,6 +5808,7 @@ function renderBrokerReport(){
  section('06 세부상태',overview+details)+
  '<footer class="buyer-report-foot">검차 시점에 확인한 내용을 기록한 리포트입니다. 미확인·확인불가 항목은 추가 확인이 필요합니다.</footer></article>';
  mountVehicleReportChapters(box.querySelector('.buyer-report'),'editor');
+ mountVehicleReportIssueFilter(box.querySelector('.buyer-report'),'editor');
  renderBrokerPartPhotos();if(typeof brokerGuardReady!=='undefined'&&brokerGuardReady)updateBrokerSaveIndicator();
 }
 /* Export images in readable pages instead of an excessively tall screenshot. */
@@ -6002,6 +6006,28 @@ function mountVehicleReportChapters(root,key){
   root.addEventListener('keydown',event=>{if(event.target.closest('button,a,input,select,textarea,dialog,[role="button"]'))return;if(event.key==='ArrowLeft'||event.key==='ArrowRight'){event.preventDefault();root.vehicleReportSelectChapter(event.key==='ArrowRight'?1:-1)}});
  }
  select(state.index,false);
+}
+
+const vehicleReportIssueFilters=new Map();
+function mountVehicleReportIssueFilter(root,key){
+ const overview=root?.querySelector('.premium-overview');if(!overview)return;
+ const section=overview.closest('.buyer-report-section'),card=overview.querySelector('.premium-metric.issue');if(!section||!card)return;
+ section.querySelectorAll('.report-issue-filter-bar,.report-issue-filter-empty').forEach(el=>el.remove());
+ const groups=[...section.querySelectorAll('.buyer-detail-group')],rows=groups.flatMap(group=>[...group.querySelectorAll('.buyer-report-row')]);
+ const bar=document.createElement('div');bar.className='report-issue-filter-bar';
+ const message=document.createElement('span');message.setAttribute('role','status');message.setAttribute('aria-live','polite');
+ const reset=document.createElement('button');reset.type='button';reset.textContent='전체 보기';bar.append(message,reset);overview.after(bar);
+ const empty=document.createElement('p');empty.className='report-issue-filter-empty';empty.textContent='이상 기록이 있는 항목이 없습니다.';bar.after(empty);
+ card.setAttribute('role','button');card.tabIndex=0;card.setAttribute('aria-label','이상 기록 항목만 보기');
+ function apply(active){
+  vehicleReportIssueFilters.set(key,active);card.setAttribute('aria-pressed',String(active));card.classList.toggle('filter-active',active);
+  let count=0;rows.forEach(row=>{const show=!active||row.dataset.reviewState==='issue';row.hidden=!show;if(show)count++});
+  groups.forEach(group=>group.hidden=active&&![...group.querySelectorAll('.buyer-report-row')].some(row=>!row.hidden));
+  bar.hidden=!active;empty.hidden=!active||count>0;message.textContent='이상 기록 '+count+'개만 표시 중';
+ }
+ card.onclick=()=>apply(!vehicleReportIssueFilters.get(key));
+ card.onkeydown=event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();apply(!vehicleReportIssueFilters.get(key))}};
+ reset.onclick=()=>apply(false);apply(vehicleReportIssueFilters.get(key)||false);
 }
 
 </script>
