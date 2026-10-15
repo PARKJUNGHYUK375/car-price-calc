@@ -2715,7 +2715,7 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 
 <div class="app-header">
 <div class="app-title">
-<div class="inspection-brand"><img src="assets/dealer-mate-logo.webp" alt="딜러메이트"><div><span class="inspection-eyebrow">DEALER MATE · INSPECTION</span><h1>알선검차</h1><p>차량 상태와 확인 사진을 구매자 리포트로.</p></div></div>
+<div class="inspection-brand"><img src="assets/dealer-mate-logo.webp" alt="딜러메이트"><div><span class="inspection-eyebrow">DEALER MATE · INSPECTION</span><h1>알선검차</h1><p>차량 상태와 확인 사진을 차량리포트로.</p></div></div>
 
 <div class="header-actions">
 <a href="index.html" class="theme-toggle" aria-label="첫화면으로" title="첫화면으로" style="text-decoration:none;display:grid;place-items:center"><i class="fa-solid fa-house"></i></a>
@@ -2732,7 +2732,7 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 <button class="page-tab" data-page="1" onclick="showPage(1)">외관</button>
 <button class="page-tab" data-page="2" onclick="showPage(2)">사고</button>
 <button class="page-tab" data-page="3" onclick="showPage(3)">세부상태</button>
-<button class="page-tab" data-page="4" onclick="showPage(4)">구매자 리포트</button>
+<button class="page-tab" data-page="4" onclick="showPage(4)">차량리포트</button>
 <button class="page-tab" data-page="5" onclick="showPage(5)">저장목록</button>
 </div>
 <!-- 가격 + 검차결과 -->
@@ -2740,7 +2740,7 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 <!-- 차량정보 -->
 <div class="section page-panel active inspection-info-grid" data-page-panel="0">
 <h2><i class="fas fa-car-side"></i> 차량정보</h2>
-<table class="broker-sale-table"><tbody><tr><th scope="row"><label for="brokerSalePrice">판매가</label></th><td><div class="broker-sale-input"><input id="brokerSalePrice" type="text" inputmode="numeric" placeholder="예) 23,500,000" oninput="formatInput(this); saveInput('brokerSalePrice'); updateAll()"><span>원</span></div></td></tr></tbody></table>
+<table class="broker-sale-table"><tbody><tr><th scope="row"><label for="brokerSalePriceMan">판매가</label></th><td><div class="broker-sale-input"><input id="brokerSalePrice" type="hidden"><input id="brokerSalePriceMan" type="text" inputmode="decimal" placeholder="예) 2,350" oninput="updateBrokerSalePrice(this)"><span>만원</span></div></td></tr></tbody></table>
 <div class="field">
 <label for="carNumber"><i class="fas fa-car"></i> 차량번호</label>
 <input id="carNumber" oninput="saveInput('carNumber')" placeholder="예) 12가3456" type="text"/>
@@ -2777,8 +2777,8 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
   <h2><i class="fa-solid fa-camera"></i> 차량사진</h2>
   <div class="vehicle-photo-head">
     <div class="vehicle-photo-copy">
-      <div class="vehicle-photo-title">검차 사진</div>
-      <div class="vehicle-photo-sub">차량 상태 사진을 최대 60장까지 저장할 수 있습니다.</div>
+      <div class="vehicle-photo-title">외관·실내 차량사진</div>
+      <div class="vehicle-photo-sub">외관·실내 차량사진을 추가해주세요. 부위별 이상 사진과 구분해 리포트에 표시됩니다.</div>
     </div>
     <button type="button" class="vehicle-photo-add" onclick="openPhotoSourceSheet()">
       <i class="fa-solid fa-camera"></i><span>사진 추가</span>
@@ -3094,7 +3094,7 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 <div class="detail-navigation"><button type="button" id="detailPrev" onclick="moveDetailBatch(-1)">← 이전</button><span id="detailBatchText" aria-live="polite"></span><button type="button" id="detailNext" onclick="moveDetailBatch(1)">다음 항목 →</button></div><div id="detailEmpty" class="detail-empty" hidden>해당 항목이 없어요.</div><p id="detailReviewHint" class="detail-review-hint"></p></div>
 <!-- 검차결과 -->
 <div class="section page-panel" data-page-panel="4">
-<h2><i class="fa-solid fa-clipboard-check"></i> 구매자 리포트</h2>
+<h2><i class="fa-solid fa-clipboard-check"></i> 차량리포트</h2>
 <div class="result-area" id="resultArea" style="display:none;"></div>
 
 <div class="record-action-panel">
@@ -3107,7 +3107,7 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 
   <div class="photo-section">
     <div class="photo-title-row">
-      <div class="photo-title"><i class="fa-solid fa-camera"></i> 검차 사진 <span id="photoCountText">0</span>/60</div>
+      <div class="photo-title"><i class="fa-solid fa-camera"></i> 차량사진 <span id="photoCountText">0</span>/60</div>
       <button type="button" class="photo-add-button" onclick="openPhotoSourceSheet()">
         <i class="fa-solid fa-plus"></i> 사진 추가
       </button>
@@ -3809,6 +3809,7 @@ function initCoating(){
         if(key && brokerStorage.getItem(key)) input.value=brokerStorage.getItem(key);
       });
 
+      loadBrokerSalePriceInput();
       autoResize(document.getElementById('carAdvantage'));
       autoResize(document.getElementById('Memo'));
     }
@@ -4240,7 +4241,7 @@ function initCoating(){
       // -----------------------------------------------------
       // 5. 화면 입력값 초기화
       // -----------------------------------------------------
-      document.querySelectorAll("input[type='text'],input[type='date']").forEach(input => {
+      document.querySelectorAll("input[type='text'],input[type='date'],#brokerSalePrice").forEach(input => {
         input.value = '';
       });
 
@@ -5148,6 +5149,7 @@ function choosePhotoSource(source){
 function renderInspectionPhotos(){
   if(typeof brokerGuardReady!=='undefined'&&brokerGuardReady)updateBrokerSaveIndicator();
   if(typeof renderBrokerReport==='function' && typeof detailReady!=='undefined' && detailReady)renderBrokerReport();
+  const vehiclePhotos=currentInspectionPhotos.map((photo,index)=>({photo,index})).filter(({photo})=>!photo.partKey);
   const previews=[
     document.getElementById('photoPreview'),
     document.getElementById('photoPreviewTop')
@@ -5158,18 +5160,18 @@ function renderInspectionPhotos(){
     document.getElementById('photoCountTextTop')
   ].filter(Boolean);
 
-  counts.forEach(el=>el.textContent=String(currentInspectionPhotos.length));
+  counts.forEach(el=>el.textContent=String(vehiclePhotos.length));
 
   if(!previews.length) return;
 
-  if(!currentInspectionPhotos.length){
+  if(!vehiclePhotos.length){
     previews.forEach(preview=>{
       preview.innerHTML='<div class="photo-empty">첨부된 사진이 없습니다.</div>';
     });
     return;
   }
 
-  const markup=currentInspectionPhotos.map((photo,index)=>{
+  const markup=vehiclePhotos.map(({photo,index})=>{
     const src=photo.dataUrl||photo.url||'';
     return `
       <div class="photo-item">
@@ -5714,8 +5716,24 @@ function brokerExteriorStatusLabel(key,n){
  const choice=brokerExteriorChoices(key).find(([value])=>value===n.condition);if(choice)return choice[1];
  return BROKER_STATE[n.state]||'미확인';
 }
+function formatVehicleReportPrice(value){
+ const text=String(value??'').trim();if(!text||text==='미입력')return '미입력';
+ if(text.replace(/\s/g,'').endsWith('만원'))return text;
+ const won=Number(text.replace(/[,\s원]/g,''));
+ return Number.isFinite(won)?(won/10000).toLocaleString('ko-KR',{maximumFractionDigits:4})+'만원':text;
+}
+function updateBrokerSalePrice(input){
+ const parts=input.value.replace(/[^0-9.]/g,'').split('.');
+ const integer=parts[0],fraction=parts.length>1?parts.slice(1).join('').slice(0,4):null;
+ const raw=integer+(fraction!==null?'.'+fraction:'');
+ const amount=raw&&raw!=='.'?Math.round(Number(raw)*10000):null;
+ document.getElementById('brokerSalePrice').value=amount!==null&&Number.isSafeInteger(amount)?amount.toLocaleString('en-US'):'';
+ input.value=(integer?Number(integer).toLocaleString('en-US'):'')+(fraction!==null?'.'+fraction:'');
+ saveInput('brokerSalePrice');updateAll();
+}
+function loadBrokerSalePriceInput(){const raw=document.getElementById('brokerSalePrice')?.value||'';const input=document.getElementById('brokerSalePriceMan');if(input)input.value=raw?formatVehicleReportPrice(raw).replace(/만원$/,''):''}
 function brokerReportSections(){
- const fields=BROKER_FIELDS.filter(([id])=>id!=='brokerOptions'||document.getElementById(id)?.value.trim()).map(([id,label])=>({label,value:(id==='brokerSalePrice'&&document.getElementById(id)?.value.trim()?document.getElementById(id).value.trim()+'원':document.getElementById(id)?.value.trim())||'미입력'}));
+ const fields=BROKER_FIELDS.filter(([id])=>id!=='brokerOptions'||document.getElementById(id)?.value.trim()).map(([id,label])=>({label,value:(id==='brokerSalePrice'&&document.getElementById(id)?.value.trim()?formatVehicleReportPrice(document.getElementById(id).value.trim()):document.getElementById(id)?.value.trim())||'미입력'}));
  const exterior=DATA.partNames.map(p=>{const n=brokerExteriorNotes[p.key]||{state:'pending',memo:''};return {key:p.key,title:brokerPartName(p.key),state:BROKER_STATE[n.state]?n.state:'pending',stateLabel:brokerExteriorStatusLabel(p.key,n),memo:n.memo||''}});
  const detail=detailCards().map(card=>{const cb=card.querySelector('input[type=checkbox]');return {group:DETAIL_GROUPS[Number(card.closest('.function-category').dataset.detailGroup)]?.title||'세부상태',key:'detail:'+cb.dataset.name,title:DETAIL_PROMPTS[cb.dataset.name]?.[0]||cb.dataset.name,state:detailStatus(card),memo:card.querySelector('.function-desc')?.value.trim()||''}});
  const accidents=[...document.querySelectorAll('.acc-item')].filter(p=>p.dataset.state||coatingData[p.dataset.key]).map(p=>{const part=DATA.accidentParts.find(item=>item.key===p.dataset.key);return {key:p.dataset.key,top:part?.top,left:part?.left,measurement:coatingData[p.dataset.key]?.peak?{value:coatingData[p.dataset.key].peak.value,material:coatingData[p.dataset.key].peak.material}:null,state:p.dataset.state,mark:({exchange:'X',repair:'W','disclosed-exchange':'XX','disclosed-repair':'WW'})[p.dataset.state]||'',title:coatingName(p.dataset.key),value:({exchange:'교환 X',repair:'판금 W','disclosed-exchange':'고지된 교환 XX','disclosed-repair':'고지된 판금 WW'})[p.dataset.state]||'기록 있음'}});
@@ -5726,11 +5744,11 @@ function brokerReportSections(){
 function brokerCoatingDescription(value){
  if(typeof value!=='number'||!Number.isFinite(value))return '수치 없음';
  if(value>=400)return '판금도장 가능성 있음';
- if(value>=80&&value<=150)return '정상 예상';
+ if(value>=70&&value<=150)return '정상 예상';
  if(value>=151&&value<400)return '단순도색 예상';
  return '추가 확인';
 }
-function brokerCoatingGuide(){return '<div class="report-coating-guide"><strong>도막수치 참고 기준</strong><p>80~150 μm 정상 예상 · 151~400 μm 단순도색 예상 · 400 μm 이상 판금도장 가능성 있음</p><small>400 μm는 판금도장 가능성으로 표시합니다. 범위 외 수치는 추가 확인입니다. 부위별 최고 측정값입니다.</small></div>'}
+function brokerCoatingGuide(){return '<div class="report-coating-guide"><strong>도막수치 참고 기준</strong><p>70~150 μm 정상 예상 · 151~400 μm 단순도색 예상 · 400 μm 이상 판금도장 가능성 있음</p><small>400 μm는 판금도장 가능성으로 표시합니다. (부위별 최고 측정값입니다.)</small></div>'}
 function brokerAccidentDiagram(items){
  const e=escapeHtml;
  return '<div class="report-accident-diagram"><img src="https://i.imgur.com/agbd7Z8.png" alt="차량 외판과 골격 전체 도면">'+items.map(p=>{
@@ -5739,7 +5757,7 @@ function brokerAccidentDiagram(items){
   const value=p.measurement?.value;
   const measured=typeof value==='number'&&Number.isFinite(value)?'<span class="report-coating-value '+(value>=400?'high':'')+'" style="top:'+top+'%;left:'+left+'%">'+e(value+' μm')+'</span>':'';
   return mark+measured;
- }).join('')+'</div><p class="report-accident-legend">X 교환 · W 판금<br>미표시 부위는 무사고를 확정하는 의미가 아닙니다.</p>'+brokerCoatingGuide()+items.filter(p=>p.measurement).map(p=>'<div class="buyer-report-row"><strong>'+e(p.title)+'</strong> · '+e(typeof p.measurement.value==='number'?p.measurement.value+' μm · '+brokerCoatingDescription(p.measurement.value):'수치 없음')+'</div>').join('');
+ }).join('')+'</div><p class="report-accident-legend">X 교환 · W 판금<br>미표시 부위는 무사고를 확정하는 의미가 아닙니다.</p>'+brokerCoatingGuide();
 }
 function renderBrokerReport(){
  const box=document.getElementById('resultArea');if(!box)return;
@@ -5751,6 +5769,7 @@ function renderBrokerReport(){
   return `<div class="buyer-report-row"><span class="buyer-status ${e(r.state)}">${e(r.stateLabel||BROKER_STATE[r.state]||'미확인')}</span><strong>${e(r.title)}</strong>${r.memo?`<small>${e(r.memo)}</small>`:''}${attached}</div>`;
  };
  const section=(title,html)=>`<section class="buyer-report-section"><h3><span class="premium-section-number">${e(title.slice(0,2))}</span>${e(title.slice(3))}</h3>${html}</section>`;
+ const vehiclePhotos=data.photos.filter(photo=>!photo.partKey);
  const counts=data.detail.reduce((a,r)=>(a[r.state]=(a[r.state]||0)+1,a),{});
  box.style.display='block';
  const allRows=[...data.exterior,...data.detail],totalCounts=allRows.reduce((a,r)=>(a[r.state]=(a[r.state]||0)+1,a),{});
@@ -5764,7 +5783,7 @@ function renderBrokerReport(){
  section('03 교환·판금 확인',brokerAccidentDiagram(data.accidents))+
  section('04 세부상태',details)+
  section('05 종합 의견',`<div class="premium-summary-copy">${e(data.note||'별도 의견 없음')}</div>`)+
- section('06 확인 사진',data.photos.length?`<div class="buyer-report-photos">${data.photos.map((p,i)=>`<figure><img src="${e(p.dataUrl||p.url||'')}" alt="${e(brokerPartName(p.partKey))}" data-broker-photo="${i}" role="button" tabindex="0"><figcaption>${i+1}. ${e(brokerPartName(p.partKey))}</figcaption></figure>`).join('')}</div>`:'<p>첨부된 사진이 없습니다.</p>')+
+ section('06 차량사진',vehiclePhotos.length?`<div class="buyer-report-photos">${vehiclePhotos.map((p,i)=>`<figure><img src="${e(p.dataUrl||p.url||'')}" alt="${e(brokerPartName(p.partKey))}" data-broker-photo="${data.photos.indexOf(p)}" role="button" tabindex="0"><figcaption>${i+1}. ${e(brokerPartName(p.partKey))}</figcaption></figure>`).join('')}</div>`:'<p>기본정보에서 외관·실내 차량사진을 추가해주세요.</p>')+
  '<footer class="buyer-report-foot">검차 시점에 확인한 내용을 기록한 리포트입니다. 미확인·확인불가 항목은 추가 확인이 필요합니다.</footer></article>';
  renderBrokerPartPhotos();if(typeof brokerGuardReady!=='undefined'&&brokerGuardReady)updateBrokerSaveIndicator();
 }
@@ -5785,15 +5804,16 @@ captureInspectionResult=async function(){
   const diagramHeight=Math.min(1200,H-y-160),diagramWidth=diagramHeight*diagramImage.width/diagramImage.height,diagramX=(W-diagramWidth)/2,diagramY=y;
   ctx.drawImage(diagramImage,diagramX,diagramY,diagramWidth,diagramHeight);
   data.accidents.forEach(p=>{const top=parseFloat(p.top),left=parseFloat(p.left);if(!Number.isFinite(top)||!Number.isFinite(left))return;const x=diagramX+diagramWidth*left/100,py=diagramY+diagramHeight*top/100;ctx.fillStyle=p.mark.includes('X')?'#ffeded':'#e5efff';ctx.strokeStyle=p.mark.includes('X')?'#c82028':'#1558c0';ctx.lineWidth=2;ctx.textAlign='center';ctx.textBaseline='middle';if(p.mark){ctx.beginPath();ctx.arc(x,py,15,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.fillStyle=ctx.strokeStyle;ctx.font='bold 17px sans-serif';ctx.fillText(p.mark,x,py)}if(typeof p.measurement?.value==='number'){ctx.fillStyle=p.measurement.value>=400?'#c82028':'#1558c0';ctx.font='bold 18px sans-serif';ctx.fillText(p.measurement.value+' μm',x,py+27)}});
-  ctx.textAlign='left';ctx.textBaseline='alphabetic';y=diagramY+diagramHeight+35;text('X 교환 · W 판금');text('미표시 부위는 무사고 확정이 아닙니다.','#6c7a8f');text('도막: 80~150 μm 정상 예상 / 151~400 μm 단순도색 예상 / 400 μm 이상 판금도장 가능성 있음');data.accidents.filter(p=>p.measurement).forEach(p=>text(p.title+': '+(typeof p.measurement.value==='number'?p.measurement.value+' μm · '+brokerCoatingDescription(p.measurement.value):'수치 없음')));
+  ctx.textAlign='left';ctx.textBaseline='alphabetic';y=diagramY+diagramHeight+35;text('X 교환 · W 판금');text('미표시 부위는 무사고 확정이 아닙니다.','#6c7a8f');text('도막수치 참고 기준');text('70~150 μm 정상 예상 · 151~400 μm 단순도색 예상 · 400 μm 이상 판금도장 가능성 있음');text('400 μm는 판금도장 가능성으로 표시합니다. (부위별 최고 측정값입니다.)','#6c7a8f');
   title('04 세부상태');data.detail.forEach(r=>{text('['+BROKER_STATE[r.state]+'] '+r.title,r.state==='issue'?'#b12f2f':'#34445d');if(r.memo)text('  '+r.memo)});title('05 종합 의견');text(data.note||'별도 의견 없음');
-  if(data.photos.length){page();title('06 확인 사진');for(let i=0;i<data.photos.length;i++){const photo=data.photos[i];let src=photo.dataUrl;if(!src){const blob=await fetchPhotoBlobFromUrl(photo.url||await createPhotoSignedUrl(photo.path));src=await blobToDataUrl(blob)}const img=await new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>resolve(im);im.onerror=()=>reject(new Error((i+1)+'번 사진을 불러오지 못했습니다.'));im.src=src});if(y+525>H-100){page();title('06 확인 사진 · 계속')}text((i+1)+'. '+brokerPartName(photo.partKey),'#295fe8',true);const scale=Math.min((W-P*2)/img.width,430/img.height),width=img.width*scale,height=img.height*scale;ctx.fillStyle='#fff';ctx.fillRect(P,y-12,W-P*2,445);ctx.drawImage(img,(W-width)/2,y,width,height);y+=475}}
+  const vehiclePhotos=data.photos.filter(photo=>!photo.partKey);
+  if(vehiclePhotos.length){page();title('06 차량사진');for(let i=0;i<vehiclePhotos.length;i++){const photo=vehiclePhotos[i];let src=photo.dataUrl;if(!src){const blob=await fetchPhotoBlobFromUrl(photo.url||await createPhotoSignedUrl(photo.path));src=await blobToDataUrl(blob)}const img=await new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>resolve(im);im.onerror=()=>reject(new Error((i+1)+'번 사진을 불러오지 못했습니다.'));im.src=src});if(y+525>H-100){page();title('06 차량사진 · 계속')}text((i+1)+'. '+brokerPartName(photo.partKey),'#295fe8',true);const scale=Math.min((W-P*2)/img.width,430/img.height),width=img.width*scale,height=img.height*scale;ctx.fillStyle='#fff';ctx.fillRect(P,y-12,W-P*2,445);ctx.drawImage(img,(W-width)/2,y,width,height);y+=475}}
   text('미확인·확인불가 항목은 추가 확인이 필요합니다.','#6c7a8f');
   const safe=sanitizeDownloadName(data.fields[0].value);for(let i=0;i<pages.length;i++){const c=pages[i],cctx=c.getContext('2d');cctx.fillStyle='#73829a';cctx.font='22px sans-serif';cctx.fillText('DEALER MATE · '+(i+1)+' / '+pages.length,P,H-38);const blob=await new Promise(resolve=>c.toBlob(resolve,'image/png'));if(!blob)throw Error('리포트 이미지 생성 실패');await saveBlobToDevice(blob,'알선검차_'+safe+'_'+String(i+1).padStart(2,'0')+'.png');if(i<pages.length-1)await new Promise(resolve=>setTimeout(resolve,250))}
   alert('리포트 '+pages.length+'장을 저장했습니다.');
  }catch(error){console.error(error);alert('리포트 저장 실패: '+error.message)}finally{if(button)button.disabled=false}
 };
-copyInspectionSummary=async function(){updateAll();const text=document.getElementById('resultArea').innerText||document.getElementById('resultArea').textContent;try{await navigator.clipboard.writeText(text);alert('구매자 리포트를 복사했습니다.')}catch{prompt('리포트 내용을 복사해주세요.',text)}};
+copyInspectionSummary=async function(){updateAll();const text=document.getElementById('resultArea').innerText||document.getElementById('resultArea').textContent;try{await navigator.clipboard.writeText(text);alert('차량리포트를 복사했습니다.')}catch{prompt('리포트 내용을 복사해주세요.',text)}};
 printInspection=function(){updateAll();showPage(4,false);window.print()};
 document.addEventListener('DOMContentLoaded',()=>{
  if(!document.getElementById('brokerDate').value){document.getElementById('brokerDate').value=brokerStorage.getItem('brokerDate')||new Intl.DateTimeFormat('sv-SE').format(new Date());saveInput('brokerDate')}
@@ -5840,7 +5860,7 @@ async function createBrokerShare(){
   const signed=await Promise.all((saved.photos||[]).map(async photo=>{
    const {data,error}=await supabaseClient.storage.from(CLOUD_PHOTO_BUCKET).createSignedUrl(photo.path,7*24*60*60);
    if(error||!data?.signedUrl)throw error||new Error('공유 사진 주소 생성 실패');
-   return {url:data.signedUrl,label:brokerPartName(photo.partKey),partKey:photo.partKey||''};
+   return {url:data.signedUrl,label:brokerPartName(photo.partKey),partKey:photo.partKey||'',category:photo.partKey?'finding':'vehicle'};
   }));
   const snapshot={fields:before.fields,exterior:before.exterior,detail:before.detail,accidents:before.accidents,note:before.note,photos:signed};
   const {data,error}=await supabaseClient.rpc('publish_broker_report',{p_record_id:String(saved.id),p_snapshot:snapshot});if(error)throw error;
