@@ -2677,6 +2677,7 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 @media print{.report-chapter-nav,.report-chapter-pager{display:none!important}.report-chapters-ready .buyer-report-section[hidden]{display:block!important}.report-chapters-ready:not([data-report-chapter="0"])>.buyer-report-header{display:block!important}.report-chapters-ready .buyer-report-section{min-height:0!important}}
 
 .buyer-report-section>.premium-overview{margin:0 0 18px!important}
+#brokerCustomConditionField[hidden]{display:none!important}#brokerCustomConditionField{margin:10px 0 14px;padding:12px;border:1px solid #dce5f3;border-radius:9px;background:#f5f8fd}#brokerCustomConditionField textarea{margin-bottom:0}
 </style>
 </head>
 <body>
@@ -5670,10 +5671,17 @@ function brokerPartName(key){
  return part.name;
 }
 function brokerExteriorChoices(key){
- if(key==='front_glass'||key==='rear_glass')return [['normal','양호'],['stonechip','스톤칩 있음'],['broken','깨짐 있음']];
- if(key.startsWith('wheel_'))return [['issue','휠스크래치 있음'],['normal','양호']];
- if(key.startsWith('mirror_'))return [['normal','양호'],['broken','파손 있음'],['scratch','스크래치 있음']];
- return [['normal','양호'],['scratch','스크래치 있음'],['dent','문콕 있음']];
+ let choices;
+ if(key==='front_glass'||key==='rear_glass')choices=[['normal','양호'],['stonechip','스톤칩 있음'],['broken','깨짐 있음']];
+ else if(key.startsWith('wheel_'))choices=[['issue','휠스크래치 있음'],['normal','양호']];
+ else if(key.startsWith('mirror_'))choices=[['normal','양호'],['broken','파손 있음'],['scratch','스크래치 있음']];
+ else choices=[['normal','양호'],['scratch','스크래치 있음'],['dent','문콕 있음']];
+ return [...choices,['custom','직접 입력']];
+}
+function syncBrokerCustomCondition(){
+ const isTire=brokerEditingPart.startsWith('tire_');
+ const selected=document.getElementById(isTire?'brokerTireTread':'brokerPartStatus').value;
+ document.getElementById('brokerCustomConditionField').hidden=selected!=='custom';
 }
 function openBrokerExterior(key){
  brokerEditingPart=key;brokerCurrentPhotoTarget=key;
@@ -5687,7 +5695,9 @@ function openBrokerExterior(key){
  const isTire=key.startsWith('tire_');
  document.getElementById('brokerPartStatusLabel').hidden=isTire;select.hidden=isTire;
  document.getElementById('brokerTireFields').hidden=!isTire;
- document.getElementById('brokerTireTread').value=note.tireTread!==undefined&&note.tireTread!==null?String(note.tireTread):'';
+ document.getElementById('brokerTireTread').value=note.condition==='custom'?'custom':note.tireTread!==undefined&&note.tireTread!==null?String(note.tireTread):'';
+ document.getElementById('brokerCustomCondition').value=note.customCondition||'';
+ syncBrokerCustomCondition();
  document.getElementById('brokerTireYear').value=note.tireYear||'';
  document.getElementById('brokerPartMemo').value=note.memo||'';
  renderBrokerPartPhotos();document.getElementById('brokerPartDialog').showModal();
@@ -5698,9 +5708,12 @@ function saveBrokerExterior(){
  const selection=document.getElementById('brokerPartStatus').value;
  if(!isTire&&!brokerExteriorChoices(brokerEditingPart).some(([value])=>value===selection)){alert('확인 상태를 선택해주세요.');return}
  const tread=document.getElementById('brokerTireTread').value,year=document.getElementById('brokerTireYear').value.trim();
- if(isTire&&!Array.from({length:11},(_,i)=>String(100-i*10)).includes(tread)){alert('타이어 트레드를 선택해주세요.');return}
+ const custom=(isTire?tread:selection)==='custom';
+ const customText=document.getElementById('brokerCustomCondition').value.trim();
+ if(custom&&!customText){alert('확인 상태를 직접 입력해주세요.');document.getElementById('brokerCustomCondition').focus();return}
+ if(isTire&&!custom&&!Array.from({length:11},(_,i)=>String(100-i*10)).includes(tread)){alert('타이어 트레드를 선택해주세요.');return}
  if(isTire&&year&&!/^[0-9]{4}$/.test(year)){alert('타이어 연식은 2025처럼 4자리로 입력해주세요.');return}
- brokerExteriorNotes[brokerEditingPart]={state:isTire||selection==='normal'?'normal':'issue',...(isTire?{}:{condition:selection}),memo:document.getElementById('brokerPartMemo').value.trim(),...(isTire?{tireTread:Number(tread),tireYear:year}:{})};
+ brokerExteriorNotes[brokerEditingPart]={state:custom?'issue':isTire||selection==='normal'?'normal':'issue',...(isTire&&!custom?{}:{condition:custom?'custom':selection}),...(custom?{customCondition:customText}:{}),memo:document.getElementById('brokerPartMemo').value.trim(),...(isTire?{tireTread:custom?null:Number(tread),tireYear:year}:{})};
  brokerStorage.setItem('exteriorNotes',JSON.stringify(brokerExteriorNotes));
  const pin=[...document.querySelectorAll('.part-item')].find(p=>p.dataset.key===brokerEditingPart);
  if(pin){pin.classList.toggle('selected',brokerExteriorNotes[brokerEditingPart].state==='issue');pin.setAttribute('aria-pressed',String(brokerExteriorNotes[brokerEditingPart].state==='issue'));}
@@ -5715,6 +5728,7 @@ function renderBrokerPartPhotos(){
  });
 }
 function brokerExteriorStatusLabel(key,n){
+ if(n.condition==='custom'&&n.customCondition)return (key.startsWith('tire_')&&n.tireYear?n.tireYear+'년 ':'')+String(n.customCondition);
  if(key.startsWith('tire_')&&Number.isInteger(n.tireTread)&&n.tireTread>=0&&n.tireTread<=100)return (n.tireYear?n.tireYear+'년':'연식 미입력')+' 트레드'+n.tireTread+'%';
  if(key.startsWith('wheel_'))return n.state==='issue'?'휠스크래치 있음':n.state==='normal'?'양호':BROKER_STATE[n.state]||'미확인';
  if(n.state==='normal')return '양호';
@@ -6000,7 +6014,7 @@ function mountVehicleReportChapters(root,key){
 <p id="detailAddError" role="alert"></p>
 <div class="detail-add-actions"><button type="button" onclick="document.getElementById('detailAddDialog').close()">취소</button><button type="submit">추가</button></div>
 </form></dialog>
-<dialog id="brokerPartDialog" class="broker-dialog"><h2 id="brokerPartTitle">외관 상태</h2><label id="brokerPartStatusLabel" for="brokerPartStatus">확인 상태</label><select id="brokerPartStatus"><option value="pending">미확인</option><option value="normal">정상</option><option value="issue">이상 있음</option><option value="unavailable">확인불가</option></select><div id="brokerTireFields" hidden><label for="brokerTireTread">타이어 트레드</label><select id="brokerTireTread"><option value="">트레드 선택</option><option value="100">100%</option><option value="90">90%</option><option value="80">80%</option><option value="70">70%</option><option value="60">60%</option><option value="50">50%</option><option value="40">40%</option><option value="30">30%</option><option value="20">20%</option><option value="10">10%</option><option value="0">0%</option></select><label for="brokerTireYear">타이어 연식</label><input id="brokerTireYear" type="text" inputmode="numeric" maxlength="4" placeholder="예) 2025" oninput="this.value=this.value.replace(/[^0-9]/g,'')"><small>제조연도를 4자리로 입력해주세요.</small></div><label for="brokerPartMemo">상태 메모</label><textarea id="brokerPartMemo" rows="3" placeholder="예) 오른쪽 하단 긁힘, 찌그러짐, 도장 손상"></textarea><div class="broker-dialog-actions"><button type="button" onclick="chooseBrokerPartPhoto('camera')">사진 촬영</button><button type="button" onclick="chooseBrokerPartPhoto('album')">앨범에서 추가</button></div><div id="brokerPartPhotos" class="broker-part-photos"></div><div class="broker-dialog-actions"><button type="button" onclick="saveBrokerExterior()">상태 저장</button><button type="button" onclick="document.getElementById('brokerPartDialog').close()">닫기</button></div></dialog>
+<dialog id="brokerPartDialog" class="broker-dialog"><h2 id="brokerPartTitle">외관 상태</h2><label id="brokerPartStatusLabel" for="brokerPartStatus">확인 상태</label><select id="brokerPartStatus" onchange="syncBrokerCustomCondition()"><option value="pending">미확인</option><option value="normal">정상</option><option value="issue">이상 있음</option><option value="unavailable">확인불가</option></select><div id="brokerTireFields" hidden><label for="brokerTireTread">타이어 트레드</label><select id="brokerTireTread" onchange="syncBrokerCustomCondition()"><option value="">트레드 선택</option><option value="100">100%</option><option value="90">90%</option><option value="80">80%</option><option value="70">70%</option><option value="60">60%</option><option value="50">50%</option><option value="40">40%</option><option value="30">30%</option><option value="20">20%</option><option value="10">10%</option><option value="0">0%</option><option value="custom">직접 입력</option></select><label for="brokerTireYear">타이어 연식</label><input id="brokerTireYear" type="text" inputmode="numeric" maxlength="4" placeholder="예) 2025" oninput="this.value=this.value.replace(/[^0-9]/g,'')"><small>제조연도를 4자리로 입력해주세요.</small></div><div id="brokerCustomConditionField" hidden><label for="brokerCustomCondition">확인 상태 직접 입력</label><textarea id="brokerCustomCondition" rows="2" maxlength="200" placeholder="필요한 상태를 직접 작성해주세요"></textarea></div><label for="brokerPartMemo">상태 메모</label><textarea id="brokerPartMemo" rows="3" placeholder="예) 오른쪽 하단 긁힘, 찌그러짐, 도장 손상"></textarea><div class="broker-dialog-actions"><button type="button" onclick="chooseBrokerPartPhoto('camera')">사진 촬영</button><button type="button" onclick="chooseBrokerPartPhoto('album')">앨범에서 추가</button></div><div id="brokerPartPhotos" class="broker-part-photos"></div><div class="broker-dialog-actions"><button type="button" onclick="saveBrokerExterior()">상태 저장</button><button type="button" onclick="document.getElementById('brokerPartDialog').close()">닫기</button></div></dialog>
 
 <dialog id="brokerPhotoViewer" class="photo-fullscreen"><header><span id="brokerExpandedPhotoTitle">확인 사진</span><div><button type="button" onclick="document.getElementById('brokerPhotoViewer').classList.toggle('zoomed')">확대 / 맞춤</button><button type="button" onclick="document.getElementById('brokerPhotoViewer').close()">닫기</button></div></header><div class="photo-surface"><img id="brokerExpandedPhoto" alt="확인 사진" onclick="document.getElementById('brokerPhotoViewer').classList.toggle('zoomed')"></div></dialog>
 <dialog id="brokerLeaveDialog" class="broker-leave-dialog"><h2>검차를 저장하시겠습니까?</h2><p id="brokerLeaveMessage"></p><div><button id="brokerLeaveSave" type="button" onclick="decideBrokerLeave(true)">저장하고 나가기</button><button type="button" onclick="cancelBrokerLeave()">계속 작성</button><button type="button" onclick="decideBrokerLeave(false)">저장 없이 나가기</button></div></dialog>
