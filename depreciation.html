@@ -4156,7 +4156,6 @@ function initCoating(){
               <h3><i class="fa-solid fa-list"></i> 감가 내역</h3>
               ${detailList}
             </div>
-            ${coatingLines().length ? `<div class="result-card"><h3>도막 측정</h3><ul class="result-list">${coatingLines().map(line=>`<li><b>${escapeHtml(line.title)}</b>: ${escapeHtml(line.text)} · ${escapeHtml(line.summary)} · ${escapeHtml(COATING_MATERIALS[line.last.material]||'재질 미확인')}</li>`).join('')}</ul></div>` : ''}
 
 
           </div>
