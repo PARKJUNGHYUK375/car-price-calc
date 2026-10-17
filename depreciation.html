@@ -5605,13 +5605,13 @@ async function captureInspectionResult(){
       }
       if(line)out.push(line);return out.length?out:[''];
     }
-    const cards=[...resultArea.querySelectorAll('.result-meta > .result-card,.result-grid > .result-summary')].map((card,index)=>{
-      const title=clean(card.querySelector('h3')?.textContent)||'검차 내역';
-      const lines=[...card.querySelectorAll('li,.subgroup-title,.result-empty,.result-notice,.kv,.sum-final,.deduction-diagram')]
+    const cards=[...resultArea.querySelectorAll('.result-meta > .result-card,.result-grid > .result-summary')].flatMap(card=>card.querySelector('.subgroup')?[...card.querySelectorAll('.subgroup')]:[card]).map((card,index)=>{
+      const title=clean(card.querySelector('h3,.subgroup-title')?.textContent)||'검차 내역';
+      const lines=[...card.querySelectorAll('li,.result-empty,.result-notice,.kv,.sum-final,.deduction-diagram')]
         .map(el=>el.classList.contains('deduction-diagram')?{diagram:deductionDiagramData(el.dataset.kind)}:({text:clean(el.innerText||el.textContent),sub:el.classList.contains('subgroup-title'),strong:el.classList.contains('sum-final')||el.classList.contains('kv')}))
         .filter(row=>row.text||row.diagram);
       if(index===0)lines.push({text:'입찰가: '+(document.getElementById('bidPriceInput')?.value||'0')+'원'});
-      const rows=lines.flatMap(row=>row.diagram?[{...row,height:CONTENT*row.diagram.ratio+46,gap:0}]:wrapText(row.text).map((text,i)=>({...row,text,gap:row.sub&&i===0?14:0})));
+      const rows=lines.flatMap(row=>row.diagram?[{...row,height:Math.min(CONTENT*row.diagram.ratio,1120)+46,gap:0}]:wrapText(row.text).map((text,i)=>({...row,text,gap:row.sub&&i===0?14:0})));
       return {title,rows,summary:card.classList.contains('result-summary'),height:80+rows.reduce((h,row)=>h+(row.height||LINE)+row.gap,0)+30};
     });
     if(!cards.length)throw new Error('감가리포트 영역을 찾지 못했습니다.');
@@ -5624,10 +5624,10 @@ async function captureInspectionResult(){
       diagramImages.set(row.diagram.src,image);
     }
     function drawDiagram(data,x,y){
-      const height=CONTENT*data.ratio;ctx.fillStyle='#fff';ctx.fillRect(x,y,CONTENT,height);
-      ctx.drawImage(diagramImages.get(data.src),x,y,CONTENT,height);
+      const height=Math.min(CONTENT*data.ratio,1120),width=height/data.ratio;x+=(CONTENT-width)/2;ctx.fillStyle='#fff';ctx.fillRect(x,y,width,height);
+      ctx.drawImage(diagramImages.get(data.src),x,y,width,height);
       data.points.forEach(p=>{
-        const px=x+CONTENT*p.left/100,py=y+height*p.top/100;
+        const px=x+width*p.left/100,py=y+height*p.top/100;
         ctx.textAlign='center';ctx.textBaseline='middle';
         if(p.mark){ctx.fillStyle='#ffffffb0';ctx.strokeStyle=p.mark.includes('X')||data.kind==='paint'?'#d32128':'#1558c0';ctx.lineWidth=2;ctx.beginPath();ctx.arc(px,py,18,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.fillStyle=ctx.strokeStyle;ctx.font='bold 21px sans-serif';ctx.fillText(p.mark,px,py)}
         if(p.value!==null){const label=p.value+' μm',ly=py+(p.mark?34:0);ctx.font='bold 22px sans-serif';const width=ctx.measureText(label).width+8;ctx.fillStyle='#ffffffe6';ctx.fillRect(px-width/2,ly-14,width,28);ctx.fillStyle=p.value>=400?'#d71920':'#1556a5';ctx.fillText(label,px,ly)}
@@ -5635,33 +5635,51 @@ async function captureInspectionResult(){
       ctx.textAlign='left';ctx.textBaseline='alphabetic';
     }
 
-    canvas.width=W;canvas.height=156+cards.reduce((h,card)=>h+card.height+26,0)+72;
-    ctx.fillStyle='#f4f6fa';ctx.fillRect(0,0,W,canvas.height);
-    ctx.fillStyle='#101b30';ctx.fillRect(0,0,W,124);
-    ctx.fillStyle='#fff';ctx.font='bold 40px sans-serif';ctx.fillText('딜러메이트 · 매입검차',PAD,61);
-    ctx.fillStyle='#a9bad5';ctx.font='24px sans-serif';ctx.fillText('차량 감가리포트',PAD,100);
-    ctx.textAlign='right';ctx.font='22px sans-serif';ctx.fillText(new Date().toLocaleString('ko-KR'),W-PAD,98);ctx.textAlign='left';
-    let y=156;
-    cards.forEach((card,index)=>{
-      ctx.fillStyle=card.summary?'#101b30':'#fff';ctx.fillRect(PAD,y,W-PAD*2,card.height);
-      ctx.strokeStyle=card.summary?'#101b30':'#dfe6f1';ctx.lineWidth=2;ctx.strokeRect(PAD,y,W-PAD*2,card.height);
-      ctx.fillStyle=card.summary?'#20365a':'#eaf0fc';ctx.fillRect(PAD,y,W-PAD*2,66);
-      ctx.fillStyle=card.summary?'#fff':'#295fe8';ctx.font='bold 30px sans-serif';ctx.fillText(String(index+1).padStart(2,'0')+'  '+card.title,PAD+INNER,y+43);
-      let lineY=y+106;
-      card.rows.forEach(row=>{
-        if(row.diagram){drawDiagram(row.diagram,PAD+INNER,lineY-20);lineY+=row.height;return;}
-        lineY+=row.gap;
-        ctx.font=(row.sub||row.strong?'bold ':'')+'30px sans-serif';
-        ctx.fillStyle=card.summary?(row.strong?'#a8c2ff':'#c3cfe2'):(row.sub?'#295fe8':'#34445d');
-        ctx.fillText(row.text,PAD+INNER,lineY);lineY+=LINE;
-      });
-      y+=card.height+26;
+
+    // Fixed portrait pages, keeping each diagram intact.
+    const H=1697,TOP=156,BOTTOM=H-76,MAXCARD=BOTTOM-TOP;
+    const pages=[];let page=[],used=0;
+    function place(card){
+      if(used+card.height>MAXCARD&&page.length){pages.push(page);page=[];used=0}
+      page.push(card);used+=card.height+26;
+    }
+    cards.forEach(card=>{
+      let rows=[],height=110,part=0;
+      function flush(){if(!rows.length)return;place({...card,title:card.title+(part?' (계속)':''),rows,height});part++;rows=[];height=110}
+      card.rows.forEach(row=>{const size=(row.height||LINE)+row.gap;if(height+size>MAXCARD)flush();rows.push(row);height+=size});
+      flush();
     });
-    ctx.fillStyle='#8593a8';ctx.font='23px sans-serif';ctx.fillText('DEALER MATE · 차량 검차기록',PAD,canvas.height-34);
-    const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png',1));
-    if(!blob)throw new Error('이미지를 만들지 못했습니다.');
-    const safeCar=String(carNumber||'vehicle').replace(/[\\/:*?"<>|\s]+/g,'_');
-    await saveBlobToDevice(blob,`감가리포트_${safeCar}_${new Date().toISOString().slice(0,10)}.png`);
+    if(page.length)pages.push(page);
+    const safeCar=String(carNumber||'vehicle').replace(/[\\/:*?"<>|\s]+/g,'_'),date=new Date().toISOString().slice(0,10);
+    const stamp=new Date().toLocaleString('ko-KR');
+    for(let pageIndex=0;pageIndex<pages.length;pageIndex++){
+      canvas.width=W;canvas.height=H;
+      ctx.fillStyle='#f4f6fa';ctx.fillRect(0,0,W,H);
+      ctx.fillStyle='#101b30';ctx.fillRect(0,0,W,124);
+      ctx.fillStyle='#fff';ctx.font='bold 40px sans-serif';ctx.fillText('딜러메이트 · 매입검차',PAD,61);
+      ctx.fillStyle='#a9bad5';ctx.font='24px sans-serif';ctx.fillText('감가리포트 · '+carNumber,PAD,100);
+      ctx.textAlign='right';ctx.font='22px sans-serif';ctx.fillText(stamp,W-PAD,98);ctx.textAlign='left';
+      let y=TOP;
+      pages[pageIndex].forEach(card=>{
+        ctx.fillStyle=card.summary?'#101b30':'#fff';ctx.fillRect(PAD,y,W-PAD*2,card.height);
+        ctx.strokeStyle=card.summary?'#101b30':'#dfe6f1';ctx.lineWidth=2;ctx.strokeRect(PAD,y,W-PAD*2,card.height);
+        ctx.fillStyle=card.summary?'#20365a':'#eaf0fc';ctx.fillRect(PAD,y,W-PAD*2,66);
+        ctx.fillStyle=card.summary?'#fff':'#295fe8';ctx.font='bold 30px sans-serif';ctx.fillText(card.title,PAD+INNER,y+43);
+        let lineY=y+106;
+        card.rows.forEach(row=>{
+          if(row.diagram){drawDiagram(row.diagram,PAD+INNER,lineY-20);lineY+=row.height;return}
+          lineY+=row.gap;ctx.font=(row.sub||row.strong?'bold ':'')+'30px sans-serif';
+          ctx.fillStyle=card.summary?(row.strong?'#a8c2ff':'#c3cfe2'):(row.sub?'#295fe8':'#34445d');
+          ctx.fillText(row.text,PAD+INNER,lineY);lineY+=LINE;
+        });
+        y+=card.height+26;
+      });
+      ctx.fillStyle='#8593a8';ctx.font='23px sans-serif';ctx.fillText('DEALER MATE · 감가리포트',PAD,H-34);
+      ctx.textAlign='right';ctx.fillText((pageIndex+1)+' / '+pages.length,W-PAD,H-34);ctx.textAlign='left';
+      const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png',1));
+      if(!blob)throw new Error('이미지를 만들지 못했습니다.');
+      await saveBlobToDevice(blob,`감가리포트_${safeCar}_${date}_${String(pageIndex+1).padStart(2,'0')}.png`);
+    }
   }catch(error){console.error(error);alert('감가리포트 이미지 저장 중 오류가 발생했습니다.\n'+(error?.message||''))}
 }
 
