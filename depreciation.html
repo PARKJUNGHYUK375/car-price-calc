@@ -207,7 +207,7 @@
       color:var(--muted);
     }
 
-    /* ✅ 검차결과(통합) */
+    /* ✅ 감가리포트(통합) */
     .result-area{
       border:1px dashed rgba(255,92,92,0.40);
       background: rgba(255,92,92,0.06);
@@ -270,7 +270,7 @@
     .result-list li{ margin:4px 0; color: #f3f4f6; }
     .result-empty{ margin-top:8px; font-size:13px; color: var(--muted); }
 
-    /* ✅ 검차결과 UI 리프레시 */
+    /* ✅ 감가리포트 UI 리프레시 */
     .result-area{
       border-style: solid;
       background: rgba(255,255,255,0.03);
@@ -2641,6 +2641,15 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 
 .coating-pin-value,.coating-current span{color:#1556a5}
 .coating-pin-value.coating-high,.coating-current span.coating-high{color:#d71920}
+
+.deduction-diagram{position:relative;line-height:0;width:100%;max-width:540px;margin:14px auto 0;background:#fff;border-radius:8px;overflow:hidden;aspect-ratio:1055 / 791}
+.deduction-diagram[data-kind="accident"]{aspect-ratio:1055 / 1718}
+.deduction-diagram>img{display:block;width:100%;height:100%;object-fit:fill}
+.deduction-mark{position:absolute;transform:translate(-50%,-50%);display:grid;place-items:center;width:23px;height:23px;border:1.5px solid;border-radius:50%;font-size:12px;font-weight:900;line-height:1;background:#ffffffa0}
+.deduction-mark.paint,.deduction-mark.exchange{color:#d32128}.deduction-mark.repair{color:#1558c0}
+.deduction-coating{position:absolute;transform:translate(-50%,-50%);font-size:11px;font-weight:900;line-height:1.3;color:#1556a5;background:#ffffffe0;padding:1px 3px;white-space:nowrap;border-radius:3px}
+.deduction-coating.high{color:#d71920}.deduction-coating.with-mark{transform:translate(-50%,13px)}
+.deduction-diagram-legend{font-size:11px;color:var(--muted);line-height:1.6;margin:8px 0 16px}
 </style>
 </head>
 <body>
@@ -2703,10 +2712,10 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 <button class="page-tab" data-page="1" onclick="showPage(1)">도색</button>
 <button class="page-tab" data-page="2" onclick="showPage(2)">사고</button>
 <button class="page-tab" data-page="3" onclick="showPage(3)">세부상태</button>
-<button class="page-tab" data-page="4" onclick="showPage(4)">검차결과</button>
+<button class="page-tab" data-page="4" onclick="showPage(4)">감가리포트</button>
 <button class="page-tab" data-page="5" onclick="showPage(5)">저장목록</button>
 </div>
-<!-- 가격 + 검차결과 -->
+<!-- 가격 + 감가리포트 -->
 <div class="section page-panel active" data-page-panel="0">
 <h2><i class="fa-solid fa-won-sign"></i> 가격</h2>
 <div class="field">
@@ -2716,7 +2725,7 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 </div>
 </div>
 <div class="hint">
-      * 입력한 내용과 감가 결과는 <b>검차결과</b>에서 확인할 수 있습니다.
+      * 입력한 내용과 감가 결과는 <b>감가리포트</b>에서 확인할 수 있습니다.
     </div>
 </div>
 <!-- 차량정보 -->
@@ -3130,9 +3139,9 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 <button class="btn-soft" onclick="addExtraItem('인테리어')">+ 항목 추가</button>
 </div>
 <div class="detail-navigation"><button type="button" id="detailPrev" onclick="moveDetailBatch(-1)">← 이전</button><span id="detailBatchText" aria-live="polite"></span><button type="button" id="detailNext" onclick="moveDetailBatch(1)">다음 항목 →</button></div><div id="detailEmpty" class="detail-empty" hidden>해당 항목이 없어요.</div><p id="detailReviewHint" class="detail-review-hint"></p></div>
-<!-- 검차결과 -->
+<!-- 감가리포트 -->
 <div class="section page-panel" data-page-panel="4">
-<h2><i class="fa-solid fa-clipboard-check"></i> 검차결과</h2>
+<h2><i class="fa-solid fa-clipboard-check"></i> 감가리포트</h2>
 <div class="result-area" id="resultArea" style="display:none;"></div>
 
 <div class="record-action-panel">
@@ -4050,7 +4059,29 @@ function initCoating(){
       });
     }
 
-    // ✅ 검차결과 렌더
+    // ✅ 감가리포트 렌더
+
+function deductionDiagramData(kind){
+ const accident=kind==='accident',parts=accident?DATA.accidentParts:DATA.partNames;
+ return {kind,src:accident?'https://i.imgur.com/agbd7Z8.png':'https://i.imgur.com/1OGXwOu.png',ratio:accident?1718/1055:791/1055,
+ points:parts.flatMap(part=>{
+  const pin=[...document.querySelectorAll(accident?'.acc-item':'.part-item')].find(el=>el.dataset.key===part.key);
+  const state=pin?.dataset.state||'',selected=pin?.classList.contains('selected');
+  const peak=accident?coatingData[part.key]?.peak:null;
+  const value=typeof peak?.value==='number'&&Number.isFinite(peak.value)?peak.value:null;
+  const mark=accident?({'exchange':'X','repair':'W','disclosed-exchange':'XX','disclosed-repair':'WW'}[state]||''):(selected?'R':'');
+  return mark||value!==null?[{top:parseFloat(part.top),left:parseFloat(part.left),mark,value,title:part.name,state}]:[];
+ })};
+}
+function deductionDiagramHtml(kind){
+ const data=deductionDiagramData(kind),e=escapeHtml;
+ return '<div class="deduction-diagram" data-kind="'+kind+'"><img src="'+data.src+'" alt="'+(kind==='paint'?'도색 선택 부위 도면':'교환·판금 및 도막측정 도면')+'">'+data.points.map(p=>{
+  const pos='top:'+p.top+'%;left:'+p.left+'%;';
+  const mark=p.mark?'<span class="deduction-mark '+(p.mark.includes('X')?'exchange':kind==='paint'?'paint':'repair')+'" style="'+pos+'" title="'+e(p.title)+'">'+p.mark+'</span>':'';
+  return mark+(p.value!==null?'<span class="deduction-coating '+(p.value>=400?'high':'')+(p.mark?' with-mark':'')+'" style="'+pos+'" title="'+e(p.title)+'">'+p.value+' μm</span>':'');
+ }).join('')+'</div><p class="deduction-diagram-legend">'+(kind==='paint'?'R 도색 선택 부위':'X 교환 · W 판금 · 도막수치는 부위별 최고 측정값')+'</p>';
+}
+
     function renderResultBox({selectedPaint, selectedAccidents, deductionLines, paintLines=[], accidentLines=[], detailLines=[], totalDiscount, finalPrice, paintSetoff}){
       const box = document.getElementById('resultArea');
       const hasAny = (
@@ -4116,27 +4147,26 @@ function initCoating(){
 
       const hasAnyLines = (paintLines.length || accidentLines.length || detailLines.length);
 
-      const groupBlock = (title, icon, lines) => {
-        if(!lines || !lines.length) return '';
+      const groupBlock = (title, icon, lines, kind='') => {
+        if((!lines || !lines.length)&&!kind) return '';
         return `
           <div class="subgroup">
             <div class="subgroup-title"><i class="${icon}"></i> ${title}</div>
             <ul class="result-list">${lines.map(x=>`<li>${x}</li>`).join('')}</ul>
+            ${kind?deductionDiagramHtml(kind):''}
           </div>
         `;
       };
 
-      const detailList = hasAnyLines
-        ? `
-            ${groupBlock('도색', 'fa-solid fa-paint-roller', paintLines)}
-            ${groupBlock('사고', 'fa-solid fa-car-burst', accidentLines)}
+      const detailList = `
+            ${groupBlock('도색', 'fa-solid fa-paint-roller', paintLines, 'paint')}
+            ${groupBlock('사고', 'fa-solid fa-car-burst', accidentLines, 'accident')}
             ${groupBlock('세부상태', 'fa-solid fa-screwdriver-wrench', detailLines)}
-          `
-        : `<div class="result-empty">선택 내역이 없습니다.</div>`;
+          `;
 
       box.innerHTML = `
         <div class="result-head">
-          <div class="result-title"><i class="fa-solid fa-clipboard-check"></i> 검차결과</div>
+          <div class="result-title"><i class="fa-solid fa-clipboard-check"></i> 감가리포트</div>
         </div>
 
         <div class="result-grid">
@@ -4445,7 +4475,7 @@ function initCoating(){
       renderInspectionPhotos();
 
       // -----------------------------------------------------
-      // 8. 검차결과 / 저장상태 초기화
+      // 8. 감가리포트 / 저장상태 초기화
       // -----------------------------------------------------
       const resultBox = document.getElementById('resultArea');
       if(resultBox){
@@ -5516,7 +5546,7 @@ async function copyInspectionSummary(){
   const resultText=(document.getElementById('resultArea')?.innerText||'').trim();
 
   const text=[
-    '[차량 검차결과]',
+    '[차량 감가리포트]',
     `차량번호: ${carNumber||'-'}`,
     `차량: ${[carName,carGrade].filter(Boolean).join(' / ')||'-'}`,
     `주행거리: ${mileage||'-'}`,
@@ -5530,7 +5560,7 @@ async function copyInspectionSummary(){
   try{
     if(navigator.clipboard && window.isSecureContext){
       await navigator.clipboard.writeText(text);
-      alert('검차결과를 복사했습니다.');
+      alert('감가리포트를 복사했습니다.');
     }else{
       const ta=document.createElement('textarea');
       ta.value=text;
@@ -5540,7 +5570,7 @@ async function copyInspectionSummary(){
       ta.select();
       document.execCommand('copy');
       ta.remove();
-      alert('검차결과를 복사했습니다.');
+      alert('감가리포트를 복사했습니다.');
     }
   }catch{
     prompt('아래 내용을 복사해주세요.',text);
@@ -5556,12 +5586,12 @@ function printInspection(){
 
 
 /* =========================================================
-   검차결과 이미지 캡처
+   감가리포트 이미지 캡처
 ========================================================= */
 async function captureInspectionResult(){
   updateAll();
   const resultArea=document.getElementById('resultArea');
-  if(!resultArea || resultArea.style.display==='none'){alert('저장할 검차결과가 없습니다.');return}
+  if(!resultArea || resultArea.style.display==='none'){alert('저장할 감가리포트가 없습니다.');return}
   try{
     const carNumber=(document.getElementById('carNumber')?.value||'-').trim();
     const canvas=document.createElement('canvas'),ctx=canvas.getContext('2d');
@@ -5577,19 +5607,39 @@ async function captureInspectionResult(){
     }
     const cards=[...resultArea.querySelectorAll('.result-meta > .result-card,.result-grid > .result-summary')].map((card,index)=>{
       const title=clean(card.querySelector('h3')?.textContent)||'검차 내역';
-      const lines=[...card.querySelectorAll('li,.subgroup-title,.result-empty,.result-notice,.kv,.sum-final')]
-        .map(el=>({text:clean(el.innerText||el.textContent),sub:el.classList.contains('subgroup-title'),strong:el.classList.contains('sum-final')||el.classList.contains('kv')}))
-        .filter(row=>row.text);
+      const lines=[...card.querySelectorAll('li,.subgroup-title,.result-empty,.result-notice,.kv,.sum-final,.deduction-diagram')]
+        .map(el=>el.classList.contains('deduction-diagram')?{diagram:deductionDiagramData(el.dataset.kind)}:({text:clean(el.innerText||el.textContent),sub:el.classList.contains('subgroup-title'),strong:el.classList.contains('sum-final')||el.classList.contains('kv')}))
+        .filter(row=>row.text||row.diagram);
       if(index===0)lines.push({text:'입찰가: '+(document.getElementById('bidPriceInput')?.value||'0')+'원'});
-      const rows=lines.flatMap(row=>wrapText(row.text).map((text,i)=>({...row,text,gap:row.sub&&i===0?14:0})));
-      return {title,rows,summary:card.classList.contains('result-summary'),height:80+rows.reduce((h,row)=>h+LINE+row.gap,0)+30};
+      const rows=lines.flatMap(row=>row.diagram?[{...row,height:CONTENT*row.diagram.ratio+46,gap:0}]:wrapText(row.text).map((text,i)=>({...row,text,gap:row.sub&&i===0?14:0})));
+      return {title,rows,summary:card.classList.contains('result-summary'),height:80+rows.reduce((h,row)=>h+(row.height||LINE)+row.gap,0)+30};
     });
-    if(!cards.length)throw new Error('검차결과 영역을 찾지 못했습니다.');
+    if(!cards.length)throw new Error('감가리포트 영역을 찾지 못했습니다.');
+
+    const diagramImages=new Map();
+    for(const row of cards.flatMap(card=>card.rows)){
+      if(!row.diagram||diagramImages.has(row.diagram.src))continue;
+      const blob=await fetchPhotoBlobFromUrl(row.diagram.src),url=await blobToDataUrl(blob);
+      const image=await new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=()=>reject(new Error('리포트 도면을 불러오지 못했습니다.'));img.src=url});
+      diagramImages.set(row.diagram.src,image);
+    }
+    function drawDiagram(data,x,y){
+      const height=CONTENT*data.ratio;ctx.fillStyle='#fff';ctx.fillRect(x,y,CONTENT,height);
+      ctx.drawImage(diagramImages.get(data.src),x,y,CONTENT,height);
+      data.points.forEach(p=>{
+        const px=x+CONTENT*p.left/100,py=y+height*p.top/100;
+        ctx.textAlign='center';ctx.textBaseline='middle';
+        if(p.mark){ctx.fillStyle='#ffffffb0';ctx.strokeStyle=p.mark.includes('X')||data.kind==='paint'?'#d32128':'#1558c0';ctx.lineWidth=2;ctx.beginPath();ctx.arc(px,py,18,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.fillStyle=ctx.strokeStyle;ctx.font='bold 21px sans-serif';ctx.fillText(p.mark,px,py)}
+        if(p.value!==null){const label=p.value+' μm',ly=py+(p.mark?34:0);ctx.font='bold 22px sans-serif';const width=ctx.measureText(label).width+8;ctx.fillStyle='#ffffffe6';ctx.fillRect(px-width/2,ly-14,width,28);ctx.fillStyle=p.value>=400?'#d71920':'#1556a5';ctx.fillText(label,px,ly)}
+      });
+      ctx.textAlign='left';ctx.textBaseline='alphabetic';
+    }
+
     canvas.width=W;canvas.height=156+cards.reduce((h,card)=>h+card.height+26,0)+72;
     ctx.fillStyle='#f4f6fa';ctx.fillRect(0,0,W,canvas.height);
     ctx.fillStyle='#101b30';ctx.fillRect(0,0,W,124);
     ctx.fillStyle='#fff';ctx.font='bold 40px sans-serif';ctx.fillText('딜러메이트 · 매입검차',PAD,61);
-    ctx.fillStyle='#a9bad5';ctx.font='24px sans-serif';ctx.fillText('차량 검차결과',PAD,100);
+    ctx.fillStyle='#a9bad5';ctx.font='24px sans-serif';ctx.fillText('차량 감가리포트',PAD,100);
     ctx.textAlign='right';ctx.font='22px sans-serif';ctx.fillText(new Date().toLocaleString('ko-KR'),W-PAD,98);ctx.textAlign='left';
     let y=156;
     cards.forEach((card,index)=>{
@@ -5599,6 +5649,7 @@ async function captureInspectionResult(){
       ctx.fillStyle=card.summary?'#fff':'#295fe8';ctx.font='bold 30px sans-serif';ctx.fillText(String(index+1).padStart(2,'0')+'  '+card.title,PAD+INNER,y+43);
       let lineY=y+106;
       card.rows.forEach(row=>{
+        if(row.diagram){drawDiagram(row.diagram,PAD+INNER,lineY-20);lineY+=row.height;return;}
         lineY+=row.gap;
         ctx.font=(row.sub||row.strong?'bold ':'')+'30px sans-serif';
         ctx.fillStyle=card.summary?(row.strong?'#a8c2ff':'#c3cfe2'):(row.sub?'#295fe8':'#34445d');
@@ -5610,8 +5661,8 @@ async function captureInspectionResult(){
     const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png',1));
     if(!blob)throw new Error('이미지를 만들지 못했습니다.');
     const safeCar=String(carNumber||'vehicle').replace(/[\\/:*?"<>|\s]+/g,'_');
-    await saveBlobToDevice(blob,`검차결과_${safeCar}_${new Date().toISOString().slice(0,10)}.png`);
-  }catch(error){console.error(error);alert('검차결과 이미지 저장 중 오류가 발생했습니다.\n'+(error?.message||''))}
+    await saveBlobToDevice(blob,`감가리포트_${safeCar}_${new Date().toISOString().slice(0,10)}.png`);
+  }catch(error){console.error(error);alert('감가리포트 이미지 저장 중 오류가 발생했습니다.\n'+(error?.message||''))}
 }
 
 
