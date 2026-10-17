@@ -2650,7 +2650,7 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 .deduction-coating{position:absolute;transform:translate(-50%,-50%);font-size:11px;font-weight:900;line-height:1.3;color:#1556a5;background:#ffffffe0;padding:1px 3px;white-space:nowrap;border-radius:3px}
 .deduction-coating.high{color:#d71920}.deduction-coating.with-mark{transform:translate(-50%,13px)}
 .deduction-diagram-legend{font-size:11px;color:var(--muted);line-height:1.6;margin:8px 0 16px}
-</style>
+.purchase-top-savebar{position:sticky;top:8px;z-index:90;max-width:760px;margin:12px auto;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border:1px solid #dce5f3;border-radius:12px;background:#fff;box-shadow:0 4px 16px #101b3010}.purchase-top-savebar strong{display:block;font-size:13px;color:#243e64}.purchase-top-savebar span{display:block;font-size:11px;color:#77869c}.purchase-top-savebar button{padding:10px 18px;border:0;border-radius:8px;background:#295fe8;color:#fff;font:inherit;font-weight:700;font-size:13px}.page-tabs{top:86px}.purchase-leave-dialog{width:min(430px,calc(100% - 28px));border:1px solid #dce4f1;border-radius:17px;background:#fff;color:#1b2b42;padding:24px}.purchase-leave-dialog::backdrop{background:#101b3090}.purchase-leave-dialog h2{font-size:19px;margin-top:0}.purchase-leave-dialog p{font-size:14px;line-height:1.7}.purchase-leave-dialog>div{display:flex;flex-direction:column;gap:9px}.purchase-leave-dialog button{padding:12px;border:1px solid #dce4ef;border-radius:9px;background:#f5f7fb;color:#314965;font:inherit;font-size:13px}.purchase-leave-dialog #purchaseLeaveSave{background:#295fe8;color:#fff;border-color:#295fe8}body.dark-mode .purchase-top-savebar{background:#18283f;border-color:#365174}body.dark-mode .purchase-top-savebar strong{color:#dce8fa}@media print{.purchase-top-savebar,.purchase-leave-dialog{display:none!important}}.purchase-share-dialog{width:min(520px,calc(100% - 28px));max-height:85dvh;overflow:auto;padding:22px;border:1px solid #dce4ef;border-radius:16px;background:#fff;color:#243e64}.purchase-share-dialog::backdrop{background:#101b3090}.purchase-share-dialog h2{font-size:19px;margin-top:0}.purchase-share-dialog p{font-size:13px;line-height:1.7}.purchase-share-dialog textarea{width:100%;min-height:85px;resize:vertical;font:12px/1.5 sans-serif;border:1px solid #dce4ef;border-radius:8px;padding:10px}.purchase-share-actions{display:flex;flex-wrap:wrap;gap:8px}.purchase-share-actions button,.purchase-share-close{padding:10px 13px;border:1px solid #dce4ef;border-radius:8px;background:#f1f5fb;color:#254b78;font:inherit;font-size:13px}.purchase-share-close{display:block;margin:0 0 10px auto}.purchase-share-note{color:#71839b}button:disabled{opacity:.55}@media print{.purchase-share-dialog{display:none!important}}</style>
 </head>
 <body>
 <div id="photoSourceOverlay" class="photo-source-overlay" hidden>
@@ -2707,6 +2707,7 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
 </div>
 </div>
 </div>
+<div class="purchase-top-savebar"><div><strong>매입검차 저장</strong><span id="purchaseTopSaveStatus" role="status" aria-live="polite"></span></div><button id="purchaseTopSave" type="button" onclick="saveInspectionRecord()">검차 저장</button></div>
 <div aria-label="검차 페이지" class="page-tabs">
 <button class="page-tab active" data-page="0" onclick="showPage(0)">기본정보</button>
 <button class="page-tab" data-page="1" onclick="showPage(1)">도색</button>
@@ -3183,6 +3184,7 @@ body.dark-mode .chip.exchange{background:#412431;color:#ffabb1;border-color:#704
     <button type="button" class="record-btn" onclick="captureInspectionResult()">
       <i class="fa-solid fa-image"></i> 결과 이미지 저장
     </button>
+    <button type="button" class="record-btn" onclick="openPurchaseShare()">리포트 공유 / 링크</button>
   </div>
 </div>
 </div>
@@ -4350,18 +4352,6 @@ function deductionDiagramHtml(kind){
     // =====================================================
     function startNewInspection(){
 
-      const hasCurrentData = [
-        'carNumber','mileage','carName','carGrade','bidPriceInput'
-      ].some(id => (document.getElementById(id)?.value || '').trim());
-
-      if(hasCurrentData){
-        const ok = confirm(
-          '현재 작성 중인 내용을 비우고 새로운 차량 검차를 시작할까요?\n' +
-          '저장하지 않은 내용은 사라집니다.'
-        );
-        if(!ok) return;
-      }
-
       // -----------------------------------------------------
       // 1. 현재 불러온 저장기록과 연결 해제
       //    다음 저장 시 기존 기록 수정이 아니라 "새 기록"으로 생성됨
@@ -4652,12 +4642,13 @@ async function initializeCloudAuth(){
     updateCloudAuthUI(currentCloudUser);
 
     client.auth.onAuthStateChange((_event,session)=>{
+      const previousUserId=currentCloudUser?.id;
       currentCloudUser=session?.user||null;
       updateCloudAuthUI(currentCloudUser);
 
       if(currentCloudUser){
         closeAuthOverlay();
-        loadActiveInspectionRecord();
+        if(previousUserId!==currentCloudUser.id)loadActiveInspectionRecord();
         renderSavedRecords();
       }else{
         currentInspectionPhotos=[];
@@ -4926,13 +4917,13 @@ function dataUrlToBlob(dataUrl){
   return new Blob([arr],{type:mime});
 }
 
-async function uploadPendingPhotos(recordId){
+async function uploadPendingPhotos(recordId,photos=currentInspectionPhotos){
   const user=requireCloudUser();
   if(!user) throw new Error('로그인이 필요합니다.');
 
   const uploaded=[];
 
-  for(const photo of currentInspectionPhotos){
+  for(const photo of photos){
     if(photo.path){
       uploaded.push({name:photo.name||'photo.jpg',path:photo.path});
       continue;
@@ -5011,7 +5002,8 @@ async function saveInspectionRecord(){
     }
 
     const oldPaths=(existing?.photos||[]).map(p=>p.path).filter(Boolean);
-    const photoMeta=await uploadPendingPhotos(recordId);
+    const savingPhotos=[...currentInspectionPhotos];
+    const photoMeta=await uploadPendingPhotos(recordId,savingPhotos);
     const newPaths=photoMeta.map(p=>p.path).filter(Boolean);
     const removedPaths=oldPaths.filter(path=>!newPaths.includes(path));
 
@@ -5042,7 +5034,8 @@ async function saveInspectionRecord(){
     await deletePhotoPaths(removedPaths);
 
     localStorage.setItem('activeInspectionRecordId',data.id);
-    currentInspectionPhotos=await hydratePhotoMetadata(data.photos||[]);
+    const hydrated=await hydratePhotoMetadata(data.photos||[]);
+    currentInspectionPhotos=currentInspectionPhotos.map(photo=>{const index=savingPhotos.indexOf(photo);return index>=0?(hydrated[index]||photo):photo});
     renderInspectionPhotos();
 
     const status=document.getElementById('recordSaveStatus');
@@ -5052,6 +5045,7 @@ async function saveInspectionRecord(){
 
     alert(existing?'검차 기록을 업데이트했습니다.':'검차 기록을 저장했습니다.');
     await renderSavedRecords();
+    return data;
   }catch(error){
     console.error(error);
     alert('저장 중 오류가 발생했습니다.\n'+(error?.message||''));
@@ -5083,6 +5077,7 @@ async function loadInspectionRecord(id){
     location.reload();
   }catch(error){
     console.error(error);
+    purchaseAllowLeave=false;
     alert('저장된 기록을 불러오지 못했습니다.\n'+(error?.message||''));
   }
 }
@@ -5508,6 +5503,7 @@ async function handleInspectionPhotos(files){
 }
 
 async function loadActiveInspectionRecord(){
+  if(currentInspectionPhotos.some(photo=>photo.dataUrl&&!photo.path))return;
   const id=localStorage.getItem('activeInspectionRecordId');
 
   if(!id || !currentCloudUser || !supabaseClient){
@@ -5518,7 +5514,10 @@ async function loadActiveInspectionRecord(){
 
   try{
     const record=await fetchCloudRecord(id);
-    currentInspectionPhotos=await hydratePhotoMetadata(record?.photos||[]);
+    const loaded=await hydratePhotoMetadata(record?.photos||[]);
+    if(currentInspectionPhotos.some(photo=>photo.dataUrl&&!photo.path))return;
+    currentInspectionPhotos=loaded;
+    markPurchaseSavedRecord(record);
     renderInspectionPhotos();
 
     const status=document.getElementById('recordSaveStatus');
@@ -5526,6 +5525,7 @@ async function loadActiveInspectionRecord(){
       status.textContent='저장된 기록 · 마지막 저장 '+formatRecordDate(record.updated_at||record.created_at);
     }
   }catch(error){
+    if(currentInspectionPhotos.some(photo=>photo.dataUrl&&!photo.path))return;
     console.error(error);
     localStorage.removeItem('activeInspectionRecordId');
     currentInspectionPhotos=[];
@@ -5588,7 +5588,7 @@ function printInspection(){
 /* =========================================================
    감가리포트 이미지 캡처
 ========================================================= */
-async function captureInspectionResult(){
+async function captureInspectionResult(mode='save'){
   updateAll();
   const resultArea=document.getElementById('resultArea');
   if(!resultArea || resultArea.style.display==='none'){alert('저장할 감가리포트가 없습니다.');return}
@@ -5652,6 +5652,7 @@ async function captureInspectionResult(){
     if(page.length)pages.push(page);
     const safeCar=String(carNumber||'vehicle').replace(/[\\/:*?"<>|\s]+/g,'_'),date=new Date().toISOString().slice(0,10);
     const stamp=new Date().toLocaleString('ko-KR');
+    const imageFiles=[];
     for(let pageIndex=0;pageIndex<pages.length;pageIndex++){
       canvas.width=W;canvas.height=H;
       ctx.fillStyle='#f4f6fa';ctx.fillRect(0,0,W,H);
@@ -5678,9 +5679,11 @@ async function captureInspectionResult(){
       ctx.textAlign='right';ctx.fillText((pageIndex+1)+' / '+pages.length,W-PAD,H-34);ctx.textAlign='left';
       const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png',1));
       if(!blob)throw new Error('이미지를 만들지 못했습니다.');
-      await saveBlobToDevice(blob,`감가리포트_${safeCar}_${date}_${String(pageIndex+1).padStart(2,'0')}.png`);
+      const name=`감가리포트_${safeCar}_${date}_${String(pageIndex+1).padStart(2,'0')}.png`;
+      if(mode==='collect')imageFiles.push({blob,name});else await saveBlobToDevice(blob,name);
     }
-  }catch(error){console.error(error);alert('감가리포트 이미지 저장 중 오류가 발생했습니다.\n'+(error?.message||''))}
+    if(mode==='collect')return imageFiles;
+  }catch(error){if(mode==='collect')throw error;console.error(error);alert('감가리포트 이미지 저장 중 오류가 발생했습니다.\n'+(error?.message||''))}
 }
 
 
@@ -5849,11 +5852,137 @@ window.addEventListener('storage',event=>{if(event.key==='calculatorTheme'||even
     updateAll();
       const savedPage = parseInt(localStorage.getItem('currentPage') || '0', 10);
       showPage(Number.isFinite(savedPage) ? savedPage : 0, false);
-      loadActiveInspectionRecord();
+      await loadActiveInspectionRecord();
+      initializePurchaseSaveGuard();
       renderSavedRecords();
     });
 
     window.addEventListener('beforeunload', saveExtraItems);
+function purchaseWorkspaceFingerprint(value){const normalize=item=>Array.isArray(item)?item.map(normalize):item&&typeof item==='object'?Object.fromEntries(Object.keys(item).sort().map(key=>[key,normalize(item[key])])):item;return JSON.stringify(normalize(value))}
+let purchaseSavedFingerprint=null,purchaseGuardReady=false,purchaseAllowLeave=false,purchaseSaveInFlight=null,purchasePendingLeave=null;
+const purchasePhotoDraftIds=new WeakMap();let purchasePhotoDraftSequence=0;
+function purchaseGuardPhotoRows(photos){return (photos||[]).map(photo=>{let draft='';if(photo.dataUrl&&!photo.path){if(!purchasePhotoDraftIds.has(photo))purchasePhotoDraftIds.set(photo,++purchasePhotoDraftSequence);draft=String(purchasePhotoDraftIds.get(photo))}return {name:photo.name||'photo.jpg',partKey:photo.partKey||'',path:photo.path||'',draft}})}
+function purchaseCurrentFingerprint(){return purchaseWorkspaceFingerprint({workspace:captureInspectionWorkspace(),photos:purchaseGuardPhotoRows(currentInspectionPhotos)})}
+function purchaseHasContent(){return ['carNumber','mileage','carName','carGrade','repair','carAdvantage','Memo'].some(id=>(document.getElementById(id)?.value||'').trim())||['bidPriceInput','exteriorCount','wheelScratchCount','tireCount'].some(id=>Number(document.getElementById(id)?.value||0)!==0)||(document.getElementById('spareKey')?.value==='없음')||currentInspectionPhotos.length>0||Object.keys(coatingData).length>0||detailCards().some(card=>detailStatus(card)!=='pending')||[...document.querySelectorAll('.acc-item')].some(pin=>pin.dataset.state)||[...document.querySelectorAll('.part-item')].some(pin=>pin.classList.contains('selected'))}
+function purchaseIsDirty(){if(purchaseSavedFingerprint===null)return !!purchaseHasContent();return purchaseCurrentFingerprint()!==purchaseSavedFingerprint}
+function markPurchaseSavedRecord(record){if(!record)return;purchaseSavedFingerprint=purchaseWorkspaceFingerprint({workspace:record.workspace,photos:purchaseGuardPhotoRows(record.photos)});updatePurchaseSaveIndicator()}
+function updatePurchaseSaveIndicator(){if(!purchaseGuardReady)return;const status=document.getElementById('purchaseTopSaveStatus');if(status)status.textContent=purchaseSaveInFlight?'저장 중…':purchaseIsDirty()?'변경사항 있음':'저장됨';const button=document.getElementById('purchaseTopSave');if(button)button.disabled=!!purchaseSaveInFlight}
+const purchaseOriginalSave=saveInspectionRecord;
+saveInspectionRecord=function(){
+ if(purchaseSaveInFlight)return purchaseSaveInFlight;
+ purchaseSaveInFlight=(async()=>{try{const record=await purchaseOriginalSave();if(record)markPurchaseSavedRecord(record);return record}finally{purchaseSaveInFlight=null;updatePurchaseSaveIndicator()}})();updatePurchaseSaveIndicator();return purchaseSaveInFlight;
+};
+function requestPurchaseLeave(action){
+ if(purchasePendingLeave)return;
+ if(!purchaseIsDirty()&&!purchaseSaveInFlight){purchaseAllowLeave=true;action();return}
+ purchasePendingLeave=action;document.getElementById('purchaseLeaveMessage').textContent='변경된 검차내용이 있습니다. 나가기 전에 저장하시겠습니까?';document.getElementById('purchaseLeaveDialog').showModal();
+}
+function cancelPurchaseLeave(){purchasePendingLeave=null;document.getElementById('purchaseLeaveDialog').close()}
+async function decidePurchaseLeave(save){
+ const action=purchasePendingLeave;if(!action)return;
+ const button=document.getElementById('purchaseLeaveSave');button.disabled=true;
+ try{if(save){const record=await saveInspectionRecord();if(!record||purchaseIsDirty()){document.getElementById('purchaseLeaveMessage').textContent='저장이 완료되지 않았거나 저장 중 내용이 변경되었습니다. 이 화면에서 확인 후 다시 저장해주세요.';return}}else if(purchaseSaveInFlight){document.getElementById('purchaseLeaveMessage').textContent='저장이 진행 중입니다. 완료 후 다시 선택해주세요.';return}
+  purchasePendingLeave=null;purchaseAllowLeave=true;document.getElementById('purchaseLeaveDialog').close();action();
+ }finally{button.disabled=false}
+}
+function initializePurchaseSaveGuard(){purchaseGuardReady=true;if(purchaseSavedFingerprint===null&&!purchaseHasContent())purchaseSavedFingerprint=purchaseCurrentFingerprint();updatePurchaseSaveIndicator()}
+document.addEventListener('input',()=>{if(purchaseGuardReady)updatePurchaseSaveIndicator()});
+document.addEventListener('change',()=>{if(purchaseGuardReady)updatePurchaseSaveIndicator()});
+document.addEventListener('click',event=>{
+ const link=event.target.closest('a[href]');if(!link||link.hasAttribute('download')||link.target==='_blank'||event.ctrlKey||event.metaKey||event.shiftKey||event.altKey||event.button>0)return;
+ const href=link.getAttribute('href');if(!href||href.startsWith('#'))return;
+ if(purchaseIsDirty()||purchaseSaveInFlight){event.preventDefault();event.stopImmediatePropagation();requestPurchaseLeave(()=>location.assign(link.href))}
+},true);
+window.addEventListener('beforeunload',event=>{if(!purchaseAllowLeave&&(purchaseIsDirty()||purchaseSaveInFlight)){event.preventDefault();event.returnValue=''}});
+document.addEventListener('DOMContentLoaded',()=>{
+ document.getElementById('purchaseLeaveDialog').addEventListener('cancel',event=>{event.preventDefault();cancelPurchaseLeave()});
+ const prior=history.state?.dealerMatePurchaseGuard;
+ const hasPrevious=prior?history.state.hasPrevious:history.length>1;
+ if(!prior)history.pushState({dealerMatePurchaseGuard:true,hasPrevious},'',location.href);
+ window.addEventListener('popstate',()=>{
+  if(purchaseAllowLeave)return;
+  history.pushState({dealerMatePurchaseGuard:true,hasPrevious},'',location.href);
+  const openDialog=document.querySelector('dialog[open]:not(#purchaseLeaveDialog)');if(openDialog){openDialog.close();return}
+  requestPurchaseLeave(()=>{if(hasPrevious)history.go(-2);else location.assign('index.html')});
+ });
+});
+window.addEventListener('pageshow',event=>{if(event.persisted){purchaseAllowLeave=false;purchasePendingLeave=null;const dialog=document.getElementById('purchaseLeaveDialog');if(dialog.open)dialog.close();updatePurchaseSaveIndicator()}});
+
+
+let purchaseShareLink='',purchaseImageFiles=null,purchaseShareBusy=false;
+function purchaseReportSnapshot(){
+ updateAll();const area=document.getElementById('resultArea');
+ if(!area||area.style.display==='none')throw new Error('공유할 감가리포트가 없습니다.');
+ const sections=[...area.querySelectorAll('.result-meta > .result-card,.result-grid > .result-summary')].flatMap(card=>card.querySelector('.subgroup')?[...card.querySelectorAll('.subgroup')]:[card]).map(card=>({
+ title:(card.querySelector('h3,.subgroup-title')?.textContent||'검차 내역').trim(),summary:card.classList.contains('result-summary'),
+ rows:[...card.querySelectorAll('li,.result-empty,.result-notice,.kv,.sum-final,.deduction-diagram,.deduction-diagram-legend')].map(el=>el.classList.contains('deduction-diagram')?{diagram:deductionDiagramData(el.dataset.kind)}:{text:(el.innerText||el.textContent||'').trim(),strong:el.classList.contains('sum-final')||el.classList.contains('kv')}).filter(row=>row.diagram||row.text)
+ }));
+ return {version:1,created:new Date().toISOString(),carNumber:(document.getElementById('carNumber')?.value||'').trim(),bidPrice:(document.getElementById('bidPriceInput')?.value||'0'),sections};
+}
+async function encodePurchaseReport(snapshot){
+ const raw=new TextEncoder().encode(JSON.stringify(snapshot));if(raw.length>200000)throw new Error('리포트 내용이 너무 큽니다. 이미지로 공유해주세요.');
+ let bytes=raw,format='j';
+ if(typeof CompressionStream==='function'){bytes=new Uint8Array(await new Response(new Blob([raw]).stream().pipeThrough(new CompressionStream('deflate'))).arrayBuffer());format='d'}
+ let binary='';bytes.forEach(byte=>binary+=String.fromCharCode(byte));const token=format+'.'+btoa(binary).replaceAll('+','-').replaceAll('/','_').replace(/=+$/,'');
+ const link=new URL('deduction-report.html',location.href);link.hash='r='+token;
+ if(link.href.length>30000)throw new Error('링크가 너무 길어 이미지 공유가 필요합니다.');
+ return link.href;
+}
+async function openPurchaseShare(){
+ if(purchaseShareBusy)return;purchaseShareBusy=true;purchaseShareLink='';purchaseImageFiles=null;
+ const dialog=document.getElementById('purchaseShareDialog'),status=document.getElementById('purchaseShareStatus');
+ document.getElementById('purchaseShareLink').value='';document.getElementById('purchaseShareCopy').disabled=true;document.getElementById('purchaseShareSend').disabled=true;
+ const images=document.getElementById('purchaseShareImages');images.textContent='페이지 이미지 준비';images.disabled=false;
+ if(!dialog.open)dialog.showModal();status.textContent='리포트 링크를 만드는 중…';
+ try{purchaseShareLink=await encodePurchaseReport(purchaseReportSnapshot());document.getElementById('purchaseShareLink').value=purchaseShareLink;document.getElementById('purchaseShareCopy').disabled=false;document.getElementById('purchaseShareSend').disabled=false;status.textContent='현재 리포트의 링크가 준비됐습니다.'}
+ catch(error){status.textContent=error.message||'링크를 만들지 못했습니다.'}
+ finally{purchaseShareBusy=false}
+}
+async function copyPurchaseShareLink(){
+ if(!purchaseShareLink)return;
+ try{await navigator.clipboard.writeText(purchaseShareLink);document.getElementById('purchaseShareStatus').textContent='링크를 복사했습니다. 원하는 대화에 붙여넣어주세요.'}
+ catch{const input=document.getElementById('purchaseShareLink');input.focus();input.select();try{if(document.execCommand('copy')){document.getElementById('purchaseShareStatus').textContent='링크를 복사했습니다.';return}}catch{}document.getElementById('purchaseShareStatus').textContent='위 링크를 길게 눌러 복사해주세요.'}
+}
+async function sendPurchaseShareLink(){
+ if(!purchaseShareLink)return;
+ const title='딜러메이트 · 감가리포트',text='차량 감가리포트를 확인해주세요.';
+ try{
+  if(typeof window.AndroidReportShare?.shareText==='function'){window.AndroidReportShare.shareText(title,text+'\n'+purchaseShareLink);return}
+  if(navigator.share){await navigator.share({title,text,url:purchaseShareLink});return}
+  await copyPurchaseShareLink();
+ }catch(error){if(error.name!=='AbortError')document.getElementById('purchaseShareStatus').textContent='공유 창을 열지 못했습니다. 링크 복사를 사용해주세요.'}
+}
+async function sharePurchaseImages(){
+ const status=document.getElementById('purchaseShareStatus'),button=document.getElementById('purchaseShareImages');
+ if(!purchaseImageFiles){
+  if(typeof window.AndroidReportShare?.shareImages!=='function'&&!(navigator.share&&navigator.canShare)){status.textContent='현재 앱은 이미지 공유 업데이트가 필요합니다. APK를 새로 설치하거나 이미지 저장 후 갤러리에서 공유해주세요.';return}
+  button.disabled=true;status.textContent='페이지 이미지를 준비하는 중…';
+  try{const files=await captureInspectionResult('collect');if(!files?.length)return;purchaseImageFiles=files;button.textContent='이미지 '+files.length+'장 공유';status.textContent='준비됐습니다. 이미지 공유 버튼을 눌러 앱을 선택해주세요.'}
+  catch(error){status.textContent=error.message||'이미지를 준비하지 못했습니다.'}
+  finally{button.disabled=false}
+  return;
+ }
+ try{
+  if(typeof window.AndroidReportShare?.shareImages==='function'){
+   button.disabled=true;
+   const images=[];for(const file of purchaseImageFiles)images.push({name:file.name,dataUrl:await blobToDataUrl(file.blob)});
+   window.AndroidReportShare.shareImages(JSON.stringify(images));button.disabled=false;return;
+  }
+  const files=purchaseImageFiles.map(file=>new File([file.blob],file.name,{type:'image/png'}));
+  if(!navigator.canShare({files})){status.textContent='이 브라우저는 이미지 파일 공유를 지원하지 않습니다. 링크 공유나 이미지 저장을 사용해주세요.';return}
+  await navigator.share({title:'딜러메이트 · 감가리포트',files});
+ }catch(error){if(error.name!=='AbortError')status.textContent='이미지 공유를 열지 못했습니다. 이미지 저장 후 갤러리에서 공유해주세요.'}
+ finally{button.disabled=false}
+}
+
+
+const purchaseOriginalUpdate=updateAll;
+updateAll=function(){const result=purchaseOriginalUpdate();if(purchaseGuardReady)updatePurchaseSaveIndicator();return result};
+const purchaseOriginalLoad=loadInspectionRecord;
+loadInspectionRecord=function(id){requestPurchaseLeave(()=>purchaseOriginalLoad(id))};
+const purchaseOriginalNew=startNewInspection;
+startNewInspection=function(){requestPurchaseLeave(()=>{purchaseOriginalNew();purchaseSavedFingerprint=null;purchaseAllowLeave=false;initializePurchaseSaveGuard()})};
+
   </script>
 <dialog id="detailAddDialog" class="detail-add-dialog" aria-labelledby="detailAddTitle">
 <form onsubmit="submitDetailAdd(event)">
@@ -5864,5 +5993,5 @@ window.addEventListener('storage',event=>{if(event.key==='calculatorTheme'||even
 <p id="detailAddError" role="alert"></p>
 <div class="detail-add-actions"><button type="button" onclick="document.getElementById('detailAddDialog').close()">취소</button><button type="submit">추가</button></div>
 </form></dialog>
-</body>
+<dialog id="purchaseLeaveDialog" class="purchase-leave-dialog"><h2>검차를 저장하시겠습니까?</h2><p id="purchaseLeaveMessage"></p><div><button id="purchaseLeaveSave" type="button" onclick="decidePurchaseLeave(true)">저장하고 나가기</button><button type="button" onclick="cancelPurchaseLeave()">계속 작성</button><button type="button" onclick="decidePurchaseLeave(false)">저장 없이 나가기</button></div></dialog><dialog id="purchaseShareDialog" class="purchase-share-dialog" aria-labelledby="purchaseShareTitle"><button class="purchase-share-close" type="button" onclick="document.getElementById('purchaseShareDialog').close()">닫기</button><h2 id="purchaseShareTitle">감가리포트 공유</h2><p id="purchaseShareStatus" role="status" aria-live="polite"></p><label for="purchaseShareLink">열람 링크</label><textarea id="purchaseShareLink" readonly></textarea><p class="purchase-share-note">링크에 생성 시점의 리포트 내용이 담깁니다. 수정 후 다시 만들면 새 링크가 생성되며, 자동 만료·회수 기능은 없습니다.</p><div class="purchase-share-actions"><button id="purchaseShareCopy" type="button" onclick="copyPurchaseShareLink()">링크 복사</button><button id="purchaseShareSend" type="button" onclick="sendPurchaseShareLink()">다른 앱으로 링크 공유</button><button id="purchaseShareImages" type="button" onclick="sharePurchaseImages()">페이지 이미지 준비</button></div></dialog></body>
 </html>
